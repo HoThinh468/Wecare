@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Wecare"
 include ':app'
+include ':features'
+include ':features:bmi'
+include ':common'
+include ':common:designsystem'

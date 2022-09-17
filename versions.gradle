@@ -1,0 +1,13 @@
+def versions = [:]
+
+versions.core_ktx = '1.8.0'
+versions.compose_version = '1.1.0-beta01'
+versions.lifycycle_runtime = '2.3.1'
+
+def deps= [:]
+
+deps.core_ktx ="androidx.core:core-ktx:$versions.core_ktx"
+
+// We need this line for outside to access
+// Add the deps to extension
+ext.deps = deps
