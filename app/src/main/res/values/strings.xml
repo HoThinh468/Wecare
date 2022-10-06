@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wecare</string>
+    <string name="title_activity_sign_in_screen">SignInScreen</string>
 </resources>
