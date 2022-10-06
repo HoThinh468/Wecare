@@ -4,15 +4,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.NavigationBarScreen
-import com.vn.wecare.core_navigation.WecareGraphItem
+import com.vn.wecare.core_navigation.AccountRoutes
 
 fun NavGraphBuilder.accountNavGraph(navHostController: NavHostController) {
     navigation(
-        route = WecareGraphItem.ACCOUNT,
-        startDestination = NavigationBarScreen.Account.route
+        route = AccountRoutes.graph,
+        startDestination = AccountRoutes.accountDes
     ) {
-        composable(route = NavigationBarScreen.Account.route) {
+        composable(route = AccountRoutes.accountDes) {
             AccountScreen()
         }
     }

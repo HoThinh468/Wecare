@@ -5,19 +5,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.vn.wecare.core_navigation.WecareNavGraph
 import com.vn.wecare.core_navigation.NavigationBarScreen
+import com.vn.wecare.core_navigation.WecareNavGraph
 
 @Composable
-fun WecareApp(
-    navController: NavHostController = rememberNavController()
-) {
+fun WecareApp(navController: NavHostController) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) {
@@ -65,20 +64,28 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
+    val isCurrentTabSelected = currentDestination?.hierarchy?.any {
+        it.route == item.route
+    } == true
+
     BottomNavigationItem(
-        label = { Text(text = item.title) },
+        label = {
+            Text(
+                text = stringResource(id = item.title),
+                style = MaterialTheme.typography.caption
+            )
+        },
         alwaysShowLabel = true,
         icon = {
             Icon(
-                imageVector = item.icon,
-                contentDescription = "Navigation Icon"
+                painter = painterResource(
+                    id = if (isCurrentTabSelected) item.selectedIcon else item.icon
+                ),
+                contentDescription = null
             )
         },
-        //? What does this mean
-        selected = currentDestination?.hierarchy?.any {
-            it.route == item.route
-        } == true,
-        unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+        selected = isCurrentTabSelected,
+        unselectedContentColor = MaterialTheme.colors.secondary,
         onClick = {
             navController.navigate(item.route) {
                 popUpTo(navController.graph.findStartDestination().id)

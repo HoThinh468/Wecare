@@ -12,6 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WecareTheme {
+                // Create a navController with rememberNavController()
                 WecareApp(navController = rememberNavController())
             }
         }

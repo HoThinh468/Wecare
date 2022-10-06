@@ -4,15 +4,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.NavigationBarScreen
-import com.vn.wecare.core_navigation.WecareGraphItem
+import com.vn.wecare.core_navigation.HomeRoutes
+import com.vn.wecare.feature.home.view.HomeScreen
 
 fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
     navigation(
-        route = WecareGraphItem.HOME,
-        startDestination = NavigationBarScreen.Home.route
+        route = HomeRoutes.graph,
+        startDestination = HomeRoutes.homeDes
     ) {
-        composable(route = NavigationBarScreen.Home.route) {
+        composable(route = HomeRoutes.homeDes) {
             HomeScreen()
         }
     }

@@ -16,7 +16,7 @@ val OpenSans = FontFamily(
 )
 
 // Set of Material typography styles to start with
-val Typography = Typography(
+val WeCareTypography = Typography(
     h1 = TextStyle(
         fontFamily = OpenSans,
         fontWeight = FontWeight.Bold,
@@ -49,7 +49,7 @@ val Typography = Typography(
     ),
     button = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp
     ),
     caption = TextStyle(

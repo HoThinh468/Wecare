@@ -12,20 +12,12 @@ import com.vn.wecare.feature.training.trainingNavGraph
 fun WecareNavGraph(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
-        route = WecareGraphItem.WECARE,
-        startDestination = WecareGraphItem.AUTHENTICATION
+        route = WECARE,
+        startDestination = AuthenticationRoutes.graph
     ) {
         authNavGraph(navHostController = navHostController)
         homeNavGraph(navHostController = navHostController)
         trainingNavGraph(navHostController = navHostController)
         accountNavGraph(navHostController = navHostController)
     }
-}
-
-object WecareGraphItem {
-    const val WECARE = "WECARE"
-    const val AUTHENTICATION = "AUTH_GRAPH"
-    const val HOME = "HOME_GRAPH"
-    const val TRAINING = "TRAINING_GRAPH"
-    const val ACCOUNT = "ACCOUNT_GRAPH"
 }

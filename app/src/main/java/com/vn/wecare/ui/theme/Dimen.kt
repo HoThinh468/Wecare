@@ -7,3 +7,6 @@ val normalPadding = 16.dp
 val mediumPadding = 24.dp
 val largePadding = 32.dp
 val extraLargePadding = 40.dp
+
+val iconSize = 24.dp
+val largeIconSize = 40.dp

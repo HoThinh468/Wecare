@@ -1,31 +1,33 @@
 package com.vn.wecare.core_navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.vn.wecare.R
 
 sealed class NavigationBarScreen(
     val route: String,
-    val title: String,
-    val icon: ImageVector
+    @StringRes val title: Int,
+    @DrawableRes val icon: Int,
+    @DrawableRes val selectedIcon: Int
 ) {
     object Home : NavigationBarScreen(
-        route = "HOME",
-        title = "Home",
-        icon = Icons.Default.Home
+        route = HomeRoutes.homeDes,
+        title = R.string.home_title,
+        icon = R.drawable.ic_outline_home,
+        selectedIcon = R.drawable.ic_home
     )
 
     object Training : NavigationBarScreen(
-        route = "TRAINING",
-        title = "Training",
-        icon = Icons.Default.PlayArrow
+        route = TrainingRoutes.trainingDes,
+        title = R.string.training_title,
+        icon = R.drawable.ic_outline_sports_baseball,
+        selectedIcon = R.drawable.ic_sports_baseball
     )
 
     object Account : NavigationBarScreen(
-        route = "ACCOUNT",
-        title = "Account",
-        icon = Icons.Default.Person
+        route = AccountRoutes.accountDes,
+        title = R.string.account_title,
+        icon = R.drawable.ic_person_outline,
+        selectedIcon = R.drawable.ic_person
     )
 }
