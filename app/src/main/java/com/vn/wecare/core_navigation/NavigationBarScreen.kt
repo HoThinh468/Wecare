@@ -1,9 +1,9 @@
-package com.vn.wecare.feature.navigation
+package com.vn.wecare.core_navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavigationBarScreen(
@@ -20,7 +20,7 @@ sealed class NavigationBarScreen(
     object Training : NavigationBarScreen(
         route = "TRAINING",
         title = "Training",
-        icon = Icons.Default.Share
+        icon = Icons.Default.PlayArrow
     )
 
     object Account : NavigationBarScreen(

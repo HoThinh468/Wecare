@@ -1,6 +1,5 @@
-package com.vn.wecare
+package com.vn.wecare.feature
 
-import com.vn.wecare.feature.WecareAppNavGraph
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -12,7 +11,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.vn.wecare.feature.navigation.NavigationBarScreen
+import com.vn.wecare.core_navigation.WecareNavGraph
+import com.vn.wecare.core_navigation.NavigationBarScreen
 
 @Composable
 fun WecareApp(
@@ -22,7 +22,7 @@ fun WecareApp(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) {
         // Add wecare nav graph which contains nav host
-        WecareGraph(navHostController = navController)
+        WecareNavGraph(navHostController = navController)
     }
 }
 
@@ -34,19 +34,27 @@ fun BottomNavigationBar(navController: NavHostController) {
         NavigationBarScreen.Account
     )
 
+    // Get the current back stack entry using navController
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    // Get the current destination (which is on top and visible to users)
     val currentDestination = navBackStackEntry?.destination
 
-    BottomNavigation(
-        backgroundColor = Color.White,
-        contentColor = MaterialTheme.colors.primary
-    ) {
-        items.forEach {
-            AddItem(
-                item = it,
-                currentDestination = currentDestination,
-                navController = navController
-            )
+    // Check if current Destination is one of the four main tab
+    val isMainTab = items.any { it.route == currentDestination?.route }
+
+    // If current destination is in the main tabs then show the bottom nav bar
+    if (isMainTab) {
+        BottomNavigation(
+            backgroundColor = Color.White,
+            contentColor = MaterialTheme.colors.primary
+        ) {
+            items.forEach {
+                AddItem(
+                    item = it,
+                    currentDestination = currentDestination,
+                    navController = navController
+                )
+            }
         }
     }
 }
@@ -58,10 +66,6 @@ fun RowScope.AddItem(
     navController: NavHostController
 ) {
     BottomNavigationItem(
-        //? What does this logic mean
-        selected = currentDestination?.hierarchy?.any {
-            it.route == item.route
-        } == true,
         label = { Text(text = item.title) },
         alwaysShowLabel = true,
         icon = {
@@ -70,6 +74,11 @@ fun RowScope.AddItem(
                 contentDescription = "Navigation Icon"
             )
         },
+        //? What does this mean
+        selected = currentDestination?.hierarchy?.any {
+            it.route == item.route
+        } == true,
+        unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
         onClick = {
             navController.navigate(item.route) {
                 popUpTo(navController.graph.findStartDestination().id)

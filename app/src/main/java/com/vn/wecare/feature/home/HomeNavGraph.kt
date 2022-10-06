@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.account
+package com.vn.wecare.feature.home
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -7,13 +7,13 @@ import androidx.navigation.navigation
 import com.vn.wecare.core_navigation.NavigationBarScreen
 import com.vn.wecare.core_navigation.WecareGraphItem
 
-fun NavGraphBuilder.accountNavGraph(navHostController: NavHostController) {
+fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
     navigation(
-        route = WecareGraphItem.ACCOUNT,
-        startDestination = NavigationBarScreen.Account.route
+        route = WecareGraphItem.HOME,
+        startDestination = NavigationBarScreen.Home.route
     ) {
-        composable(route = NavigationBarScreen.Account.route) {
-            AccountScreen()
+        composable(route = NavigationBarScreen.Home.route) {
+            HomeScreen()
         }
     }
 }

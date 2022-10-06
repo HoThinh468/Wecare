@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training
+package com.vn.wecare.feature.account
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,12 +9,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun TrainingScreen() {
+fun AccountScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Training Screen")
+        Text("Account Screen")
     }
 }

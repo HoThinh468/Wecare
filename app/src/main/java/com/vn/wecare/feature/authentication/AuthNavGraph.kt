@@ -4,18 +4,18 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.GraphRootItem
+import com.vn.wecare.core_navigation.WecareGraphItem
 
 fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     navigation(
-        route = GraphRootItem.AUTHENTICATION,
+        route = WecareGraphItem.AUTHENTICATION,
         startDestination = AuthSection.SignIn.route
     ) {
         composable(route = AuthSection.SignIn.route) {
-            // TODO: Add the SignIn screen content
+            // Add the SignIn screen content
             SignInScreen(
-                onHomeScreenClick = {
-                    navHostController.navigate(GraphRootItem.WECAREAPP)
+                onMoveClick = {
+                    navHostController.navigate(WecareGraphItem.HOME)
                 }
             )
         }
@@ -24,7 +24,7 @@ fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
 }
 
 sealed class AuthSection(val route: String) {
-    object SignIn : AuthSection(route = "SIGNIN")
-    object SignUp : AuthSection(route = "SIGNUP")
-    object ForgotPass : AuthSection(route = "FORGOTPASS")
+    object SignIn : AuthSection(route = "sign_in")
+    object SignUp : AuthSection(route = "sign_up")
+    object ForgotPass : AuthSection(route = "forgot_password")
 }
