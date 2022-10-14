@@ -114,9 +114,10 @@ fun CustomButton(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SingInScreen() {
+fun SignInScreen(
+    navigateToHome: () -> Unit
+) {
     WecareTheme {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -175,7 +176,7 @@ fun SingInScreen() {
 
             CustomButton(
                 text = "SIGN IN",
-                onClick = { /*TODO*/ },
+                onClick = navigateToHome,
                 textColor = Color.White,
                 padding = 16
             )
