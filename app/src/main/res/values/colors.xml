@@ -10,6 +10,7 @@
     <color name="Grey100">#FFEFEFEF</color>
     <color name="Pink">#FFBFACE0</color>
     <color name="Black900">#FF343A40</color>
+    <color name="Black450">#AAA3A3</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

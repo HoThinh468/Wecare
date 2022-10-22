@@ -15,6 +15,8 @@ class HomeRoutes {
     companion object {
         const val graph = "HOME_GRAPH"
         const val homeDes = "Home_screen"
+        const val StepCountDes = "Step_count_screen"
+        const val SetYourGoalDes = "Set_your_goal_screen"
     }
 }
 

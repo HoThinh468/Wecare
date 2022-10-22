@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.vn.wecare.core_navigation.AuthenticationRoutes
 import com.vn.wecare.core_navigation.HomeRoutes
-import com.vn.wecare.feature.authentication.ui.SignInScreen
+import com.vn.wecare.feature.authentication.ui.SingInScreen
 
 fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     navigation(
