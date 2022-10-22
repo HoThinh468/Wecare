@@ -115,7 +115,7 @@ fun CustomButton(
 }
 
 @Composable
-fun SingInScreen(
+fun SignInScreen(
     navigateToHome: () -> Unit
 ) {
     WecareTheme {

@@ -15,7 +15,7 @@ fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     ) {
         composable(route = AuthenticationRoutes.signInDes) {
             // Add the SignIn screen content
-            SingInScreen(
+            SignInScreen(
                 navigateToHome = {
                     navHostController.navigate(HomeRoutes.graph)
                 }
