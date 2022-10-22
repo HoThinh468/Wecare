@@ -6,4 +6,39 @@
     <string name="training_title">Training</string>
     <string name="account_title">Account</string>
     <string name="title_activity_sign_in_screen">SignInScreen</string>
+    <string name="empty_title"> </string>
+
+    <!-- Footstep count -->
+    <string name="footstep_title">Steps</string>
+    <string name="calo_amount_title">Calo</string>
+    <string name="move_min_title">Time</string>
+    <string name="calo_unit">kcal</string>
+    <string name="move_time_unit">min</string>
+
+    <!-- Training -->
+    <string name="training_now">Training now</string>
+    <string name="training_walk_title">Walking</string>
+    <string name="training_run_title">Running</string>
+    <string name="training_bicycle_title">Bicycle</string>
+    <string name="training_meditation_title">Meditation</string>
+
+    <!-- Water -->
+    <string name="water">Water</string>
+
+    <!-- Day in week -->
+    <string name="sunday">S</string>
+    <string name="monday">M</string>
+    <string name="tuesday">T</string>
+    <string name="wednesday">W</string>
+    <string name="thursday">T</string>
+    <string name="friday">F</string>
+    <string name="saturday">S</string>
+
+    <!-- Footstep count -->
+    <string name="set_goals">Set your goals</string>
+    <string name="set_goal_subtitle">Set your own goals and track your progress daily</string>
+    <string name="health_tip">Health tip</string>
+    <string name="step_health_tip">Walking at least 8000 steps a day is good for your health. The best time to walk is in the morning.</string>
+
+    <!-- Set goals in step count -->
 </resources>

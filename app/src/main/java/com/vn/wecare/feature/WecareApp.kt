@@ -25,24 +25,30 @@ fun WecareApp(navController: NavHostController) {
     }
 }
 
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    val items = listOf(
-        NavigationBarScreen.Home,
-        NavigationBarScreen.Training,
-        NavigationBarScreen.Account
-    )
+private val items = listOf(
+    NavigationBarScreen.Home,
+    NavigationBarScreen.Training,
+    NavigationBarScreen.Account
+)
 
+@Composable
+fun getCurrentDestination(navController: NavHostController): NavDestination? {
     // Get the current back stack entry using navController
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Get the current destination (which is on top and visible to users)
-    val currentDestination = navBackStackEntry?.destination
+    return navBackStackEntry?.destination
+}
 
+@Composable
+fun isMainTab(navController: NavHostController): Boolean {
     // Check if current Destination is one of the four main tab
-    val isMainTab = items.any { it.route == currentDestination?.route }
+    return items.any { it.route == getCurrentDestination(navController = navController)?.route }
+}
 
+@Composable
+fun BottomNavigationBar(navController: NavHostController) {
     // If current destination is in the main tabs then show the bottom nav bar
-    if (isMainTab) {
+    if (isMainTab(navController)) {
         BottomNavigation(
             backgroundColor = Color.White,
             contentColor = MaterialTheme.colors.primary
@@ -50,7 +56,6 @@ fun BottomNavigationBar(navController: NavHostController) {
             items.forEach {
                 AddItem(
                     item = it,
-                    currentDestination = currentDestination,
                     navController = navController
                 )
             }
@@ -61,12 +66,12 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun RowScope.AddItem(
     item: NavigationBarScreen,
-    currentDestination: NavDestination?,
     navController: NavHostController
 ) {
-    val isCurrentTabSelected = currentDestination?.hierarchy?.any {
-        it.route == item.route
-    } == true
+    val isCurrentTabSelected =
+        getCurrentDestination(navController = navController)?.hierarchy?.any {
+            it.route == item.route
+        } == true
 
     BottomNavigationItem(
         label = {

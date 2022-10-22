@@ -17,12 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.WecareTheme
@@ -114,9 +114,10 @@ fun CustomButton(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SingInScreen() {
+fun SingInScreen(
+    navigateToHome: () -> Unit
+) {
     WecareTheme {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -125,7 +126,10 @@ fun SingInScreen() {
             //CoilSVG(imageUrl = "res/drawable/logo2.png", size = 50, description = "Logo svg", padding = 20)
 
             Image(
-                modifier = Modifier.width(176.dp).height(100.dp).padding(top = 32.dp),
+                modifier = Modifier
+                    .width(176.dp)
+                    .height(100.dp)
+                    .padding(top = 32.dp),
                 painter = painterResource(R.drawable.logo2),
                 contentDescription = "",
                 contentScale = ContentScale.FillBounds
@@ -175,7 +179,7 @@ fun SingInScreen() {
 
             CustomButton(
                 text = "SIGN IN",
-                onClick = { /*TODO*/ },
+                onClick = navigateToHome,
                 textColor = Color.White,
                 padding = 16
             )
@@ -183,7 +187,7 @@ fun SingInScreen() {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.width(100.dp) )
+                Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.width(100.dp))
 
                 Text(
                     text = " or continue with ",
@@ -202,14 +206,20 @@ fun SingInScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    modifier = Modifier.width(80.dp).height(80.dp).padding(16.dp),
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(16.dp),
                     painter = painterResource(R.drawable.facebook),
                     contentDescription = "",
                     contentScale = ContentScale.FillBounds
                 )
 
                 Image(
-                    modifier = Modifier.width(80.dp).height(80.dp).padding(16.dp),
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(16.dp),
                     painter = painterResource(R.drawable.google),
                     contentDescription = "",
                     contentScale = ContentScale.FillBounds

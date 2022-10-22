@@ -19,32 +19,32 @@ val OpenSans = FontFamily(
 val WeCareTypography = Typography(
     h1 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 32.sp
     ),
     h2 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp
     ),
     h3 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp
     ),
     h4 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 18.sp
     ),
     body1 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp
     ),
     body2 = TextStyle(
         fontFamily = OpenSans,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 14.sp
     ),
     button = TextStyle(
@@ -55,6 +55,6 @@ val WeCareTypography = Typography(
     caption = TextStyle(
         fontFamily = OpenSans,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 13.sp
     )
 )

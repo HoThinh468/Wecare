@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.vn.wecare.core_navigation.AuthenticationRoutes
 import com.vn.wecare.core_navigation.HomeRoutes
+import com.vn.wecare.feature.authentication.ui.SingInScreen
 
 fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     navigation(
@@ -14,8 +15,8 @@ fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     ) {
         composable(route = AuthenticationRoutes.signInDes) {
             // Add the SignIn screen content
-            SignInScreen(
-                onMoveClick = {
+            SingInScreen(
+                navigateToHome = {
                     navHostController.navigate(HomeRoutes.graph)
                 }
             )
