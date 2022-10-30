@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.vn.wecare.core_navigation.TrainingRoutes
+import com.vn.wecare.feature.training.ui.TrainingScreen
 
 fun NavGraphBuilder.trainingNavGraph(navHostController: NavHostController) {
     navigation(
