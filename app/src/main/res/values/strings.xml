@@ -12,6 +12,7 @@
     <string name="footstep_title">Steps</string>
     <string name="calo_amount_title">Calo</string>
     <string name="move_min_title">Time</string>
+    <string name="footstep_unit">steps</string>
     <string name="calo_unit">kcal</string>
     <string name="move_time_unit">min</string>
 
@@ -41,4 +42,13 @@
     <string name="step_health_tip">Walking at least 8000 steps a day is good for your health. The best time to walk is in the morning.</string>
 
     <!-- Set goals in step count -->
+    <string name="okay_dialog_title">OKAY</string>
+    <string name="close_dialog_title">CLOSE</string>
+
+    <!-- Permissions content -->
+    <string name="permission_dialog_title">We need your permission</string>
+    <string name="rationale_message">To use this functionality, you will need to give us the permission.</string>
+    <string name="give_permission_button_title">GIVE PERMISSION</string>
+    <string name="no_motion_sensor_warning">No sensor detected on this device!</string>
+
 </resources>

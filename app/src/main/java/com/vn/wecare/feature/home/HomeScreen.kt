@@ -15,9 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.view.bmi.YourBMIHomeCard
-import com.vn.wecare.feature.home.view.step_count.FootStepCountHomeCard
-import com.vn.wecare.feature.home.view.water.WaterOverviewHomeCard
+import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
+import com.vn.wecare.feature.home.step_count.FootStepCountHomeCard
+import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
 

@@ -1,7 +1,9 @@
-package com.vn.wecare.feature.home.view.step_count
+package com.vn.wecare.feature.home.step_count
 
+import android.os.Build
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,22 +11,30 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun StepCountScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    moveToSetGoalScreen: () -> Unit
+    moveToSetGoalScreen: () -> Unit,
+    stepCountViewModel: StepCountViewModel = viewModel()
 ) {
+
+    val stepsCountUiState by stepCountViewModel.stepsCountUiState.collectAsState()
+
     Scaffold(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
@@ -39,8 +49,9 @@ fun StepCountScreen(
                 .padding(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            MotionSensorTrack(stepCountViewModel = stepCountViewModel)
             Spacer(modifier = modifier.height(halfMidPadding))
-            Overview(modifier = modifier)
+            Overview(modifier = modifier, stepsCountUiState = stepsCountUiState)
             Spacer(modifier = modifier.height(halfMidPadding))
             SetYourGoal(modifier = modifier) {
                 moveToSetGoalScreen()
@@ -93,7 +104,8 @@ fun StepCountAppBar(
 
 @Composable
 fun Overview(
-    modifier: Modifier
+    modifier: Modifier,
+    stepsCountUiState: StepsCountUiState
 ) {
     Card(
         modifier = modifier
@@ -139,7 +151,7 @@ fun Overview(
                     iconRes = R.drawable.ic_step,
                     titleRes = R.string.footstep_title,
                     iconColorRes = R.color.Green500,
-                    index = 10000,
+                    index = stepsCountUiState.currentSteps,
                     goal = 12000,
                     unitRes = null,
                     modifier = modifier

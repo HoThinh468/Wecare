@@ -32,3 +32,4 @@ val smallElevation = 4.dp
  * Corner radius
  */
 val smallRadius = 10.dp
+val mediumRadius = 24.dp
