@@ -2,6 +2,7 @@ package com.vn.wecare.feature.authentication.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -20,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.WecareTheme
 
 @Composable
@@ -53,7 +53,7 @@ fun SignUpScreen() {
                 hint = "Enter your email",
                 label = "Email",
                 backgroundColor = Color.White,
-                cursorColor = Green500,
+                cursorColor = MaterialTheme.colors.primary,
                 focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Email,
                 padding = 16
@@ -63,7 +63,7 @@ fun SignUpScreen() {
                 hint = "Enter your username",
                 label = "User Name",
                 backgroundColor = Color.White,
-                cursorColor = Green500,
+                cursorColor = MaterialTheme.colors.primary,
                 focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Person,
                 padding = 16
@@ -73,7 +73,7 @@ fun SignUpScreen() {
                 hint = "Enter your password",
                 label = "Password",
                 backgroundColor = Color.White,
-                cursorColor = Green500,
+                cursorColor = MaterialTheme.colors.primary,
                 focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Filled.VpnKey,
                 trailingIcon = Icons.Filled.Visibility,
@@ -105,7 +105,7 @@ fun SignUpScreen() {
                     fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Italic,
                     textAlign = TextAlign.Center,
-                    color = Green500
+                    color = MaterialTheme.colors.primary
                 )
             }
         }

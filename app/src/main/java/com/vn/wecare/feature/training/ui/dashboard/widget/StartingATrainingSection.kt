@@ -1,14 +1,10 @@
-package com.vn.wecare.feature.training.ui.widget
+package com.vn.wecare.feature.training.ui.dashboard.widget
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.DirectionsRun
@@ -22,8 +18,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vn.wecare.ui.theme.Green500
-import com.vn.wecare.ui.theme.Grey20
 
 @Composable
 fun StartingATrainingSection(
@@ -51,7 +45,7 @@ fun StartingATrainingSection(
                 text = "Start Your Training Today",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Green500
+                color = MaterialTheme.colors.primary
             )
             TrainingChosen(modifier = modifier)
         }
@@ -100,7 +94,7 @@ fun TrainingChosenItem(
         modifier = modifier
             .padding(horizontal = 10.dp)
             .clip(shape = CircleShape)
-            .background(Green500)
+            .background(MaterialTheme.colors.primary)
             .height(50.dp)
             .width(50.dp)
     ) {

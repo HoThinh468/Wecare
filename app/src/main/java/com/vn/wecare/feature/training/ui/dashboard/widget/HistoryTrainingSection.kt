@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.widget
+package com.vn.wecare.feature.training.ui.dashboard.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -23,7 +24,6 @@ import com.vn.wecare.feature.training.utils.UserAction
 import com.vn.wecare.feature.training.utils.secondToMinUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
 import com.vn.wecare.ui.theme.Green300
-import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
 
 @Composable
@@ -123,7 +123,7 @@ fun HistoryTrainingItem(
             Icon(
                 imageVector = action.actionIcon(),
                 contentDescription = "icon leading",
-                tint = Green500
+                tint = MaterialTheme.colors.primary
             )
         }
         Column(
@@ -135,7 +135,7 @@ fun HistoryTrainingItem(
                 text = action.actionContent(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = Green500
+                color = MaterialTheme.colors.primary
             )
             Text(
                 text = time,
@@ -187,7 +187,7 @@ fun HistoryTrainingTitle(
                 text = "Today",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Green500
+                color = MaterialTheme.colors.primary
             )
             Spacer(
                 modifier = modifier

@@ -5,7 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.vn.wecare.core_navigation.TrainingRoutes
-import com.vn.wecare.feature.training.ui.TrainingScreen
+import com.vn.wecare.feature.training.ui.dashboard.TrainingScreen
+import com.vn.wecare.feature.training.ui.walking.ui.WalkingScreen
 
 fun NavGraphBuilder.trainingNavGraph(navHostController: NavHostController) {
     navigation(
@@ -13,7 +14,7 @@ fun NavGraphBuilder.trainingNavGraph(navHostController: NavHostController) {
         startDestination = TrainingRoutes.trainingDes
     ) {
         composable(route = TrainingRoutes.trainingDes) {
-            TrainingScreen()
+            WalkingScreen()
         }
     }
 }

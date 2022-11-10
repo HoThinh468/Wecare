@@ -24,7 +24,6 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 
 import com.vn.wecare.R
-import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.WecareTheme
 
 @Composable
@@ -55,7 +54,7 @@ fun CustomTextField(
                 Icon(
                     imageVector = leadingIcon,
                     contentDescription = "leadingIcon",
-                    tint = Green500,
+                    tint = MaterialTheme.colors.primary,
                 )
 
             }
@@ -65,7 +64,7 @@ fun CustomTextField(
                 Icon(
                     imageVector = trailingIcon,
                     contentDescription = "trailingIcon",
-                    tint = Green500,
+                    tint = MaterialTheme.colors.primary,
                 )
 
             }
@@ -99,7 +98,7 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     padding: Int = 0,
-    backgroundColor: Color = Green500,
+    backgroundColor: Color = MaterialTheme.colors.primary,
     textColor: Color = Color.Black
 ) {
     Button(
@@ -149,7 +148,7 @@ fun SignInScreen(
                 hint = "Enter your email",
                 label = "Email",
                 backgroundColor = Color.White,
-                cursorColor = Green500,
+                cursorColor = MaterialTheme.colors.primary,
                 focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Email,
                 padding = 16
@@ -159,7 +158,7 @@ fun SignInScreen(
                 hint = "Enter your password",
                 label = "Password",
                 backgroundColor = Color.White,
-                cursorColor = Green500,
+                cursorColor = MaterialTheme.colors.primary,
                 focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Filled.VpnKey,
                 trailingIcon = Icons.Filled.Visibility,
@@ -171,7 +170,7 @@ fun SignInScreen(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Right,
-                color = Green500,
+                color = MaterialTheme.colors.primary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -243,7 +242,7 @@ fun SignInScreen(
                     fontWeight = FontWeight.Normal,
                     fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                     textAlign = TextAlign.Center,
-                    color = Green500
+                    color = MaterialTheme.colors.primary
                 )
             }
         }
