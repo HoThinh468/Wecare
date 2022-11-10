@@ -1,10 +1,11 @@
-package com.vn.wecare.feature.training.ui.widget
+package com.vn.wecare.feature.training.ui.dashboard.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.feature.training.utils.secondToHourUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
-import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
 
 @Composable
@@ -51,7 +51,7 @@ fun CheckingWeeklySummarySection(
                 text = "This Week",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Green500
+                color = MaterialTheme.colors.primary
             )
             TrainingCalendar(modifier = modifier, startDate = 2, endDate = 8)
             Box(
@@ -77,7 +77,7 @@ fun CalendarDayItem(
             .height(50.dp)
             .border(
                 width = 2.dp,
-                color = Green500,
+                color = MaterialTheme.colors.primary,
                 shape = RoundedCornerShape(12.dp)
             ),
         shape = RoundedCornerShape(12.dp),
@@ -131,7 +131,7 @@ fun SummarySection(
             text = secondToHourUtil(duration),
             fontSize = 42.sp,
             fontWeight = FontWeight.Bold,
-            color = Green500
+            color = MaterialTheme.colors.primary
         )
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -155,7 +155,7 @@ fun TextWithBoldNumber(
         text = buildAnnotatedString {
             withStyle(
                 style = SpanStyle(
-                    color = Green500
+                    color = MaterialTheme.colors.primary
                 )
             ) {
                 withStyle(
