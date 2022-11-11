@@ -4,6 +4,8 @@
     package="com.vn.wecare">
 
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <!-- This permission is used for in app reminder and for saving data automatically every hour -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
     <application
         android:allowBackup="true"
@@ -15,7 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wecare"
         tools:targetApi="31">
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -26,5 +27,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -20,7 +20,7 @@ fun YourBMIHomeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = midPadding),
+            .padding(top = normalPadding),
         elevation = smallElevation,
         onClick = onCardClick,
         shape = Shapes.small,

@@ -7,10 +7,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.HomeRoutes
+import com.vn.wecare.core.navigation.HomeRoutes
 import com.vn.wecare.feature.home.view.HomeScreen
 import com.vn.wecare.feature.home.step_count.SetYourGoalScreen
-import com.vn.wecare.feature.home.step_count.StepCountScreen
+import com.vn.wecare.feature.home.step_count.ui.StepCountScreen
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
@@ -36,7 +36,7 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
         composable(route = HomeRoutes.StepCountDes) {
             StepCountScreen(
                 navigateUp = { navHostController.navigateUp() },
-                moveToSetGoalScreen = { navHostController.navigate(HomeRoutes.SetYourGoalDes) }
+                moveToSetGoalScreen = { navHostController.navigate(HomeRoutes.SetYourGoalDes) },
             )
         }
         composable(route = HomeRoutes.SetYourGoalDes) {

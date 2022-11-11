@@ -14,12 +14,14 @@ import com.vn.wecare.R
 @Composable
 fun RequestPermission(
     permission: String,
-    rationaleMessageRes: Int = R.string.rationale_message
+    rationaleMessageRes: Int = R.string.rationale_message,
+    extraAction: (() -> Unit?)? = null
 ) {
 
     val permissionState = rememberPermissionState(permission)
 
     if (!permissionState.hasPermission) {
+        if (extraAction != null) extraAction()
         RequestPermissionDialog(
             rationaleMessageRes = rationaleMessageRes,
             requestPermission = { permissionState.launchPermissionRequest() }

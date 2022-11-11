@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.step_count
+package com.vn.wecare.feature.home.step_count.ui
 
 import android.os.Build
 import androidx.annotation.ColorRes
@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.step_count.MotionSensorTrack
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 
@@ -160,7 +161,7 @@ fun Overview(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
-                    index = 560,
+                    index = stepsCountUiState.caloConsumed,
                     goal = 1000,
                     unitRes = R.string.calo_unit,
                     modifier = modifier

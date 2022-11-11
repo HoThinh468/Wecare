@@ -36,7 +36,7 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(midPadding),
+            .padding(normalPadding),
     ) {
         HomeHeader(modifier = modifier)
         FootStepCountHomeCard(modifier = modifier, onCardClick = onFootStepCountCardClick)
@@ -85,7 +85,7 @@ fun TrainingNow(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = midPadding),
+            .padding(top = normalPadding),
         elevation = smallElevation,
         shape = Shapes.small
     ) {

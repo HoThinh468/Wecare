@@ -14,7 +14,7 @@
     <string name="move_min_title">Time</string>
     <string name="footstep_unit">steps</string>
     <string name="calo_unit">kcal</string>
-    <string name="move_time_unit">min</string>
+    <string name="move_time_unit">mins</string>
 
     <!-- Training -->
     <string name="training_now">Training now</string>

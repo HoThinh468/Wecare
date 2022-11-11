@@ -1,4 +1,4 @@
-package com.vn.wecare.core_navigation
+package com.vn.wecare.core.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
