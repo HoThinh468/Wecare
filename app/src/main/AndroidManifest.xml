@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.vn.wecare">
 
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,19 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wecare"
         tools:targetApi="31">
-        <activity
-            android:name=".SignInScreen"
-            android:exported="false"
-            android:label="@string/title_activity_sign_in_screen"
-            android:theme="@style/Theme.Wecare" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Wecare">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

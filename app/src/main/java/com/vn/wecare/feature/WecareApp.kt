@@ -1,5 +1,7 @@
 package com.vn.wecare.feature
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -15,6 +17,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vn.wecare.core_navigation.NavigationBarScreen
 import com.vn.wecare.core_navigation.WecareNavGraph
 
+@RequiresApi(Build.VERSION_CODES.Q)
+@ExperimentalMaterialApi
 @Composable
 fun WecareApp(navController: NavHostController) {
     Scaffold(

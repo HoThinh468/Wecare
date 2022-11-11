@@ -1,7 +1,6 @@
-package com.vn.wecare.feature.home.view.water
+package com.vn.wecare.feature.home.water
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
