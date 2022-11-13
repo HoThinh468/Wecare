@@ -1,25 +1,23 @@
 package com.vn.wecare
 
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.navigation.compose.rememberNavController
-import com.vn.wecare.feature.WecareApp
-import com.vn.wecare.ui.theme.WecareTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 
-@ExperimentalMaterialApi
-class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.Q)
+
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            WecareTheme {
-                // Create a navController with rememberNavController()
-                WecareApp(navController = rememberNavController())
-            }
-        }
+        setContentView(R.layout.activity_main)
+
+        //setting nav host
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        //set start destination
+        val inflater = navController.navInflater
+        val graph = inflater.inflate(R.navigation.nav_graph)
+        graph.setStartDestination(R.id.homeFragment)
     }
 }
