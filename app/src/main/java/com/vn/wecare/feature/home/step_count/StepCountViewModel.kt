@@ -1,14 +1,17 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
+import com.vn.wecare.core.data.HealthConnectManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalTime
 
-
+/**
+ * Define a model for view presentation
+ */
 data class StepsCountUiState(
     val currentSteps: Int = 0,
     val caloConsumed: Int = 0,
@@ -16,7 +19,25 @@ data class StepsCountUiState(
     val isPermissionEnable: Boolean = false, // Check permission to avoid crash
 )
 
-class StepCountViewModel : ViewModel() {
+// Define a sealed class to present permission state
+sealed class StepsPermissionsState {
+    object UnInitialized : StepsPermissionsState()
+    object Done : StepsPermissionsState()
+
+    data class Error(val exception: Throwable)
+}
+
+class StepCountViewModel(
+    private val healthConnectManager: HealthConnectManager
+) : ViewModel() {
+
+    // Define a list of permissions which steps count feature needs
+    val permissions = setOf(
+        HealthPermission.createReadPermission(StepsRecord::class),
+        HealthPermission.createWritePermission(StepsRecord::class)
+    )
+
+    var permissionsGranted = mutableStateOf(false)
 
     var stepsCountUiState = MutableStateFlow(StepsCountUiState())
         private set
@@ -33,14 +54,13 @@ class StepCountViewModel : ViewModel() {
         previousTotalSteps.value = totalSteps.value
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun calculateCurrentCurrentSteps(steps: Float) {
         updateTotalSteps(steps)
 
         if (LocalTime.now().hour == 23 && LocalTime.now().minute ==
             59 && LocalTime.now().second == 59
         ) {
-            // TODO Need to save this instance to database and track
+            // TODO Trigger an alarm manager to save current steps to local db
             updatePreviousTotalSteps()
         }
 

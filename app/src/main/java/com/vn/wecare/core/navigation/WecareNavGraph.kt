@@ -1,4 +1,4 @@
-package com.vn.wecare.core_navigation
+package com.vn.wecare.core.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
