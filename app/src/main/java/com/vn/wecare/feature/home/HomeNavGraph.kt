@@ -27,7 +27,8 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
                 onWalkingIcClick = {},
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
-                onMeditationIcClick = {}
+                onMeditationIcClick = {},
+                onTrainingClick = {}
             )
         }
 
