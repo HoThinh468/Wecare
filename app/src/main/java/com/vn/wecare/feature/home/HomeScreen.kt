@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ fun HomeScreen(
     onFootStepCountCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
+    onTrainingClick: () -> Unit,
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
@@ -42,6 +44,7 @@ fun HomeScreen(
         FootStepCountHomeCard(modifier = modifier, onCardClick = onFootStepCountCardClick)
         TrainingNow(
             modifier = modifier,
+            onTrainingClick,
             onWalkingIcClick,
             onRunningIcClick,
             onBicycleIcClick,
@@ -74,9 +77,11 @@ fun HomeHeader(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrainingNow(
     modifier: Modifier,
+    onTrainingClick: () -> Unit,
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
@@ -87,7 +92,8 @@ fun TrainingNow(
             .fillMaxWidth()
             .padding(top = midPadding),
         elevation = smallElevation,
-        shape = Shapes.small
+        shape = Shapes.small,
+        onClick = onTrainingClick
     ) {
         Column(
             modifier = modifier
