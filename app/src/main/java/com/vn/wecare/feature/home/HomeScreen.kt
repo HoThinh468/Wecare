@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.view
+package com.vn.wecare.feature.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -39,7 +38,7 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(midPadding),
+            .padding(halfMidPadding),
     ) {
         HomeHeader(modifier = modifier)
         FootStepCountHomeCard(modifier = modifier, onCardClick = onFootStepCountCardClick)
@@ -91,7 +90,7 @@ fun TrainingNow(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = midPadding),
+            .padding(top = smallPadding),
         elevation = smallElevation,
         shape = Shapes.small,
         onClick = onTrainingClick

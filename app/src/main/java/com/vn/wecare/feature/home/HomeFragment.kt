@@ -8,7 +8,6 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentHomeBinding
-import com.vn.wecare.feature.home.view.HomeScreen
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
     @RequiresApi(Build.VERSION_CODES.Q)

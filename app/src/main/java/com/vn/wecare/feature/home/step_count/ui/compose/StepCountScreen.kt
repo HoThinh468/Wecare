@@ -82,7 +82,7 @@ fun StepCountAppBar(
             modifier = modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = smallPadding),
+                .padding(horizontal = tinyPadding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

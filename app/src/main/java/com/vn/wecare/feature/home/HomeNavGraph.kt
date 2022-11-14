@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.vn.wecare.core.navigation.HomeRoutes
-import com.vn.wecare.feature.home.view.HomeScreen
 import com.vn.wecare.feature.home.step_count.SetYourGoalScreen
 
 @RequiresApi(Build.VERSION_CODES.Q)
