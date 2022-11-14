@@ -20,36 +20,36 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_homeFragment_to_stepCountFragment"
-            app:destination="@id/stepCountFragment"
+            app:destination="@id/step_count_nested_graph"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
         android:name="com.vn.wecare.feature.training.ui.dashboard.TrainingFragment"
         android:label="Training"
-        tools:layout="@layout/fragment_training" >
-        <action
-            android:id="@+id/action_trainingFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpToInclusive="false" />
-    </fragment>
+        tools:layout="@layout/fragment_training" />
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.vn.wecare.feature.account.AccountFragment"
         android:label="Account"
-        tools:layout="@layout/fragment_account" >
-        <action
-            android:id="@+id/action_accountFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpToInclusive="false" />
-    </fragment>
-    <fragment
-        android:id="@+id/stepCountFragment"
-        android:name="com.vn.wecare.feature.home.step_count.StepCountFragment"
-        android:label="fragment_step_count"
-        tools:layout="@layout/fragment_step_count" >
-        <action
-            android:id="@+id/action_stepCountFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_account" />
+
+    <!-- Nested graph for step count feature -->
+    <navigation android:id="@+id/step_count_nested_graph"
+        app:startDestination="@id/stepCountFragment">
+        <fragment
+            android:id="@+id/stepCountFragment"
+            android:name="com.vn.wecare.feature.home.step_count.StepCountFragment"
+            android:label="fragment_step_count"
+            tools:layout="@layout/fragment_step_count" >
+            <action
+                android:id="@+id/action_stepCountFragment_to_setYourGoalsFragment"
+                app:destination="@id/setYourGoalsFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/setYourGoalsFragment"
+            android:name="com.vn.wecare.feature.home.step_count.SetYourGoalsFragment"
+            android:label="fragment_set_your_goals"
+            tools:layout="@layout/fragment_set_your_goals" />
+    </navigation>
 </navigation>

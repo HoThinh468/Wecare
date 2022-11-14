@@ -9,11 +9,11 @@ android {
     dataBinding {
         enabled = true
     }
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.vn.wecare"
-        minSdk 21
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -83,6 +83,9 @@ dependencies {
     //navigation
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    // Health connect API
+    implementation "androidx.health.connect:connect-client:$health_connect_version"
 }
 
 // Allow references to generated code
