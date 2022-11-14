@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.step_count.compose
+package com.vn.wecare.feature.home.step_count.ui.compose
 
 import android.annotation.SuppressLint
 import android.os.Build

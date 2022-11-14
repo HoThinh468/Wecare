@@ -1,53 +1,37 @@
 package com.vn.wecare.feature.home
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
+import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.view.HomeScreen
-import com.vn.wecare.ui.theme.WecareTheme
 
-class HomeFragment : Fragment() {
-
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.homeComposeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                // In Compose world
-                WecareTheme {
-                    HomeScreen(
-                        onFootStepCountCardClick = {
-                            Navigation.findNavController(requireView())
-                                .navigate(R.id.action_homeFragment_to_stepCountFragment)
-                        },
-                        onTrainingClick = {
-                            Navigation.findNavController(requireView())
-                                .navigate(R.id.action_homeFragment_to_trainingFragment)
-                        },
-                        onWaterCardClick = {},
-                        onBMICardClick = {},
-                        onWalkingIcClick = {},
-                        onRunningIcClick = {},
-                        onBicycleIcClick = {},
-                        onMeditationIcClick = {}
-                    )
-                }
-            }
+class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        super.setupComposeView(
+            binding.homeComposeView
+        ) {
+            HomeScreen(
+                onFootStepCountCardClick = {
+                    findNavController()
+                        .navigate(R.id.action_homeFragment_to_stepCountFragment)
+                },
+                onTrainingClick = {
+                    findNavController()
+                        .navigate(R.id.action_homeFragment_to_trainingFragment)
+                },
+                onWaterCardClick = {},
+                onBMICardClick = {},
+                onWalkingIcClick = {},
+                onRunningIcClick = {},
+                onBicycleIcClick = {},
+                onMeditationIcClick = {}
+            )
         }
-        return view
     }
 }

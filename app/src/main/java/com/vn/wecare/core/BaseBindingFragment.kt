@@ -4,25 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.vn.wecare.ui.theme.WecareTheme
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
-// We use abstract class instead of open to avoid using BaseBindingFragment as a normal class
-// E.g: var base = BaseBindingFragment()
-//? Is VB in this situation is a type or variable?
 abstract class BaseBindingFragment<VB : ViewBinding>(
-    // To create a value inflate with type ViewBinding we pass the type parameter
-    private val inflate: Inflate<VB>
+    private val inflate: Inflate<VB>,
 ) : Fragment() {
-    // In the fragment we should only allow this property valid between
-    // onCreateView and onDestroyView because if we use viewpager with fragment and
-    // don't remember to destroy the binding, it will cause memory leak
+
     private var _binding: VB? = null
 
-    // Because we set the _binding type is nullable so we need to create another variable
-    // to ensure that when we get the value of _binding, it cannot be null
     protected val binding get() = _binding!!
 
     override fun onCreateView(
@@ -30,9 +26,23 @@ abstract class BaseBindingFragment<VB : ViewBinding>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //? What does invoke mean?
         _binding = inflate.invoke(inflater, container, false)
+        setupComposeView()
         return binding.root
+    }
+
+    open fun setupComposeView(
+        composeView: ComposeView? = null,
+        content: @Composable (() -> Unit)? = null
+    ) {
+        composeView?.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                WecareTheme {
+                    content?.let { it() }
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

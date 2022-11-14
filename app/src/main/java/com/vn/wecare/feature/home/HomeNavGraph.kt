@@ -10,7 +10,6 @@ import androidx.navigation.navigation
 import com.vn.wecare.core.navigation.HomeRoutes
 import com.vn.wecare.feature.home.view.HomeScreen
 import com.vn.wecare.feature.home.step_count.SetYourGoalScreen
-import com.vn.wecare.feature.home.step_count.compose.StepCountScreen
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
