@@ -1,5 +1,6 @@
-package com.vn.wecare.feature.home.step_count
+package com.vn.wecare.feature.home.step_count.ui.compose
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -12,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -21,9 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.step_count.MotionSensorTrack
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
+import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun StepCountScreen(
@@ -32,8 +36,7 @@ fun StepCountScreen(
     moveToSetGoalScreen: () -> Unit,
     stepCountViewModel: StepCountViewModel = viewModel()
 ) {
-
-    val stepsCountUiState by stepCountViewModel.stepsCountUiState.collectAsState()
+    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
     Scaffold(
         modifier = modifier,
@@ -51,7 +54,7 @@ fun StepCountScreen(
         ) {
             MotionSensorTrack(stepCountViewModel = stepCountViewModel)
             Spacer(modifier = modifier.height(halfMidPadding))
-            Overview(modifier = modifier, stepsCountUiState = stepsCountUiState)
+            Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
             Spacer(modifier = modifier.height(halfMidPadding))
             SetYourGoal(modifier = modifier) {
                 moveToSetGoalScreen()

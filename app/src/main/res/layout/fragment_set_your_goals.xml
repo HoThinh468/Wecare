@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.home.step_count.ui.view.StepCountFragment">
+    tools:context=".feature.home.step_count.ui.view.SetYourGoalsFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/stepCountComposeView"
+        android:id="@+id/setYourGoalsComposeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

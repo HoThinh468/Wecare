@@ -14,8 +14,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.vn.wecare.core_navigation.NavigationBarScreen
-import com.vn.wecare.core_navigation.WecareNavGraph
+import com.vn.wecare.core.navigation.NavigationBarScreen
+import com.vn.wecare.core.navigation.WecareNavGraph
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi

@@ -4,8 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.AuthenticationRoutes
-import com.vn.wecare.core_navigation.HomeRoutes
+import com.vn.wecare.core.navigation.AuthenticationRoutes
+import com.vn.wecare.core.navigation.HomeRoutes
 import com.vn.wecare.feature.authentication.ui.SignInScreen
 
 fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {

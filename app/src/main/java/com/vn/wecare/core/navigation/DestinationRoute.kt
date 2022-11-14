@@ -1,4 +1,4 @@
-package com.vn.wecare.core_navigation
+package com.vn.wecare.core.navigation
 
 const val WECARE = "WECARE"
 
