@@ -1,5 +1,8 @@
 package com.vn.wecare.feature.home
 
+import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,11 +20,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
-import com.vn.wecare.feature.home.step_count.FootStepCountHomeCard
+import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
+import com.vn.wecare.utils.common_composable.RequestPermission
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -34,6 +39,8 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
 ) {
+    RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
+
     Column(
         modifier = modifier
             .fillMaxSize()

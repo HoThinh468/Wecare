@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.step_count.MotionSensorTrack
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.ui.theme.*
@@ -34,7 +33,7 @@ fun StepCountScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     moveToSetGoalScreen: () -> Unit,
-    stepCountViewModel: StepCountViewModel = viewModel()
+    stepCountViewModel: StepCountViewModel = viewModel(),
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 

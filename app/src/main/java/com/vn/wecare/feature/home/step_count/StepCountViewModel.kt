@@ -57,7 +57,7 @@ class StepCountViewModel @Inject constructor(
         previousTotalSteps.value = totalSteps.value
     }
 
-    fun calculateCurrentCurrentSteps(steps: Float) {
+    fun calculateCurrentSteps(steps: Float) {
         updateTotalSteps(steps)
 
         if (LocalTime.now().hour == 23 && LocalTime.now().minute ==

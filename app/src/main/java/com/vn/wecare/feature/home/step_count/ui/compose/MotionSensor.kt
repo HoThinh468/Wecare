@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.step_count
+package com.vn.wecare.feature.home.step_count.ui.compose
 
 import android.content.Context
 import android.hardware.Sensor
@@ -9,16 +9,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.utils.common_composable.RequestPermission
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun MotionSensorTrack(
-    stepCountViewModel: StepCountViewModel
+    stepCountViewModel: StepCountViewModel,
 ) {
-
-    RequestPermission(permission = android.Manifest.permission.ACTIVITY_RECOGNITION)
-    
     val context = LocalContext.current
 
     val sensorManager: SensorManager =
@@ -33,7 +31,7 @@ fun MotionSensorTrack(
             }
 
             override fun onSensorChanged(event: SensorEvent) {
-                stepCountViewModel.calculateCurrentCurrentSteps(event.values[0])
+                stepCountViewModel.calculateCurrentSteps(event.values[0])
             }
         }
 

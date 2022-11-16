@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.step_count
+package com.vn.wecare.feature.home.step_count.ui.compose
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
