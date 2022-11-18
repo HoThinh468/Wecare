@@ -25,13 +25,17 @@
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
-        android:name="com.vn.wecare.feature.training.ui.dashboard.TrainingFragment"
+        android:name="com.vn.wecare.feature.training.dashboard.ui.TrainingFragment"
         android:label="Training"
         tools:layout="@layout/fragment_training" >
         <action
             android:id="@+id/action_trainingFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_trainingFragment_to_walkingFragment"
+            app:destination="@id/walkingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/accountFragment"
@@ -51,5 +55,13 @@
         <action
             android:id="@+id/action_stepCountFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/walkingFragment"
+        android:name="com.vn.wecare.feature.training.walking.ui.WalkingFragment"
+        android:label="WalkingFragment" >
+        <action
+            android:id="@+id/action_walkingFragment_to_trainingFragment"
+            app:destination="@id/trainingFragment" />
     </fragment>
 </navigation>

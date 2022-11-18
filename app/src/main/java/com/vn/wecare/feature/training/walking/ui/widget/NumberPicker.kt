@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.walking.ui.widget
+package com.vn.wecare.feature.training.walking.ui.widget
 
 import android.os.Build
 import android.widget.NumberPicker

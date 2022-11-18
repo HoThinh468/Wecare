@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.walking.ui.widget
+package com.vn.wecare.feature.training.walking.ui.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

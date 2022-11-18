@@ -24,6 +24,7 @@ class TrainingRoutes {
     companion object {
         const val graph = "TRAINING_GRAPH"
         const val trainingDes = "Training_screen"
+        const val walkingDes = "Walking_screen"
     }
 }
 
