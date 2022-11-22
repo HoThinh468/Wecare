@@ -1,8 +1,11 @@
 package com.vn.wecare.feature.home.step_count.data.repository
 
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.model.toEntity
+import dagger.Module
+import dagger.hilt.InstallIn
 import javax.inject.Inject
 import javax.inject.Singleton
 

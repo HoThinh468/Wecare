@@ -1,39 +1,33 @@
 package com.vn.wecare.feature.home.step_count.data.repository
 
-import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
-import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
-import com.vn.wecare.feature.home.step_count.data.entity.toModel
+import com.vn.wecare.core.data.Result
+import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
+import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.home.step_count.data.model.toEntity
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
-@Singleton
-class StepsPerHoursRepository @Inject constructor(
-    private val stepsPerHourDao: StepsPerHourDao
-) {
+class StepsPerHoursRepository(
+    private val stepsLocalDataSource: StepsDatasource<StepsPerHour>
+) : StepsRepository<StepsPerHour> {
 
-    suspend fun insertStepsPerHour(stepsPerHour: StepsPerHour) {
-        stepsPerHourDao.insertHour(stepsPerHour.toEntity())
+    /**
+     * If insert new steps per hour to room successful than save it to remote db
+     */
+    override suspend fun insert(input: StepsPerHour) {
+        stepsLocalDataSource.insert(input)
     }
 
-    fun getStepsPerDayWithHours() : List<StepsPerHour> {
-        val hours: MutableList<StepsPerHour> = arrayListOf()
-        for (item in stepsPerHourDao.getStepsPerDayWithHours()) {
-            hours.add(item.hour.toModel())
-        }
-        return hours
+    // This function should only be called in local db
+    override suspend fun delete(input: List<StepsPerHour>) {
+        stepsLocalDataSource.delete(input)
     }
 
-    suspend fun deleteStepsPerDayWithHour(stepsPerHours: List<StepsPerHour>) : Int {
-        val hours: MutableList<StepsPerHourEntity> = arrayListOf()
-        for (item in stepsPerHours) {
-            hours.add(item.toEntity())
-        }
-        return stepsPerHourDao.deleteHours(hours)
+    // This function should only be called in local db
+    override suspend fun deleteAll() {
+        stepsLocalDataSource.deleteAll()
     }
 
-    suspend fun deleteAllHours() {
-        stepsPerHourDao.deleteAllHours()
+    override fun getStepsPerDayWithHours(): Flow<Result<List<StepsPerDayWithHours>>>? {
+        return stepsLocalDataSource.getStepsPerDayWithHours()
     }
 }

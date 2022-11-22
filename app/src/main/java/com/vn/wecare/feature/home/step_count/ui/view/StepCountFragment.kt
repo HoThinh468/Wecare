@@ -16,14 +16,11 @@ import com.vn.wecare.feature.home.step_count.ui.compose.StepCountScreen
 class StepCountFragment :
     BaseBindingFragment<FragmentStepCountBinding>(FragmentStepCountBinding::inflate) {
 
-    private val stepCountViewModel: StepCountViewModel by viewModels()
-
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(
             binding.stepCountComposeView
         ) {
-            val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
             StepCountScreen(
                 navigateUp = { findNavController().popBackStack() },
                 moveToSetGoalScreen = {

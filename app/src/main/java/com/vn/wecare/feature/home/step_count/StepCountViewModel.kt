@@ -6,6 +6,11 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.vn.wecare.core.data.HealthConnectManager
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
+import com.vn.wecare.feature.home.step_count.data.repository.StepsPerDayRepository
+import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
+import com.vn.wecare.utils.getCurrentDayId
+import com.vn.wecare.utils.getCurrentHourId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalTime
@@ -21,38 +26,28 @@ data class StepsCountUiState(
     val isPermissionEnable: Boolean = false, // Check permission to avoid crash
 )
 
-// Define a sealed class to present permission state
-sealed class StepsPermissionsState {
-    object UnInitialized : StepsPermissionsState()
-    object Done : StepsPermissionsState()
+//@HiltViewModel
+class StepCountViewModel : ViewModel() {
+//@Inject constructor(
+//    private val stepsPerHoursRepository: StepsPerHoursRepository
+//): ViewModel() {
 
-    data class Error(val exception: Throwable)
-}
-
-@HiltViewModel
-class StepCountViewModel @Inject constructor(
-//    healthConnectManager: HealthConnectManager
-): ViewModel() {
-
-    // Define a list of permissions which steps count feature needs
-    val permissions = setOf(
-        HealthPermission.createReadPermission(StepsRecord::class),
-        HealthPermission.createWritePermission(StepsRecord::class)
-    )
-
-    var permissionsGranted = mutableStateOf(false)
-
+    // Define a variable of ui state
     var stepsCountUiState = MutableStateFlow(StepsCountUiState())
         private set
 
+    // store total steps of the sensor
     private var totalSteps = mutableStateOf(0f)
 
+    // store the last total steps when saving current steps to db
     private var previousTotalSteps = mutableStateOf(0f)
 
+    // Get total steps from motion sensor
     private fun updateTotalSteps(steps: Float) {
         totalSteps.value = steps
     }
 
+    // Call this function daily at 24:00 to save data to db
     private fun updatePreviousTotalSteps() {
         previousTotalSteps.value = totalSteps.value
     }
@@ -60,17 +55,23 @@ class StepCountViewModel @Inject constructor(
     fun calculateCurrentSteps(steps: Float) {
         updateTotalSteps(steps)
 
-        if (LocalTime.now().hour == 23 && LocalTime.now().minute ==
-            59 && LocalTime.now().second == 59
-        ) {
-            // TODO Trigger an alarm manager to save current steps to local db
-            updatePreviousTotalSteps()
-        }
-
         stepsCountUiState.update {
             it.copy(
                 currentSteps = totalSteps.value.minus(previousTotalSteps.value).toInt()
             )
         }
+    }
+
+    /**
+     * Insert new stepsPerHour to db each hour
+     */
+    suspend fun insertNewHour() {
+        val newHour = StepsPerHour(
+            getCurrentHourId(),
+            getCurrentDayId(),
+            stepsCountUiState.value.currentSteps,
+            stepsCountUiState.value.caloConsumed,
+            stepsCountUiState.value.moveMin
+        )
     }
 }

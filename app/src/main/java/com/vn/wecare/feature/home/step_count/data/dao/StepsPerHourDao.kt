@@ -4,6 +4,8 @@ import androidx.room.*
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
+import dagger.Provides
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StepsPerHourDao {
@@ -17,10 +19,10 @@ interface StepsPerHourDao {
      */
     @Transaction
     @Query("SELECT * FROM steps_per_day")
-    fun getStepsPerDayWithHours(): List<StepsPerDayWithHours>
+    fun getStepsPerDayWithHours(): Flow<List<StepsPerDayWithHours>>
 
     @Delete
-    suspend fun deleteHours(stepsPerHourEntity: List<StepsPerHourEntity>): Int
+    suspend fun deleteHours(stepsPerHourEntity: List<StepsPerHourEntity>)
 
     @Query("DELETE FROM steps_per_hour")
     suspend fun deleteAllHours()
