@@ -1,12 +1,10 @@
-package com.vn.wecare.feature.training.ui.walking.ui.widget
+package com.vn.wecare.feature.training.walking.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,15 +14,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TargetChosen(
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp)
+            .height(300.dp)
             .padding(8.dp)
             .background(
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colors.background,
                 shape = RoundedCornerShape(12.dp)
             ),
         contentAlignment = Alignment.TopCenter,
@@ -47,7 +45,7 @@ fun TargetChosen(
                             .clickable(onClick = { expanded = true }),
                         text = items[selectedIndex],
                         fontSize = 18.sp,
-                        color = Color.White
+                        color = MaterialTheme.colors.primary
                     )
                     DropdownMenu(
                         modifier = modifier.background(Color.White),
@@ -88,11 +86,12 @@ fun DistanceTarget(
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ".",
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = MaterialTheme.colors.primary
         )
         NumberPickerSpinner(modifier = modifier, max = 99, min = 0)
         Spacer(modifier = modifier.width(32.dp))
-        Text(text = "km", fontSize = 28.sp)
+        Text(text = "km", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
 }
 
@@ -109,17 +108,19 @@ fun TimeTarget(
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = MaterialTheme.colors.primary
         )
         NumberPickerSpinner(modifier = modifier, max = 59, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
-            fontSize = 32.sp
+            fontSize = 32.sp,
+            color = MaterialTheme.colors.primary
         )
         NumberPickerSpinner(modifier = modifier, max = 50, min = 0)
         Spacer(modifier = modifier.width(32.dp))
-        Text(text = "hour", fontSize = 28.sp)
+        Text(text = "hour", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
 }
 
@@ -134,7 +135,7 @@ fun CalorieTarget(
     ) {
         NumberPickerSpinner(modifier = modifier, max = 9999, min = 50)
         Spacer(modifier = modifier.width(32.dp))
-        Text(text = "Cal", fontSize = 28.sp)
+        Text(text = "Cal", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
 }
 
@@ -145,7 +146,8 @@ fun NoTarget(
     Text(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 32.dp),
         text = "Start your training without any target.",
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        color = MaterialTheme.colors.primary
     )
 }
 

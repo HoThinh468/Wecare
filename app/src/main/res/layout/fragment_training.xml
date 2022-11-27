@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".feature.training.ui.dashboard.TrainingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.compose.ui.platform.ComposeView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="training fragment" />
+        android:id = "@+id/training_compose_view"/>
 
 </FrameLayout>

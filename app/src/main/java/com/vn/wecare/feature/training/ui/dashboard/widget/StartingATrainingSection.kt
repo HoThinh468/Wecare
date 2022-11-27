@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun StartingATrainingSection(
-    modifier: Modifier
+    modifier: Modifier,
+    moveToWalkingScreen: () -> Unit
 ) {
     Card(
         modifier = modifier
@@ -47,14 +48,15 @@ fun StartingATrainingSection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary
             )
-            TrainingChosen(modifier = modifier)
+            TrainingChosen(modifier = modifier, moveToWalkingScreen)
         }
     }
 }
 
 @Composable
 fun TrainingChosen(
-    modifier: Modifier
+    modifier: Modifier,
+    moveToWalkingScreen: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -66,7 +68,7 @@ fun TrainingChosen(
             .fillMaxWidth()
     ) {
         TrainingChosenItem(
-            onClick = { /*TODO*/ },
+            onClick = moveToWalkingScreen,
             icon = Icons.Default.DirectionsWalk,
             description = "Icon Walk"
         )
