@@ -86,6 +86,11 @@ dependencies {
 
     // Health connect API
     implementation "androidx.health.connect:connect-client:$health_connect_version"
+
+    //mapbox api
+    implementation ('com.mapbox.maps:android:10.9.1'){
+        exclude group: 'group_name', module: 'module_name'
+    }
 }
 
 // Allow references to generated code
