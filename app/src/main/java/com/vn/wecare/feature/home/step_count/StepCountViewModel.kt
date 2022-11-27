@@ -1,19 +1,14 @@
 package com.vn.wecare.feature.home.step_count
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import com.vn.wecare.core.data.HealthConnectManager
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.home.step_count.data.repository.StepsPerDayRepository
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
 import com.vn.wecare.utils.getCurrentDayId
 import com.vn.wecare.utils.getCurrentHourId
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import java.time.LocalTime
 import javax.inject.Inject
 
 /**
@@ -26,11 +21,10 @@ data class StepsCountUiState(
     val isPermissionEnable: Boolean = false, // Check permission to avoid crash
 )
 
-//@HiltViewModel
-class StepCountViewModel : ViewModel() {
-//@Inject constructor(
-//    private val stepsPerHoursRepository: StepsPerHoursRepository
-//): ViewModel() {
+@HiltViewModel
+class StepCountViewModel @Inject constructor(
+    private val stepsPerHoursRepository: StepsPerHoursRepository
+) : ViewModel() {
 
     // Define a variable of ui state
     var stepsCountUiState = MutableStateFlow(StepsCountUiState())
@@ -73,5 +67,6 @@ class StepCountViewModel : ViewModel() {
             stepsCountUiState.value.caloConsumed,
             stepsCountUiState.value.moveMin
         )
+        stepsPerHoursRepository.insert(newHour)
     }
 }

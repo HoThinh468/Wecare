@@ -12,8 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LocalStepPerHourDatasource(
+class LocalStepPerHourDatasource @Inject constructor(
     private val stepsPerHourDao: StepsPerHourDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StepsDatasource<StepsPerHour> {

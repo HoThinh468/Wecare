@@ -9,7 +9,6 @@ import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 
-const val DATABASE_NAME = "wecare-db"
 
 @Database(
     entities = [StepsPerDayEntity::class, StepsPerHourEntity::class],
@@ -19,30 +18,4 @@ const val DATABASE_NAME = "wecare-db"
 abstract class WecareDatabase : RoomDatabase() {
     abstract fun stepsPerDayDao(): StepsPerDayDao
     abstract fun stepsPerHourDao(): StepsPerHourDao
-
-    companion object {
-
-        // For Singleton instantiation
-        @Volatile
-        private var INSTANCE: WecareDatabase? = null
-
-        fun getInstance(context: Context): WecareDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        WecareDatabase::class.java,
-                        DATABASE_NAME
-                    ).fallbackToDestructiveMigration()
-                        .build()
-
-                    INSTANCE = instance
-                }
-                return instance
-            }
-        }
-
-    }
 }
