@@ -22,6 +22,7 @@ fun FootStepCountHomeCard(
     modifier: Modifier,
     onCardClick: () -> Unit,
 ) {
+
     Card(
         modifier = modifier
             .fillMaxWidth()

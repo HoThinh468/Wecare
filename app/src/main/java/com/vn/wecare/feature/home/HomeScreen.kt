@@ -37,7 +37,7 @@ fun HomeScreen(
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
-    onMeditationIcClick: () -> Unit,
+    onMeditationIcClick: () -> Unit
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 

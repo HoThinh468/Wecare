@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.home.step_count.ui.view
 
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView

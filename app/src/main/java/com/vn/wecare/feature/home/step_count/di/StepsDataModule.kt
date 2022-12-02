@@ -31,7 +31,6 @@ class StepsDataSourceModule {
             database.stepsPerHourDao(), ioDispatcher
         )
     }
-
 }
 
 @Module

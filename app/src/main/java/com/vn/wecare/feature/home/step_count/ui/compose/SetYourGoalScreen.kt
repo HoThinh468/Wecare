@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count.ui.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import com.vn.wecare.utils.common_composable.CardListTile
 import com.vn.wecare.utils.common_composable.Picker
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @Composable
 fun SetYourGoalScreen(

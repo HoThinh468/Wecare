@@ -28,6 +28,7 @@ abstract class BaseBindingFragment<VB : ViewBinding>(
     ): View? {
         _binding = inflate.invoke(inflater, container, false)
         setupComposeView()
+        setupWhatNeeded()
         return binding.root
     }
 
@@ -44,6 +45,9 @@ abstract class BaseBindingFragment<VB : ViewBinding>(
             }
         }
     }
+
+    // This function is used to setup what you need in the onCreateView state
+    open fun setupWhatNeeded() {}
 
     override fun onDestroy() {
         super.onDestroy()
