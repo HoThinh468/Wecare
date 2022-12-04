@@ -59,11 +59,24 @@
     </navigation>
     <fragment
         android:id="@+id/walkingFragment"
-        android:name="com.vn.wecare.feature.training.walking.WalkingFragment"
+        android:name="com.vn.wecare.feature.training.ui.walking.WalkingFragment"
         android:label="fragment_walking"
         tools:layout="@layout/fragment_walking" >
         <action
             android:id="@+id/action_walkingFragment_to_trainingFragment"
             app:destination="@id/trainingFragment" />
+        <action
+            android:id="@+id/action_walkingFragment_to_onWalkingFragment"
+            app:destination="@id/onWalkingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/onWalkingFragment"
+        android:name="com.vn.wecare.feature.training.ui.walking.OnWalkingFragment"
+        android:label="fragment_on_walking"
+        tools:layout="@layout/fragment_on_walking" >
+        <action
+            android:id="@+id/action_onWalkingFragment_to_walkingFragment"
+            app:destination="@id/walkingFragment" />
     </fragment>
 </navigation>

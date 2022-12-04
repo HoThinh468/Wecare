@@ -2,7 +2,7 @@ package com.vn.wecare.feature.training.utils
 
 import com.mapbox.android.core.location.LocationEngineCallback
 import com.mapbox.android.core.location.LocationEngineResult
-import com.vn.wecare.feature.training.walking.WalkingFragment
+import com.vn.wecare.feature.training.ui.walking.WalkingFragment
 import java.lang.ref.WeakReference
 
 class LocationListeningCallback constructor(fragment: WalkingFragment) :

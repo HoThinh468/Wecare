@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".feature.training.walking.WalkingFragment">
+    tools:context=".feature.training.ui.walking.WalkingFragment">
 
     <com.mapbox.maps.MapView
         xmlns:mapbox="http://schemas.android.com/apk/res-auto"
@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mapView"/>
-    
+
     <ImageButton
         android:id="@+id/get_location_btn"
         android:layout_width="wrap_content"

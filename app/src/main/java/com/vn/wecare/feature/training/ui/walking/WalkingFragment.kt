@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.walking
+package com.vn.wecare.feature.training.ui.walking
 
 import android.Manifest
 import android.content.Context
@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineCallback
 import com.mapbox.android.core.location.LocationEngineProvider
@@ -36,7 +37,7 @@ import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentWalkingBinding
 import com.vn.wecare.feature.training.utils.LocationListeningCallback
 import com.vn.wecare.feature.training.utils.LocationPermissionHelper
-import com.vn.wecare.feature.training.walking.widget.TargetChosen
+import com.vn.wecare.feature.training.ui.walking.widget.TargetChosen
 import com.vn.wecare.ui.theme.WecareTheme
 import java.lang.ref.WeakReference
 
@@ -91,7 +92,12 @@ class WalkingFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 WecareTheme {
-                    TargetChosen()
+                    TargetChosen(
+                        goScreen = {
+                            Navigation.findNavController(requireView())
+                                .navigate(R.id.action_walkingFragment_to_onWalkingFragment)
+                        }
+                    )
                 }
             }
         }
@@ -110,7 +116,7 @@ class WalkingFragment : Fragment() {
     private fun onMapReady() {
         mapView.getMapboxMap().setCamera(
             CameraOptions.Builder()
-                .zoom(14.0)
+                .zoom(16.0)
                 .build()
         )
         mapView.getMapboxMap().loadStyleUri(

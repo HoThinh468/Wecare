@@ -57,4 +57,7 @@
     <string name="mapbox_access_token">pk.eyJ1IjoidHJ1bmdsZTI2MDgiLCJhIjoiY2xhbW9obzR6MGk5djN3cXZpaHRtMHdneSJ9.1GAlFWxdPIDrPGuuC_zRyg</string>
     <string name="get_location_button">Get Location Button</string>
 
+    <!--    walking fragment-->
+    <string name="button_go">GO</string>
+
 </resources>
