@@ -1,26 +1,28 @@
 package com.vn.wecare.feature.home
 
 import android.Manifest
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
 import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
+import com.vn.wecare.feature.home.step_count.ui.compose.MotionSensor
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
@@ -37,9 +39,22 @@ fun HomeScreen(
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
-    onMeditationIcClick: () -> Unit
+    onMeditationIcClick: () -> Unit,
+    cancelAlarm: () -> Unit
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
+
+    val sensorManager: SensorManager =
+        LocalContext.current.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    val motionSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+
+    if (motionSensor != null) {
+        val motionSensorEventListener = MotionSensor()
+        sensorManager.registerListener(
+            motionSensorEventListener, motionSensor, SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
 
     Column(
         modifier = modifier
@@ -60,6 +75,9 @@ fun HomeScreen(
         WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
+        Button(onClick = { cancelAlarm() }) {
+            Text(text = "Cancel")
+        }
     }
 }
 
@@ -68,8 +86,7 @@ fun HomeHeader(
     modifier: Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

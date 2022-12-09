@@ -16,32 +16,5 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
     navigation(
         route = HomeRoutes.graph,
         startDestination = HomeRoutes.homeDes
-    ) {
-        composable(route = HomeRoutes.homeDes) {
-            HomeScreen(
-                onFootStepCountCardClick = { navHostController.navigate(HomeRoutes.StepCountDes) },
-                onWaterCardClick = {},
-                onBMICardClick = {},
-                onWalkingIcClick = {},
-                onRunningIcClick = {},
-                onBicycleIcClick = {},
-                onMeditationIcClick = {},
-                onTrainingClick = {}
-            )
-        }
-
-        /**
-         * This part is for Step count*/
-//        composable(route = HomeRoutes.StepCountDes) {
-//            StepCountScreen(
-//                navigateUp = { navHostController.navigateUp() },
-//                moveToSetGoalScreen = { navHostController.navigate(HomeRoutes.SetYourGoalDes) }
-//            )
-//        }
-        composable(route = HomeRoutes.SetYourGoalDes) {
-            SetYourGoalScreen {
-                navHostController.navigateUp()
-            }
-        }
-    }
+    ) {}
 }

@@ -1,44 +1,58 @@
 package com.vn.wecare.feature.home.step_count.ui.compose
 
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.utils.common_composable.RequestPermission
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
-fun MotionSensorTrack(
-    stepCountViewModel: StepCountViewModel,
-) {
-    val context = LocalContext.current
+//class MotionSensor @Inject constructor(
+//    @ApplicationContext private val context: Context
+//) {
+//
+//    private val sensorManager: SensorManager =
+//        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+//
+//    private val motionSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+//
+//    fun isMotionSensorExist(): Boolean {
+//        return (motionSensor != null)
+//    }
+//
+//    var currentSteps = mutableStateOf(0f)
+//
+//    fun getCurrentStepsFromSensor(): Float {
+//        val motionSensorEventListener = object : SensorEventListener {
+//            override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+//                // No action needed at this function
+//            }
+//
+//            override fun onSensorChanged(event: SensorEvent) {
+//                currentSteps.value = event.values[0]
+//                Log.d("Steps: ", event.values[0].toString())
+//            }
+//        }
+//
+//        sensorManager.registerListener(
+//            motionSensorEventListener, motionSensor, SensorManager.SENSOR_DELAY_UI
+//        )
+//
+//        return currentSteps.value
+//    }
+//}
 
-    val sensorManager: SensorManager =
-        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+class MotionSensor @Inject constructor() : SensorEventListener {
 
-    val motionSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+    var currentSteps = mutableStateOf(0f)
+        private set
 
-    if (motionSensor != null) {
-        val motionSensorEventListener = object : SensorEventListener {
-            override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-                // No action needed at this function
-            }
+    override fun onSensorChanged(event: SensorEvent) {
+        currentSteps.value = event.values[0]
+        Log.d("ABcdXyz: ", event.values[0].toString())
+    }
 
-            override fun onSensorChanged(event: SensorEvent) {
-                stepCountViewModel.calculateCurrentSteps(event.values[0])
-            }
-        }
-
-        sensorManager.registerListener(
-            motionSensorEventListener,
-            motionSensor,
-            SensorManager.SENSOR_DELAY_UI
-        )
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        // Nothing to do with this function
     }
 }

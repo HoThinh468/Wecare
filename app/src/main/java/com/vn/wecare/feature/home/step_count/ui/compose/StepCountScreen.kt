@@ -50,7 +50,7 @@ fun StepCountScreen(
                 .padding(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MotionSensorTrack(stepCountViewModel = stepCountViewModel)
+            stepCountViewModel.updateCurrentStepUI()
             Spacer(modifier = modifier.height(halfMidPadding))
             Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
             Spacer(modifier = modifier.height(halfMidPadding))
@@ -161,7 +161,7 @@ fun Overview(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
-                    index = 560,
+                    index = 560f,
                     goal = 1000,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
@@ -170,7 +170,7 @@ fun Overview(
                     iconRes = R.drawable.ic_time_clock,
                     titleRes = R.string.move_min_title,
                     iconColorRes = R.color.Blue400,
-                    index = 90,
+                    index = 90f,
                     goal = 80,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
@@ -186,7 +186,7 @@ fun StepCountIndexItem(
     @StringRes titleRes: Int,
     @ColorRes iconColorRes: Int,
     @StringRes unitRes: Int?,
-    index: Int,
+    index: Float,
     goal: Int,
     modifier: Modifier
 ) {

@@ -18,7 +18,6 @@ const val DATABASE_NAME = "wecare-db"
 object DatabaseModule {
 
     @Provides
-    @Singleton
     fun provideDatabase(@ApplicationContext context: Context): WecareDatabase {
         return Room.databaseBuilder(
             context, WecareDatabase::class.java, DATABASE_NAME

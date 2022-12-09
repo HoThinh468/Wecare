@@ -2,9 +2,9 @@ package com.vn.wecare.feature.home.step_count.di
 
 import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.core.di.IoDispatcher
+import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.datasource.local.LocalStepPerHourDatasource
-import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
-import dagger.Binds
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,26 +26,26 @@ class StepsDataSourceModule {
     @Provides
     fun provideLocalStepsPerHourDataSource(
         database: WecareDatabase, @IoDispatcher ioDispatcher: CoroutineDispatcher
-    ): LocalStepPerHourDatasource {
+    ): StepsDatasource<StepsPerHour> {
         return LocalStepPerHourDatasource(
             database.stepsPerHourDao(), ioDispatcher
         )
     }
 }
 
-@Module
-@InstallIn(SingletonComponent::class)
-object StepsPerHourRepositoryModule {
-
-    @Singleton
-    @Provides
-    fun provideStepsPerHourRepository(
-        @LocalStepsPerHourDatasource stepPerHourDatasource: LocalStepPerHourDatasource,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
-    ): StepsPerHoursRepository {
-        return StepsPerHoursRepository(
-            stepPerHourDatasource, ioDispatcher
-        )
-    }
-
-}
+//@Module
+//@InstallIn(SingletonComponent::class)
+//object StepsPerHourRepositoryModule {
+//
+//    @Singleton
+//    @Provides
+//    fun provideStepsPerHourRepository(
+//        @LocalStepsPerHourDatasource stepPerHourDatasource: LocalStepPerHourDatasource,
+//        @IoDispatcher ioDispatcher: CoroutineDispatcher
+//    ): StepsPerHoursRepository {
+//        return StepsPerHoursRepository(
+//            stepPerHourDatasource, ioDispatcher
+//        )
+//    }
+//
+//}

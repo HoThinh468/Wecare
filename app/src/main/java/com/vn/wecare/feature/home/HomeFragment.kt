@@ -11,13 +11,15 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
+import com.vn.wecare.utils.getCurrentEndHourInMillis
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
-    @Inject lateinit var stepCountExactAlarms: ExactAlarms
+    @Inject
+    lateinit var stepCountExactAlarms: ExactAlarms
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
@@ -37,18 +39,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
+                cancelAlarm = {
+                    stepCountExactAlarms.clearExactAlarm()
+                },
             )
         }
     }
 
-    override fun setupWhatNeeded() {
-        super.setupWhatNeeded()
-        if (stepCountExactAlarms.canScheduleExactAlarm()) {
-            stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis(), 30000)
-        } else {
-            openSetting()
-        }
-    }
+
 
     // Call this function in the main screen to get needed permissions
     private fun openSetting() {
