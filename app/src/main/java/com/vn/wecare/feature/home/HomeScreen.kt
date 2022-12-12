@@ -12,6 +12,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
@@ -37,8 +39,11 @@ fun HomeScreen(
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
-    onMeditationIcClick: () -> Unit
+    onMeditationIcClick: () -> Unit,
+    stepCountViewModel: StepCountViewModel
 ) {
+    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
+
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
     Column(
@@ -48,7 +53,12 @@ fun HomeScreen(
             .padding(halfMidPadding),
     ) {
         HomeHeader(modifier = modifier)
-        FootStepCountHomeCard(modifier = modifier, onCardClick = onFootStepCountCardClick)
+        FootStepCountHomeCard(
+            modifier = modifier,
+            onCardClick = onFootStepCountCardClick,
+            steps = stepsCountUiState.value.currentSteps,
+            calories = stepsCountUiState.value.caloConsumed
+        )
         TrainingNow(
             modifier = modifier,
             onTrainingClick,

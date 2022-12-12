@@ -50,7 +50,6 @@ fun StepCountScreen(
                 .padding(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MotionSensorTrack(stepCountViewModel = stepCountViewModel)
             Spacer(modifier = modifier.height(halfMidPadding))
             Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
             Spacer(modifier = modifier.height(halfMidPadding))

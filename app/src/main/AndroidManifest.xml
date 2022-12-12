@@ -34,6 +34,10 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Declare BroadcastReceiver for an exact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountExactAlarmBroadCastReceiver" />
+
     </application>
 
     <!-- declare Health Connect visibility -->

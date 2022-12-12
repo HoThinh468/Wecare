@@ -33,9 +33,10 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) :
     private fun setRepeatingAlarm(triggerAtMillis: Long, intervalMillis: Long) {
         val pendingIntent = createExactAlarmIntent()
         // Alarm repeat every hour
-        alarmManager.setRepeating(
-            AlarmManager.ELAPSED_REALTIME, triggerAtMillis, intervalMillis, pendingIntent
-        )
+//        alarmManager.setRepeating(
+//            AlarmManager.ELAPSED_REALTIME, triggerAtMillis, intervalMillis, pendingIntent
+//        )
+        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 5000, pendingIntent)
     }
 
     /**

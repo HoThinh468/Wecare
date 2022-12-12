@@ -21,6 +21,9 @@ import com.vn.wecare.utils.common_composable.CircularProgressAnimated
 fun FootStepCountHomeCard(
     modifier: Modifier,
     onCardClick: () -> Unit,
+    steps: Int = 0,
+    calories: Int = 0,
+    moveMin: Int = 0
 ) {
 
     Card(
@@ -64,21 +67,21 @@ fun FootStepCountHomeCard(
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_step,
                     iconColorRes = R.color.Green500,
-                    index = 4056000,
+                    index = steps,
                     unitRes = R.string.footstep_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_fire_calo,
                     iconColorRes = R.color.Red400,
-                    index = 1000,
+                    index = calories,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_time_clock,
                     iconColorRes = R.color.Blue400,
-                    index = 1000,
+                    index = moveMin,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
                 )

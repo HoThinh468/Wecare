@@ -6,18 +6,23 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
-    @Inject lateinit var stepCountExactAlarms: ExactAlarms
+    @Inject
+    lateinit var stepCountExactAlarms: ExactAlarms
+
+    private val stepCountViewModel: StepCountViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
@@ -37,14 +42,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
+                stepCountViewModel = stepCountViewModel
             )
         }
     }
 
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
+        // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-            stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis(), 30000)
+            // stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis(), 30000)
         } else {
             openSetting()
         }
