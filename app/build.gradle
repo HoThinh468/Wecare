@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -97,6 +98,9 @@ dependencies {
 
     // Kotlin coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutine_version"
+
+    // frirebase
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
 }
 
 // Allow references to generated code
