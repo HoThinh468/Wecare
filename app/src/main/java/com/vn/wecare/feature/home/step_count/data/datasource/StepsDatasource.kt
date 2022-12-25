@@ -12,5 +12,5 @@ interface StepsDatasource<I> {
 
     suspend fun deleteAll()
 
-    fun getStepsPerDayWithHours(): Flow<Result<List<StepsPerDayWithHours>>>?
+    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>>?
 }

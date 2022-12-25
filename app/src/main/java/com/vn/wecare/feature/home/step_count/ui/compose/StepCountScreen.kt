@@ -98,7 +98,7 @@ fun StepCountAppBar(
             }
         }
         Divider(color = colorResource(id = R.color.Grey100), thickness = 1.dp)
-        CalendarWeekView(modifier = modifier)
+//        CalendarWeekView(modifier = modifier)
     }
 }
 
@@ -256,7 +256,7 @@ fun DetailStatistic(modifier: Modifier) {
             .fillMaxWidth(),
         shape = Shapes.small,
     ) {
-        val dataList = listOf(
+        val dataList = listOf<StepCountPerHour>(
             StepCountPerHour(0, 1000),
             StepCountPerHour(1, 1000),
             StepCountPerHour(2, 2000),

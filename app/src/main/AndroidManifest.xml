@@ -38,6 +38,9 @@
         <!-- Declare BroadcastReceiver for an exact alarm -->
         <receiver android:name=".feature.home.step_count.alarm.StepCountExactAlarmBroadCastReceiver" />
 
+        <!-- Declare BroadcastReceiver for an inexact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountInExactAlarmBroadcastReceiver" />
+
     </application>
 
     <!-- declare Health Connect visibility -->

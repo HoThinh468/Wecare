@@ -1,11 +1,12 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.home.step_count.di.StepCountSharePref
+import com.vn.wecare.feature.home.step_count.usecase.StepCountUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +24,6 @@ data class StepsCountUiState(
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
     private val stepCountUsecase: StepCountUsecase,
-    @StepCountSharePref private val sharedPreferences: SharedPreferences,
 ) : ViewModel() {
 
     // Define a variable of ui state
@@ -31,7 +31,7 @@ class StepCountViewModel @Inject constructor(
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
     init {
-        updateCurrentSteps(sharedPreferences.getFloat(LATEST_STEPS_COUNT, 0f))
+        updateCurrentSteps(stepCountUsecase.getSharedPrefLatestStep())
         updateCaloriesConsumed()
     }
 
@@ -44,14 +44,12 @@ class StepCountViewModel @Inject constructor(
     }
 
     fun updateCaloriesConsumed() = viewModelScope.launch {
-        stepCountUsecase.calculateCurrentCaloriesConsumed().collect { calories ->
-            _stepsCountUiState.update {
-                it.copy(
-                    caloConsumed = calories.toInt()
-                )
-            }
-        }
+//        stepCountUsecase.calculateCurrentCaloriesConsumed().collect { calories ->
+//            _stepsCountUiState.update {
+//                it.copy(
+//                    caloConsumed = calories.toInt()
+//                )
+//            }
+//        }
     }
-
-    fun updateSharedPref() = stepCountUsecase.updateSharedPref()
 }

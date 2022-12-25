@@ -2,7 +2,9 @@ package com.vn.wecare.feature.home.step_count.di
 
 import android.content.Context
 import com.vn.wecare.core.alarm.ExactAlarms
+import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.feature.home.step_count.alarm.StepCountExactAlarms
+import com.vn.wecare.feature.home.step_count.alarm.StepCountInExactAlarms
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,11 +14,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object StepCountExactAlarmModule {
+object StepCountAlarmModule {
 
     @Provides
     @Singleton
     fun provideStepCountExactAlarm(
         @ApplicationContext context: Context
     ): ExactAlarms = StepCountExactAlarms(context)
+
+    @Provides
+    @Singleton
+    fun provideStepCountInExactAlarm(
+        @ApplicationContext context: Context
+    ) : InExactAlarms = StepCountInExactAlarms(context)
 }

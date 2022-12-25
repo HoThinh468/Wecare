@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.home.step_count.data.datasource.local
 
-import com.vn.wecare.core.data.Result
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
@@ -31,9 +30,9 @@ class LocalStepPerHourDatasource @Inject constructor(
         stepsPerHourDao.deleteHours(hours)
     }
 
-    override fun getStepsPerDayWithHours(): Flow<Result<List<StepsPerDayWithHours>>> {
-        return stepsPerHourDao.getStepsPerDayWithHours().map {
-            Result.Success(it)
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>> {
+        return stepsPerHourDao.getStepsPerDayWithHours(dayId).map {
+            it
         }
     }
 

@@ -13,22 +13,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StepCountExactAlarmBroadCastReceiver : BroadcastReceiver() {
+class StepCountInExactAlarmBroadcastReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var stepCountUsecase: StepCountUsecase
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun onReceive(context: Context, intent: Intent?) {
-        val sharedPref = context.getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
-        val currentStepsFromSensor = sharedPref.getFloat(LATEST_STEPS_COUNT, 0f)
-
-        stepCountUsecase.updatePreviousTotalSensorStepCount(currentStepsFromSensor)
-
+    override fun onReceive(context: Context?, p1: Intent?) {
+        val sharePref = context?.getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
+        val currentStepsFromSensor = sharePref?.getFloat(LATEST_STEPS_COUNT, 0f)
         GlobalScope.launch {
-            stepCountUsecase.calculateCurrentDaySteps(currentStepsFromSensor).collect { currentDaySteps ->
-                // TODO: Call a function to insert steps per day to db
-            }
+            stepCountUsecase.calculateCurrentDaySteps(currentStepsFromSensor ?: 0f)
+                .collect { currentDaySteps ->
+                    stepCountUsecase.insertStepsPerHourToDb(
+                        stepCountUsecase.getCurrentHourSteps(
+                            currentDaySteps
+                        )
+                    )
+                }
         }
     }
 }

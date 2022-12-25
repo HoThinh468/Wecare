@@ -42,7 +42,7 @@ class StepsPerHoursRepository @Inject constructor(
         }
     }
 
-    override fun getStepsPerDayWithHours(): Flow<Result<List<StepsPerDayWithHours>>>? {
-        return stepsLocalDataSource.getStepsPerDayWithHours()
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>>? {
+        return stepsLocalDataSource.getStepsPerDayWithHours(dayId)
     }
 }

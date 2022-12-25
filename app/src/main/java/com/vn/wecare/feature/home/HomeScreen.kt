@@ -7,10 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -40,7 +37,8 @@ fun HomeScreen(
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
-    stepCountViewModel: StepCountViewModel
+    stepCountViewModel: StepCountViewModel,
+    cancelInExactAlarm: () -> Unit
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
@@ -70,6 +68,9 @@ fun HomeScreen(
         WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
+        Button(onClick = { cancelInExactAlarm() }) {
+            Text(text = "Cancel In-Exact")
+        }
     }
 }
 

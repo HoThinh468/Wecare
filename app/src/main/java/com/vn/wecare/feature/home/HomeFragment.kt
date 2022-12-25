@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -11,8 +12,12 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
+import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
+import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_EXACT_ALARM_SET
+import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
+import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,6 +26,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     @Inject
     lateinit var stepCountExactAlarms: ExactAlarms
+
+    @Inject
+    lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val stepCountViewModel: StepCountViewModel by activityViewModels()
 
@@ -42,18 +50,33 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
-                stepCountViewModel = stepCountViewModel
+                stepCountViewModel = stepCountViewModel,
+                cancelInExactAlarm = { stepCountInExactAlarms.clearInExactAlarm() },
             )
         }
     }
 
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
+        val sharedPref = requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-            // stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis(), 30000)
+            if (sharedPref.getBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)) {
+//                stepCountExactAlarms.scheduleExactAlarm(null)
+                with(sharedPref.edit()) {
+                    putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
+                }
+            }
         } else {
             openSetting()
+        }
+        if (sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
+//        stepCountInExactAlarms.scheduleInExactAlarm(
+//            getEndOfTheDayMilliseconds(), ONE_HOUR_INTERVAL_MILLIS
+//        )
+            with(sharedPref.edit()) {
+                putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
+            }
         }
     }
 
