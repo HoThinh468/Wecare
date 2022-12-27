@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.walking
+package com.vn.wecare.feature.training.ui.walking.walking
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.vn.wecare.feature.training.ui.dashboard.TopBar
-import com.vn.wecare.feature.training.walking.widget.TargetChosen
+import com.vn.wecare.feature.training.ui.walking.widget.TargetChosen
 
 
 @Composable
@@ -24,11 +24,11 @@ fun WalkingScreen(
                 secondActionIcon = Icons.Default.MoreVert
             )
         },
-        content = {
+        content = { padding ->
             Column(
-                modifier
+                modifier.padding(padding)
             ) {
-                TargetChosen(modifier = modifier)
+               // TargetChosen(modifier = modifier)
             }
         }
     )

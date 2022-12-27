@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui
+package com.vn.wecare.feature.authentication.ui.signup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
+import com.vn.wecare.feature.authentication.ui.login.CustomButton
+import com.vn.wecare.feature.authentication.ui.login.CustomTextField
 import com.vn.wecare.ui.theme.WecareTheme
 
 @Composable

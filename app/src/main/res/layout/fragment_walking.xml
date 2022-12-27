@@ -4,7 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".feature.training.walking.WalkingFragment">
+    tools:context=".feature.training.ui.walking.walking.WalkingFragment">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/app_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/mapView"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.mapbox.maps.MapView
         xmlns:mapbox="http://schemas.android.com/apk/res-auto"
@@ -15,9 +24,9 @@
         mapbox:mapbox_cameraTargetLat="40.7128"
         mapbox:mapbox_cameraTargetLng="-74.0060"
         mapbox:mapbox_cameraZoom="9.0"
-        app:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintStart_toEndOf="@id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@id/app_bar"
         />
 
     <androidx.compose.ui.platform.ComposeView
@@ -28,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mapView"/>
-    
+
     <ImageButton
         android:id="@+id/get_location_btn"
         android:layout_width="wrap_content"

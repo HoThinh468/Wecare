@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.vn.wecare.feature.training.utils.UserAction
 import com.vn.wecare.feature.training.utils.secondToMinUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
+import com.vn.wecare.ui.theme.Black900
 import com.vn.wecare.ui.theme.Green300
 import com.vn.wecare.ui.theme.Grey500
 
@@ -141,7 +142,7 @@ fun HistoryTrainingItem(
                 text = time,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
-                color = Green300
+                color = Black900
             )
         }
         Spacer(
@@ -187,7 +188,7 @@ fun HistoryTrainingTitle(
                 text = "Today",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.primary
+                color = Black900
             )
             Spacer(
                 modifier = modifier

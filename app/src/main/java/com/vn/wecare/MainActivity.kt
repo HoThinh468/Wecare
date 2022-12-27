@@ -1,5 +1,6 @@
 package com.vn.wecare
 
+import android.content.Context
 import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
@@ -9,6 +10,9 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.mapbox.navigation.base.options.NavigationOptions
+import com.mapbox.navigation.core.MapboxNavigation
+import com.mapbox.navigation.core.lifecycle.requireMapboxNavigation
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
@@ -28,6 +32,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        appContext = applicationContext
+    }
+
+    companion object {
+        lateinit  var appContext: Context
 
         // Setup sensor manger and check if motion sensor is available
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager

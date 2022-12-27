@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.feature.training.utils.secondToHourUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
+import com.vn.wecare.ui.theme.Black900
 import com.vn.wecare.ui.theme.Grey500
 
 @Composable
@@ -51,7 +52,7 @@ fun CheckingWeeklySummarySection(
                 text = "This Week",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.primary
+                color = Black900
             )
             TrainingCalendar(modifier = modifier, startDate = 2, endDate = 8)
             Box(
@@ -169,8 +170,13 @@ fun TextWithBoldNumber(
                     else
                         append(stringWith2Decimals(numberDouble!!))
                 }
-                append(pluralOrNot(numberDouble ?: numberInt!!.toDouble(), suffix))
-
+                withStyle(
+                    style = SpanStyle(
+                        color = Black900
+                    )
+                ) {
+                    append(pluralOrNot(numberDouble ?: numberInt!!.toDouble(), suffix))
+                }
             }
         }
     )
