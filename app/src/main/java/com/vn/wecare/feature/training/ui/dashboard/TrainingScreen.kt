@@ -41,11 +41,9 @@ fun TrainingScreen(
         topBar = {
             TopBar(
                 text = "Training Section",
-                firstActionIcon = Icons.Default.CalendarToday,
-                secondActionIcon = Icons.Default.Analytics
             )
         },
-        content = {
+        content = { padding ->
             Column(
                 modifier = modifier,
                 verticalArrangement = Arrangement.Center,

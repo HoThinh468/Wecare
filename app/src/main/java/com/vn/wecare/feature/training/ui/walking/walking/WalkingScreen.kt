@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.walking
+package com.vn.wecare.feature.training.ui.walking.walking
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -24,9 +24,9 @@ fun WalkingScreen(
                 secondActionIcon = Icons.Default.MoreVert
             )
         },
-        content = {
+        content = { padding ->
             Column(
-                modifier
+                modifier.padding(padding)
             ) {
                // TargetChosen(modifier = modifier)
             }

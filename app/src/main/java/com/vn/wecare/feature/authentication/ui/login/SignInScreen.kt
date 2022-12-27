@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui
+package com.vn.wecare.feature.authentication.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -115,7 +115,8 @@ fun CustomButton(
 
 @Composable
 fun SignInScreen(
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    navigateToSignUp: () -> Unit
 ) {
     WecareTheme {
         Column(
@@ -236,14 +237,17 @@ fun SignInScreen(
                     color = Color.Gray
                 )
 
-                Text(
-                    text = " Sign Up",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primary
-                )
+                TextButton(onClick = navigateToSignUp) {
+                    Text(
+                        text = " Sign Up",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colors.primary
+                    )
+
+                }
             }
         }
     }

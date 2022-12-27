@@ -17,6 +17,7 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.distance
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
@@ -72,7 +73,9 @@ fun TargetChosen(
                     }
                 }
                 when (selectedIndex) {
-                    0 -> {distance = distanceTarget(modifier = modifier) }
+                    0 -> {
+                        distance = distanceTarget(modifier = modifier)
+                }
                     1 -> TimeTarget(modifier = modifier)
                     2 -> CalorieTarget(modifier = modifier)
                     else -> NoTarget(modifier = modifier)
@@ -80,10 +83,10 @@ fun TargetChosen(
                 Button(
                     modifier = modifier
                         .width(300.dp)
-                        .padding(top = midPadding)
+                        .padding(top = normalPadding)
                         .height(50.dp),
                     onClick = {
-                              Log.e("trung", distance.toString())
+                        goScreen()
                     },
                     shape = RoundedCornerShape(mediumRadius)
                 ) {
@@ -97,15 +100,15 @@ fun TargetChosen(
 @Composable
 fun distanceTarget(
     modifier: Modifier
-) : Int {
-    var first  by remember { mutableStateOf(0)}
-    var second  by remember { mutableStateOf(0)}
+): Int {
+    var first by remember { mutableStateOf(0) }
+    var second by remember { mutableStateOf(0) }
     Row(
         modifier.height(124.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        first =  numberPickerSpinner(modifier = modifier, max = 999, min = 0)
+        first = numberPickerSpinner(modifier = modifier, max = 999, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ".",

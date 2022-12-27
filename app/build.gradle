@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -14,7 +15,7 @@ android {
     defaultConfig {
         applicationId "com.vn.wecare"
         minSdk 26
-        targetSdk 32
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -91,6 +92,12 @@ dependencies {
     implementation ('com.mapbox.maps:android:10.9.1'){
         exclude group: 'group_name', module: 'module_name'
     }
+    //dropin ui mapbox
+    implementation "com.mapbox.navigation:ui-dropin:2.9.5"
+    implementation "com.mapbox.navigation:android:2.9.5"
+
+    //gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
 }
 
 // Allow references to generated code

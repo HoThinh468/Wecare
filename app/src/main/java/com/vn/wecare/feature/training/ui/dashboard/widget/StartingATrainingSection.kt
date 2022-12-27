@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vn.wecare.ui.theme.Black900
 
 @Composable
 fun StartingATrainingSection(
@@ -46,7 +48,7 @@ fun StartingATrainingSection(
                 text = "Start Your Training Today",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.primary
+                color = Black900
             )
             TrainingChosen(modifier = modifier, moveToWalkingScreen)
         }
@@ -81,6 +83,11 @@ fun TrainingChosen(
             onClick = { /*TODO*/ },
             icon = Icons.Default.DirectionsBike,
             description = "Icon Bike"
+        )
+        TrainingChosenItem(
+            onClick = { /*TODO*/ },
+            icon = Icons.Default.SelfImprovement,
+            description = "Meditation"
         )
     }
 }
