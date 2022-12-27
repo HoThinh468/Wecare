@@ -4,14 +4,18 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,7 +42,8 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     stepCountViewModel: StepCountViewModel,
-    cancelInExactAlarm: () -> Unit
+    cancelInExactAlarm: () -> Unit,
+    moveToAccountScreen: () -> Unit
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
@@ -50,7 +55,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(halfMidPadding),
     ) {
-        HomeHeader(modifier = modifier)
+        HomeHeader(modifier = modifier, moveToAccountScreen = moveToAccountScreen)
         FootStepCountHomeCard(
             modifier = modifier,
             onCardClick = onFootStepCountCardClick,
@@ -77,10 +82,10 @@ fun HomeScreen(
 @Composable
 fun HomeHeader(
     modifier: Modifier,
+    moveToAccountScreen: () -> Unit
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -92,6 +97,15 @@ fun HomeHeader(
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
+        IconButton(
+            onClick = moveToAccountScreen,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_person),
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary
+            )
+        }
     }
 }
 

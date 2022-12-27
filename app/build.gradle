@@ -101,6 +101,7 @@ dependencies {
 
     // frirebase
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation 'com.google.firebase:firebase-auth-ktx'
 }
 
 // Allow references to generated code

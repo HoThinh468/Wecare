@@ -37,14 +37,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         super.setupComposeView(
             binding.homeComposeView
         ) {
-            HomeScreen(
-                onFootStepCountCardClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
-                },
+            HomeScreen(onFootStepCountCardClick = {
+                findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
+            },
                 onTrainingClick = {
                     findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
                 },
-                onWaterCardClick = {},
+                onWaterCardClick = {
+                    findNavController().navigate(R.id.action_homeFragment_to_waterFragment)
+                },
                 onBMICardClick = {},
                 onWalkingIcClick = {},
                 onRunningIcClick = {},
@@ -52,13 +53,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onMeditationIcClick = {},
                 stepCountViewModel = stepCountViewModel,
                 cancelInExactAlarm = { stepCountInExactAlarms.clearInExactAlarm() },
-            )
+                moveToAccountScreen = {
+                    findNavController().navigate(R.id.action_homeFragment_to_accountFragment)
+                })
         }
     }
 
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
-        val sharedPref = requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
+        val sharedPref =
+            requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
             if (sharedPref.getBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)) {

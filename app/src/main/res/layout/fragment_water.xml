@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.account.AccountFragment">
+    tools:context=".feature.home.water.WaterFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id = "@+id/account_compose_view"
+        android:id = "@+id/water_compose_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
