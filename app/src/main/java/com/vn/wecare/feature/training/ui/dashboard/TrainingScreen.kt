@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.training.ui.dashboard
 
+import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
@@ -13,16 +14,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import com.vn.wecare.ui.theme.Green500
+import com.vn.wecare.ui.theme.Grey20
+import com.vn.wecare.R
 import com.vn.wecare.feature.training.ui.dashboard.widget.CheckingWeeklySummarySection
 import com.vn.wecare.feature.training.ui.dashboard.widget.HistoryTrainingSection
 import com.vn.wecare.feature.training.ui.dashboard.widget.StartingATrainingSection
-import com.vn.wecare.ui.theme.Grey20
+import com.vn.wecare.utils.common_composable.RequestPermission
 
 @Preview
 @Composable
+fun TrainingScreenPreview() {
+    TrainingScreen(
+        modifier = Modifier,
+        moveToWalkingScreen = {}
+    )
+}
+
+@Composable
 fun TrainingScreen(
     modifier: Modifier = Modifier,
+    moveToWalkingScreen: () -> Unit
 ) {
+    RequestPermission(permission = Manifest.permission.ACCESS_FINE_LOCATION)
     Scaffold(
         topBar = {
             TopBar(
@@ -43,7 +57,7 @@ fun TrainingScreen(
                     kcal = 23.1,
                     session = 7
                 )
-                StartingATrainingSection(modifier)
+                StartingATrainingSection(modifier, moveToWalkingScreen)
                 HistoryTrainingSection(modifier = modifier)
             }
         },
@@ -54,6 +68,7 @@ fun TrainingScreen(
 @Composable
 fun TopBar(
     text: String,
+    navigateBack: () -> Unit = {},
     firstActionIcon: ImageVector? = null,
     firstAction: () -> Unit = {},
     secondActionIcon: ImageVector? = null,
@@ -65,16 +80,16 @@ fun TopBar(
         },
         backgroundColor = Color.White,
         navigationIcon = {
-            IconButton(onClick = {}) {
+            if(navigateBack != {}) IconButton(onClick = navigateBack) {
                 Icon(Icons.Default.ArrowBack, "back icon", tint = MaterialTheme.colors.primary)
             }
         },
         actions = {
             if(firstActionIcon != null && firstAction != {} ) IconButton(onClick = firstAction) {
-                Icon(firstActionIcon, "first icon", tint = MaterialTheme.colors.primary)
+                Icon(firstActionIcon, "first action", tint = MaterialTheme.colors.primary)
             }
-            if(secondActionIcon != null) IconButton(onClick = secondAction) {
-                Icon(secondActionIcon, "second icon", tint = MaterialTheme.colors.primary)
+            if(secondActionIcon != null && secondAction != {}) IconButton(onClick = secondAction) {
+                Icon(secondActionIcon, "second action", tint = MaterialTheme.colors.primary)
             }
         }
     )
