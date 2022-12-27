@@ -1,41 +1,26 @@
 package com.vn.wecare.feature.authentication.ui.signup
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
-import com.vn.wecare.databinding.FragmentLogInBinding
+import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentSignUpBinding
-import com.vn.wecare.databinding.FragmentTrainingBinding
-import com.vn.wecare.feature.authentication.ui.login.SignInScreen
-import com.vn.wecare.ui.theme.WecareTheme
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : BaseBindingFragment<FragmentSignUpBinding>(FragmentSignUpBinding::inflate) {
 
-    private var _binding: FragmentSignUpBinding? = null
-    private val binding get() = _binding!!
+    private val signUpViewModel: SignUpViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                WecareTheme {
-                    SignUpScreen()
-                }
-            }
+    override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        super.setupComposeView(binding.composeView) {
+            SignUpScreen(
+                viewModel = signUpViewModel,
+                moveToHomeScreen = {
+                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                },
+                navigateBack = { findNavController().popBackStack() },
+            )
         }
-        return view
     }
 }

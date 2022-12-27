@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.navigation.Navigation
 import com.vn.wecare.R
-import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.databinding.FragmentTrainingBinding
-import com.vn.wecare.feature.home.view.HomeScreen
 import com.vn.wecare.ui.theme.WecareTheme
 
 class TrainingFragment : Fragment() {
