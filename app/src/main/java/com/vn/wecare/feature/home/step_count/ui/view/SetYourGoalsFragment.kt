@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentSetYourGoalsBinding
-import com.vn.wecare.feature.home.step_count.SetYourGoalScreen
+import com.vn.wecare.feature.home.step_count.ui.compose.SetYourGoalScreen
 
 class SetYourGoalsFragment: BaseBindingFragment<FragmentSetYourGoalsBinding>(FragmentSetYourGoalsBinding::inflate) {
     @OptIn(ExperimentalMaterialApi::class)

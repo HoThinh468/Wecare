@@ -4,10 +4,12 @@
     package="com.vn.wecare">
 
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".WecareApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -33,8 +35,14 @@
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
 
-
         </activity>
+
+        <!-- Declare BroadcastReceiver for an exact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountExactAlarmBroadCastReceiver" />
+
+        <!-- Declare BroadcastReceiver for an inexact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountInExactAlarmBroadcastReceiver" />
+
     </application>
 
     <!-- declare Health Connect visibility -->

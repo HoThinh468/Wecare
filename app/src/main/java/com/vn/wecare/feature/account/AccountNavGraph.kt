@@ -12,7 +12,6 @@ fun NavGraphBuilder.accountNavGraph(navHostController: NavHostController) {
         startDestination = AccountRoutes.accountDes
     ) {
         composable(route = AccountRoutes.accountDes) {
-            AccountScreen()
         }
     }
 }

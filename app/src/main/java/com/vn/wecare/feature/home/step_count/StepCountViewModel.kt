@@ -1,14 +1,13 @@
 package com.vn.wecare.feature.home.step_count
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vn.wecare.feature.home.step_count.usecase.StepCountUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.vn.wecare.core.data.HealthConnectManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import java.time.LocalTime
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -19,58 +18,38 @@ data class StepsCountUiState(
     val caloConsumed: Int = 0,
     val moveMin: Int = 0,
     val isPermissionEnable: Boolean = false, // Check permission to avoid crash
+    val isLoading: Boolean = false,
 )
-
-// Define a sealed class to present permission state
-sealed class StepsPermissionsState {
-    object UnInitialized : StepsPermissionsState()
-    object Done : StepsPermissionsState()
-
-    data class Error(val exception: Throwable)
-}
 
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
-//    healthConnectManager: HealthConnectManager
-): ViewModel() {
+    private val stepCountUsecase: StepCountUsecase,
+) : ViewModel() {
 
-    // Define a list of permissions which steps count feature needs
-    val permissions = setOf(
-        HealthPermission.createReadPermission(StepsRecord::class),
-        HealthPermission.createWritePermission(StepsRecord::class)
-    )
+    // Define a variable of ui state
+    private val _stepsCountUiState = MutableStateFlow(StepsCountUiState())
+    val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
-    var permissionsGranted = mutableStateOf(false)
-
-    var stepsCountUiState = MutableStateFlow(StepsCountUiState())
-        private set
-
-    private var totalSteps = mutableStateOf(0f)
-
-    private var previousTotalSteps = mutableStateOf(0f)
-
-    private fun updateTotalSteps(steps: Float) {
-        totalSteps.value = steps
+    init {
+        updateCurrentSteps(stepCountUsecase.getSharedPrefLatestStep())
+        updateCaloriesConsumed()
     }
 
-    private fun updatePreviousTotalSteps() {
-        previousTotalSteps.value = totalSteps.value
+    fun updateCurrentSteps(steps: Float) = viewModelScope.launch {
+        stepCountUsecase.calculateCurrentDaySteps(steps).collect { steps ->
+            _stepsCountUiState.update {
+                it.copy(currentSteps = steps.toInt())
+            }
+        }
     }
 
-    fun calculateCurrentCurrentSteps(steps: Float) {
-        updateTotalSteps(steps)
-
-        if (LocalTime.now().hour == 23 && LocalTime.now().minute ==
-            59 && LocalTime.now().second == 59
-        ) {
-            // TODO Trigger an alarm manager to save current steps to local db
-            updatePreviousTotalSteps()
-        }
-
-        stepsCountUiState.update {
-            it.copy(
-                currentSteps = totalSteps.value.minus(previousTotalSteps.value).toInt()
-            )
-        }
+    fun updateCaloriesConsumed() = viewModelScope.launch {
+//        stepCountUsecase.calculateCurrentCaloriesConsumed().collect { calories ->
+//            _stepsCountUiState.update {
+//                it.copy(
+//                    caloConsumed = calories.toInt()
+//                )
+//            }
+//        }
     }
 }

@@ -53,7 +53,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!--    mapbox public token-->
+    <!-- Account content -->
+    <string name="change_password">Change your password</string>
+    <string name="edit_information">Edit your information</string>
+    <string name="about_us">About us</string>
+    <string name="logout">Logout</string>
+    
+    
     <string name="mapbox_access_token">pk.eyJ1IjoidHJ1bmdsZTI2MDgiLCJhIjoiY2xhbW9obzR6MGk5djN3cXZpaHRtMHdneSJ9.1GAlFWxdPIDrPGuuC_zRyg</string>
     <string name="get_location_button">Get Location Button</string>
 
