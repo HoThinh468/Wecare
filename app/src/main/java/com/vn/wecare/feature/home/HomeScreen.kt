@@ -1,28 +1,35 @@
-package com.vn.wecare.feature.home.view
+package com.vn.wecare.feature.home
 
+import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
-import com.vn.wecare.feature.home.step_count.FootStepCountHomeCard
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
+import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
+import com.vn.wecare.utils.common_composable.RequestPermission
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -34,15 +41,27 @@ fun HomeScreen(
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
+    stepCountViewModel: StepCountViewModel,
+    cancelInExactAlarm: () -> Unit,
+    moveToAccountScreen: () -> Unit
 ) {
+    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
+
+    RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(midPadding),
+            .padding(halfMidPadding),
     ) {
-        HomeHeader(modifier = modifier)
-        FootStepCountHomeCard(modifier = modifier, onCardClick = onFootStepCountCardClick)
+        HomeHeader(modifier = modifier, moveToAccountScreen = moveToAccountScreen)
+        FootStepCountHomeCard(
+            modifier = modifier,
+            onCardClick = onFootStepCountCardClick,
+            steps = stepsCountUiState.value.currentSteps,
+            calories = stepsCountUiState.value.caloConsumed
+        )
         TrainingNow(
             modifier = modifier,
             onTrainingClick,
@@ -54,16 +73,19 @@ fun HomeScreen(
         WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
+        Button(onClick = { cancelInExactAlarm() }) {
+            Text(text = "Cancel In-Exact")
+        }
     }
 }
 
 @Composable
 fun HomeHeader(
     modifier: Modifier,
+    moveToAccountScreen: () -> Unit
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -75,6 +97,15 @@ fun HomeHeader(
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
+        IconButton(
+            onClick = moveToAccountScreen,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_person),
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary
+            )
+        }
     }
 }
 
@@ -91,7 +122,7 @@ fun TrainingNow(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = midPadding),
+            .padding(top = smallPadding),
         elevation = smallElevation,
         shape = Shapes.small,
         onClick = onTrainingClick

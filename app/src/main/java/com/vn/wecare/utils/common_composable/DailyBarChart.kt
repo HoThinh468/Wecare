@@ -29,7 +29,7 @@ fun DailyBarChart(
     color: Color = MaterialTheme.colors.primary,
     dataList: List<StepCountPerHour>
 ) {
-    val maxValue = dataList.maxOf { it.value }
+    val maxValue = if (dataList.isNotEmpty()) dataList.maxOf { it.value } else 0
 
     Box(
         modifier = modifier
@@ -46,8 +46,7 @@ fun DailyBarChart(
             horizontalAlignment = Alignment.End
         ) {
             Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
             ) {
                 Text(text = "$maxValue", style = MaterialTheme.typography.caption)
                 Divider(
@@ -57,13 +56,11 @@ fun DailyBarChart(
                 )
             }
             Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
             ) {
                 Text(text = "${maxValue / 2}", style = MaterialTheme.typography.caption)
                 Divider(
-                    modifier = modifier
-                        .fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     color = colorResource(id = R.color.Grey100),
                     thickness = 1.dp
                 )
@@ -76,24 +73,20 @@ fun DailyBarChart(
                 .fillMaxHeight()
                 .align(Alignment.CenterStart)
                 .padding(
-                    bottom = midPadding,
-                    end = if (maxValue >= 10000) xxxExtraPadding
+                    bottom = midPadding, end = if (maxValue >= 10000) xxxExtraPadding
                     else if (maxValue >= 1000) xxExtraPadding
-                    else extraLargePadding,
-                    start = normalPadding
+                    else extraLargePadding, start = normalPadding
                 ),
         ) {
             Row(
                 modifier = modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .horizontalScroll(rememberScrollState()),
-                verticalAlignment = Alignment.Bottom
+                    .horizontalScroll(rememberScrollState()), verticalAlignment = Alignment.Bottom
             ) {
                 dataList.forEach {
                     Column(
-                        modifier = modifier
-                            .padding(end = smallPadding),
+                        modifier = modifier.padding(end = smallPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(

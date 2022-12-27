@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "82384104455",
+    "project_id": "wecare-c22b0",
+    "storage_bucket": "wecare-c22b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82384104455:android:a6ff3f69af4fa26f350ea2",
+        "android_client_info": {
+          "package_name": "com.vn.wecare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82384104455-7nj3p5g17kvg399vsdimg4qqgc7o9bd8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRzi8pNB7EBXvdzGDAwwFEmsjAFy4_MWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82384104455-7nj3p5g17kvg399vsdimg4qqgc7o9bd8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

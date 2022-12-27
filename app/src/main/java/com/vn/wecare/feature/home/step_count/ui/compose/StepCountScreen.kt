@@ -19,9 +19,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.step_count.MotionSensorTrack
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.ui.theme.*
@@ -34,7 +32,7 @@ fun StepCountScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     moveToSetGoalScreen: () -> Unit,
-    stepCountViewModel: StepCountViewModel = viewModel()
+    stepCountViewModel: StepCountViewModel,
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
@@ -43,16 +41,13 @@ fun StepCountScreen(
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
             StepCountAppBar(modifier) { navigateUp() }
-        }
-    ) {
+        }) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(smallPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MotionSensorTrack(stepCountViewModel = stepCountViewModel)
             Spacer(modifier = modifier.height(halfMidPadding))
             Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
             Spacer(modifier = modifier.height(halfMidPadding))
@@ -73,46 +68,36 @@ fun StepCountAppBar(
     modifier: Modifier,
     navigateUp: () -> Unit,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(56.dp)
             .background(color = MaterialTheme.colors.background)
+            .padding(horizontal = tinyPadding),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = smallPadding),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = navigateUp) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = null
-                )
-            }
-            Text(text = "Oct 12, 2022", style = MaterialTheme.typography.h4)
-            IconButton(onClick = {}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit_calendar),
-                    contentDescription = null
-                )
-            }
+        IconButton(onClick = navigateUp) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back), contentDescription = null
+            )
         }
-        Divider(color = colorResource(id = R.color.Grey100), thickness = 1.dp)
-        CalendarWeekView(modifier = modifier)
+        Text(text = "Oct 12, 2022", style = MaterialTheme.typography.h4)
+        IconButton(onClick = {}) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_edit_calendar),
+                contentDescription = null
+            )
+        }
     }
 }
 
 @Composable
 fun Overview(
-    modifier: Modifier,
-    stepsCountUiState: StepsCountUiState
+    modifier: Modifier, stepsCountUiState: StepsCountUiState
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = Shapes.small,
     ) {
         Column(
@@ -126,9 +111,7 @@ fun Overview(
                 modifier = modifier.padding(bottom = normalPadding)
             ) {
                 CircularProgressAnimated(
-                    size = 200.dp,
-                    currentValue = 75f,
-                    indicatorThickness = 20.dp
+                    size = 200.dp, currentValue = 75f, indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 160.dp,
@@ -145,7 +128,9 @@ fun Overview(
             }
             Row(
                 modifier = modifier
-                    .padding(end = mediumPadding, start = mediumPadding, top = largePadding)
+                    .padding(
+                        end = mediumPadding, start = mediumPadding, top = largePadding
+                    )
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -163,7 +148,7 @@ fun Overview(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
-                    index = 560,
+                    index = 0,
                     goal = 1000,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
@@ -172,7 +157,7 @@ fun Overview(
                     iconRes = R.drawable.ic_time_clock,
                     titleRes = R.string.move_min_title,
                     iconColorRes = R.color.Blue400,
-                    index = 90,
+                    index = 0,
                     goal = 80,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
@@ -193,8 +178,7 @@ fun StepCountIndexItem(
     modifier: Modifier
 ) {
     Column(
-        modifier = modifier.widthIn(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.widthIn(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -206,8 +190,7 @@ fun StepCountIndexItem(
             )
             Spacer(modifier = modifier.width(4.dp))
             Text(
-                text = stringResource(id = titleRes),
-                style = MaterialTheme.typography.body1
+                text = stringResource(id = titleRes), style = MaterialTheme.typography.body1
             )
         }
         Text(text = index.toString(), style = MaterialTheme.typography.h2)
@@ -222,8 +205,7 @@ fun StepCountIndexItem(
 
 @Composable
 fun SetYourGoal(
-    modifier: Modifier,
-    moveToSetGoalScreen: () -> Unit
+    modifier: Modifier, moveToSetGoalScreen: () -> Unit
 ) {
     CardListTile(
         modifier = modifier,
@@ -255,39 +237,12 @@ fun HealthTip(
 @Composable
 fun DetailStatistic(modifier: Modifier) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = Shapes.small,
     ) {
-        val dataList = listOf(
-            StepCountPerHour(0, 1000),
-            StepCountPerHour(1, 1000),
-            StepCountPerHour(2, 2000),
-            StepCountPerHour(3, 500),
-            StepCountPerHour(4, 400),
-            StepCountPerHour(5, 1000),
-            StepCountPerHour(6, 1000),
-            StepCountPerHour(7, 0),
-            StepCountPerHour(8, 0),
-            StepCountPerHour(9, 1200),
-            StepCountPerHour(10, 0),
-            StepCountPerHour(11, 700),
-            StepCountPerHour(12, 800),
-            StepCountPerHour(13, 900),
-            StepCountPerHour(14, 780),
-            StepCountPerHour(15, 1000),
-            StepCountPerHour(16, 200),
-            StepCountPerHour(17, 1000),
-            StepCountPerHour(18, 0),
-            StepCountPerHour(19, 0),
-            StepCountPerHour(20, 1000),
-            StepCountPerHour(21, 1200),
-            StepCountPerHour(22, 1020),
-            StepCountPerHour(23, 1050)
-        )
+        val dataList = listOf<StepCountPerHour>()
         DailyBarChart(
-            modifier = modifier,
-            dataList = dataList
+            modifier = modifier, dataList = dataList
         )
     }
 }

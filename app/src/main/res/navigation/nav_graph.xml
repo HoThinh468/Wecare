@@ -22,6 +22,9 @@
             android:id="@+id/action_homeFragment_to_stepCountFragment"
             app:destination="@id/step_count_nested_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_waterFragment"
+            app:destination="@id/waterFragment" />
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
@@ -57,6 +60,11 @@
             android:label="fragment_set_your_goals"
             tools:layout="@layout/fragment_set_your_goals" />
     </navigation>
+    <fragment
+        android:id="@+id/waterFragment"
+        android:name="com.vn.wecare.feature.home.water.WaterFragment"
+        android:label="fragment_water"
+        tools:layout="@layout/fragment_water" />
     <fragment
         android:id="@+id/walkingFragment"
         android:name="com.vn.wecare.feature.training.walking.WalkingFragment"
