@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.home.HomeFragment">
+    tools:context=".feature.authentication.ui.forgotpassword.SendRecoveryEmailSuccessFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id = "@+id/home_compose_view"
+        android:id = "@+id/send_recovery_email_compose_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
