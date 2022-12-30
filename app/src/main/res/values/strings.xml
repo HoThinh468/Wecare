@@ -58,8 +58,8 @@
     <string name="edit_information">Edit your information</string>
     <string name="about_us">About us</string>
     <string name="logout">Logout</string>
-    
-    
+
+
     <string name="mapbox_access_token">pk.eyJ1IjoidHJ1bmdsZTI2MDgiLCJhIjoiY2xhbW9obzR6MGk5djN3cXZpaHRtMHdneSJ9.1GAlFWxdPIDrPGuuC_zRyg</string>
     <string name="get_location_button">Get Location Button</string>
 
@@ -82,5 +82,16 @@
     <string name="history_local_history_file" translatable="false">Local history file</string>
     <string name="history_recorded_history_file" translatable="false">Recorded history file</string>
     <string name="replay_playback_speed_seekbar" translatable="false">Replay speed %d</string>
+
+    <!-- Authentication section -->
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="email_error">Please insert a valid email.</string>
+    <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
+    <string name="password_match_error">Passwords do not match.</string>
+    <string name="empty_password_error">Password cannot be empty.</string>
+
+    <string name="email_hint">Enter your email</string>
+    <string name="username_hint">Enter your username</string>
+    <string name="password_hint">Enter your password</string>
 
 </resources>

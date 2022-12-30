@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/logInFragment">
+    app:startDestination="@id/authentication_nested_graph">
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.vn.wecare.feature.home.HomeFragment"
         android:label="Home "
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_trainingFragment"
             app:destination="@id/trainingFragment"
@@ -30,7 +30,7 @@
         android:id="@+id/trainingFragment"
         android:name="com.vn.wecare.feature.training.ui.dashboard.TrainingFragment"
         android:label="Training"
-        tools:layout="@layout/fragment_training" >
+        tools:layout="@layout/fragment_training">
         <action
             android:id="@+id/action_trainingFragment_to_walkingFragment"
             app:destination="@id/walkingFragment"
@@ -43,13 +43,14 @@
         tools:layout="@layout/fragment_account" />
 
     <!-- Nested graph for step count feature -->
-    <navigation android:id="@+id/step_count_nested_graph"
+    <navigation
+        android:id="@+id/step_count_nested_graph"
         app:startDestination="@id/stepCountFragment">
         <fragment
             android:id="@+id/stepCountFragment"
             android:name="com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment"
             android:label="fragment_step_count"
-            tools:layout="@layout/fragment_step_count" >
+            tools:layout="@layout/fragment_step_count">
             <action
                 android:id="@+id/action_stepCountFragment_to_setYourGoalsFragment"
                 app:destination="@id/setYourGoalsFragment" />
@@ -60,6 +61,7 @@
             android:label="fragment_set_your_goals"
             tools:layout="@layout/fragment_set_your_goals" />
     </navigation>
+
     <fragment
         android:id="@+id/waterFragment"
         android:name="com.vn.wecare.feature.home.water.WaterFragment"
@@ -69,7 +71,7 @@
         android:id="@+id/walkingFragment"
         android:name="com.vn.wecare.feature.training.ui.walking.walking.WalkingFragment"
         android:label="fragment_walking"
-        tools:layout="@layout/fragment_walking" >
+        tools:layout="@layout/fragment_walking">
         <action
             android:id="@+id/action_walkingFragment_to_trainingFragment"
             app:destination="@id/trainingFragment" />
@@ -82,7 +84,7 @@
         android:id="@+id/onWalkingFragment"
         android:name="com.vn.wecare.feature.training.ui.walking.onWalking.OnWalkingFragment"
         android:label="fragment_on_walking"
-        tools:layout="@layout/fragment_on_walking" >
+        tools:layout="@layout/fragment_on_walking">
         <action
             android:id="@+id/action_onWalkingFragment_to_walkingFragment"
             app:destination="@id/walkingFragment" />
@@ -95,7 +97,7 @@
         android:id="@+id/doneFragment"
         android:name="com.vn.wecare.feature.training.ui.done_training.DoneFragment"
         android:label="fragment_done"
-        tools:layout="@layout/fragment_done" >
+        tools:layout="@layout/fragment_done">
         <action
             android:id="@+id/action_doneFragment_to_trainingFragment"
             app:destination="@id/trainingFragment" />
@@ -109,28 +111,29 @@
         android:name="com.vn.wecare.feature.training.ui.view_route.ViewRouteFragment"
         android:label="fragment_view_route"
         tools:layout="@layout/fragment_view_route" />
-    <fragment
-        android:id="@+id/logInFragment"
-        android:name="com.vn.wecare.feature.authentication.ui.login.LogInFragment"
-        android:label="fragment_log_in"
-        tools:layout="@layout/fragment_log_in" >
+
+    <!-- Nested graph for authentication fragment -->
+    <navigation
+        android:id="@+id/authentication_nested_graph"
+        app:startDestination="@id/logInFragment">
+        <fragment
+            android:id="@+id/logInFragment"
+            android:name="com.vn.wecare.feature.authentication.ui.login.view.LogInFragment"
+            android:label="fragment_log_in"
+            tools:layout="@layout/fragment_log_in">
+            <action
+                android:id="@+id/action_logInFragment_to_signUpFragment"
+                app:destination="@id/signUpFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/signUpFragment"
+            android:name="com.vn.wecare.feature.authentication.ui.signup.SignUpFragment"
+            android:label="fragment_sign_up"
+            tools:layout="@layout/fragment_sign_up" />
         <action
-            android:id="@+id/action_logInFragment_to_homeFragment"
+            android:id="@+id/action_global_homeFragment"
             app:destination="@id/homeFragment"
-            app:launchSingleTop="true"
-            app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_logInFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment"
+            app:popUpTo="@id/authentication_nested_graph"
             app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.vn.wecare.feature.authentication.ui.signup.SignUpFragment"
-        android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
-        <action
-            android:id="@+id/action_signUpFragment_to_logInFragment"
-            app:destination="@id/logInFragment" />
-    </fragment>
+    </navigation>
 </navigation>

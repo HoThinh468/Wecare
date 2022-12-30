@@ -7,8 +7,13 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
@@ -24,6 +29,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private val stepCountViewModel: StepCountViewModel by viewModels()
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -34,10 +41,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         motionSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
         appContext = applicationContext
+
+        auth = Firebase.auth
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
+        if (auth.currentUser != null) {
+            Log.d("Current user: ", auth.currentUser!!.uid)
+            navGraph.setStartDestination(R.id.homeFragment)
+            navController.graph = navGraph
+        }
     }
 
     companion object {
-        lateinit  var appContext: Context
+        lateinit var appContext: Context
     }
 
     override fun onResume() {
@@ -50,7 +69,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (p0 == null) return
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
-        with (sharePref.edit()) {
+        with(sharePref.edit()) {
             putFloat(LATEST_STEPS_COUNT, p0.values[0])
             apply()
         }
