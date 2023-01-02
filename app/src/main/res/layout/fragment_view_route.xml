@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.training.ui.view_route.ViewRouteFragment">
+    tools:context=".feature.training.view_route.ViewRouteFragment">
 
     <com.mapbox.maps.MapView
         android:id="@+id/mapView"
