@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.done_training
+package com.vn.wecare.feature.training.done_training
 
 import android.content.res.Resources
 import android.location.Location
@@ -34,10 +34,10 @@ import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentDoneBinding
 import com.vn.wecare.databinding.FragmentOnWalkingBinding
-import com.vn.wecare.feature.training.ui.walking.onWalking.ExitOrView
-import com.vn.wecare.feature.training.ui.walking.onWalking.StopAndPause
-import com.vn.wecare.feature.training.ui.walking.onWalking.UserTarget
-import com.vn.wecare.feature.training.ui.walking.widget.TargetChosen
+import com.vn.wecare.feature.training.onWalking.ExitOrView
+import com.vn.wecare.feature.training.onWalking.StopAndPause
+import com.vn.wecare.feature.training.onWalking.UserTarget
+import com.vn.wecare.feature.training.widget.TargetChosen
 import com.vn.wecare.ui.theme.WecareTheme
 import kotlinx.coroutines.Job
 
@@ -60,7 +60,11 @@ class DoneFragment : Fragment() {
             setContent {
                 WecareTheme {
                     ExitOrView(
-                        onExit = { /*TODO*/ },
+                        onExit = {
+                            Navigation.findNavController(requireView()).popBackStack()
+                            Navigation.findNavController(requireView()).popBackStack()
+                            Navigation.findNavController(requireView()).popBackStack()
+                        },
                         onView = {
                             Navigation.findNavController(requireView())
                                 .navigate(R.id.action_doneFragment_to_viewRouteFragment)

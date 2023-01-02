@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
-        android:name="com.vn.wecare.feature.training.ui.dashboard.TrainingFragment"
+        android:name="com.vn.wecare.feature.training.dashboard.TrainingFragment"
         android:label="Training"
         tools:layout="@layout/fragment_training" >
         <action
@@ -67,7 +67,7 @@
         tools:layout="@layout/fragment_water" />
     <fragment
         android:id="@+id/walkingFragment"
-        android:name="com.vn.wecare.feature.training.ui.walking.walking.WalkingFragment"
+        android:name="com.vn.wecare.feature.training.walking.WalkingFragment"
         android:label="fragment_walking"
         tools:layout="@layout/fragment_walking" >
         <action
@@ -80,7 +80,7 @@
     </fragment>
     <fragment
         android:id="@+id/onWalkingFragment"
-        android:name="com.vn.wecare.feature.training.ui.walking.onWalking.OnWalkingFragment"
+        android:name="com.vn.wecare.feature.training.onWalking.OnWalkingFragment"
         android:label="fragment_on_walking"
         tools:layout="@layout/fragment_on_walking" >
         <action
@@ -93,7 +93,7 @@
     </fragment>
     <fragment
         android:id="@+id/doneFragment"
-        android:name="com.vn.wecare.feature.training.ui.done_training.DoneFragment"
+        android:name="com.vn.wecare.feature.training.done_training.DoneFragment"
         android:label="fragment_done"
         tools:layout="@layout/fragment_done" >
         <action
@@ -106,7 +106,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewRouteFragment"
-        android:name="com.vn.wecare.feature.training.ui.view_route.ViewRouteFragment"
+        android:name="com.vn.wecare.feature.training.view_route.ViewRouteFragment"
         android:label="fragment_view_route"
         tools:layout="@layout/fragment_view_route" />
     <fragment

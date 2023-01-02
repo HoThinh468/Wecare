@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.walking.widget
+package com.vn.wecare.feature.training.widget
 
 import android.widget.TextClock
 import androidx.compose.foundation.layout.padding

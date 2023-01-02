@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.dashboard.widget
+package com.vn.wecare.feature.training.dashboard.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

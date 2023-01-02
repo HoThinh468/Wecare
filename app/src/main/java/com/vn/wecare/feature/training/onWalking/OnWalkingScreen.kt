@@ -1,6 +1,8 @@
-package com.vn.wecare.feature.training.ui.walking.onWalking
+package com.vn.wecare.feature.training.onWalking
 
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,16 +17,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.mapbox.navigation.core.MapboxNavigation
 import com.vn.wecare.R
-import com.vn.wecare.feature.training.ui.dashboard.TopBar
-import com.vn.wecare.feature.training.ui.walking.widget.ClockWidget
-import com.vn.wecare.feature.training.ui.walking.widget.TimerWidget
+import com.vn.wecare.feature.training.dashboard.TopBar
+import com.vn.wecare.feature.training.view_route.widget.HistoryFilesDirectory
+import com.vn.wecare.feature.training.widget.ClockWidget
+import com.vn.wecare.feature.training.widget.TimerWidget
 import com.vn.wecare.ui.theme.*
-import com.vn.wecare.feature.training.ui.walking.widget.CustomAlertDialog
+import com.vn.wecare.feature.training.widget.CustomAlertDialog
+import okio.Path.Companion.toPath
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 enum class UserTarget {
     distance, time, calo, none
@@ -55,12 +62,21 @@ fun OnWalkingScreen(
                 Button(onClick = {
                     mapboxNavigation.historyRecorder.stopRecording { filePath ->
                         if (filePath != null) {
-                            val path = "app/src/main/assets"
+                            val fileName =
+                                "/data/data/com.vn.wecare/files/mbx_nav/history/replay-history-activity.pbf.gz"
                             try {
-                                val file = File(path, "replay-history-activity.json")
-                                file.appendText("record goes here")
+                                val file = File(fileName)
+                                file.createNewFile()
+                                Log.e("trung history", "create file SUCCESS")
+
                             } catch (e: Exception) {
-                                print("save json file failed!")
+                                Log.e("trung history", "create file FAIL")
+                            }
+                            try {
+                                File(filePath).copyTo(File(fileName), overwrite = true)
+                                Log.e("trung copy", "copy file SUCCESS")
+                            } catch (e: Exception) {
+                                Log.e("trung copy", "copy file FAIL")
                             }
                         }
                     }
@@ -77,29 +93,30 @@ fun OnWalkingScreen(
         )
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopBar(
-                text = "On Walking",
-                firstActionIcon = Icons.Default.MusicNote
-            )
-        },
-        content = { padding ->
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(8.dp)
+            .background(
+                color = MaterialTheme.colors.background,
+                shape = RoundedCornerShape(12.dp)
+            ),
+        content = {
             Column(
                 modifier
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ClockWidget(modifier = modifier.padding(64.dp))
+                //ClockWidget(modifier = modifier.padding(64.dp))
                 when (userTarget) {
-                    UserTarget.distance -> TargetDistance(modifier = modifier)
-                    UserTarget.calo -> TargetCalorie(modifier = modifier)
+                    UserTarget.distance -> TargetDistance(modifier = modifier, onResume = onResume)
+                    UserTarget.calo -> TargetCalorie(modifier = modifier, onResume = onResume)
                     else -> TargetTime(modifier = modifier, onResume = onResume)
                 }
                 Spacer(
                     modifier = modifier
-                        .height(220.dp)
+                        .height(16.dp)
                 )
                 StopAndPause(
                     onStop = {
@@ -113,7 +130,8 @@ fun OnWalkingScreen(
 
 @Composable
 fun TargetDistance(
-    modifier: Modifier
+    modifier: Modifier,
+    onResume: Boolean
 ) {
     Column(
         modifier = modifier
@@ -146,11 +164,9 @@ fun TargetDistance(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Time", modifier = modifier.padding(4.dp))
-                Text(
-                    text = "00:00:00",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = modifier.padding(8.dp)
+                TimerWidget(
+                    modifier = modifier.padding(8.dp),
+                    onResume = onResume
                 )
             }
             Box(
@@ -242,7 +258,8 @@ fun TargetTime(
 
 @Composable
 fun TargetCalorie(
-    modifier: Modifier
+    modifier: Modifier,
+    onResume: Boolean
 ) {
     Column(
         modifier = modifier
@@ -294,11 +311,9 @@ fun TargetCalorie(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Time", modifier = modifier.padding(4.dp))
-                Text(
-                    text = "00:00:00",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = modifier.padding(8.dp)
+                TimerWidget(
+                    modifier = modifier.padding(8.dp),
+                    onResume = onResume
                 )
             }
         }

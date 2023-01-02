@@ -1,6 +1,7 @@
-package com.vn.wecare.feature.training.ui.view_route
+package com.vn.wecare.feature.training.view_route
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
@@ -9,7 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import com.mapbox.android.gestures.Utils
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
@@ -50,7 +54,8 @@ import com.vn.wecare.MainActivity
 import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentDoneBinding
 import com.vn.wecare.databinding.FragmentViewRouteBinding
-import com.vn.wecare.feature.training.ui.view_route.widget.HistoryFileLoader
+import com.vn.wecare.feature.training.view_route.widget.HistoryFileLoader
+import com.vn.wecare.feature.training.view_route.widget.HistoryFilesActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -106,6 +111,7 @@ class ViewRouteFragment : Fragment() {
             40.0 * pixelDensity
         )
     }
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     private val initialCameraOptions: CameraOptions? = CameraOptions.Builder()
         .zoom(DEFAULT_INITIAL_ZOOM)
@@ -126,6 +132,20 @@ class ViewRouteFragment : Fragment() {
         initMapStyle()
 
         setupReplayControls()
+
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == HistoryFilesActivity.REQUEST_CODE) {
+                handleHistoryFileSelected()
+            }
+        }
+
+        binding.selectHistoryButton.setOnClickListener {
+            Navigation.findNavController(requireView()).popBackStack()
+            Navigation.findNavController(requireView()).popBackStack()
+            Navigation.findNavController(requireView()).popBackStack()
+            Navigation.findNavController(requireView()).popBackStack()
+        }
+
         return binding.root
     }
 

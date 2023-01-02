@@ -11,7 +11,7 @@ import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentLogInBinding
 import com.vn.wecare.databinding.FragmentTrainingBinding
 import com.vn.wecare.feature.authentication.ui.signup.SignUpScreen
-import com.vn.wecare.feature.training.ui.dashboard.TrainingScreen
+import com.vn.wecare.feature.training.dashboard.TrainingScreen
 import com.vn.wecare.ui.theme.WecareTheme
 
 class LogInFragment : Fragment() {

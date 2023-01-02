@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.dashboard
+package com.vn.wecare.feature.training.dashboard
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -26,7 +26,13 @@ class TrainingFragment : Fragment() {
             setContent {
                 WecareTheme {
                     TrainingScreen(
-                        moveToWalkingScreen = { Navigation.findNavController(requireView()).navigate(R.id.action_trainingFragment_to_walkingFragment) }
+                        moveToWalkingScreen = {
+                            Navigation.findNavController(requireView())
+                                .navigate(R.id.action_trainingFragment_to_walkingFragment)
+                        },
+                        navigateBack = {
+                            Navigation.findNavController(requireView()).popBackStack()
+                        }
                     )
                 }
             }

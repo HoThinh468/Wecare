@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.view_route.widget
+package com.vn.wecare.feature.training.view_route.widget
 
 import android.view.LayoutInflater
 import android.view.View

@@ -1,17 +1,15 @@
-package com.vn.wecare.feature.training.ui.walking.walking
+package com.vn.wecare.feature.training.onWalking
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineProvider
@@ -26,29 +24,32 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.navigation.base.options.HistoryRecorderOptions
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.core.MapboxNavigation
-import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp
 import com.mapbox.navigation.core.lifecycle.requireMapboxNavigation
 import com.vn.wecare.MainActivity
 import com.vn.wecare.R
-import com.vn.wecare.databinding.FragmentWalkingBinding
-import com.vn.wecare.feature.training.ui.dashboard.TopBar
-import com.vn.wecare.feature.training.ui.walking.onWalking.UserTarget
-import com.vn.wecare.feature.training.ui.walking.widget.TargetChosen
+import com.vn.wecare.databinding.FragmentOnWalkingBinding
+import com.vn.wecare.feature.training.dashboard.TopBar
+import com.vn.wecare.feature.training.walking.WalkingFragment
 import com.vn.wecare.feature.training.utils.LocationListeningCallback
 import com.vn.wecare.feature.training.utils.LocationPermissionHelper
+import com.vn.wecare.feature.training.widget.TargetIndex
 import com.vn.wecare.ui.theme.WecareTheme
-import kotlinx.parcelize.Parcelize
+import java.io.File
 import java.lang.ref.WeakReference
 
-class WalkingFragment : Fragment() {
+class OnWalkingFragment : Fragment() {
 
     lateinit var mapView: MapView
-    private var _binding: FragmentWalkingBinding? = null
+    private var _binding: FragmentOnWalkingBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     private lateinit var locationEngine: LocationEngine
     private val callback = LocationListeningCallback(this)
     private val DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L
@@ -80,10 +81,6 @@ class WalkingFragment : Fragment() {
         locationEngine = LocationEngineProvider.getBestLocationEngine(context)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     private val mapboxNavigation: MapboxNavigation by requireMapboxNavigation(
         onInitialize = this::initNavigation
     )
@@ -100,29 +97,26 @@ class WalkingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentWalkingBinding.inflate(inflater, container, false)
+        // Inflate the layout for this fragment
+        _binding = FragmentOnWalkingBinding.inflate(inflater, container, false)
         mapView = binding.mapView
-        binding.targetChosen.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                WecareTheme {
-                    TargetChosen(
-                        goScreen = {
-                            Navigation.findNavController(requireView())
-                                .navigate(R.id.action_walkingFragment_to_onWalkingFragment)
 
-                            val result = UserTarget.time
-                            setFragmentResult("userTarget", bundleOf("userTarget" to result))
-                        }
-                    )
-                }
-            }
-        }
-        binding.appBar.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                WecareTheme {
-                    TopBar(text = "Walking", navigateBack = {})
+        lateinit var result: Pair<UserTarget, TargetIndex>
+        setFragmentResultListener("userTarget") { requestKey, bundle ->
+            result = bundle.get("userTarget") as Pair<UserTarget, TargetIndex>
+            binding.composeView.apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent {
+                    WecareTheme {
+                        OnWalkingScreen(
+                            userTarget = result.first,
+                            mapboxNavigation = mapboxNavigation,
+                            onNavigateToSuccess = {
+                                Navigation.findNavController(requireView())
+                                    .navigate(R.id.action_onWalkingFragment_to_doneFragment)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -202,5 +196,3 @@ class WalkingFragment : Fragment() {
         mapView.gestures.addOnMoveListener(onMoveListener)
     }
 }
-
-

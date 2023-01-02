@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.dashboard
+package com.vn.wecare.feature.training.dashboard
 
 import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey20
 import com.vn.wecare.R
-import com.vn.wecare.feature.training.ui.dashboard.widget.CheckingWeeklySummarySection
-import com.vn.wecare.feature.training.ui.dashboard.widget.HistoryTrainingSection
-import com.vn.wecare.feature.training.ui.dashboard.widget.StartingATrainingSection
+import com.vn.wecare.feature.training.dashboard.widget.CheckingWeeklySummarySection
+import com.vn.wecare.feature.training.dashboard.widget.HistoryTrainingSection
+import com.vn.wecare.feature.training.dashboard.widget.StartingATrainingSection
 import com.vn.wecare.utils.common_composable.RequestPermission
 
 @Preview
@@ -27,20 +27,23 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 fun TrainingScreenPreview() {
     TrainingScreen(
         modifier = Modifier,
-        moveToWalkingScreen = {}
+        moveToWalkingScreen = {},
+        navigateBack = {}
     )
 }
 
 @Composable
 fun TrainingScreen(
     modifier: Modifier = Modifier,
-    moveToWalkingScreen: () -> Unit
+    moveToWalkingScreen: () -> Unit,
+    navigateBack: () -> Unit
 ) {
     RequestPermission(permission = Manifest.permission.ACCESS_FINE_LOCATION)
     Scaffold(
         topBar = {
             TopBar(
                 text = "Training Section",
+                navigateBack = navigateBack
             )
         },
         content = { padding ->

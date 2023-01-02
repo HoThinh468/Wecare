@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.dashboard.widget
+package com.vn.wecare.feature.training.dashboard.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +22,7 @@ import com.vn.wecare.feature.training.utils.secondToHourUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
 import com.vn.wecare.ui.theme.Black900
 import com.vn.wecare.ui.theme.Grey500
+import java.util.Calendar
 
 @Composable
 fun CheckingWeeklySummarySection(
@@ -30,6 +31,8 @@ fun CheckingWeeklySummarySection(
     kcal: Double,
     session: Int
 ) {
+    val cal: Calendar = Calendar.getInstance()
+    val firstDateOfWeek = cal.firstDayOfWeek
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -54,7 +57,7 @@ fun CheckingWeeklySummarySection(
                 fontWeight = FontWeight.Bold,
                 color = Black900
             )
-            TrainingCalendar(modifier = modifier, startDate = 2, endDate = 8)
+            TrainingCalendar(modifier = modifier, startDate = firstDateOfWeek, endDate = firstDateOfWeek + 6)
             Box(
                 modifier = modifier
                     .padding(start = 16.dp, end = 16.dp)

@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.ui.walking.walking
+package com.vn.wecare.feature.training.walking
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -7,8 +7,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.vn.wecare.feature.training.ui.dashboard.TopBar
-import com.vn.wecare.feature.training.ui.walking.widget.TargetChosen
+import com.vn.wecare.feature.training.dashboard.TopBar
 
 
 @Composable

@@ -1,6 +1,7 @@
-package com.vn.wecare.feature.training.ui.view_route.widget
+package com.vn.wecare.feature.training.view_route.widget
 
 import android.content.Context
+import android.util.Log
 import com.mapbox.navigation.core.history.MapboxHistoryReader
 import java.io.File
 
@@ -12,9 +13,10 @@ class HistoryFilesDirectory {
     /**
      * The directory where the replay files are stored.
      */
-    fun replayDirectory(context: Context) =
-        File(context.filesDir, DIRECTORY_NAME).also { it.mkdirs() }
-
+    fun replayDirectory(context: Context) : File {
+        Log.d("replay Direction:", DIRECTORY_NAME)
+        return File(context.filesDir, DIRECTORY_NAME).also { it.mkdirs() }
+    }
     /**
      * Returns a list of history files from the [replayDirectory].
      */
@@ -27,7 +29,7 @@ class HistoryFilesDirectory {
     fun outputFile(context: Context, path: String) =
         File(replayDirectory(context), path)
 
-    private companion object {
+    companion object {
         private const val DIRECTORY_NAME = "/data/data/com.vn.wecare/files/mbx_nav/history"
     }
 }

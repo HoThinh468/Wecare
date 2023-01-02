@@ -1,5 +1,6 @@
-package com.vn.wecare.feature.training.ui.walking.widget
+package com.vn.wecare.feature.training.widget
 
+import android.opengl.Visibility
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mapbox.maps.extension.style.expressions.dsl.generated.distance
 import com.vn.wecare.R
+import com.vn.wecare.feature.training.onWalking.UserTarget
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -23,7 +25,7 @@ import com.vn.wecare.ui.theme.smallPadding
 @Composable
 fun TargetChosen(
     modifier: Modifier = Modifier,
-    goScreen: () -> Unit
+    goScreen: (UserTarget, TargetIndex) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -40,7 +42,7 @@ fun TargetChosen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var selectedIndex by remember { mutableStateOf(0) }
-                var distance by remember { mutableStateOf(0) }
+                var target by remember { mutableStateOf(TargetIndex(0)) }
                 Column(
                     modifier
                         .wrapContentHeight()
@@ -74,10 +76,14 @@ fun TargetChosen(
                 }
                 when (selectedIndex) {
                     0 -> {
-                        distance = distanceTarget(modifier = modifier)
-                }
-                    1 -> TimeTarget(modifier = modifier)
-                    2 -> CalorieTarget(modifier = modifier)
+                        target = distanceTarget(modifier = modifier)
+                    }
+                    1 -> {
+                        target = timeTarget(modifier = modifier)
+                    }
+                    2 -> {
+                        target = calorieTarget(modifier = modifier)
+                    }
                     else -> NoTarget(modifier = modifier)
                 }
                 Button(
@@ -86,7 +92,15 @@ fun TargetChosen(
                         .padding(top = normalPadding)
                         .height(50.dp),
                     onClick = {
-                        goScreen()
+                        goScreen(
+                            when (selectedIndex) {
+                                0 -> UserTarget.distance
+                                1 -> UserTarget.time
+                                2 -> UserTarget.calo
+                                else -> UserTarget.none
+                            },
+                            target
+                        )
                     },
                     shape = RoundedCornerShape(mediumRadius)
                 ) {
@@ -100,7 +114,7 @@ fun TargetChosen(
 @Composable
 fun distanceTarget(
     modifier: Modifier
-): Int {
+): TargetIndex {
     var first by remember { mutableStateOf(0) }
     var second by remember { mutableStateOf(0) }
     Row(
@@ -119,51 +133,57 @@ fun distanceTarget(
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "km", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
-    return first
+    return TargetIndex(first, second)
 }
 
 @Composable
-fun TimeTarget(
+fun timeTarget(
     modifier: Modifier
-) {
+): TargetIndex {
+    var hour by remember { mutableStateOf(0) }
+    var min by remember { mutableStateOf(0) }
+    var sec by remember { mutableStateOf(0) }
     Row(
         modifier.height(124.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        numberPickerSpinner(modifier = modifier, max = 12, min = 0)
+        hour = numberPickerSpinner(modifier = modifier, max = 12, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
             fontSize = 32.sp,
             color = MaterialTheme.colors.primary
         )
-        numberPickerSpinner(modifier = modifier, max = 59, min = 0)
+        min = numberPickerSpinner(modifier = modifier, max = 59, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
             fontSize = 32.sp,
             color = MaterialTheme.colors.primary
         )
-        numberPickerSpinner(modifier = modifier, max = 50, min = 0)
+        sec = numberPickerSpinner(modifier = modifier, max = 50, min = 0)
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "hour", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
+    return TargetIndex(hour, min, sec)
 }
 
 @Composable
-fun CalorieTarget(
+fun calorieTarget(
     modifier: Modifier
-) {
+): TargetIndex {
+    var time by remember { mutableStateOf(0) }
     Row(
         modifier.height(124.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        numberPickerSpinner(modifier = modifier, max = 9999, min = 50)
+        time = numberPickerSpinner(modifier = modifier, max = 9999, min = 50)
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "Cal", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
+    return TargetIndex(time)
 }
 
 @Composable
@@ -178,12 +198,10 @@ fun NoTarget(
     )
 }
 
-interface ChosenType {}
-
-class Distance(
-    var first: Int = 0,
-    var second: Int = 0
-) : ChosenType {
-}
+data class TargetIndex(
+    val first: Int,
+    val second: Int? = null,
+    val third: Int? = null
+)
 
 
