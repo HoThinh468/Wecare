@@ -1,8 +1,13 @@
 package com.vn.wecare.utils
 
+import android.util.Patterns
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.regex.Pattern
+
+private const val MIN_PASS_LENGTH = 6
+private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{4,}$"
 
 fun String.formatDate(): String {
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
@@ -25,4 +30,18 @@ fun getHourId(hour: Int, day: Int, month: Int, year: Int): String {
 fun getCurrentHourId(): String {
     val now = LocalDateTime.now()
     return getHourId(now.hour, now.dayOfMonth, now.monthValue, now.year)
+}
+
+fun String.isValidEmail(): Boolean {
+    return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
+
+fun String.isValidPassword(): Boolean {
+    return this.isNotBlank() &&
+            this.length >= MIN_PASS_LENGTH &&
+            Pattern.compile(PASS_PATTERN).matcher(this).matches()
+}
+
+fun String.passwordMatches(repeated: String): Boolean {
+    return this == repeated
 }

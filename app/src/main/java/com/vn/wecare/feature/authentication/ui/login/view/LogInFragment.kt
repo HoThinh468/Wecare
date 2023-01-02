@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui.login
+package com.vn.wecare.feature.authentication.ui.login.view
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -7,7 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
-import com.vn.wecare.feature.authentication.ui.login.view.SignInScreen
+import com.vn.wecare.feature.authentication.ui.login.LoginViewModel
 
 class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBinding::inflate) {
 

@@ -13,11 +13,13 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
+import com.vn.wecare.core.alarm.ONE_HOUR_INTERVAL_MILLIS
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_EXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
+import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -52,9 +54,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
                 stepCountViewModel = stepCountViewModel,
-                cancelInExactAlarm = { stepCountInExactAlarms.clearInExactAlarm() },
                 moveToAccountScreen = {
-                    findNavController().navigate(R.id.action_homeFragment_to_accountFragment)
+                    findNavController().navigate(R.id.action_homeFragment_to_account_nested_graph)
                 })
         }
     }
@@ -66,7 +67,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
             if (sharedPref.getBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)) {
-//                stepCountExactAlarms.scheduleExactAlarm(null)
+                stepCountExactAlarms.scheduleExactAlarm(null)
                 with(sharedPref.edit()) {
                     putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
                 }
@@ -75,9 +76,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             openSetting()
         }
         if (sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
-//        stepCountInExactAlarms.scheduleInExactAlarm(
-//            getEndOfTheDayMilliseconds(), ONE_HOUR_INTERVAL_MILLIS
-//        )
+            stepCountInExactAlarms.scheduleInExactAlarm(
+                getEndOfTheDayMilliseconds(), ONE_HOUR_INTERVAL_MILLIS
+            )
             with(sharedPref.edit()) {
                 putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
             }

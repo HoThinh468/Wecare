@@ -1,7 +1,6 @@
-package com.vn.wecare.feature.account
+package com.vn.wecare.feature.account.view
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,7 +21,9 @@ import com.vn.wecare.utils.common_composable.CardListTile
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AccountScreen(
-    modifier: Modifier = Modifier, navigateUp: () -> Unit
+    modifier: Modifier = Modifier,
+    navigateUp: () -> Unit,
+    onSignOutClick: () -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -38,7 +38,10 @@ fun AccountScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(halfMidPadding),
         ) {
-            AccountBody(modifier = modifier)
+            AccountBody(
+                modifier = modifier,
+                onSignOutClick =  onSignOutClick
+            )
         }
     }
 }
@@ -99,7 +102,8 @@ fun AccountHeader(
 
 @Composable
 fun AccountBody(
-    modifier: Modifier
+    modifier: Modifier,
+    onSignOutClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -142,7 +146,8 @@ fun AccountBody(
             titleRes = R.string.logout,
             subTitle = null,
             elevation = 0.dp,
-            colorIconRes = R.color.Red400
+            colorIconRes = R.color.Red400,
+            onClick = onSignOutClick
         )
     }
 }

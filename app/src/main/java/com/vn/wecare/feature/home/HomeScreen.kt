@@ -42,7 +42,6 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     stepCountViewModel: StepCountViewModel,
-    cancelInExactAlarm: () -> Unit,
     moveToAccountScreen: () -> Unit
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
@@ -73,9 +72,6 @@ fun HomeScreen(
         WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
-        Button(onClick = { cancelInExactAlarm() }) {
-            Text(text = "Cancel In-Exact")
-        }
     }
 }
 
