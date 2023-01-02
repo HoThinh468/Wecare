@@ -1,13 +1,19 @@
 package com.vn.wecare.feature.home.step_count
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.home.step_count.usecase.StepCountUsecase
+import com.vn.wecare.feature.home.step_count.data.entity.toModel
+import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
+import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
+import com.vn.wecare.utils.getDayId
+import com.vn.wecare.utils.getMonthPrefix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 /**
@@ -17,13 +23,15 @@ data class StepsCountUiState(
     val currentSteps: Int = 0,
     val caloConsumed: Int = 0,
     val moveMin: Int = 0,
-    val isPermissionEnable: Boolean = false, // Check permission to avoid crash
     val isLoading: Boolean = false,
+    val selectedDay: String = "",
+    val hasData: Boolean = true
 )
 
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
-    private val stepCountUsecase: StepCountUsecase,
+    getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
+    private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
 ) : ViewModel() {
 
     // Define a variable of ui state
@@ -31,25 +39,51 @@ class StepCountViewModel @Inject constructor(
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
     init {
-        updateCurrentSteps(stepCountUsecase.getSharedPrefLatestStep())
-        updateCaloriesConsumed()
+        val currentDate = LocalDate.now()
+        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+        updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
     }
 
-    fun updateCurrentSteps(steps: Float) = viewModelScope.launch {
-        stepCountUsecase.calculateCurrentDaySteps(steps).collect { steps ->
+    fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
+        getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
             _stepsCountUiState.update {
-                it.copy(currentSteps = steps.toInt())
+                it.copy(
+                    currentSteps = steps.toInt(),
+                    caloConsumed = (steps * 0.04).toInt(),
+                    moveMin = (steps * 0.01).toInt()
+                )
             }
         }
     }
 
-    fun updateCaloriesConsumed() = viewModelScope.launch {
-//        stepCountUsecase.calculateCurrentCaloriesConsumed().collect { calories ->
-//            _stepsCountUiState.update {
-//                it.copy(
-//                    caloConsumed = calories.toInt()
-//                )
-//            }
-//        }
+    fun onDaySelected(year: Int, month: Int, dayOfMonth: Int) {
+        updateDateTitle(dayOfMonth, month, year)
+        viewModelScope.launch {
+            getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
+                .collect { stepsPerDay ->
+                    if (stepsPerDay != null) {
+                        _stepsCountUiState.update { ui ->
+                            ui.copy(
+                                currentSteps = stepsPerDay.toModel().steps,
+                                caloConsumed = stepsPerDay.toModel().calories,
+                                moveMin = stepsPerDay.toModel().moveTime,
+                                hasData = true
+                            )
+                        }
+                    } else {
+                        _stepsCountUiState.update {
+                            it.copy(hasData = false)
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun updateDateTitle(day: Int, month: Int, year: Int) {
+        _stepsCountUiState.update {
+            it.copy(
+                selectedDay = "${getMonthPrefix(month)} $day, $year"
+            )
+        }
     }
 }

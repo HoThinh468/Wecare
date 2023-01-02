@@ -5,6 +5,13 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : AccountService {
+
+    override val currentUserId: String
+        get() = auth.currentUser?.uid.orEmpty()
+
+    override val hasUser: Boolean
+        get() = auth.currentUser != null
+
     override suspend fun createAccount(email: String, password: String) : AuthenticationResult {
         var result = AuthenticationResult.SUCCESS
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {

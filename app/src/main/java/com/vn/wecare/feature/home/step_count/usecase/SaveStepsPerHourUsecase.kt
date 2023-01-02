@@ -14,8 +14,8 @@ class SaveStepsPerHourUsecase @Inject constructor(
             getCurrentHourId(),
             getCurrentDayId(),
             steps.toInt(),
-            (steps * 0.05).toInt(),
-            0
+            (steps * 0.04).toInt(),
+            (steps * 0.01).toInt()
         )
         stepsPerHoursRepository.insert(stepsPerHour)
     }

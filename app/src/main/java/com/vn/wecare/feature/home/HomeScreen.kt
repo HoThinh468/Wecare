@@ -59,7 +59,8 @@ fun HomeScreen(
             modifier = modifier,
             onCardClick = onFootStepCountCardClick,
             steps = stepsCountUiState.value.currentSteps,
-            calories = stepsCountUiState.value.caloConsumed
+            calories = stepsCountUiState.value.caloConsumed,
+            moveMin = stepsCountUiState.value.moveMin
         )
         TrainingNow(
             modifier = modifier,

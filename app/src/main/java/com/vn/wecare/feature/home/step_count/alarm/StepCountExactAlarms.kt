@@ -12,7 +12,6 @@ import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import javax.inject.Inject
 
 const val STEP_COUNT_ALARM = "step_count_alarm"
-const val IS_STEP_COUNT_EXACT_ALARM_SET = "is_set"
 
 class StepCountExactAlarms @Inject constructor(private val context: Context) : ExactAlarms {
 
@@ -47,12 +46,8 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
     }
 
     private fun triggerSaveDataAtTheEndOfTheDay() {
-        val sharedPref = context.getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)
-        }
         val pendingIntent = createExactAlarmIntent(EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE, null)
-        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 10000, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC, getEndOfTheDayMilliseconds(), pendingIntent)
     }
 
     /**

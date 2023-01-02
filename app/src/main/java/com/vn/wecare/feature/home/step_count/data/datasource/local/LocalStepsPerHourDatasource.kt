@@ -4,6 +4,7 @@ import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.feature.home.step_count.data.model.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,5 +39,9 @@ class LocalStepPerHourDatasource @Inject constructor(
 
     override suspend fun deleteAll() = withContext(ioDispatcher) {
         stepsPerHourDao.deleteAllHours()
+    }
+
+    override fun getStepsPerDay(dayId: String): Flow<StepsPerDay>? {
+        TODO("Not yet implemented")
     }
 }

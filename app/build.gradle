@@ -103,6 +103,7 @@ dependencies {
     // frirebase
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
 
     implementation ('com.mapbox.maps:android:10.9.1'){
         exclude group: 'group_name', module: 'module_name'

@@ -3,9 +3,10 @@ package com.vn.wecare.feature.home.step_count.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
-import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
-import com.vn.wecare.feature.home.step_count.usecase.StepCountUsecase
+import com.vn.wecare.feature.home.step_count.usecase.*
+import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -16,21 +17,30 @@ import javax.inject.Inject
 class StepCountInExactAlarmBroadcastReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var stepCountUsecase: StepCountUsecase
+    lateinit var getStepsPerDayUsecase: GetStepsPerDayUsecase
+
+    @Inject
+    lateinit var getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase
+
+    @Inject
+    lateinit var saveStepsPerHourUsecase: SaveStepsPerHourUsecase
+
+    @Inject
+    lateinit var getStepsPerHourUsecase: GetStepsPerHourUsecase
+
+    @Inject
+    lateinit var stepCountExactAlarms: ExactAlarms
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context?, p1: Intent?) {
-        val sharePref = context?.getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
-        val currentStepsFromSensor = sharePref?.getFloat(LATEST_STEPS_COUNT, 0f)
         GlobalScope.launch {
-            stepCountUsecase.calculateCurrentDaySteps(currentStepsFromSensor ?: 0f)
+            getStepsPerDayUsecase.getCurrentDaySteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
                 .collect { currentDaySteps ->
-                    stepCountUsecase.insertStepsPerHourToDb(
-                        stepCountUsecase.getCurrentHourSteps(
-                            currentDaySteps
-                        )
-                    )
+                    getStepsPerHourUsecase.getCurrentHourSteps(currentDaySteps).collect {
+                        saveStepsPerHourUsecase.insertStepsPerHourToDb(it)
+                    }
                 }
         }
+        stepCountExactAlarms.scheduleExactAlarm(null)
     }
 }

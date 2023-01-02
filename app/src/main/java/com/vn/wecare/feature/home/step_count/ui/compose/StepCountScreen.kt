@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,11 +37,14 @@ fun StepCountScreen(
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
-    Scaffold(
-        modifier = modifier,
+    Scaffold(modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
-            StepCountAppBar(modifier) { navigateUp() }
+            StepCountAppBar(
+                modifier = modifier,
+                stepCountViewModel = stepCountViewModel,
+                navigateUp = navigateUp
+            )
         }) {
         Column(
             modifier = modifier
@@ -48,26 +52,31 @@ fun StepCountScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = modifier.height(halfMidPadding))
-            Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
-            Spacer(modifier = modifier.height(halfMidPadding))
-            SetYourGoal(modifier = modifier) {
-                moveToSetGoalScreen()
+            if (stepsCountUiState.value.hasData) {
+                Spacer(modifier = modifier.height(halfMidPadding))
+                Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
+                Spacer(modifier = modifier.height(halfMidPadding))
+                SetYourGoal(modifier = modifier) { moveToSetGoalScreen() }
+                Spacer(modifier = modifier.height(halfMidPadding))
+                DetailStatistic(modifier = modifier)
+                Spacer(modifier = modifier.height(halfMidPadding))
+                HealthTip(modifier = modifier)
+                Spacer(modifier = modifier.height(normalPadding))
+            } else {
+                PageNotFound()
             }
-            Spacer(modifier = modifier.height(halfMidPadding))
-            DetailStatistic(modifier = modifier)
-            Spacer(modifier = modifier.height(halfMidPadding))
-            HealthTip(modifier = modifier)
-            Spacer(modifier = modifier.height(normalPadding))
         }
     }
 }
 
 @Composable
 fun StepCountAppBar(
-    modifier: Modifier,
-    navigateUp: () -> Unit,
+    modifier: Modifier, navigateUp: () -> Unit, stepCountViewModel: StepCountViewModel
 ) {
+
+    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
+
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -82,8 +91,13 @@ fun StepCountAppBar(
                 painter = painterResource(id = R.drawable.ic_arrow_back), contentDescription = null
             )
         }
-        Text(text = "Oct 12, 2022", style = MaterialTheme.typography.h4)
-        IconButton(onClick = {}) {
+        Text(text = stepsCountUiState.value.selectedDay, style = MaterialTheme.typography.h4)
+        IconButton(onClick = {
+            datePicker(
+                context = context,
+                updateDate = stepCountViewModel::onDaySelected,
+            ).show()
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_edit_calendar),
                 contentDescription = null
@@ -148,7 +162,7 @@ fun Overview(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
-                    index = 0,
+                    index = stepsCountUiState.caloConsumed,
                     goal = 1000,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
@@ -157,7 +171,7 @@ fun Overview(
                     iconRes = R.drawable.ic_time_clock,
                     titleRes = R.string.move_min_title,
                     iconColorRes = R.color.Blue400,
-                    index = 0,
+                    index = stepsCountUiState.moveMin,
                     goal = 80,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier

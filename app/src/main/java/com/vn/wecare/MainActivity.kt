@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             putFloat(LATEST_STEPS_COUNT, p0.values[0])
             apply()
         }
-        stepCountViewModel.updateCaloriesConsumed()
+//        stepCountViewModel.updateCaloriesConsumed()
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

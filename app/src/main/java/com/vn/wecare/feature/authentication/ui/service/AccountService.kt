@@ -6,6 +6,9 @@ enum class AuthenticationResult() {
 }
 
 interface AccountService {
+    val currentUserId: String
+    val hasUser: Boolean
+
     suspend fun createAccount(email: String, password: String) : AuthenticationResult
     suspend fun authenticate(email: String, password: String) : AuthenticationResult
     suspend fun sendVerificationEmail(email: String)
