@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.authentication.ui.login
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,12 +47,14 @@ class LoginViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            if (accountService.authenticate(
-                    email, password
-                ) == AuthenticationResult.SUCCESS
-            ) {
-                moveToHomeScreen()
-                clearLogInInformation()
+            accountService.authenticate(email, password).collect {
+                if (it == AuthenticationResult.SUCCESS) {
+                    moveToHomeScreen()
+                    clearLogInInformation()
+                } else {
+                    // Todo Show a dialog to notify users
+                    Log.d("LogIn res: ", "fail")
+                }
             }
         }
     }

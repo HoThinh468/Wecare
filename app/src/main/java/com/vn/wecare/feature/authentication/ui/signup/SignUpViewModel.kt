@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.authentication.ui.signup
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -59,12 +60,14 @@ class SignUpViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            if (accountService.createAccount(
-                    email, password
-                ) == AuthenticationResult.SUCCESS
-            ) {
-                moveToHomeScreen()
-                clearSignUpInformation()
+            accountService.createAccount(email, password).collect {
+                if (it == AuthenticationResult.SUCCESS) {
+                    moveToHomeScreen()
+                    clearSignUpInformation()
+                } else {
+                    // Todo Show a dialog to notify users
+                    Log.d("Signup res: ", "fail")
+                }
             }
         }
     }

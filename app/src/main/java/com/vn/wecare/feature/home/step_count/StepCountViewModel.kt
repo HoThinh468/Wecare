@@ -1,11 +1,11 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
+import com.vn.wecare.utils.getCurrentDayId
 import com.vn.wecare.utils.getDayId
 import com.vn.wecare.utils.getMonthPrefix
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ data class StepsCountUiState(
 
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
-    getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
+    private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
 ) : ViewModel() {
 
@@ -50,7 +50,8 @@ class StepCountViewModel @Inject constructor(
                 it.copy(
                     currentSteps = steps.toInt(),
                     caloConsumed = (steps * 0.04).toInt(),
-                    moveMin = (steps * 0.01).toInt()
+                    moveMin = (steps * 0.01).toInt(),
+                    hasData = true
                 )
             }
         }
@@ -58,24 +59,28 @@ class StepCountViewModel @Inject constructor(
 
     fun onDaySelected(year: Int, month: Int, dayOfMonth: Int) {
         updateDateTitle(dayOfMonth, month, year)
-        viewModelScope.launch {
-            getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
-                .collect { stepsPerDay ->
-                    if (stepsPerDay != null) {
-                        _stepsCountUiState.update { ui ->
-                            ui.copy(
-                                currentSteps = stepsPerDay.toModel().steps,
-                                caloConsumed = stepsPerDay.toModel().calories,
-                                moveMin = stepsPerDay.toModel().moveTime,
-                                hasData = true
-                            )
-                        }
-                    } else {
-                        _stepsCountUiState.update {
-                            it.copy(hasData = false)
+        if (getCurrentDayId() == getDayId(dayOfMonth, month, year)) {
+            updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+        } else {
+            viewModelScope.launch {
+                getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
+                    .collect { stepsPerDay ->
+                        if (stepsPerDay != null) {
+                            _stepsCountUiState.update { ui ->
+                                ui.copy(
+                                    currentSteps = stepsPerDay.steps,
+                                    caloConsumed = stepsPerDay.toModel().calories,
+                                    moveMin = stepsPerDay.toModel().moveTime,
+                                    hasData = true
+                                )
+                            }
+                        } else {
+                            _stepsCountUiState.update {
+                                it.copy(hasData = false)
+                            }
                         }
                     }
-                }
+            }
         }
     }
 
