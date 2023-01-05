@@ -36,7 +36,7 @@ class FirebaseStepsPerDayDataSource @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>>? {
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>> {
         TODO("Not yet implemented")
     }
 

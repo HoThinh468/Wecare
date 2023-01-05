@@ -13,17 +13,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CircularProgressAnimated
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FootStepCountHomeCard(
-    modifier: Modifier,
-    onCardClick: () -> Unit,
-    steps: Int = 0,
-    calories: Int = 0,
-    moveMin: Int = 0
+    modifier: Modifier, onCardClick: () -> Unit, stepsCountUiState: StepsCountUiState
 ) {
 
     Card(
@@ -43,22 +40,24 @@ fun FootStepCountHomeCard(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = modifier.weight(1f)
+                contentAlignment = Alignment.BottomCenter, modifier = modifier.weight(1f)
             ) {
                 CircularProgressAnimated(
                     size = 125.dp,
-                    currentValue = 75f,
+                    currentValue = if (stepsCountUiState.currentSteps > stepsCountUiState.stepGoal) 100f
+                    else (stepsCountUiState.currentSteps.toFloat() / stepsCountUiState.stepGoal),
                 )
                 CircularProgressAnimated(
                     size = 100.dp,
                     color = colorResource(id = R.color.Red400),
-                    currentValue = 30f,
+                    currentValue = if (stepsCountUiState.caloConsumed > stepsCountUiState.caloriesBurnedGoal) 100f
+                    else (stepsCountUiState.caloConsumed.toFloat() / stepsCountUiState.caloriesBurnedGoal),
                 )
                 CircularProgressAnimated(
                     size = 75.dp,
                     color = colorResource(id = R.color.Blue400),
-                    currentValue = 50f,
+                    currentValue = if (stepsCountUiState.moveMin > stepsCountUiState.moveTimeGoal) 100f
+                    else (stepsCountUiState.moveMin.toFloat() / stepsCountUiState.moveTimeGoal),
                 )
             }
             Column(
@@ -67,21 +66,21 @@ fun FootStepCountHomeCard(
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_step,
                     iconColorRes = R.color.Green500,
-                    index = steps,
+                    index = stepsCountUiState.currentSteps,
                     unitRes = R.string.footstep_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_fire_calo,
                     iconColorRes = R.color.Red400,
-                    index = calories,
+                    index = stepsCountUiState.caloConsumed,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_time_clock,
                     iconColorRes = R.color.Blue400,
-                    index = moveMin,
+                    index = stepsCountUiState.moveMin,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
                 )

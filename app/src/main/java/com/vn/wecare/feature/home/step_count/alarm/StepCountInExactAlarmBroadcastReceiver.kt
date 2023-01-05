@@ -4,9 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.vn.wecare.core.alarm.ExactAlarms
-import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
+import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.feature.home.step_count.usecase.*
-import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -32,12 +31,15 @@ class StepCountInExactAlarmBroadcastReceiver : BroadcastReceiver() {
     lateinit var stepCountExactAlarms: ExactAlarms
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun onReceive(context: Context?, p1: Intent?) {
+    override fun onReceive(context: Context, p1: Intent?) {
         GlobalScope.launch {
             getStepsPerDayUsecase.getCurrentDaySteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
                 .collect { currentDaySteps ->
                     getStepsPerHourUsecase.getCurrentHourSteps(currentDaySteps).collect {
                         saveStepsPerHourUsecase.insertStepsPerHourToDb(it)
+                        if (checkInternetConnection(context)) {
+                            saveStepsPerHourUsecase.insertStepsPerHourToFirestore(it)
+                        }
                     }
                 }
         }

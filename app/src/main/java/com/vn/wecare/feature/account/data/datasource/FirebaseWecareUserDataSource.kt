@@ -32,10 +32,10 @@ class FirebaseWecareUserDataSource @Inject constructor(
     }
 
     override fun getUserWithId(userId: String): Flow<WecareUser?> = flow {
-        var user = WecareUser("", "", "")
+        var user = WecareUser()
         db.collection(WECARE_USER_COLLECTION_PATH).document(userId).get().addOnSuccessListener {
             if (it != null) {
-                user = it.toObject(WecareUser::class.java) ?: WecareUser("", "", "")
+                user = it.toObject(WecareUser::class.java) ?: WecareUser()
             }
         }.await()
         Log.d("Get user from firebase res: ", user.toString())

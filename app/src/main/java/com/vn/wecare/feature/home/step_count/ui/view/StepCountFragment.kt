@@ -24,9 +24,6 @@ class StepCountFragment :
             binding.stepCountComposeView
         ) {
             StepCountScreen(navigateUp = { findNavController().popBackStack() },
-                moveToSetGoalScreen = {
-                    findNavController().navigate(R.id.action_stepCountFragment_to_setYourGoalsFragment)
-                },
                 stepCountViewModel = stepCountViewModel
             )
         }

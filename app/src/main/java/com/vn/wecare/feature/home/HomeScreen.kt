@@ -4,18 +4,14 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,9 +54,7 @@ fun HomeScreen(
         FootStepCountHomeCard(
             modifier = modifier,
             onCardClick = onFootStepCountCardClick,
-            steps = stepsCountUiState.value.currentSteps,
-            calories = stepsCountUiState.value.caloConsumed,
-            moveMin = stepsCountUiState.value.moveMin
+            stepsCountUiState = stepsCountUiState.value
         )
         TrainingNow(
             modifier = modifier,
@@ -78,8 +72,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeHeader(
-    modifier: Modifier,
-    moveToAccountScreen: () -> Unit
+    modifier: Modifier, moveToAccountScreen: () -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

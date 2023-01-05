@@ -10,6 +10,8 @@ import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.usecase.SaveUserToLocalDbUsecase
 import com.vn.wecare.feature.authentication.ui.service.AccountService
 import com.vn.wecare.feature.authentication.ui.service.AuthenticationResult
+import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
+import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorSteps
 import com.vn.wecare.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,7 +25,9 @@ data class LoginUiState(
 class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
-    private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase
+    private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase,
+    private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
+    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps
 ) : ViewModel() {
     var loginUiState = mutableStateOf(LoginUiState())
         private set

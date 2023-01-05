@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -44,7 +45,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                     findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
                 },
                 onWaterCardClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_waterFragment)
                 },
                 onBMICardClick = {},
                 onWalkingIcClick = {},
@@ -70,8 +70,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         }
         if (sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
             stepCountInExactAlarms.scheduleInExactAlarm(
-                System.currentTimeMillis(), ONE_HOUR_INTERVAL_MILLIS
+                System.currentTimeMillis(),
+                300_000
+//                ONE_HOUR_INTERVAL_MILLIS
             )
+            Log.d("Step count in exact alarm set: ", "true")
             with(sharedPref.edit()) {
                 putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
             }

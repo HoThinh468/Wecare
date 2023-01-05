@@ -19,4 +19,15 @@ class SaveStepsPerHourUsecase @Inject constructor(
         )
         stepsPerHoursRepository.insert(stepsPerHour)
     }
+
+    suspend fun insertStepsPerHourToFirestore(steps: Float) {
+        val stepsPerHour = StepsPerHour(
+            getCurrentHourId(),
+            getCurrentDayId(),
+            steps.toInt(),
+            (steps * 0.04).toInt(),
+            (steps * 0.01).toInt()
+        )
+        stepsPerHoursRepository.insertStepsPerHourToFirebase(stepsPerHour)
+    }
 }

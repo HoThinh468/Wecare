@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
         with(sharePref.edit()) {
+            Log.d("Sensor changes: ", p0.values[0].toString())
             putFloat(LATEST_STEPS_COUNT, p0.values[0])
             apply()
         }

@@ -17,7 +17,7 @@ class LocalStepsPerDayDataSource @Inject constructor(
         stepsPerDayDao.deleteAllDays()
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>>? {
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>> {
         TODO("Not yet implemented")
     }
 
