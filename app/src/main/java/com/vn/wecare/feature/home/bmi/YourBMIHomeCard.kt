@@ -22,7 +22,6 @@ fun YourBMIHomeCard(
             .fillMaxWidth()
             .padding(top = smallPadding),
         elevation = smallElevation,
-        onClick = onCardClick,
         shape = Shapes.small,
     ) {
         Row(
@@ -39,7 +38,7 @@ fun YourBMIHomeCard(
                 )
                 Text(
                     modifier = modifier.padding(top = smallPadding),
-                    text = "20.5",
+                    text = "0",
                     style = MaterialTheme.typography.h1.copy(
                         color = colorResource(id = R.color.Orange300)
                     )
@@ -49,7 +48,7 @@ fun YourBMIHomeCard(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_happy),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.Green500)
+                    tint = colorResource(id = R.color.Grey500)
                 )
                 Spacer(modifier = modifier.width(4.dp))
                 Icon(

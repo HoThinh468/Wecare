@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -16,10 +17,8 @@ import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.alarm.ONE_HOUR_INTERVAL_MILLIS
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_EXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
-import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,7 +45,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                     findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
                 },
                 onWaterCardClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_waterFragment)
                 },
                 onBMICardClick = {},
                 onWalkingIcClick = {},
@@ -66,19 +64,17 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-            if (sharedPref.getBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)) {
                 stepCountExactAlarms.scheduleExactAlarm(null)
-                with(sharedPref.edit()) {
-                    putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
-                }
-            }
         } else {
             openSetting()
         }
         if (sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
             stepCountInExactAlarms.scheduleInExactAlarm(
-                getEndOfTheDayMilliseconds(), ONE_HOUR_INTERVAL_MILLIS
+                System.currentTimeMillis(),
+                300_000
+//                ONE_HOUR_INTERVAL_MILLIS
             )
+            Log.d("Step count in exact alarm set: ", "true")
             with(sharedPref.edit()) {
                 putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
             }

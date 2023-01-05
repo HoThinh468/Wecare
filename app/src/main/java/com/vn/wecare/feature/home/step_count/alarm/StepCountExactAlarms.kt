@@ -12,7 +12,6 @@ import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import javax.inject.Inject
 
 const val STEP_COUNT_ALARM = "step_count_alarm"
-const val IS_STEP_COUNT_EXACT_ALARM_SET = "is_set"
 
 class StepCountExactAlarms @Inject constructor(private val context: Context) : ExactAlarms {
 
@@ -27,7 +26,7 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
     }
 
     override fun clearExactAlarm() {
-        val pendingIntent = createExactAlarmIntent(null, PendingIntent.FLAG_NO_CREATE)
+        val pendingIntent = createExactAlarmIntent(null)
         alarmManager.cancel(pendingIntent)
     }
 
@@ -39,7 +38,7 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
     }
 
     private fun setExactAlarm(triggerAtMillis: Long) {
-        val pendingIntent = createExactAlarmIntent(null, null)
+        val pendingIntent = createExactAlarmIntent(null)
         // Alarm repeat every hour
         alarmManager.setExact(
             AlarmManager.RTC, triggerAtMillis, pendingIntent
@@ -47,19 +46,15 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
     }
 
     private fun triggerSaveDataAtTheEndOfTheDay() {
-        val sharedPref = context.getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)
-        }
-        val pendingIntent = createExactAlarmIntent(EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE, null)
-        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 10000, pendingIntent)
+        val pendingIntent = createExactAlarmIntent(EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE)
+        alarmManager.setExact(AlarmManager.RTC, getEndOfTheDayMilliseconds(), pendingIntent)
     }
 
     /**
      * Create pending intent for an exact alarm
      */
     private fun createExactAlarmIntent(
-        requestCode: Int?, flag: Int?
+        requestCode: Int?
     ): PendingIntent {
         val intent = Intent(context, StepCountExactAlarmBroadCastReceiver::class.java)
         // Flag indicating that the created PendingIntent should be immutable.
@@ -69,7 +64,7 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
             context,
             requestCode ?: EXACT_ALARM_INTENT_REQUEST_CODE,
             intent,
-            flag ?: PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 }

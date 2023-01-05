@@ -9,12 +9,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,52 +24,88 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.StepsCountUiState
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
+import com.vn.wecare.feature.training.ui.walking.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun StepCountScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    moveToSetGoalScreen: () -> Unit,
     stepCountViewModel: StepCountViewModel,
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
-    Scaffold(
-        modifier = modifier,
-        backgroundColor = MaterialTheme.colors.secondaryVariant,
-        topBar = {
-            StepCountAppBar(modifier) { navigateUp() }
-        }) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = modifier.height(halfMidPadding))
-            Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
-            Spacer(modifier = modifier.height(halfMidPadding))
-            SetYourGoal(modifier = modifier) {
-                moveToSetGoalScreen()
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden
+    )
+
+    val showModalBottomSheet = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheetLayout(
+        sheetContent = {
+            SetYourStepCountGoalModalBottomSheetContent(
+                modifier = modifier,
+                onCloseClick = { scope.launch { bottomSheetState.hide() } },
+                stepCountViewModel = stepCountViewModel
+            )
+        }, sheetState = bottomSheetState
+    ) {
+        Scaffold(modifier = modifier,
+            backgroundColor = MaterialTheme.colors.secondaryVariant,
+            topBar = {
+                StepCountAppBar(
+                    modifier = modifier,
+                    stepCountViewModel = stepCountViewModel,
+                    navigateUp = navigateUp
+                )
+            }) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (stepsCountUiState.value.hasData) {
+                    Spacer(modifier = modifier.height(halfMidPadding))
+                    Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
+                    Spacer(modifier = modifier.height(halfMidPadding))
+                    SetYourGoal(modifier = modifier) {
+                        showModalBottomSheet.value = !showModalBottomSheet.value
+                        scope.launch { bottomSheetState.show() }
+                    }
+                    Spacer(modifier = modifier.height(halfMidPadding))
+                    DetailStatistic(
+                        modifier = modifier, hoursList = stepsCountUiState.value.hoursList
+                    )
+                    Spacer(modifier = modifier.height(halfMidPadding))
+                    HealthTip(modifier = modifier)
+                    Spacer(modifier = modifier.height(normalPadding))
+                } else {
+                    PageNotFound()
+                }
             }
-            Spacer(modifier = modifier.height(halfMidPadding))
-            DetailStatistic(modifier = modifier)
-            Spacer(modifier = modifier.height(halfMidPadding))
-            HealthTip(modifier = modifier)
-            Spacer(modifier = modifier.height(normalPadding))
         }
     }
 }
 
 @Composable
 fun StepCountAppBar(
-    modifier: Modifier,
-    navigateUp: () -> Unit,
+    modifier: Modifier, navigateUp: () -> Unit, stepCountViewModel: StepCountViewModel
 ) {
+
+    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
+
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -82,8 +120,13 @@ fun StepCountAppBar(
                 painter = painterResource(id = R.drawable.ic_arrow_back), contentDescription = null
             )
         }
-        Text(text = "Oct 12, 2022", style = MaterialTheme.typography.h4)
-        IconButton(onClick = {}) {
+        Text(text = stepsCountUiState.value.selectedDay, style = MaterialTheme.typography.h4)
+        IconButton(onClick = {
+            datePicker(
+                context = context,
+                updateDate = stepCountViewModel::onDaySelected,
+            ).show()
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_edit_calendar),
                 contentDescription = null
@@ -111,18 +154,23 @@ fun Overview(
                 modifier = modifier.padding(bottom = normalPadding)
             ) {
                 CircularProgressAnimated(
-                    size = 200.dp, currentValue = 75f, indicatorThickness = 20.dp
+                    size = 200.dp,
+                    currentValue = if (stepsCountUiState.currentSteps > stepsCountUiState.stepGoal) 100f
+                    else (stepsCountUiState.currentSteps.toFloat() / stepsCountUiState.stepGoal),
+                    indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 160.dp,
                     color = colorResource(id = R.color.Red400),
-                    currentValue = 30f,
+                    currentValue = if (stepsCountUiState.caloConsumed > stepsCountUiState.caloriesBurnedGoal) 100f
+                    else (stepsCountUiState.caloConsumed.toFloat() / stepsCountUiState.caloriesBurnedGoal),
                     indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 120.dp,
                     color = colorResource(id = R.color.Blue400),
-                    currentValue = 50f,
+                    currentValue = if (stepsCountUiState.moveMin > stepsCountUiState.moveTimeGoal) 100f
+                    else (stepsCountUiState.moveMin.toFloat() / stepsCountUiState.moveTimeGoal),
                     indicatorThickness = 20.dp
                 )
             }
@@ -140,7 +188,7 @@ fun Overview(
                     titleRes = R.string.footstep_title,
                     iconColorRes = R.color.Green500,
                     index = stepsCountUiState.currentSteps,
-                    goal = 12000,
+                    goal = stepsCountUiState.stepGoal,
                     unitRes = null,
                     modifier = modifier
                 )
@@ -148,8 +196,8 @@ fun Overview(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
-                    index = 0,
-                    goal = 1000,
+                    index = stepsCountUiState.caloConsumed,
+                    goal = stepsCountUiState.caloriesBurnedGoal,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
@@ -157,8 +205,8 @@ fun Overview(
                     iconRes = R.drawable.ic_time_clock,
                     titleRes = R.string.move_min_title,
                     iconColorRes = R.color.Blue400,
-                    index = 0,
-                    goal = 80,
+                    index = stepsCountUiState.moveMin,
+                    goal = stepsCountUiState.moveTimeGoal,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
                 )
@@ -235,14 +283,62 @@ fun HealthTip(
 }
 
 @Composable
-fun DetailStatistic(modifier: Modifier) {
+fun DetailStatistic(
+    modifier: Modifier, hoursList: List<StepsPerHour>
+) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = Shapes.small,
     ) {
-        val dataList = listOf<StepCountPerHour>()
         DailyBarChart(
-            modifier = modifier, dataList = dataList
+            modifier = modifier, dataList = hoursList
         )
+    }
+}
+
+@Composable
+fun SetYourStepCountGoalModalBottomSheetContent(
+    modifier: Modifier, onCloseClick: () -> Unit, stepCountViewModel: StepCountViewModel
+) {
+
+    var newStepsGoal: Int
+
+    Column(
+        modifier = modifier
+            .heightIn()
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.background)
+            .padding(horizontal = midPadding, vertical = mediumPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Steps", style = MaterialTheme.typography.h3)
+        newStepsGoal = numberPickerSpinner(modifier = modifier, max = 50000, min = 1000)
+        Row(
+            modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            OutlinedButton(
+                modifier = modifier
+                    .weight(1f)
+                    .padding(end = smallPadding)
+                    .height(40.dp),
+                onClick = { onCloseClick() },
+                shape = RoundedCornerShape(mediumRadius)
+            ) {
+                Text(text = stringResource(id = R.string.close_dialog_title))
+            }
+            Button(
+                modifier = modifier
+                    .weight(1f)
+                    .padding(start = smallPadding)
+                    .height(40.dp),
+                onClick = {
+                    stepCountViewModel.updateGoal(newStepsGoal)
+                    onCloseClick()
+                },
+                shape = RoundedCornerShape(mediumRadius)
+            ) {
+                Text(text = stringResource(id = R.string.okay_dialog_title))
+            }
+        }
     }
 }

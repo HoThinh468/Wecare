@@ -1,10 +1,16 @@
 package com.vn.wecare.utils
 
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
 
 fun getEndOfTheDayMilliseconds(): Long {
+    val now = LocalDateTime.now()
+    val dateTime = java.util.Date(
+        now.year,
+        now.monthValue + 1,
+        now.dayOfMonth,
+        23,
+        59
+    )
+    return dateTime.time
 //    return LocalDateTime.now().with(LocalTime.MAX).toInstant(OffsetDateTime.now().offset).toEpochMilli()
-    return System.currentTimeMillis()
 }

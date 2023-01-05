@@ -27,7 +27,6 @@ fun WaterOverviewHomeCard(
             .fillMaxWidth()
             .padding(top = smallPadding),
         elevation = smallElevation,
-        onClick = onCardClick,
         shape = Shapes.small,
     ) {
         Row(
@@ -42,31 +41,28 @@ fun WaterOverviewHomeCard(
                     text = stringResource(id = R.string.water),
                     style = MaterialTheme.typography.h4,
                 )
-                Text(
-                    modifier = modifier.padding(top = smallPadding),
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = colorResource(id = R.color.Blue400),
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 32.sp,
-                                fontFamily = OpenSans
-                            )
-                        ) {
-                            append("1600")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = colorResource(id = R.color.Black450),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp,
-                                fontFamily = OpenSans
-                            )
-                        ) {
-                            append("/2000 ml")
-                        }
+                Text(modifier = modifier.padding(top = smallPadding), text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = colorResource(id = R.color.Blue400),
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 32.sp,
+                            fontFamily = OpenSans
+                        )
+                    ) {
+                        append("0")
                     }
-                )
+                    withStyle(
+                        style = SpanStyle(
+                            color = colorResource(id = R.color.Black450),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            fontFamily = OpenSans
+                        )
+                    ) {
+                        append("/0 ml")
+                    }
+                })
             }
             Row {
                 IconButton(onClick = {}) {

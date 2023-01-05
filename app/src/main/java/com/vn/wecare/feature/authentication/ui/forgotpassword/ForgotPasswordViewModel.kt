@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.authentication.ui.forgotpassword
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,9 +38,14 @@ class ForgotPasswordViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            if (accountService.sendRecoveryEmail(email) == AuthenticationResult.SUCCESS) {
-                clearInformation()
-                moveToSendSuccessScreen()
+            accountService.sendRecoveryEmail(email).collect {
+                if (it == AuthenticationResult.SUCCESS) {
+                    clearInformation()
+                    moveToSendSuccessScreen()
+                } else {
+                    // Todo Show a dialog to notify users
+                    Log.d("LogIn res: ", "fail")
+                }
             }
         }
     }

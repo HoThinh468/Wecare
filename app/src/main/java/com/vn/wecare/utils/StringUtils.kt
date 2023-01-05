@@ -1,9 +1,11 @@
 package com.vn.wecare.utils
 
 import android.util.Patterns
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
@@ -44,4 +46,21 @@ fun String.isValidPassword(): Boolean {
 
 fun String.passwordMatches(repeated: String): Boolean {
     return this == repeated
+}
+
+fun getMonthPrefix(month: Int) : String {
+    return when(month) {
+        1 -> "Jan"
+        2 -> "Feb"
+        3 -> "Mar"
+        4 -> "Apr"
+        5 -> "May"
+        6 -> "Jun"
+        7 -> "Jul"
+        8 -> "Aug"
+        9 -> "Sep"
+        10 -> "Oct"
+        11 -> "Nov"
+        else -> "Dec"
+    }
 }

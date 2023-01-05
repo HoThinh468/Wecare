@@ -182,7 +182,6 @@ fun SignInScreen(
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colors.primary
                 )
-
             }
         }
     }

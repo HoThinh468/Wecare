@@ -1,5 +1,7 @@
 package com.vn.wecare.feature.authentication.ui.login.view
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
@@ -8,6 +10,9 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
 import com.vn.wecare.feature.authentication.ui.login.LoginViewModel
+import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
+import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
+import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
 
 class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBinding::inflate) {
 
@@ -24,5 +29,19 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
                 viewModel = loginViewModel,
                 moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) })
         }
+    }
+
+    override fun setupWhatNeeded() {
+        super.setupWhatNeeded()
+        val sharePref =
+            requireActivity().getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
+        Log.d(
+            "Login page latest step count: ", sharePref.getFloat(LATEST_STEPS_COUNT, 0f).toString()
+        )
+        Log.d(
+            "Login page previous total sensor step count: ", sharePref.getFloat(
+                PREVIOUS_TOTAL_SENSOR_STEPS, 0f
+            ).toString()
+        )
     }
 }
