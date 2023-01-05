@@ -9,10 +9,10 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun TimerWidget(
+fun timerWidget(
     modifier: Modifier,
     onResume: Boolean,
-) {
+): Int{
     var ticks by remember { mutableStateOf(0) }
     var onTimerResume by remember { mutableStateOf(onResume) }
     onTimerResume = !onResume
@@ -24,6 +24,7 @@ fun TimerWidget(
         }
     }
     CalculateTime(ticks = ticks)
+    return ticks
 }
 
 @Composable

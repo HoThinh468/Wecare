@@ -1,15 +1,10 @@
 package com.vn.wecare.feature.training.onWalking
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,21 +12,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.mapbox.navigation.core.MapboxNavigation
 import com.vn.wecare.R
-import com.vn.wecare.feature.training.dashboard.TopBar
-import com.vn.wecare.feature.training.view_route.widget.HistoryFilesDirectory
-import com.vn.wecare.feature.training.widget.ClockWidget
-import com.vn.wecare.feature.training.widget.TimerWidget
-import com.vn.wecare.ui.theme.*
-import com.vn.wecare.feature.training.widget.CustomAlertDialog
-import okio.Path.Companion.toPath
+import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
+import com.vn.wecare.feature.training.utils.UserAction
+import com.vn.wecare.feature.training.utils.convertUserActionToString
+import com.vn.wecare.feature.training.utils.stringWith2Decimals
+import com.vn.wecare.feature.training.widget.timerWidget
+import com.vn.wecare.ui.theme.Green500
+import com.vn.wecare.ui.theme.Grey500
+import com.vn.wecare.ui.theme.mediumRadius
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 
 enum class UserTarget {
     distance, time, calo, none
@@ -42,10 +36,35 @@ fun OnWalkingScreen(
     modifier: Modifier = Modifier,
     userTarget: UserTarget,
     mapboxNavigation: MapboxNavigation,
-    onNavigateToSuccess: () -> Unit
+    onNavigateToSuccess: () -> Unit,
+    viewModel : OnWalkingViewModel,
+    userAction: UserAction
 ) {
     var onResume by remember { mutableStateOf(true) }
     var openDialog by remember { mutableStateOf(false) }
+    var duration by remember { mutableStateOf(0) }
+    var distance by remember { mutableStateOf(viewModel.distance) }
+    var kcal by remember { mutableStateOf(viewModel.kcal) }
+
+    LifecycleEventObserver{_, event ->
+        when (event) {
+            Lifecycle.Event.ON_DESTROY -> {
+                onResume = true
+                openDialog = false
+                duration = 0
+                distance = mutableStateOf(0.0)
+                kcal = mutableStateOf(0.0)
+            }
+            Lifecycle.Event.ON_STOP -> {
+                onResume = true
+                openDialog = false
+                duration = 0
+                distance = mutableStateOf(0.0)
+                kcal = mutableStateOf(0.0)
+            }
+            else -> {}
+        }
+    }
 
     mapboxNavigation.historyRecorder.startRecording()
 
@@ -80,6 +99,15 @@ fun OnWalkingScreen(
                             }
                         }
                     }
+                    viewModel.addTrainingHistory(
+                        TrainingHistory(
+                            convertUserActionToString(userAction),
+                            System.currentTimeMillis(),
+                            duration,
+                            stringWith2Decimals(kcal.value).toDouble(),
+                            stringWith2Decimals(distance.value).toDouble()
+                        )
+                    )
                     onNavigateToSuccess()
                 }) {
                     Text(stringResource(id = R.string.button_confirm))
@@ -109,10 +137,10 @@ fun OnWalkingScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //ClockWidget(modifier = modifier.padding(64.dp))
-                when (userTarget) {
-                    UserTarget.distance -> TargetDistance(modifier = modifier, onResume = onResume)
-                    UserTarget.calo -> TargetCalorie(modifier = modifier, onResume = onResume)
-                    else -> TargetTime(modifier = modifier, onResume = onResume)
+                duration = when (userTarget) {
+                    UserTarget.distance -> targetDistance(modifier = modifier, onResume = onResume, distance.value, kcal.value)
+                    UserTarget.calo -> targetCalorie(modifier = modifier, onResume = onResume, distance.value, kcal.value)
+                    else -> targetTime(modifier = modifier, onResume = onResume, distance.value, kcal.value)
                 }
                 Spacer(
                     modifier = modifier
@@ -129,10 +157,16 @@ fun OnWalkingScreen(
 }
 
 @Composable
-fun TargetDistance(
+fun targetDistance(
     modifier: Modifier,
-    onResume: Boolean
-) {
+    onResume: Boolean,
+    distance: Double,
+    kcal: Double
+): Int {
+    var duration by remember {
+        mutableStateOf(0)
+    }
+
     Column(
         modifier = modifier
             .height(200.dp)
@@ -141,7 +175,7 @@ fun TargetDistance(
     ) {
         Text(text = "Distance", modifier = modifier.padding(4.dp))
         Text(
-            text = "00.00.00",
+            text = stringWith2Decimals(distance) + " Km",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = modifier.padding(4.dp)
@@ -164,7 +198,7 @@ fun TargetDistance(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Time", modifier = modifier.padding(4.dp))
-                TimerWidget(
+                duration = timerWidget(
                     modifier = modifier.padding(8.dp),
                     onResume = onResume
                 )
@@ -182,7 +216,7 @@ fun TargetDistance(
             ) {
                 Text(text = "Calories", modifier = modifier.padding(4.dp))
                 Text(
-                    text = "00.00.00",
+                    text = stringWith2Decimals(kcal),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = modifier.padding(8.dp)
@@ -190,13 +224,19 @@ fun TargetDistance(
             }
         }
     }
+    return duration
 }
 
 @Composable
-fun TargetTime(
+fun targetTime(
     modifier: Modifier,
-    onResume: Boolean
-) {
+    onResume: Boolean,
+    distance: Double,
+    kcal: Double
+) : Int {
+    var duration by remember {
+        mutableStateOf(0)
+    }
     Column(
         modifier = modifier
             .height(200.dp)
@@ -204,7 +244,7 @@ fun TargetTime(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Time", modifier = modifier.padding(4.dp))
-        TimerWidget(
+        duration = timerWidget(
             modifier = modifier.padding(8.dp),
             onResume = onResume
         )
@@ -227,7 +267,7 @@ fun TargetTime(
             ) {
                 Text(text = "Distance", modifier = modifier.padding(4.dp))
                 Text(
-                    text = "00.00.00",
+                    text = stringWith2Decimals(distance),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = modifier.padding(4.dp)
@@ -246,7 +286,7 @@ fun TargetTime(
             ) {
                 Text(text = "Calories", modifier = modifier.padding(4.dp))
                 Text(
-                    text = "00.00.00",
+                    text = stringWith2Decimals(kcal),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = modifier.padding(8.dp)
@@ -254,13 +294,19 @@ fun TargetTime(
             }
         }
     }
+    return duration
 }
 
 @Composable
-fun TargetCalorie(
+fun targetCalorie(
     modifier: Modifier,
-    onResume: Boolean
-) {
+    onResume: Boolean,
+    distance: Double,
+    kcal: Double
+) : Int {
+    var duration by remember {
+        mutableStateOf(0)
+    }
     Column(
         modifier = modifier
             .height(200.dp)
@@ -269,7 +315,7 @@ fun TargetCalorie(
     ) {
         Text(text = "Calories", modifier = modifier.padding(4.dp))
         Text(
-            text = "00.00.00",
+            text = stringWith2Decimals(kcal),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = modifier.padding(8.dp)
@@ -293,7 +339,7 @@ fun TargetCalorie(
             ) {
                 Text(text = "Distance", modifier = modifier.padding(4.dp))
                 Text(
-                    text = "00.00.00",
+                    text = stringWith2Decimals(distance),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = modifier.padding(4.dp)
@@ -311,13 +357,14 @@ fun TargetCalorie(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Time", modifier = modifier.padding(4.dp))
-                TimerWidget(
+                duration = timerWidget(
                     modifier = modifier.padding(8.dp),
                     onResume = onResume
                 )
             }
         }
     }
+    return duration
 }
 
 @Composable

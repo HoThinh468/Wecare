@@ -3,6 +3,8 @@ package com.vn.wecare.feature.training.dashboard.widget
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -18,11 +20,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vn.wecare.feature.training.dashboard.TrainingViewModel
+import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
 import com.vn.wecare.feature.training.utils.secondToHourUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
 import com.vn.wecare.ui.theme.Black900
+import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
 import java.util.Calendar
+
+
+@Composable
+fun WeeklyCheck(
+    viewModel: TrainingViewModel = hiltViewModel(),
+    weeklyContents: @Composable (weeklyCheck: List<Int>) -> Unit
+) {
+    when (val weeklyCheck = viewModel.weeklyCheckResponse) {
+        is Response.Loading -> ProgressBar()
+        is Response.Success -> weeklyContents(weeklyCheck.data)
+        is Response.Error -> print(weeklyCheck.e)
+    }
+}
 
 @Composable
 fun CheckingWeeklySummarySection(
@@ -48,16 +68,26 @@ fun CheckingWeeklySummarySection(
     ) {
         Column(
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = modifier.padding(top = 16.dp, start = 16.dp),
+                modifier = modifier.padding(top = 16.dp),
                 text = "This Week",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black900
             )
-            TrainingCalendar(modifier = modifier, startDate = firstDateOfWeek, endDate = firstDateOfWeek + 6)
+            WeeklyCheck(
+                weeklyContents = { checks ->
+                    TrainingCalendar(
+                        modifier = modifier,
+                        checks = checks,
+                        startDate = firstDateOfWeek,
+                        endDate = firstDateOfWeek + 6
+                    )
+                }
+            )
             Box(
                 modifier = modifier
                     .padding(start = 16.dp, end = 16.dp)
@@ -103,19 +133,58 @@ fun CalendarDayItem(
 }
 
 @Composable
+fun CalendarTrainedDayItem(
+    modifier: Modifier,
+    date: Int,
+) {
+    Card(
+        modifier = modifier
+            .width(30.dp)
+            .height(50.dp)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colors.primary,
+                shape = RoundedCornerShape(12.dp)
+            ),
+        shape = RoundedCornerShape(12.dp),
+        backgroundColor = Green500,
+        content = {
+            Text(
+                modifier = modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(
+                        align = Alignment.CenterVertically
+                    ),
+                textAlign = TextAlign.Center,
+                text = "$date",
+                color = Color.White,
+                fontSize = 16.sp
+            )
+        }
+    )
+}
+
+@Composable
 fun TrainingCalendar(
     modifier: Modifier,
+    checks: List<Int>,
     startDate: Int,
     endDate: Int
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp, 8.dp, 8.dp, 16.dp),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        for (i in startDate..endDate) {
-            CalendarDayItem(modifier = modifier, date = i + 1)
+    Box() {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp, 8.dp, 8.dp, 16.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            for (i in startDate..endDate) {
+                if(checks.contains(i+1)) {
+                    CalendarTrainedDayItem(modifier = modifier, date = i+1 )
+                } else {
+                    CalendarDayItem(modifier = modifier, date = i+1)
+                }
+            }
         }
     }
 }
