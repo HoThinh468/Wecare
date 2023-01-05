@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Wecare</string>
 
+    <!-- Common -->
+    <string name="page_not_found_message">Sorry, we cannot find anything!</string>
+
     <!-- Bottom navigation bar title -->
     <string name="home_title">Home</string>
     <string name="training_title">Training</string>
@@ -12,6 +15,7 @@
     <string name="footstep_title">Steps</string>
     <string name="calo_amount_title">Calo</string>
     <string name="move_min_title">Time</string>
+    <string name="footstep_unit">steps</string>
     <string name="calo_unit">kcal</string>
     <string name="move_time_unit">min</string>
 
@@ -41,4 +45,59 @@
     <string name="step_health_tip">Walking at least 8000 steps a day is good for your health. The best time to walk is in the morning.</string>
 
     <!-- Set goals in step count -->
+    <string name="okay_dialog_title">OKAY</string>
+    <string name="close_dialog_title">CLOSE</string>
+
+    <!-- Permissions content -->
+    <string name="permission_dialog_title">We need your permission</string>
+    <string name="rationale_message">To use this functionality, you will need to give us the permission.</string>
+    <string name="give_permission_button_title">GIVE PERMISSION</string>
+    <string name="no_motion_sensor_warning">No sensor detected on this device!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Account content -->
+    <string name="change_password">Change your password</string>
+    <string name="edit_information">Edit your information</string>
+    <string name="about_us">About us</string>
+    <string name="logout">Logout</string>
+
+
+    <string name="mapbox_access_token">pk.eyJ1IjoidHJ1bmdsZTI2MDgiLCJhIjoiY2xhbW9obzR6MGk5djN3cXZpaHRtMHdneSJ9.1GAlFWxdPIDrPGuuC_zRyg</string>
+    <string name="get_location_button">Get Location Button</string>
+
+    <!--    walking fragment-->
+    <string name="button_go">GO</string>
+    <string name="button_stop">STOP</string>
+    <string name="button_pause">PAUSE</string>
+    <string name="button_confirm">CONFIRM</string>
+    <string name="button_cancel">CANCEL</string>
+    <string name="stop_confirm_title">Are you sure to stop?</string>
+    <string name="congratulation">CONGRATULATION</string>
+    <string name="you_have_passed_the_target">You have passed the target!!!</string>
+    <string name="button_exit">EXIT</string>
+    <string name="button_view">VIEW ROUTE</string>
+    <string name="select_history" translatable="false">Select history</string>
+    <string name="play_history" translatable="false">Play history</string>
+    <string name="paused">Paused</string>
+    <string name="history_failed_to_load_list" translatable="false">Failed to load list</string>
+    <string name="history_failed_to_load_item" translatable="false">History failed to load item</string>
+    <string name="history_local_history_file" translatable="false">Local history file</string>
+    <string name="history_recorded_history_file" translatable="false">Recorded history file</string>
+    <string name="replay_playback_speed_seekbar" translatable="false">Replay speed %d</string>
+
+    <!-- Authentication section -->
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="email_error">Please insert a valid email.</string>
+    <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
+    <string name="password_match_error">Passwords do not match.</string>
+    <string name="empty_password_error">Password cannot be empty.</string>
+    <string name="empty_username_error">Username cannot be empty.</string>
+    <string name="forgot_password_message">Forgot your password? Enter your email below to receive recovery email</string>
+    <string name="send_recovery_email_message">Check your inbox to reset your password!</string>
+
+    <string name="email_hint">Enter your email</string>
+    <string name="username_hint">Enter your username</string>
+    <string name="password_hint">Enter your password</string>
+
 </resources>

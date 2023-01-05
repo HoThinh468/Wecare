@@ -1,5 +1,7 @@
 package com.vn.wecare.feature
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -12,23 +14,16 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.vn.wecare.core_navigation.NavigationBarScreen
-import com.vn.wecare.core_navigation.WecareNavGraph
+import com.vn.wecare.core.navigation.NavigationBarScreen
 
+@RequiresApi(Build.VERSION_CODES.Q)
+@ExperimentalMaterialApi
 @Composable
 fun WecareApp(navController: NavHostController) {
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) }
-    ) {
-        // Add wecare nav graph which contains nav host
-        WecareNavGraph(navHostController = navController)
-    }
 }
 
 private val items = listOf(
-    NavigationBarScreen.Home,
-    NavigationBarScreen.Training,
-    NavigationBarScreen.Account
+    NavigationBarScreen.Home, NavigationBarScreen.Training, NavigationBarScreen.Account
 )
 
 @Composable
@@ -50,13 +45,11 @@ fun BottomNavigationBar(navController: NavHostController) {
     // If current destination is in the main tabs then show the bottom nav bar
     if (isMainTab(navController)) {
         BottomNavigation(
-            backgroundColor = Color.White,
-            contentColor = MaterialTheme.colors.primary
+            backgroundColor = Color.White, contentColor = MaterialTheme.colors.primary
         ) {
             items.forEach {
                 AddItem(
-                    item = it,
-                    navController = navController
+                    item = it, navController = navController
                 )
             }
         }
@@ -65,8 +58,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 @Composable
 fun RowScope.AddItem(
-    item: NavigationBarScreen,
-    navController: NavHostController
+    item: NavigationBarScreen, navController: NavHostController
 ) {
     val isCurrentTabSelected =
         getCurrentDestination(navController = navController)?.hierarchy?.any {
@@ -76,8 +68,7 @@ fun RowScope.AddItem(
     BottomNavigationItem(
         label = {
             Text(
-                text = stringResource(id = item.title),
-                style = MaterialTheme.typography.caption
+                text = stringResource(id = item.title), style = MaterialTheme.typography.caption
             )
         },
         alwaysShowLabel = true,
@@ -85,8 +76,7 @@ fun RowScope.AddItem(
             Icon(
                 painter = painterResource(
                     id = if (isCurrentTabSelected) item.selectedIcon else item.icon
-                ),
-                contentDescription = null
+                ), contentDescription = null
             )
         },
         selected = isCurrentTabSelected,

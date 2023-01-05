@@ -16,20 +16,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.ui.theme.*
-
-data class StepCountPerHour(
-    val hour: Int,
-    val value: Int,
-)
 
 @Composable
 fun DailyBarChart(
-    modifier: Modifier,
-    color: Color = MaterialTheme.colors.primary,
-    dataList: List<StepCountPerHour>
+    modifier: Modifier, color: Color = MaterialTheme.colors.primary, dataList: List<StepsPerHour>
 ) {
-    val maxValue = dataList.maxOf { it.value }
+    val maxValue = if (dataList.isNotEmpty()) dataList.maxOf { it.steps } else 0
 
     Box(
         modifier = modifier
@@ -46,8 +40,7 @@ fun DailyBarChart(
             horizontalAlignment = Alignment.End
         ) {
             Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
             ) {
                 Text(text = "$maxValue", style = MaterialTheme.typography.caption)
                 Divider(
@@ -57,13 +50,11 @@ fun DailyBarChart(
                 )
             }
             Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
             ) {
                 Text(text = "${maxValue / 2}", style = MaterialTheme.typography.caption)
                 Divider(
-                    modifier = modifier
-                        .fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     color = colorResource(id = R.color.Grey100),
                     thickness = 1.dp
                 )
@@ -76,36 +67,28 @@ fun DailyBarChart(
                 .fillMaxHeight()
                 .align(Alignment.CenterStart)
                 .padding(
-                    bottom = midPadding,
-                    end = if (maxValue >= 10000) xxxExtraPadding
+                    bottom = midPadding, end = if (maxValue >= 10000) xxxExtraPadding
                     else if (maxValue >= 1000) xxExtraPadding
-                    else extraLargePadding,
-                    start = normalPadding
+                    else extraLargePadding, start = normalPadding
                 ),
         ) {
             Row(
                 modifier = modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .horizontalScroll(rememberScrollState()),
-                verticalAlignment = Alignment.Bottom
+                    .horizontalScroll(rememberScrollState()), verticalAlignment = Alignment.Bottom
             ) {
                 dataList.forEach {
                     Column(
-                        modifier = modifier
-                            .padding(end = smallPadding),
+                        modifier = modifier.padding(end = smallPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
-                            modifier = modifier
-                                .padding(bottom = tinyPadding)
-                                .width(10.dp)
-                                // TODO: Move the calculation below to view model
-                                .height(((it.value.toFloat() / maxValue.toFloat()) * 200).dp)
-                                .clip(RoundedCornerShape(smallRadius))
-                                .background(color),
+                            modifier = modifier.padding(bottom = tinyPadding).width(10.dp)
+                                .height(((it.steps.toFloat() / maxValue.toFloat()) * 200).dp)
+                                .clip(RoundedCornerShape(smallRadius)).background(color),
                         )
-                        Text(text = "${it.hour}:00", style = MaterialTheme.typography.caption)
+                        Text(text = "$:00", style = MaterialTheme.typography.caption)
                     }
                 }
             }

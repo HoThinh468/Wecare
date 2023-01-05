@@ -7,8 +7,8 @@ import androidx.compose.ui.unit.dp
  */
 val tinyPadding = 4.dp
 val smallPadding = 8.dp
-val normalPadding = 16.dp
 val halfMidPadding = 12.dp
+val normalPadding = 16.dp
 val midPadding = 20.dp
 val mediumPadding = 24.dp
 val largePadding = 32.dp
@@ -32,3 +32,4 @@ val smallElevation = 4.dp
  * Corner radius
  */
 val smallRadius = 10.dp
+val mediumRadius = 24.dp

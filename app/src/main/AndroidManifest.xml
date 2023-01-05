@@ -3,7 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.vn.wecare">
 
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
+
     <application
+        android:name=".WecareApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,22 +22,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wecare"
         tools:targetApi="31">
-        <activity
-            android:name=".SignInScreen"
-            android:exported="false"
-            android:label="@string/title_activity_sign_in_screen"
-            android:theme="@style/Theme.Wecare" />
+
+        <activity android:name=".feature.training.view_route.widget.HistoryFilesActivity"
+            android:theme="@style/Theme.Wecare"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Wecare">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Add intent filter to handle permission rationale intent -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+
         </activity>
+
+        <!-- Declare BroadcastReceiver for an exact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountExactAlarmBroadCastReceiver" />
+
+        <!-- Declare BroadcastReceiver for an inexact alarm -->
+        <receiver android:name=".feature.home.step_count.alarm.StepCountInExactAlarmBroadcastReceiver" />
+
     </application>
+
+    <!-- declare Health Connect visibility -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
 </manifest>

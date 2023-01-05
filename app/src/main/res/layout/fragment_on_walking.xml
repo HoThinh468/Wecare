@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".feature.training.onWalking.OnWalkingFragment">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/app_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/mapView"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.mapbox.maps.MapView
+        xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.6"
+        mapbox:mapbox_cameraTargetLat="40.7128"
+        mapbox:mapbox_cameraTargetLng="-74.0060"
+        mapbox:mapbox_cameraZoom="9.0"
+        mapbox:layout_constraintStart_toEndOf="@id/app_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@id/app_bar"
+        />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mapView"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

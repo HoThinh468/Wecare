@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.vn.wecare.core_navigation.AccountRoutes
+import com.vn.wecare.core.navigation.AccountRoutes
 
 fun NavGraphBuilder.accountNavGraph(navHostController: NavHostController) {
     navigation(
@@ -12,7 +12,6 @@ fun NavGraphBuilder.accountNavGraph(navHostController: NavHostController) {
         startDestination = AccountRoutes.accountDes
     ) {
         composable(route = AccountRoutes.accountDes) {
-            AccountScreen()
         }
     }
 }
