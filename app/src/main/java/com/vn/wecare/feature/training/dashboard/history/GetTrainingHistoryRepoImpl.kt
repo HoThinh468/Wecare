@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -62,7 +63,6 @@ class TrainingHistoryRepoImpl @Inject constructor (
             Log.e("response add training history", "Error: $e")
             Response.Error(e)
         }
-
     }
 
     override fun getWeeklyCheck()= callbackFlow {
@@ -89,5 +89,25 @@ class TrainingHistoryRepoImpl @Inject constructor (
             snapshotListener.remove()
         }
     }
+
+    override suspend fun addTrainedDate(): Response<Boolean> {
+        return try {
+            Firebase.firestore
+                .collection("training_history")
+                .document(Firebase.auth.currentUser!!.uid)
+                .collection(formatCurrentMonth())
+                .document(LocalDateTime.now().dayOfMonth.toString())
+                .set(CustomDate(LocalDateTime.now().dayOfMonth))
+                .await()
+            Log.e("response add trained date", "Success")
+            Response.Success(true)
+        } catch (e: Exception) {
+            Log.e("response add trained date", "Error: $e")
+            Response.Error(e)
+        }
+    }
 }
 
+data class CustomDate(
+    val date: Int = 0
+)

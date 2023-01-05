@@ -18,6 +18,9 @@ class OnWalkingViewModel @Inject constructor(
     var addTrainingHistoryResponse by mutableStateOf<Response<Boolean>>(Response.Loading)
         private set
 
+    var addTrainedDateResponse by mutableStateOf<Response<Boolean>>(Response.Loading)
+        private set
+
     private var _distance = mutableStateOf(0.0)
     val distance: State<Double>
         get() = _distance
@@ -29,6 +32,11 @@ class OnWalkingViewModel @Inject constructor(
     fun addTrainingHistory(history: TrainingHistory) = viewModelScope.launch {
         addTrainingHistoryResponse = Response.Loading
         useCases.addTrainingHistory(history)
+    }
+
+    fun addTrainedDate() = viewModelScope.launch {
+        addTrainedDateResponse = Response.Loading
+        useCases.addTrainedDate()
     }
 
     fun updateNewDistance(newDistance: Double) {

@@ -8,4 +8,5 @@ interface TrainingHistoryRepo {
     fun getTrainingHistoryFromFireStore(): Flow<Response<List<TrainingHistory>>>
     suspend fun addTrainingHistory(history: TrainingHistory): Response<Boolean>
     fun getWeeklyCheck() : Flow<Response<List<Int>>>
+    suspend fun addTrainedDate(): Response<Boolean>
 }
