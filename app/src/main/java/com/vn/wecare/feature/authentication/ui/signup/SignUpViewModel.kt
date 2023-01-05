@@ -83,7 +83,7 @@ class SignUpViewModel @Inject constructor(
         )
     }
 
-    private fun clearSignUpInformation() {
+    fun clearSignUpInformation() {
         signUpUiState.value = signUpUiState.value.copy(
             email = "", userName = "", password = "", isPasswordShow = false
         )

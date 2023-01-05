@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".feature.training.ui.done_training.DoneFragment">
+    tools:context=".feature.training.done_training.DoneFragment">
 
     <TextView
         android:layout_width="wrap_content"

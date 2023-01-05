@@ -2,6 +2,7 @@ package com.vn.wecare.feature.home
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
@@ -136,7 +139,7 @@ fun TrainingNow(
                     modifier = modifier,
                     iconRes = R.drawable.ic_walk,
                     trainingTitleRes = R.string.training_walk_title,
-                    onClick = onWalkingIcClick
+                    onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid )}
                 )
                 CustomOutlinedIconButton(
                     modifier = modifier,
