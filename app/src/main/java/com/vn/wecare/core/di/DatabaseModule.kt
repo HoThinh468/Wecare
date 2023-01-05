@@ -3,6 +3,7 @@ package com.vn.wecare.core.di
 import android.content.Context
 import androidx.room.Room
 import com.vn.wecare.core.data.WecareDatabase
+import com.vn.wecare.feature.account.data.dao.UserDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import dagger.Module
@@ -34,5 +35,10 @@ object DatabaseModule {
     @Provides
     fun provideStepsPerDayDao(database: WecareDatabase): StepsPerDayDao {
         return database.stepsPerDayDao()
+    }
+
+    @Provides
+    fun provideUserDao(database: WecareDatabase) : UserDao {
+        return database.userDao()
     }
 }

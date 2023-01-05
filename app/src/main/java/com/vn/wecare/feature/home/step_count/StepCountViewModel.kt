@@ -62,24 +62,24 @@ class StepCountViewModel @Inject constructor(
         if (getCurrentDayId() == getDayId(dayOfMonth, month, year)) {
             updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
         } else {
-            viewModelScope.launch {
-                getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
-                    .collect { stepsPerDay ->
-                        if (stepsPerDay != null) {
-                            _stepsCountUiState.update { ui ->
-                                ui.copy(
-                                    currentSteps = stepsPerDay.steps,
-                                    caloConsumed = stepsPerDay.toModel().calories,
-                                    moveMin = stepsPerDay.toModel().moveTime,
-                                    hasData = true
-                                )
-                            }
-                        } else {
-                            _stepsCountUiState.update {
-                                it.copy(hasData = false)
-                            }
+        viewModelScope.launch {
+            getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
+                .collect { stepsPerDay ->
+                    if (stepsPerDay != null) {
+                        _stepsCountUiState.update { ui ->
+                            ui.copy(
+                                currentSteps = stepsPerDay.steps,
+                                caloConsumed = stepsPerDay.toModel().calories,
+                                moveMin = stepsPerDay.toModel().moveTime,
+                                hasData = true
+                            )
+                        }
+                    } else {
+                        _stepsCountUiState.update {
+                            it.copy(hasData = false)
                         }
                     }
+                }
             }
         }
     }

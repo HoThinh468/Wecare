@@ -17,6 +17,6 @@ interface StepsPerDayDao {
     @Query("DELETE FROM steps_per_day")
     suspend fun deleteAllDays()
 
-    @Query("SELECT * FROM steps_per_day where dayId = :dayId")
+    @Query("SELECT * FROM steps_per_day WHERE dayId = :dayId")
     fun getStepsPerDay(vararg dayId: String): Flow<StepsPerDayEntity?>
 }

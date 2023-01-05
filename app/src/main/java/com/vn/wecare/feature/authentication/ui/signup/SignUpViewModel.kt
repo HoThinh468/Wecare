@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.snackbar.SnackbarManager
+import com.vn.wecare.feature.account.usecase.CreateNewWecareUserUsecase
 import com.vn.wecare.feature.authentication.ui.service.AccountService
 import com.vn.wecare.feature.authentication.ui.service.AuthenticationResult
 import com.vn.wecare.utils.isValidEmail
@@ -22,7 +23,8 @@ data class SignUpUiState(
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val createNewWecareUserUsecase: CreateNewWecareUserUsecase
 ) : ViewModel() {
     var signUpUiState = mutableStateOf(SignUpUiState())
         private set
@@ -62,6 +64,9 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             accountService.createAccount(email, password).collect {
                 if (it == AuthenticationResult.SUCCESS) {
+                    createNewWecareUserUsecase.createNewWecareUser(
+                        accountService.currentUserId, email, userName
+                    )
                     moveToHomeScreen()
                     clearSignUpInformation()
                 } else {

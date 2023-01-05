@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -15,6 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.account.AccountUiState
+import com.vn.wecare.feature.account.AccountViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CardListTile
 
@@ -23,13 +26,17 @@ import com.vn.wecare.utils.common_composable.CardListTile
 fun AccountScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    onSignOutClick: () -> Unit
+    onSignOutClick: () -> Unit,
+    viewModel: AccountViewModel,
 ) {
+
+    val uiState by viewModel.accountUiState
+
     Scaffold(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
-            AccountHeader(modifier = modifier) { navigateUp() }
+            AccountHeader(modifier = modifier, uiState = uiState, navigateUp = { navigateUp() })
         },
     ) {
         Column(
@@ -39,8 +46,7 @@ fun AccountScreen(
                 .padding(halfMidPadding),
         ) {
             AccountBody(
-                modifier = modifier,
-                onSignOutClick =  onSignOutClick
+                modifier = modifier, onSignOutClick = onSignOutClick
             )
         }
     }
@@ -48,7 +54,7 @@ fun AccountScreen(
 
 @Composable
 fun AccountHeader(
-    modifier: Modifier, navigateUp: () -> Unit
+    modifier: Modifier, navigateUp: () -> Unit, uiState: AccountUiState
 ) {
     Column(
         modifier = modifier
@@ -91,9 +97,9 @@ fun AccountHeader(
                 color = MaterialTheme.colors.onPrimary
             )
         }
-        Text(text = "Thinh Ho", style = MaterialTheme.typography.h3)
+        Text(text = uiState.username, style = MaterialTheme.typography.h3)
         Text(
-            text = "htt@gmail.com", style = MaterialTheme.typography.body1, color = colorResource(
+            text = uiState.email, style = MaterialTheme.typography.body1, color = colorResource(
                 id = R.color.Black450
             ), modifier = modifier.padding(bottom = normalPadding)
         )
@@ -102,8 +108,7 @@ fun AccountHeader(
 
 @Composable
 fun AccountBody(
-    modifier: Modifier,
-    onSignOutClick: () -> Unit
+    modifier: Modifier, onSignOutClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),

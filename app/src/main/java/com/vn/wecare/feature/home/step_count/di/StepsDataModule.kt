@@ -4,7 +4,6 @@ import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.step_count.data.datasource.local.LocalStepPerHourDatasource
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,7 +43,7 @@ object StepsPerHourRepositoryModule {
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): StepsPerHoursRepository {
         return StepsPerHoursRepository(
-            stepPerHourDatasource, ioDispatcher
+            stepPerHourDatasource
         )
     }
 
