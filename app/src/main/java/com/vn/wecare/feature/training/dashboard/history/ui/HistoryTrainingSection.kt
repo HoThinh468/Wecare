@@ -1,7 +1,9 @@
-package com.vn.wecare.feature.training.dashboard.widget
+package com.vn.wecare.feature.training.dashboard.history.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,12 +23,28 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vn.wecare.feature.training.utils.UserAction
-import com.vn.wecare.feature.training.utils.secondToMinUtil
-import com.vn.wecare.feature.training.utils.stringWith2Decimals
+import com.vn.wecare.feature.training.dashboard.TrainingViewModel
 import com.vn.wecare.ui.theme.Black900
-import com.vn.wecare.ui.theme.Green300
 import com.vn.wecare.ui.theme.Grey500
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.api.ResourceDescriptor.History
+import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
+import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
+import com.vn.wecare.feature.training.utils.*
+import dagger.hilt.android.AndroidEntryPoint
+
+@Composable
+fun HistoryTrainings(
+    viewModel: TrainingViewModel = hiltViewModel(),
+    historyContents: @Composable (historyTraining: List<TrainingHistory>) -> Unit
+) {
+    when (val historyResponse = viewModel.trainingHistoryResponse) {
+        is Response.Loading -> ProgressBar()
+        is Response.Success -> historyContents(historyResponse.data)
+        is Response.Error -> print(historyResponse.e)
+    }
+}
 
 @Composable
 fun HistoryTrainingSection(
@@ -46,37 +65,40 @@ fun HistoryTrainingSection(
     ) {
         Column(
             modifier = modifier
-                .verticalScroll(rememberScrollState())
         ) {
-            HistoryTrainingTitle(modifier = modifier, kcal = 23.1, duration = 200)
-            HistoryTrainingItem(
-                modifier = modifier,
-                action = UserAction.RUNNING,
-                time = "16:30",
-                kcal = 23.1,
-                duration = 200
+            HistoryTrainings(
+                historyContents = { histories ->
+                    HistoryContents(histories = histories)
+                }
             )
-            HistoryTrainingItem(
-                modifier = modifier,
-                action = UserAction.RUNNING,
-                time = "16:30",
-                kcal = 23.1,
-                duration = 200
-            )
-            HistoryTrainingItem(
-                modifier = modifier,
-                action = UserAction.RUNNING,
-                time = "16:30",
-                kcal = 23.1,
-                duration = 200
-            )
-            HistoryTrainingItem(
-                modifier = modifier,
-                action = UserAction.RUNNING,
-                time = "16:30",
-                kcal = 23.1,
-                duration = 200
-            )
+        }
+    }
+}
+
+@Composable
+fun HistoryContents(
+    modifier: Modifier = Modifier,
+    histories: List<TrainingHistory>
+) {
+    HistoryTrainingTitle(modifier = modifier)
+    Box(
+        modifier = modifier.height(260.dp)
+    ) {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
+            items(
+                items = histories.reversed()
+            ) { history ->
+                HistoryTrainingItem(
+                    action = convertStringToUserAction(history.userAction),
+                    time = convertLongToTime(history.time),
+                    kcal = history.kcal,
+                    duration = history.duration,
+                    distance = history.distance
+                )
+            }
         }
     }
 }
@@ -106,11 +128,12 @@ fun LeadingIconText(
 
 @Composable
 fun HistoryTrainingItem(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     action: UserAction,
     time: String,
     kcal: Double,
-    duration: Int
+    duration: Int,
+    distance: Double
 ) {
     Row(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp, top = 4.dp),
@@ -164,52 +187,32 @@ fun HistoryTrainingItem(
                 text = "${secondToMinUtil(duration)} min",
                 modifier = modifier
             )
+            LeadingIconText(
+                icon = Icons.Default.Route,
+                text = "$distance km",
+                modifier = modifier
+            )
         }
     }
 }
 
 @Composable
 fun HistoryTrainingTitle(
-    modifier: Modifier,
-    kcal: Double,
-    duration: Int
+    modifier: Modifier
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Row(
+        Text(
             modifier = modifier
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = modifier.weight(1f),
-                text = "Today",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Black900
-            )
-            Spacer(
-                modifier = modifier
-                    .weight(4f)
-            )
-            Column(
-                modifier = modifier
-                    .padding(end = 16.dp)
-            ) {
-                LeadingIconText(
-                    icon = Icons.Default.Whatshot,
-                    text = "${stringWith2Decimals(kcal)} kcal",
-                    modifier = modifier
-                )
-                LeadingIconText(
-                    icon = Icons.Default.AccessTime,
-                    text = "${secondToMinUtil(duration)} min",
-                    modifier = modifier
-                )
-            }
-        }
+                .padding(top = 8.dp, bottom = 8.dp),
+            text = "History",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Black900
+        )
         Box(
             modifier = modifier
                 .padding(start = 16.dp, end = 16.dp)

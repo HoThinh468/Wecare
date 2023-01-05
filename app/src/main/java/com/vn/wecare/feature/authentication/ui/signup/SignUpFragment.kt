@@ -23,4 +23,9 @@ class SignUpFragment : BaseBindingFragment<FragmentSignUpBinding>(FragmentSignUp
             )
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        signUpViewModel.clearSignUpInformation()
+    }
 }

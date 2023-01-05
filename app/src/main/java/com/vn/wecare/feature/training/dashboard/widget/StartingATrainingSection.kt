@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.training.dashboard.widget
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -19,12 +20,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vn.wecare.feature.training.utils.UserAction
 import com.vn.wecare.ui.theme.Black900
+import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StartingATrainingSection(
     modifier: Modifier,
-    moveToWalkingScreen: () -> Unit
+    moveToWalkingScreen: (UserAction) -> Unit,
+    moveToRunningScreen: (UserAction) -> Unit,
+    moveToCyclingScreen: (UserAction) -> Unit,
+    moveToMeditationScreen: (UserAction) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -41,16 +48,21 @@ fun StartingATrainingSection(
     ) {
         Column(
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = modifier.padding(top = 16.dp, start = 16.dp),
+                modifier = modifier.padding(top = 16.dp),
                 text = "Start Your Training Today",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black900
             )
-            TrainingChosen(modifier = modifier, moveToWalkingScreen)
+            TrainingChosen(modifier = modifier,
+                moveToWalkingScreen,
+                moveToRunningScreen,
+                moveToCyclingScreen,
+                moveToMeditationScreen)
         }
     }
 }
@@ -58,7 +70,10 @@ fun StartingATrainingSection(
 @Composable
 fun TrainingChosen(
     modifier: Modifier,
-    moveToWalkingScreen: () -> Unit
+    moveToWalkingScreen: (UserAction) -> Unit,
+    moveToRunningScreen: (UserAction) -> Unit,
+    moveToCyclingScreen: (UserAction) -> Unit,
+    moveToMeditationScreen: (UserAction) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -70,22 +85,22 @@ fun TrainingChosen(
             .fillMaxWidth()
     ) {
         TrainingChosenItem(
-            onClick = moveToWalkingScreen,
+            onClick = { moveToWalkingScreen(UserAction.WALKING) },
             icon = Icons.Default.DirectionsWalk,
             description = "Icon Walk"
         )
         TrainingChosenItem(
-            onClick = { /*TODO*/ },
+            onClick = { moveToRunningScreen(UserAction.RUNNING) },
             icon = Icons.Default.DirectionsRun,
             description = "Icon Run"
         )
         TrainingChosenItem(
-            onClick = { /*TODO*/ },
+            onClick = { moveToCyclingScreen(UserAction.CYCLING) },
             icon = Icons.Default.DirectionsBike,
             description = "Icon Bike"
         )
         TrainingChosenItem(
-            onClick = { /*TODO*/ },
+            onClick = { moveToMeditationScreen(UserAction.MEDIATION) },
             icon = Icons.Default.SelfImprovement,
             description = "Meditation"
         )
