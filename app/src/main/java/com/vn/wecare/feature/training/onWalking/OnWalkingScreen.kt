@@ -108,6 +108,7 @@ fun OnWalkingScreen(
                             stringWith2Decimals(distance.value).toDouble()
                         )
                     )
+                    viewModel.addTrainedDate()
                     onNavigateToSuccess()
                 }) {
                     Text(stringResource(id = R.string.button_confirm))

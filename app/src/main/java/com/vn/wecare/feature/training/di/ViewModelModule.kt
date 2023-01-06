@@ -6,10 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.vn.wecare.feature.training.TrainingHistoryRepo
 import com.vn.wecare.feature.training.dashboard.history.TrainingHistoryRepoImpl
-import com.vn.wecare.feature.training.dashboard.usecase.AddTrainingHistory
-import com.vn.wecare.feature.training.dashboard.usecase.GetTrainingHistory
-import com.vn.wecare.feature.training.dashboard.usecase.GetWeeklyCheck
-import com.vn.wecare.feature.training.dashboard.usecase.UseCases
+import com.vn.wecare.feature.training.dashboard.usecase.*
 import com.vn.wecare.feature.training.utils.formatCurrentMonth
 import dagger.Module
 import dagger.Provides
@@ -37,6 +34,7 @@ object ViewModelModule {
     )= UseCases(
         getTrainingHistory = GetTrainingHistory(repo),
         addTrainingHistory = AddTrainingHistory(repo),
-        getWeeklyCheck = GetWeeklyCheck(repo)
+        getWeeklyCheck = GetWeeklyCheck(repo),
+        addTrainedDate = AddTrainedDate(repo)
     )
 }
