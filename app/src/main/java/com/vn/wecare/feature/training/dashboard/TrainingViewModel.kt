@@ -25,6 +25,12 @@ class TrainingViewModel @Inject constructor(
     var weeklyCheckResponse by mutableStateOf<Response<List<Int>>>(Response.Loading)
         private set
 
+    var totalKcal by mutableStateOf(0.0)
+        private set
+
+    var totalDuration by mutableStateOf(0)
+        private set
+
     init {
         getListTrainingHistory()
         getWeeklyCheck()
@@ -41,6 +47,20 @@ class TrainingViewModel @Inject constructor(
         useCases.getWeeklyCheck().collect { response ->
             Log.e("Training viewModel get List Training Date in Week", response.toString())
             weeklyCheckResponse = response
+        }
+    }
+
+    fun calculateTotalCalo(list: List<TrainingHistory>) {
+        totalKcal = 0.0
+        for(i in list) {
+            totalKcal += i.kcal
+        }
+    }
+
+    fun calculateTotalDuration(list: List<TrainingHistory>) {
+        totalDuration = 0
+        for(i in list) {
+            totalDuration += i.duration
         }
     }
 }

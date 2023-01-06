@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vn.wecare.feature.training.dashboard.history.model.Response
 import com.vn.wecare.ui.theme.Grey20
 import com.vn.wecare.feature.training.dashboard.widget.CheckingWeeklySummarySection
 import com.vn.wecare.feature.training.dashboard.history.ui.HistoryTrainingSection
+import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
 import com.vn.wecare.feature.training.dashboard.widget.StartingATrainingSection
 import com.vn.wecare.feature.training.utils.UserAction
 import com.vn.wecare.utils.common_composable.RequestPermission
@@ -29,6 +32,7 @@ fun TrainingScreen(
     moveToRunningScreen: (UserAction) -> Unit,
     moveToCyclingScreen: (UserAction) -> Unit,
     moveToMeditationScreen: (UserAction) -> Unit,
+    viewModel: TrainingViewModel = hiltViewModel()
 ) {
     RequestPermission(permission = Manifest.permission.ACCESS_FINE_LOCATION)
     Scaffold(
@@ -45,12 +49,20 @@ fun TrainingScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CheckingWeeklySummarySection(
-                    modifier,
-                    duration = 200,
-                    kcal = 23.1,
-                    session = 7
-                )
+                when (val historyResponse = viewModel.trainingHistoryResponse) {
+                    is Response.Loading -> ProgressBar()
+                    is Response.Success -> {
+                        viewModel.calculateTotalCalo(historyResponse.data)
+                        viewModel.calculateTotalDuration(historyResponse.data)
+                        CheckingWeeklySummarySection(
+                            modifier,
+                            duration = viewModel.totalDuration,
+                            kcal = viewModel.totalKcal,
+                            session = historyResponse.data.size
+                        )
+                    }
+                    is Response.Error -> print(historyResponse.e)
+                }
                 StartingATrainingSection(modifier,
                     moveToWalkingScreen,
                     moveToRunningScreen,
