@@ -20,14 +20,16 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(binding.composeView) {
-            SignInScreen(navigateToHome = {
-                findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
-            },
+            SignInScreen(
+                navigateToHome = {
+                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                },
                 navigateToSignUp = {
                     findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
                 },
                 viewModel = loginViewModel,
-                moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) })
+                moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) },
+            )
         }
     }
 

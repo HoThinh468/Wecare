@@ -32,7 +32,7 @@ class LocalStepPerHourDatasource @Inject constructor(
         stepsPerHourDao.deleteHours(hours)
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>> {
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
         return stepsPerHourDao.getStepsPerDayWithHours(dayId)
     }
 

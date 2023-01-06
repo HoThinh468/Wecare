@@ -18,7 +18,8 @@ data class SignUpUiState(
     val email: String = "",
     val userName: String = "",
     val password: String = "",
-    val isPasswordShow: Boolean = false
+    val isPasswordShow: Boolean = false,
+    val isLoading: Boolean = false
 )
 
 @HiltViewModel
@@ -62,6 +63,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
+            signUpUiState.value = signUpUiState.value.copy(isLoading = true)
             accountService.createAccount(email, password).collect {
                 if (it == AuthenticationResult.SUCCESS) {
                     createNewWecareUserUsecase.createNewWecareUser(
@@ -69,6 +71,7 @@ class SignUpViewModel @Inject constructor(
                     )
                     moveToHomeScreen()
                     clearSignUpInformation()
+                    signUpUiState.value = signUpUiState.value.copy(isLoading = false)
                 } else {
                     // Todo Show a dialog to notify users
                     Log.d("Signup res: ", "fail")

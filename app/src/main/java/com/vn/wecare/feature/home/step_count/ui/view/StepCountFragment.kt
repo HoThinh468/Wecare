@@ -12,6 +12,7 @@ import com.vn.wecare.databinding.FragmentStepCountBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.ui.compose.StepCountScreen
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 
 @AndroidEntryPoint
 class StepCountFragment :
@@ -23,6 +24,8 @@ class StepCountFragment :
         super.setupComposeView(
             binding.stepCountComposeView
         ) {
+            val currentDate = LocalDate.now()
+            stepCountViewModel.updateStepsPerDayWithHours(currentDate.year, currentDate.monthValue, currentDate.dayOfMonth)
             StepCountScreen(navigateUp = { findNavController().popBackStack() },
                 stepCountViewModel = stepCountViewModel
             )

@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ForgotPasswordUiState(
-    val email: String = ""
+    val email: String = "",
+    val isLoading: Boolean = false
 )
 
 @HiltViewModel
@@ -38,10 +39,12 @@ class ForgotPasswordViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
+            uiState.value = uiState.value.copy(isLoading = true)
             accountService.sendRecoveryEmail(email).collect {
                 if (it == AuthenticationResult.SUCCESS) {
                     clearInformation()
                     moveToSendSuccessScreen()
+                    uiState.value = uiState.value.copy(isLoading = true)
                 } else {
                     // Todo Show a dialog to notify users
                     Log.d("LogIn res: ", "fail")

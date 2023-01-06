@@ -21,6 +21,7 @@ import com.vn.wecare.R
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CustomButton
 import com.vn.wecare.utils.common_composable.CustomTextField
+import com.vn.wecare.utils.common_composable.LoadingDialog
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -46,6 +47,10 @@ fun ForgotPasswordScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.isLoading) {
+                LoadingDialog(loading = uiState.isLoading) {
+                }
+            }
             Image(
                 modifier = modifier.padding(vertical = normalPadding, horizontal = mediumPadding),
                 painter = painterResource(id = R.drawable.forgot_password),

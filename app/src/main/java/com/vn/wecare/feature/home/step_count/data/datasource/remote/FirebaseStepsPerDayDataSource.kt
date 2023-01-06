@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.feature.authentication.ui.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
+import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,7 +37,7 @@ class FirebaseStepsPerDayDataSource @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>> {
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
         TODO("Not yet implemented")
     }
 

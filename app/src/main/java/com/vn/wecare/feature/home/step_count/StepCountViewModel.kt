@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.feature.authentication.ui.service.AccountService
@@ -74,7 +75,12 @@ class StepCountViewModel @Inject constructor(
         }
     }
 
-    private fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
+    fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
+        Log.d(
+            "day id: ", getDayId(
+                year, month, dayOfMonth
+            )
+        )
         viewModelScope.launch {
             getStepsPerDayWithHoursUsecase.getStepsPerDayWithHour(
                 dayId = getDayId(
@@ -83,7 +89,7 @@ class StepCountViewModel @Inject constructor(
             ).collect { list ->
                 if (list != null && list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
                     if (stepsPerDayWithHours != null) {
-                        hoursList.add(stepsPerDayWithHours.hour.toModel())
+                        hoursList.add(stepsPerDayWithHours.toModel())
                         _stepsCountUiState.update {
                             it.copy(
                                 hoursList = hoursList

@@ -18,7 +18,7 @@ class GetStepsPerHourUsecase @Inject constructor(
         stepsPerHoursRepository.getStepsPerDayWithHours(dayId)?.map {
             it.forEach { stepsPerDayWithHours ->
                 if (stepsPerDayWithHours != null) {
-                    stepsInDay += stepsPerDayWithHours.hour.steps
+                    stepsInDay += stepsPerDayWithHours.steps
                 }
             }
         }?.catch {

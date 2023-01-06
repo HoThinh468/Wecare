@@ -25,7 +25,7 @@ import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.training.ui.walking.widget.numberPickerSpinner
+import com.vn.wecare.feature.training.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 import kotlinx.coroutines.launch

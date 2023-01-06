@@ -18,7 +18,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class LoginUiState(
-    val email: String = "", val password: String = "", val isPasswordShow: Boolean = false
+    val email: String = "",
+    val password: String = "",
+    val isPasswordShow: Boolean = false,
+    val isLoading: Boolean = false,
 )
 
 @HiltViewModel
@@ -45,7 +48,9 @@ class LoginViewModel @Inject constructor(
         loginUiState.value = loginUiState.value.copy(password = newVal)
     }
 
-    fun onSignInClick(moveToHomeScreen: () -> Unit) {
+    fun onSignInClick(
+        moveToHomeScreen: () -> Unit,
+    ) {
         if (!email.isValidEmail()) {
             SnackbarManager.showMessage(R.string.email_error)
             return
@@ -55,14 +60,16 @@ class LoginViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
+            loginUiState.value = loginUiState.value.copy(isLoading = true)
             accountService.authenticate(email, password).collect { it ->
                 if (it == AuthenticationResult.SUCCESS) {
                     moveToHomeScreen()
                     clearLogInInformation()
+                    loginUiState.value = loginUiState.value.copy(isLoading = false)
                     val user =
                         getWecareUserWithIdUsecase.getFirebaseUserWithId(accountService.currentUserId)
                     user.collect { res ->
-                        if (res != null) {
+                        if (res != null){
                             Log.d("New user login with id: ", res.userId)
                             saveUserToLocalDbUsecase.saveNewUserToLocalDb(
                                 res.userId, res.email, res.userName

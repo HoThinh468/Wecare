@@ -14,7 +14,6 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
-import com.vn.wecare.core.alarm.ONE_HOUR_INTERVAL_MILLIS
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
@@ -64,19 +63,25 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-                stepCountExactAlarms.scheduleExactAlarm(null)
+            stepCountExactAlarms.scheduleExactAlarm(null)
         } else {
             openSetting()
         }
-        if (sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
+        // TODO: Check logic here
+        Log.d(
+            "Is step count set: ",
+            sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false).toString()
+        )
+        if (!sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
             stepCountInExactAlarms.scheduleInExactAlarm(
                 System.currentTimeMillis(),
-                300_000
+                30_000
 //                ONE_HOUR_INTERVAL_MILLIS
             )
             Log.d("Step count in exact alarm set: ", "true")
             with(sharedPref.edit()) {
                 putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
+                apply()
             }
         }
     }

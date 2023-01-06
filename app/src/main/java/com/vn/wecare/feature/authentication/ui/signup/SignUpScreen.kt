@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
 import com.vn.wecare.utils.common_composable.CustomButton
 import com.vn.wecare.utils.common_composable.CustomTextField
+import com.vn.wecare.utils.common_composable.LoadingDialog
 
 @Composable
 fun SignUpScreen(
@@ -34,6 +35,10 @@ fun SignUpScreen(
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        if (signUpUiState.isLoading) {
+            LoadingDialog(loading = signUpUiState.isLoading) {}
+        }
 
         Image(
             modifier = Modifier

@@ -3,6 +3,7 @@ package com.vn.wecare.feature.home.step_count.data.repository
 import com.vn.wecare.core.data.Result
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
+import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import kotlinx.coroutines.flow.Flow
 
 interface StepsRepository<I> {
@@ -13,5 +14,5 @@ interface StepsRepository<I> {
 
     suspend fun deleteAll()
 
-    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>>
+    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>>
 }

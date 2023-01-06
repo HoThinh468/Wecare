@@ -30,6 +30,7 @@ import com.vn.wecare.R
 import com.vn.wecare.feature.authentication.ui.login.LoginViewModel
 import com.vn.wecare.utils.common_composable.CustomButton
 import com.vn.wecare.utils.common_composable.CustomTextField
+import com.vn.wecare.utils.common_composable.LoadingDialog
 
 @Composable
 fun CoilSVG(imageUrl: String, size: Int, description: String, padding: Int = 0) {
@@ -47,7 +48,7 @@ fun SignInScreen(
     navigateToHome: () -> Unit,
     navigateToSignUp: () -> Unit,
     viewModel: LoginViewModel,
-    moveToForgotPasswordScreen: () -> Unit
+    moveToForgotPasswordScreen: () -> Unit,
 ) {
 
     val uiState by viewModel.loginUiState
@@ -55,6 +56,10 @@ fun SignInScreen(
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (uiState.isLoading) {
+            LoadingDialog(loading = uiState.isLoading) {
+            }
+        }
         Image(
             modifier = Modifier
                 .width(176.dp)
@@ -117,7 +122,9 @@ fun SignInScreen(
 
         CustomButton(
             text = "SIGN IN", onClick = {
-                viewModel.onSignInClick(moveToHomeScreen = { navigateToHome() })
+                viewModel.onSignInClick(
+                    moveToHomeScreen = { navigateToHome() },
+                )
             }, textColor = Color.White
         )
 

@@ -17,8 +17,8 @@ interface StepsPerHourDao {
      * tables and handle the object mapping.
      */
     @Transaction
-    @Query("SELECT * FROM steps_per_day WHERE dayId = :dayId")
-    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>>
+    @Query("SELECT * FROM steps_per_hour WHERE dayIncludeId = :dayId")
+    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity>>
 
     @Delete
     suspend fun deleteHours(stepsPerHourEntity: List<StepsPerHourEntity>)

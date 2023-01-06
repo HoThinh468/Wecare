@@ -4,6 +4,7 @@ import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerDayDataSource
 import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerHourDataSource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
+import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class StepsPerHoursRepository @Inject constructor(
         }
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours?>> {
+    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
         return stepsLocalDataSource.getStepsPerDayWithHours(dayId)
     }
 
