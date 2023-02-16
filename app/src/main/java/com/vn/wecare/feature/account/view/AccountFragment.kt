@@ -18,9 +18,9 @@ class AccountFragment :
         super.setupComposeView(
             binding.accountComposeView
         ) {
-            AccountScreen(navigateUp = { findNavController().popBackStack() }, onSignOutClick = {
+            AccountScreen(onSignOutClick = {
                 accountViewModel.onSignOutClick {
-                    findNavController().navigate(R.id.action_global_account_nested_graph_to_authentication_nested_graph)
+                    findNavController().navigate(R.id.action_accountFragment2_to_authentication_nested_graph)
                 }
             }, viewModel = accountViewModel
             )
