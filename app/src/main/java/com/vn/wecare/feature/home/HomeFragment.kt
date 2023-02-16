@@ -50,10 +50,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
-                stepCountViewModel = stepCountViewModel,
-                moveToAccountScreen = {
-                    findNavController().navigate(R.id.action_homeFragment_to_account_nested_graph)
-                })
+                stepCountViewModel = stepCountViewModel
+            )
         }
     }
 

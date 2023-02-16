@@ -21,9 +21,6 @@
         <action
             android:id="@+id/action_homeFragment_to_waterFragment"
             app:destination="@id/waterFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_account_nested_graph"
-            app:destination="@id/account_nested_graph" />
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
@@ -155,17 +152,25 @@
     </navigation>
 
     <!-- Account management nested section -->
-    <navigation android:id="@+id/account_nested_graph"
-        app:startDestination="@id/accountFragment">
-        <fragment
-            android:id="@+id/accountFragment"
-            android:name="com.vn.wecare.feature.account.view.AccountFragment"
-            android:label="Account"
-            tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/exercisesFragment"
+        android:name="com.vn.wecare.feature.exercises.ExercisesFragment"
+        android:label="fragment_exercises"
+        tools:layout="@layout/fragment_exercises" />
+    <fragment
+        android:id="@+id/newFeedFragment"
+        android:name="com.vn.wecare.feature.new_feed.NewFeedFragment"
+        android:label="fragment_new_feed"
+        tools:layout="@layout/fragment_new_feed" />
+    <fragment
+        android:id="@+id/accountFragment2"
+        android:name="com.vn.wecare.feature.account.view.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" >
         <action
-            android:id="@+id/action_global_account_nested_graph_to_authentication_nested_graph"
+            android:id="@+id/action_accountFragment2_to_authentication_nested_graph"
             app:destination="@id/authentication_nested_graph"
-            app:popUpTo="@id/homeFragment"
+            app:popUpTo="@id/authentication_nested_graph"
             app:popUpToInclusive="true" />
-    </navigation>
+    </fragment>
 </navigation>

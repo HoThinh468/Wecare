@@ -40,8 +40,7 @@ fun HomeScreen(
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
-    stepCountViewModel: StepCountViewModel,
-    moveToAccountScreen: () -> Unit
+    stepCountViewModel: StepCountViewModel
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
@@ -53,7 +52,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(halfMidPadding),
     ) {
-        HomeHeader(modifier = modifier, moveToAccountScreen = moveToAccountScreen)
+        HomeHeader(modifier = modifier)
         FootStepCountHomeCard(
             modifier = modifier,
             onCardClick = onFootStepCountCardClick,
@@ -75,7 +74,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeHeader(
-    modifier: Modifier, moveToAccountScreen: () -> Unit
+    modifier: Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -90,15 +89,6 @@ fun HomeHeader(
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
-        IconButton(
-            onClick = moveToAccountScreen,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_person),
-                contentDescription = null,
-                tint = MaterialTheme.colors.primary
-            )
-        }
     }
 }
 

@@ -25,7 +25,6 @@ import com.vn.wecare.utils.common_composable.CardListTile
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit,
     onSignOutClick: () -> Unit,
     viewModel: AccountViewModel,
 ) {
@@ -36,7 +35,7 @@ fun AccountScreen(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
-            AccountHeader(modifier = modifier, uiState = uiState, navigateUp = { navigateUp() })
+            AccountHeader(modifier = modifier, uiState = uiState)
         },
     ) {
         Column(
@@ -54,7 +53,7 @@ fun AccountScreen(
 
 @Composable
 fun AccountHeader(
-    modifier: Modifier, navigateUp: () -> Unit, uiState: AccountUiState
+    modifier: Modifier, uiState: AccountUiState
 ) {
     Column(
         modifier = modifier
@@ -68,14 +67,9 @@ fun AccountHeader(
                 .height(56.dp)
                 .padding(horizontal = tinyPadding)
                 .background(color = MaterialTheme.colors.background),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            IconButton(onClick = navigateUp) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = null
-                )
-            }
             Text(
                 modifier = modifier.padding(horizontal = smallPadding),
                 text = stringResource(id = R.string.account_title),

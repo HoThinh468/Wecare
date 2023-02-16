@@ -6,7 +6,8 @@
 
     <!-- Bottom navigation bar title -->
     <string name="home_title">Home</string>
-    <string name="training_title">Training</string>
+    <string name="new_feed">New feed</string>
+    <string name="exercises">Exercises</string>
     <string name="account_title">Account</string>
     <string name="title_activity_sign_in_screen">SignInScreen</string>
     <string name="empty_title"> </string>

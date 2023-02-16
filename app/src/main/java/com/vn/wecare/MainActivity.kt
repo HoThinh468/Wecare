@@ -8,9 +8,14 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -51,6 +56,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (auth.currentUser == null) {
             navGraph.setStartDestination(R.id.authentication_nested_graph)
             navController.graph = navGraph
+        }
+        val navView: BottomNavigationView = binding.navView
+        navView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener {_: NavController?, navDestination: NavDestination, _: Bundle? ->
+            when(navDestination.id) {
+                R.id.homeFragment, R.id.accountFragment2, R.id.exercisesFragment, R.id.newFeedFragment -> binding.navView.visibility = View.VISIBLE
+                else -> binding.navView.visibility = View.GONE
+            }
         }
     }
 
