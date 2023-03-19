@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui.signup
+package com.vn.wecare.feature.authentication.signup
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -22,10 +22,5 @@ class SignUpFragment : BaseBindingFragment<FragmentSignUpBinding>(FragmentSignUp
                 navigateBack = { findNavController().popBackStack() },
             )
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        signUpViewModel.clearSignUpInformation()
     }
 }

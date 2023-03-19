@@ -13,9 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.ui.theme.Grey20
 import com.vn.wecare.feature.training.dashboard.widget.CheckingWeeklySummarySection
 import com.vn.wecare.feature.training.dashboard.history.ui.HistoryTrainingSection

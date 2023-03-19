@@ -2,9 +2,8 @@ package com.vn.wecare.feature.home.step_count.data.datasource.remote
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
-import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import kotlinx.coroutines.flow.Flow

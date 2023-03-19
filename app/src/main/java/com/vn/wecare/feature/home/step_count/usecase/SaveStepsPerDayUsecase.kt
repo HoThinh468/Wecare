@@ -1,6 +1,6 @@
 package com.vn.wecare.feature.home.step_count.usecase
 
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerDayRepository
 import com.vn.wecare.utils.getCurrentDayId
