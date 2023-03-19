@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.dashboard.history.model
+package com.vn.wecare.core.data
 
 sealed class Response<out T> {
     object Loading: Response<Nothing>()

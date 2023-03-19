@@ -18,14 +18,16 @@ fun CustomButton(
     onClick: () -> Unit,
     padding: Dp = largePadding,
     backgroundColor: Color = MaterialTheme.colors.primary,
-    textColor: Color = Color.Black
+    textColor: Color = Color.Black,
+    isEnabled: Boolean = true,
 ) {
     Button(
         modifier = Modifier
             .padding(padding)
             .fillMaxWidth(),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor)
+        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
+        enabled = isEnabled
     ) {
         Text(text = text, color = textColor)
     }

@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -27,12 +25,10 @@ import com.vn.wecare.feature.training.dashboard.TrainingViewModel
 import com.vn.wecare.ui.theme.Black900
 import com.vn.wecare.ui.theme.Grey500
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.api.ResourceDescriptor.History
-import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
 import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
 import com.vn.wecare.feature.training.utils.*
-import dagger.hilt.android.AndroidEntryPoint
 
 @Composable
 fun HistoryTrainings(

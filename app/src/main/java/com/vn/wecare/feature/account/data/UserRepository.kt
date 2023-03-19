@@ -1,5 +1,7 @@
 package com.vn.wecare.feature.account.data
 
+import android.util.Log
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.datasource.WecareUserDataSource
 import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.di.FirebaseUserDatasource
@@ -13,11 +15,8 @@ class UserRepository @Inject constructor(
     @LocalUserDatasource private val localWecareUserDataSource: WecareUserDataSource,
     @FirebaseUserDatasource private val firebaseWecareUserDataSource: WecareUserDataSource
 ) {
-    suspend fun insertUser(user: WecareUser) {
-        coroutineScope {
-            launch { firebaseWecareUserDataSource.insertUser(user) }
-            launch { insertUserToLocaldb(user) }
-        }
+    suspend fun insertUserToFirebase(user: WecareUser) {
+        firebaseWecareUserDataSource.insertUser(user)
     }
 
     suspend fun insertUserToLocaldb(user: WecareUser) {
@@ -30,11 +29,11 @@ class UserRepository @Inject constructor(
         }
     }
 
-    fun getLocalUserWithId(userId: String): Flow<WecareUser?> {
+    suspend fun getLocalUserWithId(userId: String): Flow<Response<WecareUser?>> {
         return localWecareUserDataSource.getUserWithId(userId)
     }
 
-    fun getFirebaseUserWithId(userId: String): Flow<WecareUser?> {
+    suspend fun getFirebaseUserWithId(userId: String): Flow<Response<WecareUser?>> {
         return firebaseWecareUserDataSource.getUserWithId(userId)
     }
 }
