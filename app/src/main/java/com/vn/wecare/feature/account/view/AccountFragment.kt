@@ -18,12 +18,15 @@ class AccountFragment :
         super.setupComposeView(
             binding.accountComposeView
         ) {
-            AccountScreen(onSignOutClick = {
-                accountViewModel.onSignOutClick {
+            AccountScreen(
+                moveToSignInScreen = {
                     findNavController().navigate(R.id.action_accountFragment2_to_authentication_nested_graph)
-                }
-            }, viewModel = accountViewModel
+                }, viewModel = accountViewModel
             )
         }
+    }
+
+    companion object {
+        const val AccountFlowTAG = "Account flow"
     }
 }
