@@ -3,7 +3,6 @@ package com.vn.wecare.feature.authentication.service
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.vn.wecare.core.data.Response
 import kotlinx.coroutines.tasks.await
@@ -16,6 +15,9 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
 
     override val hasUser: Boolean
         get() = auth.currentUser != null
+
+    override val isUserEmailVerified: Boolean
+        get() = auth.currentUser?.isEmailVerified ?: false
 
     override suspend fun createAccount(
         email: String, password: String
@@ -39,7 +41,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun sendVerificationEmail(email: String): Response<Boolean> {
+    override suspend fun sendVerificationEmail(): Response<Boolean> {
         return try {
             auth.currentUser?.sendEmailVerification()?.await()
             Response.Success(true)
@@ -83,6 +85,15 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Response.Success(true)
         } catch (exception: Exception) {
             Response.Error(exception)
+        }
+    }
+
+    override suspend fun updatePassword(newPassword: String): Response<Boolean> {
+        return try {
+            auth.currentUser!!.updatePassword(newPassword).await()
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Error(e)
         }
     }
 }

@@ -135,7 +135,10 @@ class SignUpViewModel @Inject constructor(
 
     private suspend fun createNewUserOnFirebase() {
         createNewWecareUserUsecase.createNewWecareUser(
-            accountService.currentUserId, _signUpUiState.value.email, _signUpUiState.value.userName
+            accountService.currentUserId,
+            _signUpUiState.value.email,
+            _signUpUiState.value.userName,
+            accountService.isUserEmailVerified
         )
     }
 
@@ -147,7 +150,7 @@ class SignUpViewModel @Inject constructor(
                 it.data?.let { user ->
                     Log.d("New user sign up with id: ${user.userId}", "")
                     saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName
+                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
                     )
                 }
             }

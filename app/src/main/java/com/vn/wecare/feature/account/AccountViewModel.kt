@@ -21,7 +21,8 @@ import javax.inject.Inject
 data class AccountUiState(
     val username: String = "",
     val email: String = "",
-    val signOutResponse: Response<Boolean>? = null
+    val signOutResponse: Response<Boolean>? = null,
+    val isEmailVerified: Boolean = false,
 )
 
 @HiltViewModel
@@ -49,7 +50,9 @@ class AccountViewModel @Inject constructor(
             if (res is Response.Success && res.data != null) {
                 _accountUiState.update {
                     it.copy(
-                        username = res.data.userName, email = res.data.email
+                        username = res.data.userName,
+                        email = res.data.email,
+                        isEmailVerified = res.data.isEmailVerified
                     )
                 }
             }
@@ -60,6 +63,10 @@ class AccountViewModel @Inject constructor(
         Log.d(AccountFlowTAG, "Signing out user with id: ${accountService.currentUserId}")
         _accountUiState.update { it.copy(signOutResponse = Response.Loading) }
         _accountUiState.update { it.copy(signOutResponse = accountService.signOut()) }
+    }
+
+    fun sendVerificationEmail() = viewModelScope.launch {
+        accountService.sendVerificationEmail()
     }
 
     fun handleSignOutSuccess(moveToAuthenticationGraph: () -> Unit) {
@@ -73,7 +80,7 @@ class AccountViewModel @Inject constructor(
                 Log.d(AccountFlowTAG, "Sign out user response: $it")
                 if (it is Response.Success && it.data != null) {
                     deleteWecareUserUsecase.deleteAccount(
-                        it.data.userId, it.data.userName, it.data.email
+                        it.data.userId, it.data.userName, it.data.email, it.data.isEmailVerified
                     )
                 }
             }

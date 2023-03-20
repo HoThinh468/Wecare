@@ -98,7 +98,7 @@ class LoginViewModel @Inject constructor(
         _logInUiState.update { it.copy(snackbarMessageRes = null) }
     }
 
-    fun handleLoginSuccess(moveToHome:  () -> Unit) {
+    fun handleLoginSuccess(moveToHome: () -> Unit) {
         moveToHome()
         clearLogInInformation()
         viewModelScope.launch {
@@ -132,13 +132,14 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow = getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
+        val userFlow =
+            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
         userFlow.collect {
             if (it is Response.Success) {
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")
                     saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName
+                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
                     )
                 }
             }
