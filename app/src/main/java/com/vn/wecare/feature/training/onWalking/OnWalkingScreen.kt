@@ -48,14 +48,7 @@ fun OnWalkingScreen(
 
     LifecycleEventObserver{_, event ->
         when (event) {
-            Lifecycle.Event.ON_DESTROY -> {
-                onResume = true
-                openDialog = false
-                duration = 0
-                distance = mutableStateOf(0.0)
-                kcal = mutableStateOf(0.0)
-            }
-            Lifecycle.Event.ON_STOP -> {
+            Lifecycle.Event.ON_DESTROY, Lifecycle.Event.ON_STOP -> {
                 onResume = true
                 openDialog = false
                 duration = 0

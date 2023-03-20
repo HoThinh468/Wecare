@@ -1,6 +1,8 @@
 package com.vn.wecare.utils
 
+import android.annotation.SuppressLint
 import android.util.Patterns
+import com.google.type.DateTime
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -63,4 +65,11 @@ fun getMonthPrefix(month: Int) : String {
         11 -> "Nov"
         else -> "Dec"
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun convertMonthAgoTimeStamp(timeStamp: Long): String {
+    val currentTimestamp = System.currentTimeMillis()
+    val simpleDate = SimpleDateFormat("M")
+    return simpleDate.format(currentTimestamp - timeStamp) + " months ago"
 }
