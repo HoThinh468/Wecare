@@ -21,7 +21,7 @@ fun CustomButton(
     onClick: () -> Unit,
     padding: Dp = largePadding,
     backgroundColor: Color = MaterialTheme.colors.primary,
-    textColor: Color = Black900
+    textColor: Color = Black900,
     isEnabled: Boolean = true,
 ) {
     Button(
