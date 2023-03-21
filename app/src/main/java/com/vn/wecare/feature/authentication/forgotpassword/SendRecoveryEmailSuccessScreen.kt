@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui.forgotpassword
+package com.vn.wecare.feature.authentication.forgotpassword
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image

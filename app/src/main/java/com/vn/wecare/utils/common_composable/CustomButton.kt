@@ -22,6 +22,7 @@ fun CustomButton(
     padding: Dp = largePadding,
     backgroundColor: Color = MaterialTheme.colors.primary,
     textColor: Color = Black900
+    isEnabled: Boolean = true,
 ) {
     Button(
         contentPadding = PaddingValues(),
@@ -29,7 +30,8 @@ fun CustomButton(
             .padding(padding)
             .fillMaxWidth(),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor)
+        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
+        enabled = isEnabled
     ) {
         Text(text = text, color = textColor)
     }

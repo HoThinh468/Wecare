@@ -109,7 +109,7 @@
         app:startDestination="@id/logInFragment">
         <fragment
             android:id="@+id/logInFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.login.view.LogInFragment"
+            android:name="com.vn.wecare.feature.authentication.login.LogInFragment"
             android:label="fragment_log_in"
             tools:layout="@layout/fragment_log_in">
             <action
@@ -121,7 +121,7 @@
         </fragment>
         <fragment
             android:id="@+id/signUpFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.signup.SignUpFragment"
+            android:name="com.vn.wecare.feature.authentication.signup.SignUpFragment"
             android:label="fragment_sign_up"
             tools:layout="@layout/fragment_sign_up" />
         <action
@@ -131,7 +131,7 @@
             app:popUpToInclusive="true" />
         <fragment
             android:id="@+id/forgotPasswordFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.forgotpassword.ForgotPasswordFragment"
+            android:name="com.vn.wecare.feature.authentication.forgotpassword.ForgotPasswordFragment"
             android:label="fragment_forgot_password"
             tools:layout="@layout/fragment_forgot_password" >
             <action
@@ -140,7 +140,7 @@
         </fragment>
         <fragment
             android:id="@+id/sendRecoveryEmailSuccessFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.forgotpassword.SendRecoveryEmailSuccessFragment"
+            android:name="com.vn.wecare.feature.authentication.forgotpassword.SendRecoveryEmailSuccessFragment"
             android:label="fragment_send_recovery_email_success"
             tools:layout="@layout/fragment_send_recovery_email_success" >
             <action

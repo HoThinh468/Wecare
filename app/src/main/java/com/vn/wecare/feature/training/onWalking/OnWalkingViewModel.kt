@@ -1,10 +1,9 @@
 package com.vn.wecare.feature.training.onWalking
 
-import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
 import com.vn.wecare.feature.training.dashboard.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel

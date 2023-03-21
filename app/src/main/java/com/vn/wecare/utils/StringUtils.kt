@@ -41,17 +41,19 @@ fun String.isValidEmail(): Boolean {
 }
 
 fun String.isValidPassword(): Boolean {
-    return this.isNotBlank() &&
-            this.length >= MIN_PASS_LENGTH &&
-            Pattern.compile(PASS_PATTERN).matcher(this).matches()
+    return this.isNotBlank() && this.length >= MIN_PASS_LENGTH
+}
+
+fun String.isValidUsername(): Boolean {
+    return this.isNotBlank() && this.length >= MIN_PASS_LENGTH
 }
 
 fun String.passwordMatches(repeated: String): Boolean {
     return this == repeated
 }
 
-fun getMonthPrefix(month: Int) : String {
-    return when(month) {
+fun getMonthPrefix(month: Int): String {
+    return when (month) {
         1 -> "Jan"
         2 -> "Feb"
         3 -> "Mar"

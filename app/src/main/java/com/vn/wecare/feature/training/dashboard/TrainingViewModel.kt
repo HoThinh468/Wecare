@@ -6,12 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
-import com.vn.wecare.feature.training.dashboard.usecase.GetTrainingHistory
 import com.vn.wecare.feature.training.dashboard.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

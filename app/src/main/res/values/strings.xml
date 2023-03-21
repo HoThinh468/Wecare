@@ -63,7 +63,6 @@
     <string name="about_us">About us</string>
     <string name="logout">Logout</string>
 
-
     <string name="mapbox_access_token">pk.eyJ1IjoidHJ1bmdsZTI2MDgiLCJhIjoiY2xhbW9obzR6MGk5djN3cXZpaHRtMHdneSJ9.1GAlFWxdPIDrPGuuC_zRyg</string>
     <string name="get_location_button">Get Location Button</string>
 
@@ -89,16 +88,21 @@
 
     <!-- Authentication section -->
     <string name="generic_error">Something wrong happened. Please try again.</string>
-    <string name="email_error">Please insert a valid email.</string>
-    <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
+    <string name="email_error_message">Please insert a valid email.</string>
+    <string name="password_error_message">Password cannot be blank and should have at least 6 digits.</string>
+    <string name="username_error_message">Username cannot be blank and should have at least 6 digits.</string>
     <string name="password_match_error">Passwords do not match.</string>
     <string name="empty_password_error">Password cannot be empty.</string>
     <string name="empty_username_error">Username cannot be empty.</string>
     <string name="forgot_password_message">Forgot your password? Enter your email below to receive recovery email</string>
     <string name="send_recovery_email_message">Check your inbox to reset your password!</string>
-
+    <string name="log_in_error_message">Cannot login, please try again!</string>
+    <string name="sign_up_error_message">Cannot sign up, incorrect email, username or password!</string>
+    <string name="send_recovery_email_error_message">Cannot send recovery email, please try again later</string>
+    <string name="sync_data_to_local_fail">Cannot sync data to local!</string>
     <string name="email_hint">Enter your email</string>
     <string name="username_hint">Enter your username</string>
     <string name="password_hint">Enter your password</string>
+    <string name="blank_text_id"> </string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.authentication.ui.login.view
+package com.vn.wecare.feature.authentication.login
 
 import android.content.Context
 import android.util.Log
@@ -9,11 +9,12 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
-import com.vn.wecare.feature.authentication.ui.login.LoginViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
 import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBinding::inflate) {
 
     private val loginViewModel: LoginViewModel by activityViewModels()

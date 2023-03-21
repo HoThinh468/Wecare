@@ -1,6 +1,6 @@
 package com.vn.wecare.feature.training
 
-import com.vn.wecare.feature.training.dashboard.history.model.Response
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
 import kotlinx.coroutines.flow.Flow
 

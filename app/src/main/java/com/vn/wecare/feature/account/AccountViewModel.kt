@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.ClearSharedPreferencesUsecase
 import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,16 +35,8 @@ class AccountViewModel @Inject constructor(
         updateAccountScreen()
     }
 
-    private fun updateAccountScreen() {
-        viewModelScope.launch {
-            getWecareUserWithIdUsecase.getWecareUserWithId(accountService.currentUserId).collect {
-                if (it != null) {
-                    accountUiState.value = accountUiState.value.copy(
-                        username = it.userName, email = it.email
-                    )
-                }
-            }
-        }
+    private fun updateAccountScreen() = viewModelScope.launch {
+        val user = getWecareUserWithIdUsecase.getWecareUserWithId(accountService.currentUserId)
     }
 
     fun onSignOutClick(moveToAuthenticationGraph: () -> Unit) {
@@ -53,8 +46,10 @@ class AccountViewModel @Inject constructor(
             stepCountExactAlarms.clearExactAlarm()
             stepCountInExactAlarms.clearInExactAlarm()
             getWecareUserWithIdUsecase.getWecareUserWithId(accountService.currentUserId).collect {
-                if (it != null) {
-                    deleteWecareUserUsecase.deleteAccount(it.userId, it.userName, it.email)
+                if (it is Response.Success && it.data != null) {
+                    deleteWecareUserUsecase.deleteAccount(
+                        it.data.userId, it.data.userName, it.data.email
+                    )
                 }
             }
             accountService.signOut()

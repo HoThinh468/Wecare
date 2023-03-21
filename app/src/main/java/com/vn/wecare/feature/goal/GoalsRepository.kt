@@ -3,7 +3,7 @@ package com.vn.wecare.feature.goal
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await

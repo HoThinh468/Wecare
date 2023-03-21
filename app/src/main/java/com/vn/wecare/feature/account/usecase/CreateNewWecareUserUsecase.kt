@@ -11,6 +11,6 @@ class CreateNewWecareUserUsecase @Inject constructor(
         val newUser = WecareUser(
             userId, userName, email
         )
-        userRepository.insertUser(newUser)
+        userRepository.insertUserToFirebase(newUser)
     }
 }

@@ -3,8 +3,6 @@ package com.vn.wecare.feature.training.dashboard.widget
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -22,8 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vn.wecare.feature.training.dashboard.TrainingViewModel
-import com.vn.wecare.feature.training.dashboard.history.model.Response
-import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.training.utils.secondToHourUtil
 import com.vn.wecare.feature.training.utils.stringWith2Decimals
 import com.vn.wecare.ui.theme.Black900
