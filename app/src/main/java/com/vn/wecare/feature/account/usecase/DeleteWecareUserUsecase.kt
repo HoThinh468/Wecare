@@ -7,9 +7,9 @@ import javax.inject.Inject
 class DeleteWecareUserUsecase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend fun deleteAccount(userId: String, email: String, userName: String) {
+    suspend fun deleteAccount(userId: String, email: String, userName: String, isEmailVerified: Boolean) {
         val deleteUser = WecareUser(
-            userId, userName, email
+            userId, userName, email, isEmailVerified
         )
         userRepository.deleteUser(deleteUser)
     }

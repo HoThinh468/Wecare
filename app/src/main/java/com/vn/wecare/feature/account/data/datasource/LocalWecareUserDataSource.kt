@@ -3,12 +3,16 @@ package com.vn.wecare.feature.account.data.datasource
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.dao.UserDao
 import com.vn.wecare.feature.account.data.model.WecareUser
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class LocalWecareUserDataSource @Inject constructor(
     private val wecareUserDao: UserDao,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WecareUserDataSource {
 
     override suspend fun insertUser(input: WecareUser) {
@@ -29,5 +33,5 @@ class LocalWecareUserDataSource @Inject constructor(
                 Response.Error(exception)
             }
         )
-    }
+    }.flowOn(ioDispatcher)
 }

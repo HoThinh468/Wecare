@@ -8,28 +8,44 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.AccountUiState
 import com.vn.wecare.feature.account.AccountViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CardListTile
+import com.vn.wecare.utils.common_composable.LoadingDialog
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AccountScreen(
     modifier: Modifier = Modifier,
-    onSignOutClick: () -> Unit,
+    moveToSignInScreen: () -> Unit,
     viewModel: AccountViewModel,
-) {
+    ) {
 
-    val uiState by viewModel.accountUiState
+    val uiState = viewModel.accountUiState.collectAsState()
+
+    uiState.value.signOutResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+            is Response.Success -> viewModel.handleSignOutSuccess {
+                moveToSignInScreen()
+            }
+            is Response.Error -> viewModel.handleSignOutError()
+            null -> {/* do nothing */
+            }
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -44,16 +60,14 @@ fun AccountScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(halfMidPadding),
         ) {
-            AccountBody(
-                modifier = modifier, onSignOutClick = onSignOutClick
-            )
+            AccountBody(modifier = modifier, onSignOutClick = { viewModel.onSignOutClick() })
         }
     }
 }
 
 @Composable
 fun AccountHeader(
-    modifier: Modifier, uiState: AccountUiState
+    modifier: Modifier, uiState: State<AccountUiState>
 ) {
     Column(
         modifier = modifier
@@ -91,11 +105,14 @@ fun AccountHeader(
                 color = MaterialTheme.colors.onPrimary
             )
         }
-        Text(text = uiState.username, style = MaterialTheme.typography.h3)
+        Text(text = uiState.value.username, style = MaterialTheme.typography.h3)
         Text(
-            text = uiState.email, style = MaterialTheme.typography.body1, color = colorResource(
+            text = uiState.value.email,
+            style = MaterialTheme.typography.body1,
+            color = colorResource(
                 id = R.color.Black450
-            ), modifier = modifier.padding(bottom = normalPadding)
+            ),
+            modifier = modifier.padding(bottom = normalPadding)
         )
     }
 }

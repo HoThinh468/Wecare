@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.authentication.signup
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 data class SignUpUiState(
@@ -135,7 +135,10 @@ class SignUpViewModel @Inject constructor(
 
     private suspend fun createNewUserOnFirebase() {
         createNewWecareUserUsecase.createNewWecareUser(
-            accountService.currentUserId, _signUpUiState.value.email, _signUpUiState.value.userName
+            accountService.currentUserId,
+            _signUpUiState.value.email,
+            _signUpUiState.value.userName,
+            accountService.isUserEmailVerified
         )
     }
 
@@ -143,12 +146,11 @@ class SignUpViewModel @Inject constructor(
         val userFlow =
             getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
         userFlow.collect {
-            Timber.d("Save User to local db when sign up: $it")
             if (it is Response.Success) {
                 it.data?.let { user ->
-                    Timber.d("New user sign up with id: ${user.userId}")
+                    Log.d("New user sign up with id: ${user.userId}", "")
                     saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName
+                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
                     )
                 }
             }

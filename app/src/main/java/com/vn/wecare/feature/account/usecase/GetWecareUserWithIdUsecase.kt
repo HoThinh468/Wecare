@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetWecareUserWithIdUsecase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend fun getWecareUserWithId(userId: String): Flow<Response<WecareUser?>> {
+    suspend fun getUserFromRoomWithId(userId: String): Flow<Response<WecareUser?>> {
         return userRepository.getLocalUserWithId(userId)
     }
 

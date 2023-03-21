@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.account.data
 
-import android.util.Log
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.datasource.WecareUserDataSource
 import com.vn.wecare.feature.account.data.model.WecareUser

@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.authentication.login
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 data class LogInUiState(
@@ -98,7 +98,7 @@ class LoginViewModel @Inject constructor(
         _logInUiState.update { it.copy(snackbarMessageRes = null) }
     }
 
-    fun handleLoginSuccess(moveToHome:  () -> Unit) {
+    fun handleLoginSuccess(moveToHome: () -> Unit) {
         moveToHome()
         clearLogInInformation()
         viewModelScope.launch {
@@ -132,13 +132,14 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow = getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
+        val userFlow =
+            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
         userFlow.collect {
             if (it is Response.Success) {
                 it.data?.let { user ->
-                    Timber.d("New user login with id: ${user.userId}")
+                    Log.d("New user login with id: ${user.userId}", "")
                     saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName
+                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
                     )
                 }
             }

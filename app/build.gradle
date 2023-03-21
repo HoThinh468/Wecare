@@ -118,9 +118,6 @@ dependencies {
 
     //gif
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
-
-    // Log
-    implementation 'com.jakewharton.timber:timber:5.0.1'
 }
 
 // Allow references to generated code
