@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.exercises.ExercisesFragment">
+    tools:context=".feature.exercises.program_detail.ProgramDetailFragment">
 
     <androidx.compose.ui.platform.ComposeView
         android:layout_width="match_parent"
