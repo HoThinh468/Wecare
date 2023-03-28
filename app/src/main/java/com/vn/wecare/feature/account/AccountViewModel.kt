@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.account
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,8 @@ data class AccountUiState(
     val email: String = "",
     val signOutResponse: Response<Boolean>? = null,
     val isEmailVerified: Boolean = false,
+    val userNameLogo: String = "",
+    val avatarUri: Uri? = null
 )
 
 @HiltViewModel
@@ -42,9 +45,17 @@ class AccountViewModel @Inject constructor(
 
     init {
         updateAccountScreen()
+        _accountUiState.update {
+            it.copy(avatarUri = accountService.userAvatar)
+        }
     }
 
-    private fun updateAccountScreen() = viewModelScope.launch {
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(AccountFlowTAG, "Account viewmodel on cleared")
+    }
+
+    fun updateAccountScreen() = viewModelScope.launch {
         val user = getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
         user.collect { res ->
             if (res is Response.Success && res.data != null) {
@@ -52,7 +63,8 @@ class AccountViewModel @Inject constructor(
                     it.copy(
                         username = res.data.userName,
                         email = res.data.email,
-                        isEmailVerified = res.data.isEmailVerified
+                        isEmailVerified = res.data.isEmailVerified,
+                        userNameLogo = res.data.userName[0].uppercase(),
                     )
                 }
             }
@@ -66,11 +78,14 @@ class AccountViewModel @Inject constructor(
     }
 
     fun sendVerificationEmail() = viewModelScope.launch {
-        accountService.sendVerificationEmail()
+        accountService.sendVerificationEmail().collect {
+            if (it is Response.Success) {
+                accountService.signOut()
+            }
+        }
     }
 
     fun handleSignOutSuccess(moveToAuthenticationGraph: () -> Unit) {
-        Log.d(AccountFlowTAG, "Sign out success, start delete user from local db")
         moveToAuthenticationGraph()
         clearSharedPreferencesUsecase.clearAllSharedPref()
         stepCountExactAlarms.clearExactAlarm()
@@ -85,18 +100,31 @@ class AccountViewModel @Inject constructor(
                 }
             }
         }
-        clearSignOutResponse()
+        clearAccountUIState()
     }
 
     fun handleSignOutError() {
         Log.d(AccountFlowTAG, "Sign out fail, cannot delete user from local db")
-        clearSignOutResponse()
+        _accountUiState.update {
+            it.copy(signOutResponse = null)
+        }
     }
 
-    private fun clearSignOutResponse() {
+    fun pickImageUriFromPhone(uri: Uri?) {
+        _accountUiState.update {
+            it.copy(avatarUri = uri)
+        }
+    }
+
+    private fun clearAccountUIState() {
         _accountUiState.update {
             it.copy(
-                signOutResponse = null
+                signOutResponse = null,
+                userNameLogo = "",
+                username = "",
+                email = "",
+                isEmailVerified = false,
+                avatarUri = null
             )
         }
     }

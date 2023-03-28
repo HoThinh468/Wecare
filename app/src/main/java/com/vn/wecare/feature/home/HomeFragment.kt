@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -19,6 +20,7 @@ import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,14 +39,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         super.setupComposeView(
             binding.homeComposeView
         ) {
-            HomeScreen(onFootStepCountCardClick = {
-                findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
-            },
+            HomeScreen(
+                onFootStepCountCardClick = {
+                    findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
+                },
                 onTrainingClick = {
                     findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
                 },
-                onWaterCardClick = {
-                },
+                onWaterCardClick = {},
                 onBMICardClick = {},
                 onWalkingIcClick = {},
                 onRunningIcClick = {},
@@ -72,8 +74,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         )
         if (!sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
             stepCountInExactAlarms.scheduleInExactAlarm(
-                System.currentTimeMillis(),
-                30_000
+                System.currentTimeMillis(), 30_000
 //                ONE_HOUR_INTERVAL_MILLIS
             )
             Log.d("Step count in exact alarm set: ", "true")

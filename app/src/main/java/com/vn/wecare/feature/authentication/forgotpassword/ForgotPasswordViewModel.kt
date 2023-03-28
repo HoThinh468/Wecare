@@ -1,12 +1,9 @@
 package com.vn.wecare.feature.authentication.forgotpassword
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.core.snackbar.SnackbarManager
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +52,7 @@ class ForgotPasswordViewModel @Inject constructor(
         else _uiState.update { it.copy(isEmailValid = false) }
     }
 
-    fun onSendRecoveryEmailClick(moveToSendSuccessScreen: () -> Unit) {
+    fun onSendRecoveryEmailClick() {
         checkEmailValidation()
         viewModelScope.launch {
             if (_uiState.value.isEmailValid) {

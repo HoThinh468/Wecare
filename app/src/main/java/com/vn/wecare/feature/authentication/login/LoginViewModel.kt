@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.account.usecase.CreateNewWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.usecase.SaveUserToLocalDbUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
@@ -35,6 +36,7 @@ class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
     private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase,
+    private val createNewWecareUserUsecase: CreateNewWecareUserUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps
 ) : ViewModel() {
@@ -44,13 +46,11 @@ class LoginViewModel @Inject constructor(
 
     var inputEmail by mutableStateOf("")
     fun onEmailChange(newVal: String) {
-        checkEmailValidation()
         inputEmail = newVal
     }
 
     var inputPassword by mutableStateOf("")
     fun onPasswordChange(newVal: String) {
-        checkPasswordValidation()
         inputPassword = newVal
     }
 
@@ -139,8 +139,19 @@ class LoginViewModel @Inject constructor(
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")
                     saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
+                        it.data.userId,
+                        it.data.email,
+                        it.data.userName,
+                        accountService.isUserEmailVerified
                     )
+                    if (accountService.isUserEmailVerified) {
+                        createNewWecareUserUsecase.createNewWecareUser(
+                            it.data.userId,
+                            it.data.email,
+                            it.data.userName,
+                            accountService.isUserEmailVerified
+                        )
+                    }
                 }
             }
         }

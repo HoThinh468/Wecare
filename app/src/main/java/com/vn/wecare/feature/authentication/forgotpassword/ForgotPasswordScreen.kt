@@ -99,7 +99,7 @@ fun ForgotPasswordScreen(
             )
             CustomButton(
                 text = "Send recovery email",
-                onClick = { viewModel.onSendRecoveryEmailClick(moveToSendSuccessEmailScreen) },
+                onClick = { viewModel.onSendRecoveryEmailClick() },
                 textColor = Color.White,
                 padding = mediumPadding
             )

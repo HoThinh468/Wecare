@@ -21,6 +21,11 @@
         <action
             android:id="@+id/action_homeFragment_to_waterFragment"
             app:destination="@id/waterFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_authentication_nested_graph"
+            app:destination="@id/authentication_nested_graph"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
@@ -168,13 +173,14 @@
         android:label="fragment_new_feed"
         tools:layout="@layout/fragment_new_feed" />
     <fragment
-        android:id="@+id/accountFragment2"
+        android:id="@+id/accountFragment"
         android:name="com.vn.wecare.feature.account.view.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" >
         <action
-            android:id="@+id/action_accountFragment2_to_authentication_nested_graph"
+            android:id="@+id/action_accountFragment_to_authentication_nested_graph"
             app:destination="@id/authentication_nested_graph"
+            app:launchSingleTop="true"
             app:popUpTo="@id/authentication_nested_graph"
             app:popUpToInclusive="true" />
     </fragment>
