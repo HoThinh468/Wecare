@@ -19,4 +19,5 @@ interface AccountService {
     suspend fun signInWithFacebook(token: String): Response<Boolean>
     suspend fun updatePassword(newPassword: String): Response<Boolean>
     suspend fun updateAvatar(newUri: Uri): Response<Boolean>
+    suspend fun reAuthenticateUser(password: String): Response<Boolean>
 }

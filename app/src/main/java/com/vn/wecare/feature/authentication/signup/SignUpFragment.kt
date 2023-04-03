@@ -16,8 +16,8 @@ class SignUpFragment : BaseBindingFragment<FragmentSignUpBinding>(FragmentSignUp
         super.setupComposeView(binding.composeView) {
             SignUpScreen(
                 viewModel = signUpViewModel,
-                moveToHomeScreen = {
-                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                moveToOnboardingScreen = {
+                    findNavController().navigate(R.id.action_signUpFragment_to_onboardingFragment)
                 },
                 navigateBack = { findNavController().popBackStack() },
             )

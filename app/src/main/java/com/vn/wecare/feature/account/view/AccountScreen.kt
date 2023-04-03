@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -24,9 +27,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.AccountUiState
-import com.vn.wecare.feature.account.AccountViewModel
-import com.vn.wecare.ui.theme.*
+import com.vn.wecare.feature.account.viewmodel.AccountUiState
+import com.vn.wecare.feature.account.viewmodel.AccountViewModel
+import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.tinyPadding
 import com.vn.wecare.utils.common_composable.CardListTile
 import com.vn.wecare.utils.common_composable.LoadingDialog
 
@@ -54,6 +60,16 @@ fun AccountScreen(
         }
     }
 
+    uiState.value.isReAuthenticateDialogShow.let {
+        if (it) {
+            ReAuthenticateDialog(
+                modifier = modifier,
+                onDismissDialog = viewModel::onDismissReAuthenticateDialog,
+                viewModel = viewModel
+            )
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
@@ -72,7 +88,11 @@ fun AccountScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(halfMidPadding),
         ) {
-            AccountBody(modifier = modifier, onSignOutClick = { viewModel.onSignOutClick() })
+            AccountBody(
+                modifier = modifier,
+                onSignOutClick = { viewModel.onSignOutClick() },
+                onChangePasswordClick = viewModel::onChangePasswordClick
+            )
         }
     }
 }
@@ -135,6 +155,9 @@ fun AccountHeader(
                 modifier = modifier
                     .size(80.dp)
                     .clip(CircleShape)
+                    .clickable {
+                        galleryLauncher.launch("image/*")
+                    }
             )
         }
         Text(
@@ -162,7 +185,9 @@ fun AccountHeader(
 
 @Composable
 fun AccountBody(
-    modifier: Modifier, onSignOutClick: () -> Unit
+    modifier: Modifier,
+    onSignOutClick: () -> Unit,
+    onChangePasswordClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -173,9 +198,10 @@ fun AccountBody(
             leadingIconRes = R.drawable.ic_baseline_key,
             trailingIconRes = R.drawable.ic_arrow_forward,
             titleRes = R.string.change_password,
-            subTitle = "Forgot your password? Change it now",
+            subTitle = "Click here to change your password",
             elevation = 0.dp,
-            colorIconRes = R.color.Orange300
+            colorIconRes = R.color.Orange300,
+            onClick = onChangePasswordClick
         )
         Spacer(modifier = modifier.height(halfMidPadding))
         CardListTile(

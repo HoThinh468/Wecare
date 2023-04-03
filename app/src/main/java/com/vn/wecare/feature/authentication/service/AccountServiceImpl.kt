@@ -1,10 +1,7 @@
 package com.vn.wecare.feature.authentication.service
 
 import android.net.Uri
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.vn.wecare.core.data.Response
 import kotlinx.coroutines.flow.Flow
@@ -112,6 +109,18 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
         return try {
             auth.currentUser!!.updateProfile(newProfile).await()
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Error(e)
+        }
+    }
+
+    override suspend fun reAuthenticateUser(password: String): Response<Boolean> {
+        val credential =
+            EmailAuthProvider.getCredential(auth.currentUser?.email.toString(), password)
+
+        return try {
+            auth.currentUser?.reauthenticate(credential)?.await()
             Response.Success(true)
         } catch (e: Exception) {
             Response.Error(e)

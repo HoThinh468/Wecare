@@ -3,15 +3,11 @@ package com.vn.wecare.feature.account.view
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAccountBinding
-import com.vn.wecare.feature.account.AccountViewModel
+import com.vn.wecare.feature.account.viewmodel.AccountViewModel
 
 class AccountFragment :
     BaseBindingFragment<FragmentAccountBinding>(FragmentAccountBinding::inflate) {
@@ -24,11 +20,13 @@ class AccountFragment :
         ) {
             AccountScreen(
                 moveToSignInScreen = {
+                    findNavController().popBackStack()
+                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
                 }, viewModel = accountViewModel
             )
         }
+        accountViewModel.updateAccountScreen()
     }
-
 
     companion object {
         const val AccountFlowTAG = "Account flow"

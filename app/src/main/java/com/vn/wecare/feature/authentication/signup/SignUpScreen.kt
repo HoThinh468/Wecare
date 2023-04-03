@@ -33,7 +33,7 @@ import com.vn.wecare.utils.common_composable.LoadingDialog
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel,
-    moveToHomeScreen: () -> Unit,
+    moveToOnboardingScreen: () -> Unit,
     navigateBack: () -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
@@ -44,11 +44,9 @@ fun SignUpScreen(
     signUpUiState.value.signUpResponse.let {
         when (it) {
             is Response.Loading -> LoadingDialog(loading = it == Response.Loading) {}
-            is Response.Success -> viewModel.handleSignUpSuccess(moveToHomeScreen)
+            is Response.Success -> viewModel.handleSignUpSuccess(moveToOnboardingScreen)
             is Response.Error -> viewModel.handleSignUpError()
             null -> { /* do nothing */
-            }
-            else -> {/* do nothing */
             }
         }
     }
@@ -96,7 +94,6 @@ fun SignUpScreen(
                 label = "Email",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Email,
                 value = signUpUiState.value.email,
                 onValueChange = viewModel::onEmailChange,
@@ -111,7 +108,6 @@ fun SignUpScreen(
                 label = "User Name",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Person,
                 value = signUpUiState.value.userName,
                 onValueChange = viewModel::onUserNameChange,
@@ -126,7 +122,6 @@ fun SignUpScreen(
                 label = "Password",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Filled.VpnKey,
                 trailingIcon = if (viewModel.isPasswordShow) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                 value = signUpUiState.value.password,
@@ -141,7 +136,8 @@ fun SignUpScreen(
 
             CustomButton(
                 text = "SIGN UP",
-                onClick = viewModel::onSignUpClick,
+//                onClick = viewModel::onSignUpClick,
+                onClick = moveToOnboardingScreen,
                 textColor = Color.White,
             )
 

@@ -1,9 +1,10 @@
-package com.vn.wecare.feature.account
+package com.vn.wecare.feature.account.viewmodel
 
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vn.wecare.R
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
@@ -12,6 +13,7 @@ import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.view.AccountFragment.Companion.AccountFlowTAG
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +27,17 @@ data class AccountUiState(
     val signOutResponse: Response<Boolean>? = null,
     val isEmailVerified: Boolean = false,
     val userNameLogo: String = "",
-    val avatarUri: Uri? = null
+    val avatarUri: Uri? = null,
+    val isReAuthenticateDialogShow: Boolean = false
+)
+
+data class ChangePasswordUiState(
+    val isPasswordValid: Boolean = true,
+    val isPasswordShow: Boolean = false,
+    val password: String = "",
+    val reAuthenticateResult: Response<Boolean>? = null,
+    val isChangePasswordDialogShow: Boolean = false,
+    val changePasswordResult: Response<Boolean>? = null
 )
 
 @HiltViewModel
@@ -41,19 +53,10 @@ class AccountViewModel @Inject constructor(
     private val _accountUiState = MutableStateFlow(AccountUiState())
     val accountUiState = _accountUiState.asStateFlow()
 
+    private val _changePasswordUiState = MutableStateFlow(ChangePasswordUiState())
+    val changePasswordUiState = _changePasswordUiState.asStateFlow()
+
     val currentUserId = accountService.currentUserId
-
-    init {
-        updateAccountScreen()
-        _accountUiState.update {
-            it.copy(avatarUri = accountService.userAvatar)
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(AccountFlowTAG, "Account viewmodel on cleared")
-    }
 
     fun updateAccountScreen() = viewModelScope.launch {
         val user = getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
@@ -65,9 +68,22 @@ class AccountViewModel @Inject constructor(
                         email = res.data.email,
                         isEmailVerified = res.data.isEmailVerified,
                         userNameLogo = res.data.userName[0].uppercase(),
+                        avatarUri = accountService.userAvatar
                     )
                 }
             }
+        }
+    }
+
+    fun onChangePasswordClick() {
+        _accountUiState.update {
+            it.copy(isReAuthenticateDialogShow = true)
+        }
+    }
+
+    fun onDismissReAuthenticateDialog() {
+        _accountUiState.update {
+            it.copy(isReAuthenticateDialogShow = false)
         }
     }
 
@@ -111,8 +127,62 @@ class AccountViewModel @Inject constructor(
     }
 
     fun pickImageUriFromPhone(uri: Uri?) {
-        _accountUiState.update {
-            it.copy(avatarUri = uri)
+        if (_accountUiState.value.avatarUri == null) {
+            _accountUiState.update {
+                it.copy(avatarUri = uri)
+            }
+        }
+        if (uri != null) {
+            viewModelScope.launch {
+                accountService.updateAvatar(uri)
+            }
+        }
+    }
+
+    fun onShowPasswordClick() {
+        _changePasswordUiState.update {
+            it.copy(isPasswordShow = !it.isPasswordShow)
+        }
+    }
+
+    fun onSubmitReAuthenticationPassword() = viewModelScope.launch {
+        checkValidPassword()
+        if (_changePasswordUiState.value.isPasswordValid) {
+            _changePasswordUiState.update { it.copy(reAuthenticateResult = Response.Loading) }
+            _changePasswordUiState.update {
+                it.copy(
+                    reAuthenticateResult = accountService.reAuthenticateUser(
+                        _changePasswordUiState.value.password
+                    )
+                )
+            }
+        }
+    }
+
+    fun clearReAutheticateResult() {
+        _changePasswordUiState.update {
+            it.copy(reAuthenticateResult = null)
+        }
+    }
+
+    private fun checkValidPassword() {
+        _changePasswordUiState.update {
+            it.copy(isPasswordValid = it.password.isValidPassword())
+        }
+    }
+
+    fun onPasswordChange(newVal: String) {
+        _changePasswordUiState.update {
+            it.copy(password = newVal)
+        }
+    }
+
+    fun getPasswordErrorMessage(): Int? = if (_changePasswordUiState.value.isPasswordValid) null
+    else R.string.password_error_message
+
+    fun onDismissChangePasswordDialog() {
+        _changePasswordUiState.update {
+            it.copy(isChangePasswordDialogShow = false)
         }
     }
 
@@ -125,6 +195,49 @@ class AccountViewModel @Inject constructor(
                 email = "",
                 isEmailVerified = false,
                 avatarUri = null
+            )
+        }
+    }
+
+    fun handleReAuthenticateSuccessful() {
+        showChangePasswordDialog()
+        clearReAuthenticateInfo()
+    }
+
+    private fun showChangePasswordDialog() {
+        _changePasswordUiState.update {
+            it.copy(isChangePasswordDialogShow = true)
+        }
+    }
+
+    fun onSubmitChangePasswordClick() = viewModelScope.launch {
+        checkValidPassword()
+        if (_changePasswordUiState.value.isPasswordValid) {
+            _changePasswordUiState.update { it.copy(changePasswordResult = Response.Loading) }
+            _changePasswordUiState.update {
+                it.copy(
+                    changePasswordResult = accountService.updatePassword(
+                        _changePasswordUiState.value.password
+                    )
+                )
+            }
+        }
+    }
+
+    fun clearChangePasswordResult() {
+        _changePasswordUiState.update {
+            it.copy(changePasswordResult = null)
+        }
+    }
+
+    fun clearReAuthenticateInfo() {
+        _changePasswordUiState.update {
+            it.copy(
+                isPasswordValid = true,
+                isPasswordShow = false,
+                password = "",
+                reAuthenticateResult = null,
+                changePasswordResult = null,
             )
         }
     }

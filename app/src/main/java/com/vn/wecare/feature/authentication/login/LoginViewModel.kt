@@ -112,16 +112,14 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkEmailValidation() {
-        if (inputEmail.isValidEmail()) _logInUiState.update { it.copy(isEmailValid = true) }
-        else _logInUiState.update { it.copy(isEmailValid = false) }
+        _logInUiState.update { it.copy(isEmailValid = inputEmail.isValidEmail()) }
     }
 
     fun getEmailErrorMessage(): Int? = if (_logInUiState.value.isEmailValid) null
     else R.string.email_error_message
 
     private fun checkPasswordValidation() {
-        if (inputPassword.isValidPassword()) _logInUiState.update { it.copy(isPasswordValid = true) }
-        else _logInUiState.update { it.copy(isPasswordValid = false) }
+        _logInUiState.update { it.copy(isPasswordValid = inputPassword.isValidPassword()) }
     }
 
     fun getPasswordErrorMessage(): Int? = if (_logInUiState.value.isPasswordValid) null

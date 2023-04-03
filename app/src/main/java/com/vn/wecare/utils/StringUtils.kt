@@ -11,7 +11,6 @@ import java.util.*
 import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
-private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{4,}$"
 
 fun String.formatDate(): String {
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
