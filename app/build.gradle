@@ -5,6 +5,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -106,6 +107,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.facebook.android:facebook-android-sdk:14.1.0'
 
     implementation ('com.mapbox.maps:android:10.9.1'){
         exclude group: 'group_name', module: 'module_name'

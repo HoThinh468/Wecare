@@ -45,10 +45,6 @@ class StepsPerHoursRepository @Inject constructor(
         return stepsLocalDataSource.getStepsPerDayWithHours(dayId)
     }
 
-//    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerDayWithHours>?> {
-//        return stepsLocalDataSource.getStepsPerDayWithHours(dayId)
-//    }
-
     suspend fun insertStepsPerHourToFirebase(input: StepsPerHour) {
         firebaseStepsPerHourDataSource.insert(input)
     }

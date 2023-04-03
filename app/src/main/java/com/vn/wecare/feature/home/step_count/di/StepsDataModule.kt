@@ -3,8 +3,7 @@ package com.vn.wecare.feature.home.step_count.di
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.core.di.IoDispatcher
-import com.vn.wecare.feature.account.di.FirebaseUserDatasource
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.datasource.local.LocalStepPerHourDatasource
 import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerHourDataSource
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository

@@ -7,10 +7,12 @@ import javax.inject.Inject
 class CreateNewWecareUserUsecase @Inject constructor(
     private val userRepository: UserRepository,
 ) {
-    suspend fun createNewWecareUser(userId: String, email: String, userName: String) {
+    suspend fun createNewWecareUser(
+        userId: String, email: String, userName: String, isEmailVerified: Boolean
+    ) {
         val newUser = WecareUser(
-            userId, userName, email
+            userId, userName, email, isEmailVerified
         )
-        userRepository.insertUser(newUser)
+        userRepository.insertUserToFirebase(newUser)
     }
 }

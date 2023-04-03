@@ -19,7 +19,7 @@ sealed class NavigationBarScreen(
 
     object Training : NavigationBarScreen(
         route = TrainingRoutes.trainingDes,
-        title = R.string.training_title,
+        title = R.string.exercises,
         icon = R.drawable.ic_outline_sports_baseball,
         selectedIcon = R.drawable.ic_sports_baseball
     )

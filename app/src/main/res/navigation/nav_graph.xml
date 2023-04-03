@@ -22,8 +22,10 @@
             android:id="@+id/action_homeFragment_to_waterFragment"
             app:destination="@id/waterFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_account_nested_graph"
-            app:destination="@id/account_nested_graph" />
+            android:id="@+id/action_homeFragment_to_authentication_nested_graph"
+            app:destination="@id/authentication_nested_graph"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/trainingFragment"
@@ -112,7 +114,7 @@
         app:startDestination="@id/logInFragment">
         <fragment
             android:id="@+id/logInFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.login.view.LogInFragment"
+            android:name="com.vn.wecare.feature.authentication.login.LogInFragment"
             android:label="fragment_log_in"
             tools:layout="@layout/fragment_log_in">
             <action
@@ -124,9 +126,13 @@
         </fragment>
         <fragment
             android:id="@+id/signUpFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.signup.SignUpFragment"
+            android:name="com.vn.wecare.feature.authentication.signup.SignUpFragment"
             android:label="fragment_sign_up"
-            tools:layout="@layout/fragment_sign_up" />
+            tools:layout="@layout/fragment_sign_up" >
+            <action
+                android:id="@+id/action_signUpFragment_to_onboardingFragment"
+                app:destination="@id/onboardingFragment" />
+        </fragment>
         <action
             android:id="@+id/action_global_authentication_nested_graph_to_home_fragment"
             app:destination="@id/homeFragment"
@@ -134,7 +140,7 @@
             app:popUpToInclusive="true" />
         <fragment
             android:id="@+id/forgotPasswordFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.forgotpassword.ForgotPasswordFragment"
+            android:name="com.vn.wecare.feature.authentication.forgotpassword.ForgotPasswordFragment"
             android:label="fragment_forgot_password"
             tools:layout="@layout/fragment_forgot_password" >
             <action
@@ -143,7 +149,7 @@
         </fragment>
         <fragment
             android:id="@+id/sendRecoveryEmailSuccessFragment"
-            android:name="com.vn.wecare.feature.authentication.ui.forgotpassword.SendRecoveryEmailSuccessFragment"
+            android:name="com.vn.wecare.feature.authentication.forgotpassword.SendRecoveryEmailSuccessFragment"
             android:label="fragment_send_recovery_email_success"
             tools:layout="@layout/fragment_send_recovery_email_success" >
             <action
@@ -152,20 +158,57 @@
                 app:popUpTo="@id/logInFragment"
                 app:popUpToInclusive="true" />
         </fragment>
+        <fragment
+            android:id="@+id/onboardingFragment"
+            android:name="com.vn.wecare.feature.onboarding.OnboardingFragment"
+            android:label="fragment_onboarding"
+            tools:layout="@layout/fragment_onboarding" />
     </navigation>
 
     <!-- Account management nested section -->
-    <navigation android:id="@+id/account_nested_graph"
-        app:startDestination="@id/accountFragment">
-        <fragment
-            android:id="@+id/accountFragment"
-            android:name="com.vn.wecare.feature.account.view.AccountFragment"
-            android:label="Account"
-            tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/exercisesFragment"
+        android:name="com.vn.wecare.feature.exercises.ExercisesFragment"
+        android:label="fragment_exercises"
+        tools:layout="@layout/fragment_exercises" >
         <action
-            android:id="@+id/action_global_account_nested_graph_to_authentication_nested_graph"
-            app:destination="@id/authentication_nested_graph"
-            app:popUpTo="@id/homeFragment"
+            android:id="@+id/action_exercisesFragment_to_exerciseListFragment"
+            app:destination="@id/exerciseListFragment"
             app:popUpToInclusive="true" />
-    </navigation>
+    </fragment>
+    <fragment
+        android:id="@+id/newFeedFragment"
+        android:name="com.vn.wecare.feature.new_feed.NewFeedFragment"
+        android:label="fragment_new_feed"
+        tools:layout="@layout/fragment_new_feed" />
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.vn.wecare.feature.account.view.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/exerciseListFragment"
+        android:name="com.vn.wecare.feature.exercises.exercise_list.ExerciseListFragment"
+        android:label="fragment_exercise_list"
+        tools:layout="@layout/fragment_exercise_list" >
+        <action
+            android:id="@+id/action_exerciseListFragment_to_programDetailFragment"
+            app:destination="@id/programDetailFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/programDetailFragment"
+        android:name="com.vn.wecare.feature.exercises.program_detail.ProgramDetailFragment"
+        android:label="fragment_program_detail"
+        tools:layout="@layout/fragment_program_detail" >
+        <action
+            android:id="@+id/action_programDetailFragment_to_programRatingFragment"
+            app:destination="@id/programRatingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/programRatingFragment"
+        android:name="com.vn.wecare.feature.exercises.program_ratings.ProgramRatingFragment"
+        android:label="fragment_program_rating"
+        tools:layout="@layout/fragment_program_rating" />
 </navigation>

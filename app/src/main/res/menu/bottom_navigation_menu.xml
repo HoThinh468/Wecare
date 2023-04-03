@@ -2,18 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/fragment_home"
+        android:id="@+id/homeFragment"
         android:icon="@drawable/child_home_selector"
         android:title="@string/home_title"/>
     <item
-        android:id="@+id/fragment_training"
-        android:icon="@drawable/child_training_selector"
-        android:title="@string/training_title"/>
+        android:id="@+id/newFeedFragment"
+        android:icon="@drawable/ic_newspaper"
+        android:title="@string/new_feed"/>
     <item
-        android:id="@+id/fragment_account"
+        android:id="@+id/exercisesFragment"
+        android:icon="@drawable/ic_sports"
+        android:title="@string/exercises"/>
+    <item
+        android:id="@+id/accountFragment"
         android:icon="@drawable/child_account_selector"
         android:title="@string/account_title" />
-
-
 </menu>
-

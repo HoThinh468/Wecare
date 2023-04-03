@@ -1,9 +1,7 @@
 package com.vn.wecare.feature.account.di
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.vn.wecare.feature.account.data.datasource.FirebaseWecareUserDataSource
-import com.vn.wecare.feature.account.data.datasource.WecareUserDataSource
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.datasource.local.LocalStepsPerDayDataSource

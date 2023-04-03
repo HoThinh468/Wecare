@@ -7,7 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAccountBinding
-import com.vn.wecare.feature.account.AccountViewModel
+import com.vn.wecare.feature.account.viewmodel.AccountViewModel
 
 class AccountFragment :
     BaseBindingFragment<FragmentAccountBinding>(FragmentAccountBinding::inflate) {
@@ -18,12 +18,17 @@ class AccountFragment :
         super.setupComposeView(
             binding.accountComposeView
         ) {
-            AccountScreen(navigateUp = { findNavController().popBackStack() }, onSignOutClick = {
-                accountViewModel.onSignOutClick {
-                    findNavController().navigate(R.id.action_global_account_nested_graph_to_authentication_nested_graph)
-                }
-            }, viewModel = accountViewModel
+            AccountScreen(
+                moveToSignInScreen = {
+                    findNavController().popBackStack()
+                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
+                }, viewModel = accountViewModel
             )
         }
+        accountViewModel.updateAccountScreen()
+    }
+
+    companion object {
+        const val AccountFlowTAG = "Account flow"
     }
 }

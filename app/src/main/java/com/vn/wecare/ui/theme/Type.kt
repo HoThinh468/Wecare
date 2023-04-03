@@ -56,5 +56,10 @@ val WeCareTypography = Typography(
         fontFamily = OpenSans,
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp
+    ),
+    h5 = TextStyle(
+        fontFamily = OpenSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp
     )
 )

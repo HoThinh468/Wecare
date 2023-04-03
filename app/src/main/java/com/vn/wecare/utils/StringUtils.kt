@@ -1,6 +1,8 @@
 package com.vn.wecare.utils
 
+import android.annotation.SuppressLint
 import android.util.Patterns
+import com.google.type.DateTime
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -9,7 +11,6 @@ import java.util.*
 import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
-private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{4,}$"
 
 fun String.formatDate(): String {
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
@@ -39,17 +40,19 @@ fun String.isValidEmail(): Boolean {
 }
 
 fun String.isValidPassword(): Boolean {
-    return this.isNotBlank() &&
-            this.length >= MIN_PASS_LENGTH &&
-            Pattern.compile(PASS_PATTERN).matcher(this).matches()
+    return this.isNotBlank() && this.length >= MIN_PASS_LENGTH
+}
+
+fun String.isValidUsername(): Boolean {
+    return this.isNotBlank() && this.length >= MIN_PASS_LENGTH
 }
 
 fun String.passwordMatches(repeated: String): Boolean {
     return this == repeated
 }
 
-fun getMonthPrefix(month: Int) : String {
-    return when(month) {
+fun getMonthPrefix(month: Int): String {
+    return when (month) {
         1 -> "Jan"
         2 -> "Feb"
         3 -> "Mar"
@@ -63,4 +66,11 @@ fun getMonthPrefix(month: Int) : String {
         11 -> "Nov"
         else -> "Dec"
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun convertMonthAgoTimeStamp(timeStamp: Long): String {
+    val currentTimestamp = System.currentTimeMillis()
+    val simpleDate = SimpleDateFormat("M")
+    return simpleDate.format(currentTimestamp - timeStamp) + " months ago"
 }

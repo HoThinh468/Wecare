@@ -3,7 +3,7 @@ package com.vn.wecare.feature.home.step_count
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.authentication.ui.service.AccountService
+import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.goal.GetGoalsFromFirebaseUsecase
 import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
