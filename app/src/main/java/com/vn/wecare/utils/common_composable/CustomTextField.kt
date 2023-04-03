@@ -19,11 +19,11 @@ import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
 fun CustomTextField(
+    modifier: Modifier = Modifier,
     hint: String?,
     label: String?,
     backgroundColor: Color? = null,
     cursorColor: Color = MaterialTheme.colors.primary,
-    focusedIndicatorColor: Color? = null,
     padding: Dp = normalPadding,
     leadingIcon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
@@ -37,7 +37,7 @@ fun CustomTextField(
 ) {
     Column {
         OutlinedTextField(
-            modifier = Modifier
+            modifier = modifier
                 .padding(start = padding, end = padding, top = padding)
                 .fillMaxWidth(),
             value = value,

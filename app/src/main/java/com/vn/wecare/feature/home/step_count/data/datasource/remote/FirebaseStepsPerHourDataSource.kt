@@ -19,16 +19,16 @@ class FirebaseStepsPerHourDataSource @Inject constructor(
 ) : StepsDatasource<StepsPerHour> {
 
     override suspend fun insert(input: StepsPerHour) {
-        try {
-            db.collection(WECARE_STEPS_PER_HOUR_COLLECTION).document(accountService.currentUserId)
-                .collection(input.dayId).document(input.hourId).set(input).addOnSuccessListener {
-                    Log.d("Insert steps per hour to firestore: ", input.toString())
-                }.addOnFailureListener {
-                    Log.d("Cannot insert steps per hour to firestore: ", it.toString())
-                }
-        }catch (e: FirebaseFirestoreException) {
-            Log.d("Cannot insert steps per hour to firestore: ", e.message.toString())
-        }
+//        try {
+//            db.collection(WECARE_STEPS_PER_HOUR_COLLECTION).document(accountService.currentUserId)
+//                .collection(input.dayId).document(input.hourId).set(input).addOnSuccessListener {
+//                    Log.d("Insert steps per hour to firestore: ", input.toString())
+//                }.addOnFailureListener {
+//                    Log.d("Cannot insert steps per hour to firestore: ", it.toString())
+//                }
+//        }catch (e: FirebaseFirestoreException) {
+//            Log.d("Cannot insert steps per hour to firestore: ", e.message.toString())
+//        }
     }
 
     override suspend fun delete(inputs: List<StepsPerHour>) {

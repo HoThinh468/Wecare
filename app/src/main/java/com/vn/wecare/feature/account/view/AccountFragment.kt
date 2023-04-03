@@ -7,7 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAccountBinding
-import com.vn.wecare.feature.account.AccountViewModel
+import com.vn.wecare.feature.account.viewmodel.AccountViewModel
 
 class AccountFragment :
     BaseBindingFragment<FragmentAccountBinding>(FragmentAccountBinding::inflate) {
@@ -20,10 +20,12 @@ class AccountFragment :
         ) {
             AccountScreen(
                 moveToSignInScreen = {
-                    findNavController().navigate(R.id.action_accountFragment2_to_authentication_nested_graph)
+                    findNavController().popBackStack()
+                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
                 }, viewModel = accountViewModel
             )
         }
+        accountViewModel.updateAccountScreen()
     }
 
     companion object {

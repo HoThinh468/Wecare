@@ -34,4 +34,8 @@ class LocalWecareUserDataSource @Inject constructor(
             }
         )
     }.flowOn(ioDispatcher)
+
+    override suspend fun updateUser(input: WecareUser): Flow<Response<WecareUser>> = flow {
+        /* do nothing */
+    }
 }

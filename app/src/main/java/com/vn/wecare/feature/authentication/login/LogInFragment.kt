@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
@@ -23,6 +25,7 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
         super.setupComposeView(binding.composeView) {
             SignInScreen(
                 navigateToHome = {
+//                    handleWhenUserIsNotNull()
                     findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
                 },
                 navigateToSignUp = {
@@ -32,6 +35,9 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
                 moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) },
             )
         }
+//        if (Firebase.auth.currentUser != null) {
+//            handleWhenUserIsNotNull()
+//        }
     }
 
     override fun setupWhatNeeded() {
@@ -46,5 +52,12 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
                 PREVIOUS_TOTAL_SENSOR_STEPS, 0f
             ).toString()
         )
+    }
+
+    private fun handleWhenUserIsNotNull() {
+        findNavController().apply {
+            graph.setStartDestination(R.id.homeFragment)
+            navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+        }
     }
 }

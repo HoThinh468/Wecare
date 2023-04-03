@@ -16,7 +16,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vn.wecare.databinding.ActivityMainBinding
@@ -34,8 +33,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private val stepCountViewModel: StepCountViewModel by viewModels()
 
-    private lateinit var auth: FirebaseAuth
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -47,29 +44,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         appContext = applicationContext
 
-        auth = Firebase.auth
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-        if (auth.currentUser == null) {
-            navGraph.setStartDestination(R.id.authentication_nested_graph)
-            navController.graph = navGraph
-        }
         val navView: BottomNavigationView = binding.navView
-        navView.setupWithNavController(navController)
+        navView.setupWithNavController(setUpNavController())
 
-        navController.addOnDestinationChangedListener {_: NavController?, navDestination: NavDestination, _: Bundle? ->
-            when(navDestination.id) {
-                R.id.homeFragment, R.id.accountFragment2, R.id.exercisesFragment, R.id.newFeedFragment -> binding.navView.visibility = View.VISIBLE
-                else -> binding.navView.visibility = View.GONE
-            }
+        if (Firebase.auth.currentUser == null) {
+            setUpNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
         }
-    }
 
-    companion object {
-        lateinit var appContext: Context
+        hideBottomNavBar(setUpNavController())
     }
 
     override fun onResume() {
@@ -87,7 +69,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             putFloat(LATEST_STEPS_COUNT, p0.values[0])
             apply()
         }
-//        stepCountViewModel.updateCaloriesConsumed()
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -102,5 +83,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         motionSensor = null
+    }
+
+    private fun setUpNavController(): NavController {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        return navHostFragment.navController
+    }
+
+    private fun hideBottomNavBar(navController: NavController) {
+        navController.addOnDestinationChangedListener { _: NavController?, navDestination: NavDestination, _: Bundle? ->
+            when (navDestination.id) {
+                R.id.homeFragment, R.id.accountFragment, R.id.exercisesFragment, R.id.newFeedFragment -> binding.navView.visibility =
+                    View.VISIBLE
+                else -> binding.navView.visibility = View.GONE
+            }
+        }
+    }
+
+    companion object {
+        lateinit var appContext: Context
     }
 }

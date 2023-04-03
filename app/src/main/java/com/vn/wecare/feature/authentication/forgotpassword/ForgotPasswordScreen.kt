@@ -89,7 +89,6 @@ fun ForgotPasswordScreen(
                 label = "Email",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Email,
                 padding = mediumPadding,
                 value = uiState.value.email,
@@ -99,7 +98,7 @@ fun ForgotPasswordScreen(
             )
             CustomButton(
                 text = "Send recovery email",
-                onClick = { viewModel.onSendRecoveryEmailClick(moveToSendSuccessEmailScreen) },
+                onClick = { viewModel.onSendRecoveryEmailClick() },
                 textColor = Color.White,
                 padding = mediumPadding
             )

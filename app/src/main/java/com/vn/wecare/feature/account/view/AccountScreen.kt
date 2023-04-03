@@ -1,25 +1,38 @@
 package com.vn.wecare.feature.account.view
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.AccountUiState
-import com.vn.wecare.feature.account.AccountViewModel
-import com.vn.wecare.ui.theme.*
+import com.vn.wecare.feature.account.viewmodel.AccountUiState
+import com.vn.wecare.feature.account.viewmodel.AccountViewModel
+import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.tinyPadding
 import com.vn.wecare.utils.common_composable.CardListTile
 import com.vn.wecare.utils.common_composable.LoadingDialog
 
@@ -29,7 +42,7 @@ fun AccountScreen(
     modifier: Modifier = Modifier,
     moveToSignInScreen: () -> Unit,
     viewModel: AccountViewModel,
-    ) {
+) {
 
     val uiState = viewModel.accountUiState.collectAsState()
 
@@ -47,11 +60,26 @@ fun AccountScreen(
         }
     }
 
+    uiState.value.isReAuthenticateDialogShow.let {
+        if (it) {
+            ReAuthenticateDialog(
+                modifier = modifier,
+                onDismissDialog = viewModel::onDismissReAuthenticateDialog,
+                viewModel = viewModel
+            )
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
-            AccountHeader(modifier = modifier, uiState = uiState)
+            AccountHeader(modifier = modifier,
+                uiState = uiState,
+                sendVerifiedEmail = viewModel::sendVerificationEmail,
+                pickImageUri = {
+                    viewModel.pickImageUriFromPhone(it)
+                })
         },
     ) {
         Column(
@@ -60,15 +88,29 @@ fun AccountScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(halfMidPadding),
         ) {
-            AccountBody(modifier = modifier, onSignOutClick = { viewModel.onSignOutClick() })
+            AccountBody(
+                modifier = modifier,
+                onSignOutClick = { viewModel.onSignOutClick() },
+                onChangePasswordClick = viewModel::onChangePasswordClick
+            )
         }
     }
 }
 
 @Composable
 fun AccountHeader(
-    modifier: Modifier, uiState: State<AccountUiState>
+    modifier: Modifier,
+    uiState: State<AccountUiState>,
+    sendVerifiedEmail: () -> Unit,
+    pickImageUri: (uri: Uri?) -> Unit
 ) {
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(),
+            onResult = {
+                pickImageUri(it)
+            })
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -90,22 +132,39 @@ fun AccountHeader(
                 style = MaterialTheme.typography.h4,
             )
         }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = modifier.padding(vertical = halfMidPadding)
-        ) {
-            Card(
-                modifier = modifier.size(80.dp),
-                shape = CircleShape,
-                backgroundColor = MaterialTheme.colors.primary,
-            ) {}
-            Text(
-                text = "T",
-                style = MaterialTheme.typography.h1,
-                color = MaterialTheme.colors.onPrimary
+        if (uiState.value.avatarUri == null) {
+            Box(contentAlignment = Alignment.Center,
+                modifier = modifier
+                    .background(MaterialTheme.colors.primary, shape = CircleShape)
+                    .size(80.dp)
+                    .padding(vertical = halfMidPadding)
+                    .clickable {
+                        galleryLauncher.launch("image/*")
+                    }) {
+                Text(
+                    text = uiState.value.userNameLogo,
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.onPrimary
+                )
+            }
+        } else {
+            AsyncImage(
+                model = uiState.value.avatarUri,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        galleryLauncher.launch("image/*")
+                    }
             )
         }
-        Text(text = uiState.value.username, style = MaterialTheme.typography.h3)
+        Text(
+            text = uiState.value.username,
+            style = MaterialTheme.typography.h3,
+            modifier = modifier.padding(top = normalPadding)
+        )
         Text(
             text = uiState.value.email,
             style = MaterialTheme.typography.body1,
@@ -114,12 +173,21 @@ fun AccountHeader(
             ),
             modifier = modifier.padding(bottom = normalPadding)
         )
+        if (!uiState.value.isEmailVerified) {
+            Button(
+                onClick = sendVerifiedEmail, modifier = modifier.padding(bottom = normalPadding)
+            ) {
+                Text("Get your email verified!")
+            }
+        }
     }
 }
 
 @Composable
 fun AccountBody(
-    modifier: Modifier, onSignOutClick: () -> Unit
+    modifier: Modifier,
+    onSignOutClick: () -> Unit,
+    onChangePasswordClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -130,9 +198,10 @@ fun AccountBody(
             leadingIconRes = R.drawable.ic_baseline_key,
             trailingIconRes = R.drawable.ic_arrow_forward,
             titleRes = R.string.change_password,
-            subTitle = "Forgot your password? Change it now",
+            subTitle = "Click here to change your password",
             elevation = 0.dp,
-            colorIconRes = R.color.Orange300
+            colorIconRes = R.color.Orange300,
+            onClick = onChangePasswordClick
         )
         Spacer(modifier = modifier.height(halfMidPadding))
         CardListTile(

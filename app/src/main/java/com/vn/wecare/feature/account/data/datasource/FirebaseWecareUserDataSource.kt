@@ -2,6 +2,7 @@ package com.vn.wecare.feature.account.data.datasource
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,7 @@ class FirebaseWecareUserDataSource @Inject constructor(
     private val db: FirebaseFirestore,
 ) : WecareUserDataSource {
 
-    override suspend fun insertUser(input: WecareUser   ) {
+    override suspend fun insertUser(input: WecareUser) {
         db.collection(WECARE_USER_COLLECTION_PATH).document(input.userId).set(input)
             .addOnSuccessListener {
                 Log.d(
@@ -48,6 +49,18 @@ class FirebaseWecareUserDataSource @Inject constructor(
                 else Response.Error(Exception("User not found"))
             } catch (exception: Exception) {
                 Response.Error(exception)
+            }
+        )
+    }
+
+    override suspend fun updateUser(input: WecareUser): Flow<Response<WecareUser>> = flow {
+        emit(
+            try {
+                db.collection(WECARE_USER_COLLECTION_PATH).document(input.userId)
+                    .set(input, SetOptions.merge()).await()
+                Response.Success(input )
+            } catch (e: Exception) {
+                Response.Error(e)
             }
         )
     }

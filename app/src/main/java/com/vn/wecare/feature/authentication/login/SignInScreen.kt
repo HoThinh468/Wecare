@@ -106,8 +106,7 @@ fun SignInScreen(
 
             Text(
                 text = "Welcome Back",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -119,7 +118,6 @@ fun SignInScreen(
                 label = "Email",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Default.Email,
                 value = viewModel.inputEmail,
                 onValueChange = viewModel::onEmailChange,
@@ -136,7 +134,6 @@ fun SignInScreen(
                 label = "Password",
                 backgroundColor = Color.White,
                 cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Gray,
                 leadingIcon = Icons.Filled.VpnKey,
                 trailingIcon = if (viewModel.isPasswordShow) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                 value = viewModel.inputPassword,

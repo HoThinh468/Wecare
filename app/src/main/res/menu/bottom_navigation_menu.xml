@@ -14,10 +14,7 @@
         android:icon="@drawable/ic_sports"
         android:title="@string/exercises"/>
     <item
-        android:id="@+id/accountFragment2"
+        android:id="@+id/accountFragment"
         android:icon="@drawable/child_account_selector"
         android:title="@string/account_title" />
-
-
 </menu>
-
