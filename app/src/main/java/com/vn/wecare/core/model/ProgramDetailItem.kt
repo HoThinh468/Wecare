@@ -42,12 +42,6 @@ val listDetailEndurance: List<ProgramDetailItem> = listOf(
 val listDetailStrength: List<ProgramDetailItem> = listOf(
     ProgramDetailItem(
         exercise = R.drawable.exercise_header,
-        title = "title1",
-        rest = 15,
-        duration = 20,
-    ),
-    ProgramDetailItem(
-        exercise = R.drawable.exercise_header,
         title = "title2",
         rest = 15,
         duration = 20,
