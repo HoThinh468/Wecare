@@ -1,9 +1,11 @@
 package com.vn.wecare.feature.onboarding
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,19 +15,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.onboarding.composable.BaseOnboardingContent
+import com.vn.wecare.feature.onboarding.composable.OnboardingAgePicker
+import com.vn.wecare.feature.onboarding.composable.OnboardingGenderSelection
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 
+private const val ONBOARDING_PAGE_COUNT = 2
+
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier
 ) {
-    Scaffold {
+    Scaffold(bottomBar = { BottomNav(modifier = modifier, index = 1) }) {
         Column(
             modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Image(
                 modifier = Modifier
@@ -36,7 +43,29 @@ fun OnboardingScreen(
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
-            BottomNav(modifier = modifier, index = 1)
+            HorizontalPager(pageCount = ONBOARDING_PAGE_COUNT) {
+                when (it) {
+                    0 -> {
+                        BaseOnboardingContent(
+                            modifier = modifier,
+                            titleRes = R.string.gender_selection_title,
+                            subtitleRes = R.string.gender_selection_subtitle
+                        ) {
+                            OnboardingGenderSelection(modifier = modifier)
+                        }
+                    }
+                    1 -> {
+                        BaseOnboardingContent(
+                            modifier = modifier,
+                            titleRes = R.string.age_picker_title,
+                            subtitleRes = R.string.age_picker_subtitle
+                        ) {
+                            OnboardingAgePicker(modifier = modifier)
+                        }
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 }
