@@ -10,7 +10,7 @@
         android:icon="@drawable/ic_newspaper"
         android:title="@string/new_feed"/>
     <item
-        android:id="@+id/exercisesFragment"
+        android:id="@+id/exercises_graph"
         android:icon="@drawable/ic_sports"
         android:title="@string/exercises"/>
     <item
