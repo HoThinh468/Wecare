@@ -1,68 +1,67 @@
 package com.vn.wecare.core.model
 
 import com.vn.wecare.R
-import com.vn.wecare.feature.exercises.exercise_list.ExerciseLevel
 
 data class ProgramDetailItem(
-    val image: Int,
+    val exercise: Int,
     val title: String,
-    val reps: Int,
+    val rest: Int,
     val duration: Int
 )
 
-val listTestProgramDetail: Array<ProgramDetailItem> = arrayOf(
+val errorList: List<ProgramDetailItem> = listOf(
     ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
+        exercise = R.drawable.jumping_jack,
+        title = "Error Loading",
+        rest = 0,
+        duration = 0,
+    )
+)
+
+val listDetailEndurance: List<ProgramDetailItem> = listOf(
+    ProgramDetailItem(
+        exercise = R.drawable.jumping_jack,
+        title = "Jumping Jack",
+        rest = 3,
+        duration = 10,
+    ),
+    ProgramDetailItem(
+        exercise = R.drawable.sit_3_4_up,
+        title = "3/4 Sit Up",
+        rest = 5,
+        duration = 10,
+    ),
+    ProgramDetailItem(
+        exercise = R.drawable.air_bike,
+        title = "Air Bike",
+        rest = 5,
+        duration = 10,
+    ),
+)
+
+val listDetailStrength: List<ProgramDetailItem> = listOf(
+    ProgramDetailItem(
+        exercise = R.drawable.exercise_header,
+        title = "title2",
+        rest = 15,
         duration = 20,
     ),
     ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
+        exercise = R.drawable.exercise_header,
+        title = "title3",
+        rest = 15,
         duration = 20,
     ),
     ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
+        exercise = R.drawable.exercise_header,
+        title = "title4",
+        rest = 15,
         duration = 20,
     ),
     ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
+        exercise = R.drawable.exercise_header,
+        title = "title5",
+        rest = 15,
         duration = 20,
-    ),
-    ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
-        duration = 20,
-    ),
-    ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
-        duration = 20,
-    ),
-    ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
-        duration = 20,
-    ),
-    ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
-        duration = 20,
-    ),
-    ProgramDetailItem(
-        image = R.drawable.exercise_header,
-        title = "title",
-        reps = 20,
-        duration = 20,
-    ),
+    )
 )

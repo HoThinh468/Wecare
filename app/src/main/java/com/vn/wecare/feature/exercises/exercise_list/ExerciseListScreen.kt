@@ -3,33 +3,13 @@ package com.vn.wecare.feature.exercises.exercise_list
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Functions
-import androidx.compose.material.icons.filled.OfflineBolt
-import androidx.compose.material.icons.filled.Timelapse
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,25 +20,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.vn.wecare.R
 import com.vn.wecare.core.model.ListExerciseItem
-import com.vn.wecare.core.model.listTest
-import com.vn.wecare.ui.theme.Black900
-import com.vn.wecare.ui.theme.Green500
-import com.vn.wecare.ui.theme.Red400
-import com.vn.wecare.ui.theme.WeCareTypography
-import com.vn.wecare.ui.theme.midPadding
-import com.vn.wecare.ui.theme.tinyPadding
+import com.vn.wecare.feature.exercises.ExerciseListScreenUI
+import com.vn.wecare.ui.theme.*
 
 @Composable
 fun ExerciseListScreen(
     modifier: Modifier = Modifier,
     onNavigationBack: () -> Unit,
-    image: Int = R.drawable.endurance_img,
-    title: String = "Endurance exercises",
-    trackAmount: Int = 18,
-    listExercises: Array<ListExerciseItem> = listTest,
-    onNavigationProgramDetail: () -> Unit
+    uiState: ExerciseListScreenUI,
+    onNavigationProgramDetail: (Int) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -99,7 +70,7 @@ fun ExerciseListScreen(
                 modifier = modifier
                     .fillMaxWidth()
                     .height(180.dp),
-                painter = painterResource(id = image),
+                painter = painterResource(id = uiState.image),
                 contentDescription = "",
                 contentScale = ContentScale.FillBounds
             )
@@ -114,7 +85,7 @@ fun ExerciseListScreen(
                 ) {
                     Text(
                         modifier = modifier.padding(top = 20.dp),
-                        text = title,
+                        text = uiState.title,
                         style = WeCareTypography.h3,
                         color = Color.Black
                     )
@@ -128,16 +99,18 @@ fun ExerciseListScreen(
                         Icon(Icons.Default.Functions, contentDescription = "", tint = Color.Black)
                         Text(
                             modifier = modifier.padding(start = 10.dp),
-                            text = "$trackAmount tracks",
+                            text = "${uiState.trackAmount} tracks",
                             style = WeCareTypography.body1,
                             color = Black900
                         )
                     }
                     LazyColumn {
-                        items(listExercises) { exercise ->
+                        items(uiState.listExercise) { exercise ->
                             ExerciseListItem(
                                 exerciseItem = exercise,
-                                onNavigationProgramDetail = { onNavigationProgramDetail() }
+                                onNavigationProgramDetail = {
+                                    onNavigationProgramDetail(uiState.listExercise.indexOf(exercise))
+                                }
                             )
                         }
                     }
@@ -198,11 +171,7 @@ fun ExerciseListItem(
             }
         }
         Spacer(modifier = modifier.weight(4f))
-        if (!exerciseItem.isLiked) {
-            Icon(Icons.Default.FavoriteBorder, "")
-        } else {
-            Icon(Icons.Default.Favorite, "", tint = Red400)
-        }
+        Icon(Icons.Default.NavigateNext, "")
     }
 }
 
