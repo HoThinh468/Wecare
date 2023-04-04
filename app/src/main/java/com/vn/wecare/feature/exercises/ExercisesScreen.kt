@@ -76,7 +76,10 @@ fun PreviewScreen() {
     ExercisesScreen(
         userName = "",
         onNavigateToReport = {},
-        onNavigateToEndurance = {}
+        onNavigateToEndurance = {},
+        onNavigateToStrength ={},
+        onNavigateToFlexibility = {},
+        onNavigateToBalance = {}
     )
 }
 
@@ -85,7 +88,10 @@ fun ExercisesScreen(
     modifier: Modifier = Modifier,
     userName: String,
     onNavigateToReport: () -> Unit,
-    onNavigateToEndurance: () -> Unit
+    onNavigateToEndurance: () -> Unit,
+    onNavigateToStrength: () -> Unit,
+    onNavigateToBalance: () -> Unit,
+    onNavigateToFlexibility: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier
@@ -135,19 +141,22 @@ fun ExercisesScreen(
                 WorkoutType(
                     textColor = Red400, text = "Strength",
                     image1 = R.drawable.rectangle_24,
-                    image2 = R.drawable.img_2
+                    image2 = R.drawable.img_2,
+                    onStart = { onNavigateToStrength() }
                 )
                 Spacer(modifier = modifier.height(midPadding))
                 WorkoutType(
                     textColor = Blue, text = "Balance",
                     image1 = R.drawable.polygon_1,
-                    image2 = R.drawable.img_3
+                    image2 = R.drawable.img_3,
+                    onStart = { onNavigateToBalance() }
                 )
                 Spacer(modifier = modifier.height(midPadding))
                 WorkoutType(
                     textColor = Yellow, text = "Flexibility",
                     image1 = R.drawable.star_1,
-                    image2 = R.drawable.img_4
+                    image2 = R.drawable.img_4,
+                    onStart = { onNavigateToFlexibility() }
                 )
                 Spacer(modifier = modifier.height(80.dp))
             }
