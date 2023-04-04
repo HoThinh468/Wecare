@@ -13,14 +13,14 @@ import com.vn.wecare.R
 fun numberPickerSpinner(
     modifier: Modifier,
     max: Int,
-    min: Int
+    min: Int,
 ): Int {
     var newValue  by remember { mutableStateOf(0) }
     AndroidView(
         modifier = modifier.width(54.dp),
         factory = { context ->
             NumberPicker(context).apply {
-                setOnValueChangedListener { numberPicker, oldValue, i ->
+                setOnValueChangedListener { _, _, i ->
                     newValue = i
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

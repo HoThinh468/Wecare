@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_trainingFragment"
-            app:destination="@id/trainingFragment"
+            app:destination="@id/training_graph"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_homeFragment_to_stepCountFragment"
@@ -25,16 +25,6 @@
             android:id="@+id/action_homeFragment_to_authentication_nested_graph"
             app:destination="@id/authentication_nested_graph"
             app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/trainingFragment"
-        android:name="com.vn.wecare.feature.training.dashboard.TrainingFragment"
-        android:label="Training"
-        tools:layout="@layout/fragment_training">
-        <action
-            android:id="@+id/action_trainingFragment_to_walkingFragment"
-            app:destination="@id/walkingFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -63,50 +53,6 @@
         android:name="com.vn.wecare.feature.home.water.WaterFragment"
         android:label="fragment_water"
         tools:layout="@layout/fragment_water" />
-    <fragment
-        android:id="@+id/walkingFragment"
-        android:name="com.vn.wecare.feature.training.walking.WalkingFragment"
-        android:label="fragment_walking"
-        tools:layout="@layout/fragment_walking">
-        <action
-            android:id="@+id/action_walkingFragment_to_trainingFragment"
-            app:destination="@id/trainingFragment" />
-        <action
-            android:id="@+id/action_walkingFragment_to_onWalkingFragment"
-            app:destination="@id/onWalkingFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/onWalkingFragment"
-        android:name="com.vn.wecare.feature.training.onWalking.OnWalkingFragment"
-        android:label="fragment_on_walking"
-        tools:layout="@layout/fragment_on_walking">
-        <action
-            android:id="@+id/action_onWalkingFragment_to_walkingFragment"
-            app:destination="@id/walkingFragment" />
-        <action
-            android:id="@+id/action_onWalkingFragment_to_doneFragment"
-            app:destination="@id/doneFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/doneFragment"
-        android:name="com.vn.wecare.feature.training.done_training.DoneFragment"
-        android:label="fragment_done"
-        tools:layout="@layout/fragment_done">
-        <action
-            android:id="@+id/action_doneFragment_to_trainingFragment"
-            app:destination="@id/trainingFragment" />
-        <action
-            android:id="@+id/action_doneFragment_to_viewRouteFragment"
-            app:destination="@id/viewRouteFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/viewRouteFragment"
-        android:name="com.vn.wecare.feature.training.view_route.ViewRouteFragment"
-        android:label="fragment_view_route"
-        tools:layout="@layout/fragment_view_route" />
 
     <!-- Nested graph for authentication fragment -->
     <navigation
@@ -128,7 +74,7 @@
             android:id="@+id/signUpFragment"
             android:name="com.vn.wecare.feature.authentication.signup.SignUpFragment"
             android:label="fragment_sign_up"
-            tools:layout="@layout/fragment_sign_up" >
+            tools:layout="@layout/fragment_sign_up">
             <action
                 android:id="@+id/action_signUpFragment_to_onboardingFragment"
                 app:destination="@id/onboardingFragment" />
@@ -142,7 +88,7 @@
             android:id="@+id/forgotPasswordFragment"
             android:name="com.vn.wecare.feature.authentication.forgotpassword.ForgotPasswordFragment"
             android:label="fragment_forgot_password"
-            tools:layout="@layout/fragment_forgot_password" >
+            tools:layout="@layout/fragment_forgot_password">
             <action
                 android:id="@+id/action_forgotPasswordFragment_to_sendRecoveryEmailSuccessFragment"
                 app:destination="@id/sendRecoveryEmailSuccessFragment" />
@@ -151,7 +97,7 @@
             android:id="@+id/sendRecoveryEmailSuccessFragment"
             android:name="com.vn.wecare.feature.authentication.forgotpassword.SendRecoveryEmailSuccessFragment"
             android:label="fragment_send_recovery_email_success"
-            tools:layout="@layout/fragment_send_recovery_email_success" >
+            tools:layout="@layout/fragment_send_recovery_email_success">
             <action
                 android:id="@+id/action_sendRecoveryEmailSuccessFragment_to_logInFragment"
                 app:destination="@id/logInFragment"
@@ -167,16 +113,6 @@
 
     <!-- Account management nested section -->
     <fragment
-        android:id="@+id/exercisesFragment"
-        android:name="com.vn.wecare.feature.exercises.ExercisesFragment"
-        android:label="fragment_exercises"
-        tools:layout="@layout/fragment_exercises" >
-        <action
-            android:id="@+id/action_exercisesFragment_to_exerciseListFragment"
-            app:destination="@id/exerciseListFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
         android:id="@+id/newFeedFragment"
         android:name="com.vn.wecare.feature.new_feed.NewFeedFragment"
         android:label="fragment_new_feed"
@@ -185,30 +121,139 @@
         android:id="@+id/accountFragment"
         android:name="com.vn.wecare.feature.account.view.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
-    <fragment
-        android:id="@+id/exerciseListFragment"
-        android:name="com.vn.wecare.feature.exercises.exercise_list.ExerciseListFragment"
-        android:label="fragment_exercise_list"
-        tools:layout="@layout/fragment_exercise_list" >
-        <action
-            android:id="@+id/action_exerciseListFragment_to_programDetailFragment"
-            app:destination="@id/programDetailFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/programDetailFragment"
-        android:name="com.vn.wecare.feature.exercises.program_detail.ProgramDetailFragment"
-        android:label="fragment_program_detail"
-        tools:layout="@layout/fragment_program_detail" >
-        <action
-            android:id="@+id/action_programDetailFragment_to_programRatingFragment"
-            app:destination="@id/programRatingFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/programRatingFragment"
-        android:name="com.vn.wecare.feature.exercises.program_ratings.ProgramRatingFragment"
-        android:label="fragment_program_rating"
-        tools:layout="@layout/fragment_program_rating" />
+        tools:layout="@layout/fragment_account"/>
+    <navigation
+        android:id="@+id/training_graph"
+        app:startDestination="@id/trainingFragment">
+        <fragment
+            android:id="@+id/viewRouteFragment"
+            android:name="com.vn.wecare.feature.training.view_route.ViewRouteFragment"
+            android:label="fragment_view_route"
+            tools:layout="@layout/fragment_view_route" />
+        <fragment
+            android:id="@+id/doneFragment"
+            android:name="com.vn.wecare.feature.training.done_training.DoneFragment"
+            android:label="fragment_done"
+            tools:layout="@layout/fragment_done">
+            <action
+                android:id="@+id/action_doneFragment_to_trainingFragment"
+                app:destination="@id/trainingFragment" />
+            <action
+                android:id="@+id/action_doneFragment_to_viewRouteFragment"
+                app:destination="@id/viewRouteFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/walkingFragment"
+            android:name="com.vn.wecare.feature.training.walking.WalkingFragment"
+            android:label="fragment_walking"
+            tools:layout="@layout/fragment_walking">
+            <action
+                android:id="@+id/action_walkingFragment_to_trainingFragment"
+                app:destination="@id/trainingFragment" />
+            <action
+                android:id="@+id/action_walkingFragment_to_onWalkingFragment"
+                app:destination="@id/onWalkingFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/onWalkingFragment"
+            android:name="com.vn.wecare.feature.training.onWalking.OnWalkingFragment"
+            android:label="fragment_on_walking"
+            tools:layout="@layout/fragment_on_walking">
+            <action
+                android:id="@+id/action_onWalkingFragment_to_walkingFragment"
+                app:destination="@id/walkingFragment" />
+            <action
+                android:id="@+id/action_onWalkingFragment_to_doneFragment"
+                app:destination="@id/doneFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/trainingFragment"
+            android:name="com.vn.wecare.feature.training.dashboard.TrainingFragment"
+            android:label="Training"
+            tools:layout="@layout/fragment_training">
+            <action
+                android:id="@+id/action_trainingFragment_to_walkingFragment"
+                app:destination="@id/walkingFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
+    <navigation
+        android:id="@+id/exercises_graph"
+        app:startDestination="@id/exercisesFragment">
+        <fragment
+            android:id="@+id/exercisesFragment"
+            android:name="com.vn.wecare.feature.exercises.ExercisesFragment"
+            android:label="fragment_exercises"
+            tools:layout="@layout/fragment_exercises">
+            <action
+                android:id="@+id/action_exercisesFragment_to_exerciseListFragment"
+                app:destination="@id/exerciseListFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/programDetailFragment"
+            android:name="com.vn.wecare.feature.exercises.program_detail.ProgramDetailFragment"
+            android:label="fragment_program_detail"
+            tools:layout="@layout/fragment_program_detail">
+            <action
+                android:id="@+id/action_programDetailFragment_to_programRatingFragment"
+                app:destination="@id/programRatingFragment"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_programDetailFragment_to_workoutRestFragment2"
+                app:destination="@id/workoutRestFragment2"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/programRatingFragment"
+            android:name="com.vn.wecare.feature.exercises.program_ratings.ProgramRatingFragment"
+            android:label="fragment_program_rating"
+            tools:layout="@layout/fragment_program_rating" />
+        <fragment
+            android:id="@+id/exerciseListFragment"
+            android:name="com.vn.wecare.feature.exercises.exercise_list.ExerciseListFragment"
+            android:label="fragment_exercise_list"
+            tools:layout="@layout/fragment_exercise_list">
+            <action
+                android:id="@+id/action_exerciseListFragment_to_programDetailFragment"
+                app:destination="@id/programDetailFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/workoutPageFragment"
+            android:name="com.vn.wecare.feature.exercises.workout_page.WorkoutPageFragment"
+            android:label="fragment_workout_page"
+            tools:layout="@layout/fragment_workout_page">
+            <action
+                android:id="@+id/action_workoutPageFragment_to_workoutRestFragment2"
+                app:destination="@id/workoutRestFragment2"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_workoutPageFragment_to_doneFragment2"
+                app:destination="@id/doneFragment2" />
+        </fragment>
+        <fragment
+            android:id="@+id/workoutRestFragment2"
+            android:name="com.vn.wecare.feature.exercises.workout_rest.WorkoutRestFragment"
+            android:label="fragment_workout_rest"
+            tools:layout="@layout/fragment_workout_rest">
+            <action
+                android:id="@+id/action_workoutRestFragment2_to_workoutPageFragment"
+                app:destination="@id/workoutPageFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/doneFragment2"
+            android:name="com.vn.wecare.feature.exercises.done.DoneFragment"
+            android:label="fragment_done2"
+            tools:layout="@layout/fragment_done2">
+            <action
+                android:id="@+id/action_doneFragment2_to_exercisesFragment"
+                app:destination="@id/exercisesFragment"
+                app:popUpTo="@id/exercisesFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
 </navigation>

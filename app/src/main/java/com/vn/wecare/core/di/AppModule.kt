@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.training.di
+package com.vn.wecare.core.di
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
