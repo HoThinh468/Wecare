@@ -23,13 +23,15 @@ import com.vn.wecare.utils.common_composable.CustomButton
 @Preview
 @Composable
 fun a() {
-    DoneScreen()
+    DoneScreen(
+        onDone = {}
+    )
 }
 
 @Composable
 fun DoneScreen(
     modifier: Modifier = Modifier,
-    onDone: () -> Unit = {}
+    onDone: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -70,7 +72,7 @@ fun DoneScreen(
         ) {
             CustomButton(
                 text = "DONE",
-                onClick = {  },
+                onClick = { onDone() },
                 backgroundColor = Green500,
                 textColor = Color.White,
                 padding = 0.dp,

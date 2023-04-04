@@ -89,7 +89,34 @@ val listStrength: List<ListExerciseItem> = listOf(
         type = ExerciseType.Strength,
         description = "High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
         image = R.drawable.exercise_header,
-        title = "High intensity full body...",
+        title = "3High intensity full body...",
+        level = ExerciseLevel.Easy,
+        duration = 30,
+        listExerciseDetail = listDetailEndurance
+    ),
+    ListExerciseItem(
+        type = ExerciseType.Endurance,
+        description = "4High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
+        image = R.drawable.exercise_header,
+        title = "4High intensity full body...",
+        level = ExerciseLevel.Easy,
+        duration = 30,
+        listExerciseDetail = listDetailEndurance
+    ),
+    ListExerciseItem(
+        type = ExerciseType.Endurance,
+        description = "5High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
+        image = R.drawable.exercise_header,
+        title = "5High intensity full body...",
+        level = ExerciseLevel.Easy,
+        duration = 30,
+        listExerciseDetail = listDetailEndurance
+    ),
+    ListExerciseItem(
+        type = ExerciseType.Endurance,
+        description = "6High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
+        image = R.drawable.exercise_header,
+        title = "6High intensity full body...",
         level = ExerciseLevel.Easy,
         duration = 30,
         listExerciseDetail = listDetailStrength
@@ -98,7 +125,7 @@ val listStrength: List<ListExerciseItem> = listOf(
         type = ExerciseType.Strength,
         description = "High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
         image = R.drawable.exercise_header,
-        title = "High intensity full body...",
+        title = "7High intensity full body...",
         level = ExerciseLevel.Easy,
         duration = 30,
         listExerciseDetail = listDetailStrength
