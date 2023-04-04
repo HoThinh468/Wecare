@@ -2,11 +2,13 @@ package com.vn.wecare.feature.account.data.datasource
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -14,6 +16,7 @@ private const val WECARE_USER_COLLECTION_PATH = "wecareUser"
 
 class FirebaseWecareUserDataSource @Inject constructor(
     private val db: FirebaseFirestore,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WecareUserDataSource {
 
     override suspend fun insertUser(input: WecareUser) {
@@ -51,17 +54,19 @@ class FirebaseWecareUserDataSource @Inject constructor(
                 Response.Error(exception)
             }
         )
-    }
+    }.flowOn(ioDispatcher)
 
-    override suspend fun updateUser(input: WecareUser): Flow<Response<WecareUser>> = flow {
+    override suspend fun updateUser(
+        userId: String, field: String, value: Any
+    ): Flow<Response<Boolean>> = flow {
         emit(
             try {
-                db.collection(WECARE_USER_COLLECTION_PATH).document(input.userId)
-                    .set(input, SetOptions.merge()).await()
-                Response.Success(input )
+                db.collection(WECARE_USER_COLLECTION_PATH).document(userId).update(field, value)
+                    .await()
+                Response.Success(true)
             } catch (e: Exception) {
                 Response.Error(e)
             }
         )
-    }
+    }.flowOn(ioDispatcher)
 }

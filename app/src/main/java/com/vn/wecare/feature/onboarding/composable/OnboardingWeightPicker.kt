@@ -15,13 +15,11 @@ import com.vn.wecare.feature.training.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.largePadding
 import com.vn.wecare.ui.theme.midRadius
 import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.utils.WecareUserConstantValues.MAX_AGE
-import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
+import com.vn.wecare.utils.WecareUserConstantValues.MAX_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
 
 @Composable
-fun OnboardingAgePicker(
-    modifier: Modifier, viewModel: OnboardingViewModel
-) {
+fun OnboardingWeightPicker(modifier: Modifier, viewModel: OnboardingViewModel) {
 
     val uiState = viewModel.onboardingUiState.collectAsState()
 
@@ -33,17 +31,17 @@ fun OnboardingAgePicker(
     ) {
         numberPickerSpinner(
             modifier = modifier.padding(smallPadding),
-            max = MAX_AGE,
-            min = MIN_AGE,
+            max = MAX_WEIGHT,
+            min = MIN_WEIGHT,
             pickerTextSize = 80f,
-            onValChange = viewModel::onPickAgeScroll
+            onValChange = viewModel::onPickWeightScroll
         )
     }
     Spacer(modifier = modifier.height(largePadding))
     Row(
         verticalAlignment = Alignment.Bottom
     ) {
-        Text(text = uiState.value.agePicker.toString(), style = MaterialTheme.typography.h1)
-        Text(text = "y/o", style = MaterialTheme.typography.body2)
+        Text(text = uiState.value.weightPicker.toString(), style = MaterialTheme.typography.h1)
+        Text(text = "kg", style = MaterialTheme.typography.body2)
     }
 }

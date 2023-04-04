@@ -12,5 +12,5 @@ interface WecareUserDataSource {
 
     suspend fun getUserWithId(userId: String): Flow<Response<WecareUser?>>
 
-    suspend fun updateUser(input: WecareUser): Flow<Response<WecareUser>>
+    suspend fun updateUser(userId: String, field: String, value: Any): Flow<Response<Boolean>>
 }

@@ -136,8 +136,7 @@ fun SignUpScreen(
 
             CustomButton(
                 text = "SIGN UP",
-//                onClick = viewModel::onSignUpClick,
-                onClick = moveToOnboardingScreen,
+                onClick = viewModel::onSignUpClick,
                 textColor = Color.White,
             )
 

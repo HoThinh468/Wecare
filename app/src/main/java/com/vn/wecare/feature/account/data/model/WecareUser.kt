@@ -8,5 +8,10 @@ data class WecareUser(
     @PrimaryKey val userId: String = "",
     val userName: String = "",
     val email: String = "",
-    val isEmailVerified: Boolean = false
+    val emailVerified: Boolean = false,
+    val gender: Boolean? = null,
+    val age: Int? = null,
+    val height: Int? = null,
+    val weight: Int? = null,
+    val goal: String? = null
 )
