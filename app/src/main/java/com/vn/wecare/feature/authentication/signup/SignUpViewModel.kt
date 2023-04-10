@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.authentication.signup
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.usecase.CreateNewWecareUserUsecase
-import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
-import com.vn.wecare.feature.account.usecase.SaveUserToLocalDbUsecase
+import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
@@ -36,9 +33,7 @@ data class SignUpUiState(
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val accountService: AccountService,
-    private val createNewWecareUserUsecase: CreateNewWecareUserUsecase,
-    private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
-    private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase,
+    private val saveUserToDbUsecase: SaveUserToDbUsecase,
 ) : ViewModel() {
 
     private val _signUpUiState = MutableStateFlow(SignUpUiState())
@@ -50,12 +45,10 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onPasswordChange(newVal: String) {
-        checkPasswordValidation()
         _signUpUiState.update { it.copy(password = newVal) }
     }
 
     fun onUserNameChange(newVal: String) {
-        checkUsernameValidation()
         _signUpUiState.update { it.copy(userName = newVal) }
     }
 
@@ -92,9 +85,9 @@ class SignUpViewModel @Inject constructor(
         _signUpUiState.update { it.copy(snackbarMessageRes = messageRes) }
     }
 
-    fun handleSignUpSuccess(moveToHome: () -> Unit) = viewModelScope.launch {
-        moveToHome()
-        createNewUserOnFirebase()
+    fun handleSignUpSuccess(moveToOnboardingScreen: () -> Unit) = viewModelScope.launch {
+        moveToOnboardingScreen()
+        saveUserInformationToFirestoreDb()
         saveUserInformationToLocalDb()
         clearSignUpInformation()
     }
@@ -122,19 +115,14 @@ class SignUpViewModel @Inject constructor(
     else R.string.password_error_message
 
     private fun checkPasswordValidation() {
-        if (_signUpUiState.value.password.isValidPassword()) _signUpUiState.update {
-            it.copy(
-                isPasswordValid = true
-            )
-        }
-        else _signUpUiState.update { it.copy(isPasswordValid = false) }
+        _signUpUiState.update { it.copy(isPasswordValid = _signUpUiState.value.password.isValidPassword()) }
     }
 
     fun getPasswordErrorMessage(): Int? = if (_signUpUiState.value.isPasswordValid) null
     else R.string.password_error_message
 
-    private suspend fun createNewUserOnFirebase() {
-        createNewWecareUserUsecase.createNewWecareUser(
+    private suspend fun saveUserInformationToFirestoreDb() {
+        saveUserToDbUsecase.saveUserToFirestoreDb(
             accountService.currentUserId,
             _signUpUiState.value.email,
             _signUpUiState.value.userName,
@@ -143,18 +131,12 @@ class SignUpViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow =
-            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
-        userFlow.collect {
-            if (it is Response.Success) {
-                it.data?.let { user ->
-                    Log.d("New user sign up with id: ${user.userId}", "")
-                    saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId, it.data.email, it.data.userName, it.data.isEmailVerified
-                    )
-                }
-            }
-        }
+        saveUserToDbUsecase.saveUserToLocalDb(
+            accountService.currentUserId,
+            _signUpUiState.value.email,
+            _signUpUiState.value.userName,
+            accountService.isUserEmailVerified
+        )
     }
 
     private fun clearSignUpInformation() {

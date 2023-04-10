@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.usecase.CreateNewWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
-import com.vn.wecare.feature.account.usecase.SaveUserToLocalDbUsecase
+import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
+import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorSteps
+import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +36,8 @@ data class LogInUiState(
 class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
-    private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase,
-    private val createNewWecareUserUsecase: CreateNewWecareUserUsecase,
+    private val saveUserToDbUsecase: SaveUserToDbUsecase,
+    private val updateWecareUserUsecase: UpdateWecareUserUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps
 ) : ViewModel() {
@@ -136,17 +137,16 @@ class LoginViewModel @Inject constructor(
             if (it is Response.Success) {
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")
-                    saveUserToLocalDbUsecase.saveNewUserToLocalDb(
+                    saveUserToDbUsecase.saveUserToLocalDb(
                         it.data.userId,
                         it.data.email,
                         it.data.userName,
                         accountService.isUserEmailVerified
                     )
                     if (accountService.isUserEmailVerified) {
-                        createNewWecareUserUsecase.createNewWecareUser(
+                        updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
                             it.data.userId,
-                            it.data.email,
-                            it.data.userName,
+                            WecareUserConstantValues.EMAIL_VERIFIED_FIELD,
                             accountService.isUserEmailVerified
                         )
                     }

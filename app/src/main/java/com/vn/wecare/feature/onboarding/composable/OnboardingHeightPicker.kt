@@ -15,11 +15,11 @@ import com.vn.wecare.feature.training.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.largePadding
 import com.vn.wecare.ui.theme.midRadius
 import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.utils.WecareUserConstantValues.MAX_AGE
-import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
+import com.vn.wecare.utils.WecareUserConstantValues.MAX_HEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 
 @Composable
-fun OnboardingAgePicker(
+fun OnboardingHeightPicker(
     modifier: Modifier, viewModel: OnboardingViewModel
 ) {
 
@@ -33,17 +33,17 @@ fun OnboardingAgePicker(
     ) {
         numberPickerSpinner(
             modifier = modifier.padding(smallPadding),
-            max = MAX_AGE,
-            min = MIN_AGE,
+            max = MAX_HEIGHT,
+            min = MIN_HEIGHT,
             pickerTextSize = 80f,
-            onValChange = viewModel::onPickAgeScroll
+            onValChange = viewModel::onPickHeightScroll
         )
     }
     Spacer(modifier = modifier.height(largePadding))
     Row(
         verticalAlignment = Alignment.Bottom
     ) {
-        Text(text = uiState.value.agePicker.toString(), style = MaterialTheme.typography.h1)
-        Text(text = "y/o", style = MaterialTheme.typography.body2)
+        Text(text = uiState.value.heightPicker.toString(), style = MaterialTheme.typography.h1)
+        Text(text = "cm", style = MaterialTheme.typography.body2)
     }
 }

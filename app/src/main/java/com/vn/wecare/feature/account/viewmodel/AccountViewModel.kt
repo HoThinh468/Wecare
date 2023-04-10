@@ -66,7 +66,7 @@ class AccountViewModel @Inject constructor(
                     it.copy(
                         username = res.data.userName,
                         email = res.data.email,
-                        isEmailVerified = res.data.isEmailVerified,
+                        isEmailVerified = res.data.emailVerified,
                         userNameLogo = res.data.userName[0].uppercase(),
                         avatarUri = accountService.userAvatar
                     )
@@ -111,7 +111,7 @@ class AccountViewModel @Inject constructor(
                 Log.d(AccountFlowTAG, "Sign out user response: $it")
                 if (it is Response.Success && it.data != null) {
                     deleteWecareUserUsecase.deleteAccount(
-                        it.data.userId, it.data.userName, it.data.email, it.data.isEmailVerified
+                        it.data.userId, it.data.userName, it.data.email, it.data.emailVerified
                     )
                 }
             }

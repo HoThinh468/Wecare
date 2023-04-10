@@ -35,4 +35,16 @@ class UserRepository @Inject constructor(
     suspend fun getFirebaseUserWithId(userId: String): Flow<Response<WecareUser?>> {
         return firebaseWecareUserDataSource.getUserWithId(userId)
     }
+
+    suspend fun updateUserInformationInFirestoreWithId(
+        userId: String, field: String, value: Any
+    ): Flow<Response<Boolean>> {
+        return firebaseWecareUserDataSource.updateUser(userId, field, value)
+    }
+
+    suspend fun updateUserInformationInRoomWithId(
+        userId: String, field: String, value: Any
+    ): Flow<Response<Boolean>> {
+        return localWecareUserDataSource.updateUser(userId, field, value)
+    }
 }
