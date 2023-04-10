@@ -131,9 +131,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow =
-            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
-        userFlow.collect {
+        getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId).collect {
             if (it is Response.Success) {
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")

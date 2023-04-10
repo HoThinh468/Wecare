@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
+import com.vn.wecare.feature.authentication.login.LogInFragment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -37,23 +38,10 @@ class FirebaseWecareUserDataSource @Inject constructor(
     }
 
     override suspend fun getUserWithId(userId: String): Flow<Response<WecareUser?>> = flow {
-        var user: WecareUser? = null
-
-        emit(
-            try {
-                db.collection(WECARE_USER_COLLECTION_PATH).document(userId).get()
-                    .addOnSuccessListener {
-                        if (it != null) {
-                            user = it.toObject(WecareUser::class.java)
-                        }
-                    }.await()
-                Log.d("Get user from firebase res: ", user.toString())
-                if (user != null) Response.Success(user)
-                else Response.Error(Exception("User not found"))
-            } catch (exception: Exception) {
-                Response.Error(exception)
-            }
-        )
+        val res = db.collection(WECARE_USER_COLLECTION_PATH).document(userId).get().await()
+        if (res.data != null) {
+            emit(Response.Success(res.toObject(WecareUser::class.java)))
+        } else emit(Response.Error(null))
     }.flowOn(ioDispatcher)
 
     override suspend fun updateUser(
