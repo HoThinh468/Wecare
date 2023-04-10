@@ -16,8 +16,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
@@ -46,10 +44,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         val navView: BottomNavigationView = binding.navView
         navView.setupWithNavController(setUpNavController())
-
-        if (Firebase.auth.currentUser == null) {
-            setUpNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
-        }
 
         hideBottomNavBar(setUpNavController())
     }

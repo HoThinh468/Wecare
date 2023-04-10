@@ -20,7 +20,10 @@ import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.WEIGHT_FIELD
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,21 +47,28 @@ class OnboardingViewModel @Inject constructor(
     fun onNextClick() {
         when (currentIndex.value) {
             0 -> updateUserGender()
-//            1 -> updateUserAge()
-//            2 -> updateUserHeight()
-//            3 -> updateUserWeight()
-//            else -> updateUserGoal()
-            else -> {}
+            1 -> updateUserAge()
+            2 -> updateUserHeight()
+            3 -> updateUserWeight()
+            else -> updateUserGoal()
         }
+//        if (currentIndex.value < ONBOARDING_PAGE_COUNT - 1) {
+//            currentIndex.value++
+//        }
     }
 
     fun moveToNextOnboardingPage(
-        moveToHomeScreen: () -> Unit
+        moveToHomeScreen: () -> Unit,
+        moveToPageAtIndex: () -> Unit
     ) {
         if (currentIndex.value < ONBOARDING_PAGE_COUNT - 1) {
+            _onboardingUiState.update { it.copy(updateInformationResult = null) }
             currentIndex.value++
+            moveToPageAtIndex()
         } else {
             moveToHomeScreen()
+            clearOnboardingResult()
+            currentIndex.value = 0
         }
     }
 
@@ -101,12 +111,24 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    private fun clearOnboardingResult() {
+        _onboardingUiState.update {
+            it.copy(
+                genderSelectionId = 0,
+                weightPicker = 0,
+                heightPicker = 0,
+                updateInformationResult = null,
+                goalSelectionId = 0
+            )
+        }
+    }
+
     private fun updateUserGender() = viewModelScope.launch {
         _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
         updateWecareUserUsecase.updateWecareUserRoomDbWithId(
             accountService.currentUserId,
             GENDER_FIELD,
-            getGenderWithId(_onboardingUiState.value.genderSelectionId) as Boolean
+            getGenderWithId(_onboardingUiState.value.genderSelectionId)
         ).catch {
             _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
         }.collect { res ->
@@ -114,95 +136,122 @@ class OnboardingViewModel @Inject constructor(
                 updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
                     accountService.currentUserId,
                     GENDER_FIELD,
-                    getGenderWithId(_onboardingUiState.value.genderSelectionId) as Boolean
+                    getGenderWithId(_onboardingUiState.value.genderSelectionId)
                 ).collect { res2 ->
-                    _onboardingUiState.update { it.copy(updateInformationResult = res2) }
+                    if (res2 is Response.Success) {
+                        _onboardingUiState.update {
+                            it.copy(updateInformationResult = res2)
+                        }
+                    } else _onboardingUiState.update {
+                        it.copy(updateInformationResult = Response.Error(null))
+                    }
                 }
             } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
         }
     }
 
-//    private fun updateUserAge() = viewModelScope.launch {
-//        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-//        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-//            accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
-//        ).catch {
-//            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }.collect { res ->
-//            if (res is Response.Success) {
-//                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-//                    accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
-//                ).collect { res2 ->
-//                    _onboardingUiState.update { it.copy(updateInformationResult = res2) }
-//                }
-//            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }
-//    }
-//
-//    private fun updateUserHeight() = viewModelScope.launch {
-//        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-//        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-//            accountService.currentUserId, HEIGHT_FIELD, _onboardingUiState.value.heightPicker
-//        ).catch {
-//            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }.collect { res ->
-//            if (res is Response.Success) {
-//                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-//                    accountService.currentUserId,
-//                    HEIGHT_FIELD,
-//                    _onboardingUiState.value.heightPicker
-//                ).collect { res2 ->
-//                    _onboardingUiState.update { it.copy(updateInformationResult = res2) }
-//                }
-//            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }
-//    }
-//
-//    private fun updateUserWeight() = viewModelScope.launch {
-//        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-//        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-//            accountService.currentUserId, WEIGHT_FIELD, _onboardingUiState.value.weightPicker
-//        ).catch {
-//            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }.collect { res ->
-//            if (res is Response.Success) {
-//                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-//                    accountService.currentUserId,
-//                    WEIGHT_FIELD,
-//                    _onboardingUiState.value.weightPicker
-//                ).collect { res2 ->
-//                    _onboardingUiState.update { it.copy(updateInformationResult = res2) }
-//                }
-//            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }
-//    }
-//
-//    private fun updateUserGoal() = viewModelScope.launch {
-//        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-//        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-//            accountService.currentUserId,
-//            GOAL_FIELD,
-//            getGoalWithId(_onboardingUiState.value.goalSelectionId)
-//        ).catch {
-//            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }.collect { res ->
-//            if (res is Response.Success) {
-//                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-//                    accountService.currentUserId,
-//                    GOAL_FIELD,
-//                    getGoalWithId(_onboardingUiState.value.goalSelectionId)
-//                ).collect { res2 ->
-//                    _onboardingUiState.update { it.copy(updateInformationResult = res2) }
-//                }
-//            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-//        }
-//    }
+    private fun updateUserAge() = viewModelScope.launch {
+        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
+        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
+            accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
+        ).catch {
+            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }.collect { res ->
+            if (res is Response.Success) {
+                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
+                    accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
+                ).collect { res2 ->
+                    if (res2 is Response.Success) {
+                        _onboardingUiState.update {
+                            it.copy(updateInformationResult = res2)
+                        }
+                    } else _onboardingUiState.update {
+                        it.copy(updateInformationResult = Response.Error(null))
+                    }
+                }
+            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }
+    }
 
-    private fun getGenderWithId(id: Int): Boolean? {
-        var res: Boolean? = null
-        if (id == 0) res = true
-        if (id == 1) res = false
-        return res
+    private fun updateUserHeight() = viewModelScope.launch {
+        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
+        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
+            accountService.currentUserId, HEIGHT_FIELD, _onboardingUiState.value.heightPicker
+        ).catch {
+            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }.collect { res ->
+            if (res is Response.Success) {
+                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
+                    accountService.currentUserId,
+                    HEIGHT_FIELD,
+                    _onboardingUiState.value.heightPicker
+                ).collect { res2 ->
+                    if (res2 is Response.Success) {
+                        _onboardingUiState.update {
+                            it.copy(updateInformationResult = res2)
+                        }
+                    } else _onboardingUiState.update {
+                        it.copy(updateInformationResult = Response.Error(null))
+                    }
+                }
+            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }
+    }
+
+    private fun updateUserWeight() = viewModelScope.launch {
+        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
+        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
+            accountService.currentUserId, WEIGHT_FIELD, _onboardingUiState.value.weightPicker
+        ).catch {
+            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }.collect { res ->
+            if (res is Response.Success) {
+                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
+                    accountService.currentUserId,
+                    WEIGHT_FIELD,
+                    _onboardingUiState.value.weightPicker
+                ).collect { res2 ->
+                    if (res2 is Response.Success) {
+                        _onboardingUiState.update {
+                            it.copy(updateInformationResult = res2)
+                        }
+                    } else _onboardingUiState.update {
+                        it.copy(updateInformationResult = Response.Error(null))
+                    }
+                }
+            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }
+    }
+
+    private fun updateUserGoal() = viewModelScope.launch {
+        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
+        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
+            accountService.currentUserId,
+            GOAL_FIELD,
+            getGoalWithId(_onboardingUiState.value.goalSelectionId)
+        ).catch {
+            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }.collect { res ->
+            if (res is Response.Success) {
+                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
+                    accountService.currentUserId,
+                    GOAL_FIELD,
+                    getGoalWithId(_onboardingUiState.value.goalSelectionId)
+                ).collect { res2 ->
+                    if (res2 is Response.Success) {
+                        _onboardingUiState.update {
+                            it.copy(updateInformationResult = res2)
+                        }
+                    } else _onboardingUiState.update {
+                        it.copy(updateInformationResult = Response.Error(null))
+                    }
+                }
+            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
+        }
+    }
+
+    private fun getGenderWithId(id: Int): Boolean {
+        return id == 0
     }
 
     private fun getGoalWithId(id: Int): String {

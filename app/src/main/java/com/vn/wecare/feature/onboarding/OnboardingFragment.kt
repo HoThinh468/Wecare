@@ -19,7 +19,7 @@ class OnboardingFragment :
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(binding.onboardingComposeView) {
             OnboardingScreen(viewModel = onboardingViewModel, moveToHomeScreen = {
-                findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
             })
         }
     }

@@ -17,7 +17,7 @@ class SignUpFragment : BaseBindingFragment<FragmentSignUpBinding>(FragmentSignUp
             SignUpScreen(
                 viewModel = signUpViewModel,
                 moveToOnboardingScreen = {
-                    findNavController().navigate(R.id.action_signUpFragment_to_onboardingFragment)
+                    findNavController().navigate(R.id.action_global_onboardingFragment)
                 },
                 navigateBack = { findNavController().popBackStack() },
             )

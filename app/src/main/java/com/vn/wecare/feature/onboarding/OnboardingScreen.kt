@@ -48,7 +48,15 @@ fun OnboardingScreen(
     onboardingUiState.value.updateInformationResult.let {
         when (it) {
             is Response.Loading -> LoadingDialog(loading = it == Response.Loading) {}
-            is Response.Success -> viewModel.moveToNextOnboardingPage(moveToHomeScreen)
+            is Response.Success -> {
+                viewModel.moveToNextOnboardingPage(
+                    moveToHomeScreen
+                ) {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(viewModel.currentIndex.value)
+                    }
+                }
+            }
             is Response.Error -> {
                 Toast.makeText(
                     LocalContext.current, "Cannot sync data, please try later", Toast.LENGTH_SHORT
@@ -64,9 +72,6 @@ fun OnboardingScreen(
             index = viewModel.currentIndex.value,
             onContinueClick = {
                 viewModel.onNextClick()
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(viewModel.currentIndex.value)
-                }
             },
             onPreviousClick = {
                 viewModel.onPreviousClick()

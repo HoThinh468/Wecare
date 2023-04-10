@@ -10,7 +10,6 @@ import com.vn.wecare.utils.WecareUserConstantValues.HEIGHT_FIELD
 import com.vn.wecare.utils.WecareUserConstantValues.WEIGHT_FIELD
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -44,8 +43,8 @@ class LocalWecareUserDataSource @Inject constructor(
     override suspend fun updateUser(
         userId: String, field: String, value: Any
     ): Flow<Response<Boolean>> = flow {
-        emit(try {
-            coroutineScope {
+        emit(
+            try {
                 when (field) {
                     GENDER_FIELD -> wecareUserDao.updateGenderWithUserId(
                         userId, value as Boolean
@@ -57,10 +56,10 @@ class LocalWecareUserDataSource @Inject constructor(
                     else -> { /* do nothing */
                     }
                 }
+                Response.Success(true)
+            } catch (e: Exception) {
+                Response.Error(e)
             }
-            Response.Success(true)
-        } catch (e: Exception) {
-            Response.Error(e)
-        })
+        )
     }.flowOn(ioDispatcher)
 }

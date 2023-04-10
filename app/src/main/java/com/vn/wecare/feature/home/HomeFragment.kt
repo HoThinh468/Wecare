@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
@@ -20,7 +22,7 @@ import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Objects
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,9 +35,27 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val stepCountViewModel: StepCountViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        homeViewModel.apply {
+            checkIfUserIsNull()
+            checkIfAdditionalInformationMissing()
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.mainActivityUiState.collect {
+                    if (it.isUserNull) {
+                        findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
+                    }
+                    if (it.isAdditionInfoMissing) {
+                        findNavController().navigate(R.id.action_global_onboardingFragment)
+                    }
+                }
+            }
+        }
+
         super.setupComposeView(
             binding.homeComposeView
         ) {
