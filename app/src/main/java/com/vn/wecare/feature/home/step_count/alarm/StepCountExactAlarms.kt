@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count.alarm
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -9,11 +10,14 @@ import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE
 import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_REQUEST_CODE
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.utils.getEndOfTheDayMilliseconds
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 const val STEP_COUNT_ALARM = "step_count_alarm"
 
-class StepCountExactAlarms @Inject constructor(private val context: Context) : ExactAlarms {
+class StepCountExactAlarms @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ExactAlarms {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -26,7 +30,7 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
     }
 
     override fun clearExactAlarm() {
-        val pendingIntent = createExactAlarmIntent(null)
+        val pendingIntent = getPendingIntent()
         alarmManager.cancel(pendingIntent)
     }
 
@@ -66,5 +70,11 @@ class StepCountExactAlarms @Inject constructor(private val context: Context) : E
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun getPendingIntent(): PendingIntent? {
+        val intent = Intent(context, StepCountExactAlarmBroadCastReceiver::class.java)
+        return PendingIntent.getService(context, EXACT_ALARM_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE)
     }
 }

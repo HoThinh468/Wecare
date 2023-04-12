@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -13,15 +14,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.step_count.StepsCountUiState
+import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CircularProgressAnimated
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FootStepCountHomeCard(
-    modifier: Modifier, onCardClick: () -> Unit, stepsCountUiState: StepsCountUiState
+    modifier: Modifier, onCardClick: () -> Unit, viewModel: StepCountViewModel
 ) {
+
+    val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
 
     Card(
         modifier = modifier
@@ -43,21 +46,26 @@ fun FootStepCountHomeCard(
                 contentAlignment = Alignment.BottomCenter, modifier = modifier.weight(1f)
             ) {
                 CircularProgressAnimated(
-                    size = 125.dp,
-                    currentValue = if (stepsCountUiState.currentSteps > stepsCountUiState.stepGoal) 100f
-                    else (stepsCountUiState.currentSteps.toFloat() / stepsCountUiState.stepGoal),
+                    size = 125.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.currentSteps.toFloat(),
+                        stepsCountUiState.stepGoal.toFloat()
+                    )
                 )
                 CircularProgressAnimated(
                     size = 100.dp,
                     color = colorResource(id = R.color.Red400),
-                    currentValue = if (stepsCountUiState.caloConsumed > stepsCountUiState.caloriesBurnedGoal) 100f
-                    else (stepsCountUiState.caloConsumed.toFloat() / stepsCountUiState.caloriesBurnedGoal),
+                    currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.caloConsumed.toFloat(),
+                        stepsCountUiState.caloriesBurnedGoal.toFloat()
+                    )
                 )
                 CircularProgressAnimated(
                     size = 75.dp,
                     color = colorResource(id = R.color.Blue400),
-                    currentValue = if (stepsCountUiState.moveMin > stepsCountUiState.moveTimeGoal) 100f
-                    else (stepsCountUiState.moveMin.toFloat() / stepsCountUiState.moveTimeGoal),
+                    currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.moveMin.toFloat(),
+                        stepsCountUiState.moveTimeGoal.toFloat()
+                    )
                 )
             }
             Column(

@@ -28,6 +28,7 @@ fun WaterOverviewHomeCard(
             .padding(top = smallPadding),
         elevation = smallElevation,
         shape = Shapes.small,
+        onClick = onCardClick
     ) {
         Row(
             modifier = modifier

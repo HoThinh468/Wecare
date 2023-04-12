@@ -23,4 +23,8 @@ object WecareUserConstantValues {
     const val LOOSE_WEIGHT = "Lose weight"
     const val GET_HEALTHIER = "Get healthier"
     const val IMPROVE_MOOD = "Improve mood"
+
+    /* Step count */
+    const val MIN_STEPS_GOAL = 1000
+    const val MAX_STEPS_GOAL = 12000
 }

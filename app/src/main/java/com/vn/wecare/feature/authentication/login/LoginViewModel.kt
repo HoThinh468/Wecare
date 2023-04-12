@@ -131,20 +131,18 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow =
-            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
-        userFlow.collect {
+        getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId).collect {
             if (it is Response.Success) {
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")
-                    saveUserToDbUsecase.saveUserToLocalDb(
-                        it.data.userId,
-                        it.data.email,
-                        it.data.userName,
-                        accountService.isUserEmailVerified
-                    )
+                    saveUserToDbUsecase.saveUserToLocalDb(user)
                     if (accountService.isUserEmailVerified) {
                         updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
+                            it.data.userId,
+                            WecareUserConstantValues.EMAIL_VERIFIED_FIELD,
+                            accountService.isUserEmailVerified
+                        )
+                        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
                             it.data.userId,
                             WecareUserConstantValues.EMAIL_VERIFIED_FIELD,
                             accountService.isUserEmailVerified

@@ -21,15 +21,11 @@ class ClearSharedPreferencesUsecase @Inject constructor(
             remove(LATEST_STEPS_COUNT)
             remove(PREVIOUS_TOTAL_SENSOR_STEPS)
             apply()
-//            clear()
-//            commit()
         }
 
         val alarmSharePref = context.getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         with(alarmSharePref.edit()) {
             Log.d("Clear step count alarm", "")
-//            clear()
-//            commit()
             remove(IS_STEP_COUNT_INEXACT_ALARM_SET)
             apply()
         }

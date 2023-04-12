@@ -49,4 +49,8 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
             ).toString()
         )
     }
+
+    companion object {
+        const val logInTag = "Login flow"
+    }
 }
