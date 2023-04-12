@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.utils.isValidEmail
@@ -40,7 +41,6 @@ class SignUpViewModel @Inject constructor(
     val signUpUiState = _signUpUiState.asStateFlow()
 
     fun onEmailChange(newVal: String) {
-        checkEmailValidation()
         _signUpUiState.update { it.copy(email = newVal) }
     }
 
@@ -131,12 +131,13 @@ class SignUpViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        saveUserToDbUsecase.saveUserToLocalDb(
-            accountService.currentUserId,
-            _signUpUiState.value.email,
-            _signUpUiState.value.userName,
-            accountService.isUserEmailVerified
+        val user = WecareUser(
+            userId = accountService.currentUserId,
+            email = _signUpUiState.value.email,
+            userName = _signUpUiState.value.userName,
+            emailVerified = accountService.isUserEmailVerified
         )
+        saveUserToDbUsecase.saveUserToLocalDb(user)
     }
 
     private fun clearSignUpInformation() {

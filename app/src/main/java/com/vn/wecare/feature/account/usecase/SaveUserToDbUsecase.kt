@@ -7,10 +7,7 @@ import javax.inject.Inject
 class SaveUserToDbUsecase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend fun saveUserToLocalDb(userId: String, email: String, userName: String, isEmailVerified: Boolean) {
-        val newUser = WecareUser(
-            userId, userName, email, isEmailVerified
-        )
+    suspend fun saveUserToLocalDb(newUser: WecareUser) {
         userRepository.insertUserToLocaldb(newUser)
     }
 

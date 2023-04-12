@@ -3,8 +3,12 @@ package com.vn.wecare.feature.home.step_count.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.checkInternetConnection
+import com.vn.wecare.feature.home.HomeFragment
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.step_count.usecase.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -32,17 +36,18 @@ class StepCountInExactAlarmBroadcastReceiver : BroadcastReceiver() {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, p1: Intent?) {
+        Log.d(StepCountFragment.stepCountTag, "In exact alarm trigger!")
         GlobalScope.launch {
             getStepsPerDayUsecase.getCurrentDaySteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
                 .collect { currentDaySteps ->
                     getStepsPerHourUsecase.getCurrentHourSteps(currentDaySteps).collect {
-                        saveStepsPerHourUsecase.insertStepsPerHourToDb(it)
-                        if (checkInternetConnection(context)) {
-                            saveStepsPerHourUsecase.insertStepsPerHourToFirestore(it)
-                        }
+//                        saveStepsPerHourUsecase.insertStepsPerHourToDb(it)
+//                        if (checkInternetConnection(context)) {
+//                            saveStepsPerHourUsecase.insertStepsPerHourToFirestore(it)
+//                        }
+                        Log.d(StepCountFragment.stepCountTag, "steps in this hour: $it")
                     }
                 }
         }
-        stepCountExactAlarms.scheduleExactAlarm(null)
     }
 }

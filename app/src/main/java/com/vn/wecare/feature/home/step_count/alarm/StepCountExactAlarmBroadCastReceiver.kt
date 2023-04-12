@@ -35,13 +35,13 @@ class StepCountExactAlarmBroadCastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         GlobalScope.launch {
             // Update stepsPerDay
-            getStepsPerDayUsecase.getCurrentDaySteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
-                .collect {
-                    saveStepsPerDayUsecase.saveStepsPerDayToDb(it)
-                    if (checkInternetConnection(context)) {
-                        saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
-                    }
-                }
+//            getStepsPerDayUsecase.getCurrentDaySteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+//                .collect {
+//                    saveStepsPerDayUsecase.saveStepsPerDayToDb(it)
+//                    if (checkInternetConnection(context)) {
+//                        saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
+//                    }
+//                }
         }
 
         // Update previous total steps

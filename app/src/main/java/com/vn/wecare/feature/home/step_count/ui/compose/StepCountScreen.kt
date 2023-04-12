@@ -9,7 +9,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -25,7 +24,6 @@ import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.training.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 import kotlinx.coroutines.launch
@@ -77,7 +75,7 @@ fun StepCountScreen(
             ) {
                 if (stepsCountUiState.value.hasData) {
                     Spacer(modifier = modifier.height(halfMidPadding))
-                    Overview(modifier = modifier, stepsCountUiState = stepsCountUiState.value)
+                    Overview(modifier = modifier, viewModel = stepCountViewModel)
                     Spacer(modifier = modifier.height(halfMidPadding))
                     SetYourGoal(modifier = modifier) {
                         showModalBottomSheet.value = !showModalBottomSheet.value
@@ -137,8 +135,11 @@ fun StepCountAppBar(
 
 @Composable
 fun Overview(
-    modifier: Modifier, stepsCountUiState: StepsCountUiState
+    modifier: Modifier, viewModel: StepCountViewModel
 ) {
+
+    val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = Shapes.small,
@@ -154,23 +155,27 @@ fun Overview(
                 modifier = modifier.padding(bottom = normalPadding)
             ) {
                 CircularProgressAnimated(
-                    size = 200.dp,
-                    currentValue = if (stepsCountUiState.currentSteps > stepsCountUiState.stepGoal) 100f
-                    else (stepsCountUiState.currentSteps.toFloat() / stepsCountUiState.stepGoal),
-                    indicatorThickness = 20.dp
+                    size = 200.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.currentSteps.toFloat(),
+                        stepsCountUiState.stepGoal.toFloat()
+                    ), indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 160.dp,
                     color = colorResource(id = R.color.Red400),
-                    currentValue = if (stepsCountUiState.caloConsumed > stepsCountUiState.caloriesBurnedGoal) 100f
-                    else (stepsCountUiState.caloConsumed.toFloat() / stepsCountUiState.caloriesBurnedGoal),
+                    currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.caloConsumed.toFloat(),
+                        stepsCountUiState.caloriesBurnedGoal.toFloat()
+                    ),
                     indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 120.dp,
                     color = colorResource(id = R.color.Blue400),
-                    currentValue = if (stepsCountUiState.moveMin > stepsCountUiState.moveTimeGoal) 100f
-                    else (stepsCountUiState.moveMin.toFloat() / stepsCountUiState.moveTimeGoal),
+                    currentValue = viewModel.getProgressWithIndexAndGoal(
+                        stepsCountUiState.moveMin.toFloat(),
+                        stepsCountUiState.moveTimeGoal.toFloat()
+                    ),
                     indicatorThickness = 20.dp
                 )
             }
@@ -293,52 +298,5 @@ fun DetailStatistic(
         DailyBarChart(
             modifier = modifier, dataList = hoursList
         )
-    }
-}
-
-@Composable
-fun SetYourStepCountGoalModalBottomSheetContent(
-    modifier: Modifier, onCloseClick: () -> Unit, stepCountViewModel: StepCountViewModel
-) {
-
-    var newStepsGoal: Int
-
-    Column(
-        modifier = modifier
-            .heightIn()
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.background)
-            .padding(horizontal = midPadding, vertical = mediumPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Steps", style = MaterialTheme.typography.h3)
-        newStepsGoal = numberPickerSpinner(modifier = modifier, max = 50000, min = 1000)
-        Row(
-            modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            OutlinedButton(
-                modifier = modifier
-                    .weight(1f)
-                    .padding(end = smallPadding)
-                    .height(40.dp),
-                onClick = { onCloseClick() },
-                shape = RoundedCornerShape(mediumRadius)
-            ) {
-                Text(text = stringResource(id = R.string.close_dialog_title))
-            }
-            Button(
-                modifier = modifier
-                    .weight(1f)
-                    .padding(start = smallPadding)
-                    .height(40.dp),
-                onClick = {
-                    stepCountViewModel.updateGoal(newStepsGoal)
-                    onCloseClick()
-                },
-                shape = RoundedCornerShape(mediumRadius)
-            ) {
-                Text(text = stringResource(id = R.string.okay_dialog_title))
-            }
-        }
     }
 }

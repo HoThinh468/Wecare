@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -40,10 +41,9 @@ fun HomeScreen(
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
+    cancelInExactAlarm: () -> Unit,
     stepCountViewModel: StepCountViewModel
 ) {
-    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
-
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
     Column(
@@ -52,11 +52,11 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(halfMidPadding),
     ) {
-        HomeHeader(modifier = modifier)
+        HomeHeader(modifier = modifier, cancelInExactAlarm = cancelInExactAlarm)
         FootStepCountHomeCard(
             modifier = modifier,
             onCardClick = onFootStepCountCardClick,
-            stepsCountUiState = stepsCountUiState.value
+            viewModel = stepCountViewModel
         )
         TrainingNow(
             modifier = modifier,
@@ -74,7 +74,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeHeader(
-    modifier: Modifier
+    modifier: Modifier,
+    cancelInExactAlarm: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -89,6 +90,9 @@ fun HomeHeader(
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
+        IconButton(onClick = cancelInExactAlarm) {
+            Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+        }
     }
 }
 
@@ -125,12 +129,10 @@ fun TrainingNow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CustomOutlinedIconButton(
-                    modifier = modifier,
+                CustomOutlinedIconButton(modifier = modifier,
                     iconRes = R.drawable.ic_walk,
                     trainingTitleRes = R.string.training_walk_title,
-                    onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid )}
-                )
+                    onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid) })
                 CustomOutlinedIconButton(
                     modifier = modifier,
                     iconRes = R.drawable.ic_run,

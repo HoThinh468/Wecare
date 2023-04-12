@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.feature.authentication.service.AccountService
@@ -76,11 +75,6 @@ class StepCountViewModel @Inject constructor(
     }
 
     fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
-        Log.d(
-            "day id: ", getDayId(
-                year, month, dayOfMonth
-            )
-        )
         viewModelScope.launch {
             getStepsPerDayWithHoursUsecase.getStepsPerDayWithHour(
                 dayId = getDayId(
@@ -149,6 +143,16 @@ class StepCountViewModel @Inject constructor(
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(accountService.currentUserId, stepGoal)
         }
         initializeGoalIndex()
+    }
+
+    fun getProgressWithIndexAndGoal(index: Float, goal: Float): Float {
+        return if (index >= goal) {
+            100f
+        } else {
+            if (goal != 0f) {
+                (index / goal) * 100
+            } else 0f
+        }
     }
 
     private fun updateDateTitle(day: Int, month: Int, year: Int) {

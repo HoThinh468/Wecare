@@ -21,6 +21,7 @@ import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,12 +46,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.mainActivityUiState.collect {
+                homeViewModel.homeUIState.collect {
                     if (it.isUserNull) {
                         findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
+                        homeViewModel.resetUserNull()
                     }
                     if (it.isAdditionInfoMissing) {
                         findNavController().navigate(R.id.action_global_onboardingFragment)
+                        homeViewModel.resetUserAdditionalInformationRes()
                     }
                 }
             }
@@ -66,12 +69,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onTrainingClick = {
                     findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
                 },
-                onWaterCardClick = {},
+                onWaterCardClick = {
+                    findNavController().navigate(R.id.action_homeFragment_to_water_graph)
+                },
                 onBMICardClick = {},
                 onWalkingIcClick = {},
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
+                cancelInExactAlarm = { homeViewModel.cancelInExactAlarm() },
                 stepCountViewModel = stepCountViewModel
             )
         }
@@ -83,25 +89,27 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-            stepCountExactAlarms.scheduleExactAlarm(null)
+//            stepCountExactAlarms.scheduleExactAlarm(null)
         } else {
             openSetting()
         }
         // TODO: Check logic here
         Log.d(
-            "Is step count set: ",
-            sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false).toString()
+            StepCountFragment.stepCountTag, "I s step count inexact set: ${
+                sharedPref.getBoolean(
+                    IS_STEP_COUNT_INEXACT_ALARM_SET, false
+                )
+            }"
         )
         if (!sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
-            stepCountInExactAlarms.scheduleInExactAlarm(
-                System.currentTimeMillis(), 30_000
-//                ONE_HOUR_INTERVAL_MILLIS
-            )
-            Log.d("Step count in exact alarm set: ", "true")
-            with(sharedPref.edit()) {
-                putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
-                apply()
-            }
+//            stepCountInExactAlarms.scheduleInExactAlarm(
+//                System.currentTimeMillis(), 60_000
+//            )
+//            Log.d("Step count in exact alarm set: ", "true")
+//            with(sharedPref.edit()) {
+//                putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
+//                apply()
+//            }
         }
     }
 
