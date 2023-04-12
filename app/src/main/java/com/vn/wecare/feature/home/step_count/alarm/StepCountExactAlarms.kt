@@ -30,8 +30,7 @@ class StepCountExactAlarms @Inject constructor(
     }
 
     override fun clearExactAlarm() {
-        val pendingIntent = getPendingIntent()
-        alarmManager.cancel(pendingIntent)
+        if (getPendingIntent() != null) alarmManager.cancel(getPendingIntent())
     }
 
     override fun canScheduleExactAlarm(): Boolean {

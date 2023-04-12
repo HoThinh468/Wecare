@@ -34,7 +34,7 @@ class StepCountInExactAlarms @Inject constructor(
         with(sharedPref.edit()) {
             putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)
         }
-        alarmManager.cancel(getPendingIntent())
+        if (getPendingIntent() != null) alarmManager.cancel(getPendingIntent())
     }
 
     private fun setRepeatAlarm(triggerAtMillis: Long, intervalMillis: Long) {
