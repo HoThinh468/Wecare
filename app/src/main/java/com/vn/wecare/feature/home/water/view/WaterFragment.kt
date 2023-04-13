@@ -5,7 +5,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentWaterBinding
-import com.vn.wecare.feature.home.water.WaterScreen
+import com.vn.wecare.feature.home.water.composable.WaterScreen
 
 class WaterFragment : BaseBindingFragment<FragmentWaterBinding>(FragmentWaterBinding::inflate) {
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
