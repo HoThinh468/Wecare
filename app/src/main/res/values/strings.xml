@@ -41,6 +41,7 @@
 
     <!-- Water -->
     <string name="water">Water</string>
+    <string name="set_water_target">Set target</string>
 
     <!-- Day in week -->
     <string name="sunday">S</string>
