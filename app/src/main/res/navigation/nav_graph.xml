@@ -280,6 +280,15 @@
             android:id="@+id/waterFragment"
             android:name="com.vn.wecare.feature.home.water.view.WaterFragment"
             android:label="fragment_water"
-            tools:layout="@layout/fragment_water" />
+            tools:layout="@layout/fragment_water" >
+            <action
+                android:id="@+id/action_waterFragment_to_waterReportFragment"
+                app:destination="@id/waterReportFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/waterReportFragment"
+            android:name="com.vn.wecare.feature.home.water.view.WaterReportFragment"
+            android:label="fragment_water_report"
+            tools:layout="@layout/fragment_water_report" />
     </navigation>
 </navigation>

@@ -21,31 +21,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.*
-import com.vn.wecare.utils.common_composable.CardListTile
+import com.vn.wecare.utils.common_composable.WecareAppBar
 
 private const val WATER_OPACITY_PAGE_COUNT = 7
 private val waterOpacityList = listOf(100, 200, 300, 400, 500, 600, 700)
 
-@Preview
-@Composable
-fun WaterScreenPreview() {
-    WaterScreen {}
-}
-
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun WaterScreen(
-    modifier: Modifier = Modifier, onNavigateUp: () -> Unit
+    modifier: Modifier = Modifier, onNavigateUp: () -> Unit, moveToReportScreen: () -> Unit
 ) {
     Scaffold(
         modifier = modifier,
         backgroundColor = LightBlue,
         topBar = {
-            WaterAppBar(modifier = modifier) { onNavigateUp() }
+            WecareAppBar(
+                modifier = modifier,
+                onLeadingIconPress = onNavigateUp,
+                trailingIconRes = R.drawable.ic_bar_chart,
+                onTrailingIconPress = moveToReportScreen,
+                title = stringResource(id = R.string.water),
+                backgroundColor = LightBlue,
+            )
         },
     ) {
         Column(
@@ -57,38 +57,10 @@ fun WaterScreen(
             WaterOverView(modifier = modifier)
             Spacer(modifier = modifier.height(halfMidPadding))
             WaterOpacityPicker(modifier = modifier)
-            Spacer(modifier = modifier.height(halfMidPadding))
-            SetWaterTarget(modifier = modifier)
-            Spacer(modifier = modifier.height(halfMidPadding))
+//            Spacer(modifier = modifier.height(halfMidPadding))
+//            SetWaterTarget(modifier = modifier)
+            Spacer(modifier = modifier.height(midPadding))
             WaterTodayRecords(modifier = modifier)
-        }
-    }
-}
-
-@Composable
-fun WaterAppBar(
-    modifier: Modifier,
-    navigateUp: () -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = tinyPadding)
-            .background(color = LightBlue),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = navigateUp) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back), contentDescription = null
-            )
-        }
-        Text(text = stringResource(id = R.string.water), style = MaterialTheme.typography.h4)
-        IconButton(onClick = {}) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_bar_chart), contentDescription = null
-            )
         }
     }
 }
@@ -102,21 +74,21 @@ fun WaterOverView(
     ) {
         Canvas(
             modifier = modifier
-                .size(220.dp)
+                .size(230.dp)
                 .border(width = 2.dp, shape = CircleShape, color = Color(0xFFB7DCF0))
         ) {}
         CircularProgressIndicator(
-            modifier = modifier.size(180.dp),
+            modifier = modifier.size(200.dp),
             progress = 1f,
             color = Blue.copy(alpha = 0.3f),
-            strokeWidth = 16.dp
+            strokeWidth = 12.dp
         )
         CircularProgressIndicator(
-            modifier = modifier.size(180.dp), progress = 0.75f, color = Blue, strokeWidth = 16.dp
+            modifier = modifier.size(200.dp), progress = 0.75f, color = Blue, strokeWidth = 12.dp
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "1200ml", style = MaterialTheme.typography.h2)
-            Text(text = "Target: 2500ml", style = MaterialTheme.typography.caption)
+            Text(text = "1200 ml", style = MaterialTheme.typography.h1)
+            Text(text = "Target: 2500 ml", style = MaterialTheme.typography.body2)
         }
         Box(
             modifier = modifier
@@ -169,12 +141,12 @@ fun WaterOpacityPicker(
         HorizontalPager(
             state = pageState,
             modifier = modifier
-                .weight(4f)
+                .weight(2f)
                 .wrapContentWidth(),
             pageCount = WATER_OPACITY_PAGE_COUNT,
-            pageSpacing = smallPadding,
-            pageSize = PageSize.Fixed(80.dp),
-            userScrollEnabled = false,
+//            pageSpacing = smallPadding,
+//            pageSize = PageSize.Fixed(90.dp),
+//            userScrollEnabled = false,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (it == 3) {
@@ -184,7 +156,7 @@ fun WaterOpacityPicker(
                         .background(Blue)
                 ) {
                     Text(
-                        "${waterOpacityList[it]}ml",
+                        "${waterOpacityList[it]} ml",
                         modifier = modifier.padding(
                             vertical = smallPadding, horizontal = halfMidPadding
                         ),
@@ -193,7 +165,7 @@ fun WaterOpacityPicker(
                 }
             } else {
                 Text(
-                    "${waterOpacityList[it]}ml",
+                    "${waterOpacityList[it]} ml",
                     style = MaterialTheme.typography.h4.copy(
                         color = MaterialTheme.colors.onSecondary.copy(alpha = 0.4f)
                     ),
@@ -206,20 +178,6 @@ fun WaterOpacityPicker(
             Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
         }
     }
-}
-
-@Composable
-fun SetWaterTarget(modifier: Modifier) {
-    CardListTile(
-        modifier = modifier,
-        leadingIconRes = R.drawable.ic_fact_check,
-        trailingIconRes = R.drawable.ic_arrow_forward,
-        titleRes = R.string.set_water_target,
-        subTitle = "You should drink at least 40ml of water per kg of your body weight a day (2520ml)",
-        colorIconRes = R.color.Red400,
-        elevation = null,
-        backgroundColor = LightBlue
-    )
 }
 
 @Composable
@@ -253,8 +211,12 @@ private fun WaterRecordItem(
             contentDescription = null,
             tint = Blue
         )
-        Column(modifier = modifier.weight(6f).padding(horizontal = smallPadding)) {
-            Text(text = "${waterAmount}ml", style = MaterialTheme.typography.body1)
+        Column(
+            modifier = modifier
+                .weight(6f)
+                .padding(horizontal = smallPadding)
+        ) {
+            Text(text = "$waterAmount ml", style = MaterialTheme.typography.body1)
             Text(text = time, style = MaterialTheme.typography.caption)
         }
         IconButton(onClick = { /*TODO*/ }) {

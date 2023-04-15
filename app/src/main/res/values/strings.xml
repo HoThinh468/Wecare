@@ -42,6 +42,7 @@
     <!-- Water -->
     <string name="water">Water</string>
     <string name="set_water_target">Set target</string>
+    <string name="water_reminder">You still have %d ml for today</string>
 
     <!-- Day in week -->
     <string name="sunday">S</string>
