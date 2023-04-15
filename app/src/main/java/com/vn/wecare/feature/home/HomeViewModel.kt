@@ -2,6 +2,7 @@ package com.vn.wecare.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
@@ -33,6 +34,19 @@ class HomeViewModel @Inject constructor(
                 .collect { res ->
                     if (res is Response.Success) {
                         if (res.data?.gender == null || res.data.age == null || res.data.height == null || res.data.weight == null || res.data.goal == null) {
+
+                            val wecareUser = WecareUserSingleton.getInstance()
+                            res.data?.let {
+                                wecareUser.userId = it.userId
+                                wecareUser.email = it.userName
+                                wecareUser.emailVerified = it.emailVerified
+                                wecareUser.gender = it.gender
+                                wecareUser.age = it.age
+                                wecareUser.height = it.height
+                                wecareUser.weight = it.weight
+                                wecareUser.goal = it.goal
+                            }
+
                             _homeUiState.update { it.copy(isAdditionInfoMissing = true) }
                         }
                     }

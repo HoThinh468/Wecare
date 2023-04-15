@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentExercisesBinding
@@ -20,14 +22,15 @@ class ProgramRatingFragment : Fragment() {
     private var _binding: FragmentProgramRatingBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val uiState: ProgramRatingUI = arguments?.getSerializable("programRatingUI") as ProgramRatingUI
+        val viewModel: ProgramRatingsViewModel by viewModels()
+        viewModel.setListReview(uiState.listReview)
+
         _binding = FragmentProgramRatingBinding.inflate(inflater, container, false)
         binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -35,9 +38,11 @@ class ProgramRatingFragment : Fragment() {
                 WecareTheme {
                     ProgramRatingsScreen(
                         onNavigationBack = { findNavController().popBackStack() },
-                        title = "High intensity full body workout",
-                        rating = 4,
-                        ratedNumber = 231
+                        title = uiState.title,
+                        rating = uiState.rating,
+                        ratedNumber = uiState.ratedNumber,
+                        exerciseIndex = uiState.exerciseIndex,
+                        exerciseType = uiState.type
                     )
                 }
             }

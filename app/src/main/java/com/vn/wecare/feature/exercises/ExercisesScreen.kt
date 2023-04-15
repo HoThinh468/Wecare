@@ -34,11 +34,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +49,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import com.mapbox.maps.extension.style.style
 import com.vn.wecare.R
@@ -79,7 +78,8 @@ fun PreviewScreen() {
         onNavigateToEndurance = {},
         onNavigateToStrength ={},
         onNavigateToFlexibility = {},
-        onNavigateToBalance = {}
+        onNavigateToBalance = {},
+        onNavigateToFullBody = {}
     )
 }
 
@@ -92,6 +92,8 @@ fun ExercisesScreen(
     onNavigateToStrength: () -> Unit,
     onNavigateToBalance: () -> Unit,
     onNavigateToFlexibility: () -> Unit,
+    onNavigateToFullBody: () -> Unit,
+    auth: FirebaseAuth = Firebase.auth
 ) {
     Scaffold(
         modifier = modifier
@@ -109,7 +111,7 @@ fun ExercisesScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Let's workout,\n${userName}",
+                    text = "Let's workout,\n${auth.currentUser?.displayName}",
                     style = WeCareTypography.h2,
                     color = Color.Black
                 )
@@ -130,6 +132,14 @@ fun ExercisesScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.Start
             ) {
+                Spacer(modifier = modifier.height(mediumPadding))
+                WorkoutType(
+                    textColor = Green500, text = "30 days",
+                    textExercise = "full body",
+                    image1 = R.drawable.ellipse_2,
+                    image2 = R.drawable.img_1,
+                    onStart = { onNavigateToFullBody() }
+                )
                 Spacer(modifier = modifier.height(mediumPadding))
                 WorkoutType(
                     textColor = Green500, text = "Endurance",
@@ -181,7 +191,9 @@ fun WorkoutType(
     text: String,
     onStart: () -> Unit = {},
     image1: Int,
-    image2: Int
+    image2: Int,
+    textExercise: String = "exercises",
+    extraCompose: @Composable() () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -191,66 +203,71 @@ fun WorkoutType(
         shape = RoundedCornerShape(normalPadding),
         elevation = smallPadding
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = modifier.fillMaxSize()
         ) {
-            Column(
+            Row(
                 modifier = modifier
-                    .wrapContentSize()
-                    .padding(start = midPadding, bottom = 20.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
+                Column(
                     modifier = modifier
-                        .padding(top = 10.dp, bottom = 26.dp),
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                fontFamily = OpenSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
-                                color = textColor
-                            )
-                        ) {
-                            append(text)
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                fontFamily = OpenSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
-                                color = Black900
-                            )
-                        ) {
-                            append("\nexercises")
-                        }
-                    }
-                )
-                Box(
-                    modifier = modifier
-                        .height(30.dp)
-                        .width(70.dp)
+                        .wrapContentSize()
+                        .padding(start = midPadding, bottom = 20.dp)
                 ) {
-                    CustomButton(
-                        text = "Start",
-                        onClick = { onStart() },
-                        padding = 0.dp,
-                        backgroundColor = Black900,
-                        textColor = Color.White,
-                        modifier = modifier.clip(RoundedCornerShape(40.dp))
+                    Text(
+                        modifier = modifier
+                            .padding(top = 10.dp, bottom = 26.dp),
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontFamily = OpenSans,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = textColor
+                                )
+                            ) {
+                                append(text)
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    fontFamily = OpenSans,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Black900
+                                )
+                            ) {
+                                append("\n$textExercise")
+                            }
+                        }
                     )
+                    Box(
+                        modifier = modifier
+                            .height(30.dp)
+                            .width(70.dp)
+                    ) {
+                        CustomButton(
+                            text = "Start",
+                            onClick = { onStart() },
+                            padding = 0.dp,
+                            backgroundColor = Black900,
+                            textColor = Color.White,
+                            modifier = modifier.clip(RoundedCornerShape(40.dp))
+                        )
+                    }
                 }
+                CustomImage(
+                    modifier = modifier
+                        .padding(top = 8.dp, end = 16.dp)
+                        .width(150.dp)
+                        .fillMaxHeight(),
+                    image1 = image1,
+                    image2 = image2
+                )
             }
-            CustomImage(
-                modifier = modifier
-                    .padding(top = 8.dp, end = 16.dp)
-                    .width(150.dp)
-                    .fillMaxHeight(),
-                image1 = image1,
-                image2 = image2
-            )
+            extraCompose()
         }
     }
 }

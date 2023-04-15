@@ -11,7 +11,7 @@
     <string name="account_title">Account</string>
     <string name="title_activity_sign_in_screen">SignInScreen</string>
     <string name="empty_title"> </string>
-    
+
     <!-- Onboarding feature -->
     <string name="gender_selection_title">What is your gender?</string>
     <string name="gender_selection_subtitle">To give you a better experience we need to know your gender</string>

@@ -1,10 +1,10 @@
 package com.vn.wecare.feature.exercises.widget
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -21,46 +22,36 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.core.model.ListReviewsItem
-import com.vn.wecare.ui.theme.Black900
-import com.vn.wecare.ui.theme.Grey100
-import com.vn.wecare.ui.theme.Grey500
-import com.vn.wecare.ui.theme.WeCareTypography
-import com.vn.wecare.ui.theme.YellowStar
-import com.vn.wecare.ui.theme.halfMidPadding
-import com.vn.wecare.ui.theme.mediumPadding
-import com.vn.wecare.ui.theme.midPadding
-import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.ui.theme.tinyPadding
+import com.vn.wecare.feature.exercises.program_detail.ProgramDetailViewModel
+import com.vn.wecare.feature.exercises.program_ratings.ProgramRatingsViewModel
+import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
+import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.convertMonthAgoTimeStamp
-
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    ReviewsWidget(
-        reviewsItem = ListReviewsItem(
-            userName = "Thinh Ho",
-            rating = 4,
-            createdDate = 1676300598000,
-            likedNumber = 23,
-            content = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum"
-        )
-    )
-}
 
 @Composable
 fun ReviewsWidget(
     modifier: Modifier = Modifier,
-    reviewsItem: ListReviewsItem
+    reviewsItem: ListReviewsItem,
+    exerciseType: ExerciseType,
+    exerciseIndex: Int,
+    reviewIndex: Int,
+    reviewLikeCount: Int,
+    viewModel: ProgramRatingsViewModel = hiltViewModel(),
+    detailViewModel: ProgramDetailViewModel = hiltViewModel()
 ) {
+//    viewModel.getLikeCountResponse(exerciseType, exerciseIndex, reviewIndex)
     Column(
         modifier = modifier
             .padding(midPadding)
@@ -96,12 +87,12 @@ fun ReviewsWidget(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RatingStar(rating = reviewsItem.rating)
+                    RatingStar(rating = reviewsItem.rate)
                     Text(
                         modifier = modifier
                             .padding(start = smallPadding)
                             .wrapContentHeight(),
-                        text = convertMonthAgoTimeStamp(reviewsItem.createdDate),
+                        text = convertMonthAgoTimeStamp(reviewsItem.time),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = WeCareTypography.caption,
@@ -113,31 +104,63 @@ fun ReviewsWidget(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.ThumbUp,
-                    contentDescription = "",
-                    tint = Color.Black,
-                    modifier = modifier
-                        .size(16.dp)
-                        .padding(end = tinyPadding)
-                )
+
+                IconButton(
+                    onClick = {
+                        viewModel.likeReview(
+                            exerciseType,
+                            exerciseIndex,
+                            reviewIndex,
+                            reviewLikeCount + 1
+                        ) {
+                            detailViewModel.getListReview(exerciseType, exerciseIndex)
+                            detailViewModel.listReviews.value?.let {
+                                viewModel.setListReview(
+                                    it
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    if (viewModel.checkIsLiked(reviewIndex)) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = "",
+                            tint = Green500,
+                            modifier = modifier
+                                .size(16.dp)
+                                .padding(end = tinyPadding)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = "",
+                            tint = Color.Black,
+                            modifier = modifier
+                                .size(16.dp)
+                                .padding(end = tinyPadding)
+                        )
+                    }
+                }
                 Text(
-                    text = "(${reviewsItem.likedNumber})",
+                    text = "(${reviewLikeCount})",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = WeCareTypography.caption
                 )
-                Spacer(modifier = modifier.width(mediumPadding))
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = "",
-                    tint = Color.Black,
-                    modifier = modifier.size(12.dp)
-                )
             }
+            Spacer(modifier = modifier.width(mediumPadding))
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = "",
+                tint = Color.Black,
+                modifier = modifier.size(12.dp)
+            )
         }
-        ExpandableText(text = reviewsItem.content, textColor = Color.Black, minimizedMaxLines = 4)
     }
+    ExpandableText(
+        modifier = modifier.padding(start = midPadding),
+        text = reviewsItem.content, textColor = Color.Black, minimizedMaxLines = 4)
 }
 
 @Composable
@@ -154,7 +177,6 @@ fun RatingStar(
                 Icons.Filled.Star,
                 contentDescription = "Star",
                 modifier = modifier
-//                                        .padding(end = 2.dp)
                     .size(12.dp),
                 tint = YellowStar
             )
@@ -165,8 +187,6 @@ fun RatingStar(
                 contentDescription = "Star",
                 modifier = modifier
                     .size(12.dp),
-//                                        .padding(end = 2.dp),
-                tint = White
             )
         }
     }

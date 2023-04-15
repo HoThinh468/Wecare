@@ -21,16 +21,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.model.ProgramDetailItem
 import com.vn.wecare.core.model.listDetailEndurance
+import com.vn.wecare.feature.exercises.ExercisesViewModel
 import com.vn.wecare.feature.exercises.exercise_list.ExerciseLevel
 import com.vn.wecare.feature.exercises.widget.CountDownTimer1
 import com.vn.wecare.feature.exercises.widget.ExpandableText
 import com.vn.wecare.feature.exercises.widget.RatingStar
+import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CustomButton
 
@@ -43,8 +47,6 @@ fun PreviewScreen() {
         level = ExerciseLevel.Hard,
         duration = 20,
         description = "High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
-        rating = 4,
-        ratedNumber = 231,
         onNavigateToRatingScreen = {},
         onStartWorkout = {},
         listExercises = listDetailEndurance
@@ -62,9 +64,9 @@ fun ProgramDetailScreen(
     level: ExerciseLevel,
     duration: Int,
     description: String,
-    rating: Int,
-    ratedNumber: Int,
-    listExercises: List<ProgramDetailItem>
+    listExercises: List<ProgramDetailItem>,
+    viewModel: ProgramDetailViewModel = hiltViewModel(),
+    exerciseViewModel: ExercisesViewModel = hiltViewModel()
 ) {
     Scaffold(
         modifier = modifier,
@@ -146,26 +148,35 @@ fun ProgramDetailScreen(
                     color = Color.White,
                     modifier = modifier.padding(bottom = smallPadding)
                 )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = modifier
-                        .padding(bottom = midPadding)
-                        .clickable {
-                            onNavigateToRatingScreen()
+                when (val listReviewResponse = viewModel.reviewListResponse) {
+                    is Response.Loading -> ProgressBar()
+                    is Response.Error -> println(listReviewResponse.e)
+                    is Response.Success -> {
+                        exerciseViewModel.checkIsReview(listReviewResponse.data)
+                        val rating = viewModel.getRating(listReviewResponse.data)
+                        val reviewCount = viewModel.getReviewCount(listReviewResponse.data)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier
+                                .padding(bottom = midPadding)
+                                .clickable {
+                                    onNavigateToRatingScreen()
+                                }
+                        ) {
+                            RatingStar(rating = rating)
+                            Text(
+                                modifier = modifier.padding(end = tinyPadding),
+                                text = "($rating/5)",
+                                style = WeCareTypography.caption,
+                                color = YellowStar
+                            )
+                            Text(
+                                text = "($reviewCount reviews)",
+                                style = WeCareTypography.caption,
+                                color = Color.White
+                            )
                         }
-                ) {
-                    RatingStar(rating = rating)
-                    Text(
-                        modifier = modifier.padding(end = tinyPadding),
-                        text = "($rating/5)",
-                        style = WeCareTypography.caption,
-                        color = YellowStar
-                    )
-                    Text(
-                        text = "($ratedNumber reviews)",
-                        style = WeCareTypography.caption,
-                        color = Color.White
-                    )
+                    }
                 }
             }
             Surface(
@@ -185,7 +196,9 @@ fun ProgramDetailScreen(
                     }
                     CustomButton(
                         text = "LET'S START",
-                        onClick = { onStartWorkout() },
+                        onClick = {
+                            onStartWorkout()
+                        },
                         backgroundColor = Green500,
                         textColor = Color.White,
                         padding = 0.dp,

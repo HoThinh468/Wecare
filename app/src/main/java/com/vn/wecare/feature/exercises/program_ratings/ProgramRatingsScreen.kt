@@ -2,10 +2,6 @@ package com.vn.wecare.feature.exercises.program_ratings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -33,52 +29,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.core.model.ListReviewsItem
-import com.vn.wecare.core.model.listReviewitem
-import com.vn.wecare.feature.exercises.exercise_list.ExerciseLevel
-import com.vn.wecare.feature.exercises.program_detail.ProgramDetailScreen
+import com.vn.wecare.core.model.listReviewError
+import com.vn.wecare.feature.exercises.program_detail.ProgramDetailViewModel
 import com.vn.wecare.feature.exercises.widget.RatingStar
 import com.vn.wecare.feature.exercises.widget.ReviewsWidget
-import com.vn.wecare.ui.theme.Black900
-import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
 import com.vn.wecare.ui.theme.WeCareTypography
-import com.vn.wecare.ui.theme.YellowStar
 import com.vn.wecare.ui.theme.halfMidPadding
-import com.vn.wecare.ui.theme.iconSize
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.tinyPadding
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewScreen() {
-    ProgramRatingsScreen(
-        onNavigationBack = {},
-        title = "High intensity full body workout",
-        rating = 4,
-        ratedNumber = 231,
-        listReviews = listReviewitem
-    )
-}
-
 
 @Composable
 fun ProgramRatingsScreen(
@@ -87,7 +58,9 @@ fun ProgramRatingsScreen(
     title: String,
     rating: Int,
     ratedNumber: Int,
-    listReviews: Array<ListReviewsItem> = listReviewitem
+    exerciseType: ExerciseType,
+    exerciseIndex: Int,
+    viewModel: ProgramRatingsViewModel = hiltViewModel()
 ) {
 
     Scaffold(
@@ -167,10 +140,19 @@ fun ProgramRatingsScreen(
                     )
                     FilterComponent()
                 }
-
+                lateinit var listReview: List<ListReviewsItem>
+                viewModel.listReview.collectAsState().value?.let {
+                    listReview = it
+                }
                 LazyColumn {
-                    items(listReviews) {
-                        ReviewsWidget(reviewsItem = it)
+                    itemsIndexed(listReview) { index, item ->
+                        ReviewsWidget(
+                            reviewsItem = item,
+                            exerciseType = exerciseType,
+                            exerciseIndex = exerciseIndex,
+                            reviewIndex = index,
+                            reviewLikeCount = listReview[index].likeCount
+                        )
                     }
                 }
             }
@@ -197,22 +179,34 @@ fun FilterComponent(
         ) {
             ButtonFilterByStar(
                 isAll = true,
-                onClick = { viewModel.setFilterStar(0) },
+                onClick = {
+                    viewModel.setFilterRating(0)
+                    viewModel.filterListReview(0)
+                },
                 viewModel = viewModel
             )
             ButtonFilterByStar(
                 starNumber = 5,
-                onClick = { viewModel.setFilterStar(5) },
+                onClick = {
+                    viewModel.setFilterRating(5)
+                    viewModel.filterListReview(5)
+                },
                 viewModel = viewModel
             )
             ButtonFilterByStar(
                 starNumber = 4,
-                onClick = { viewModel.setFilterStar(4) },
+                onClick = {
+                    viewModel.setFilterRating(4)
+                    viewModel.filterListReview(4)
+                },
                 viewModel = viewModel
             )
             ButtonFilterByStar(
                 starNumber = 3,
-                onClick = { viewModel.setFilterStar(3) },
+                onClick = {
+                    viewModel.setFilterRating(3)
+                    viewModel.filterListReview(3)
+                },
                 viewModel = viewModel
             )
         }
@@ -224,12 +218,18 @@ fun FilterComponent(
         ) {
             ButtonFilterByStar(
                 starNumber = 2,
-                onClick = { viewModel.setFilterStar(2) },
+                onClick = {
+                    viewModel.setFilterRating(2)
+                    viewModel.filterListReview(2)
+                },
                 viewModel = viewModel
             )
             ButtonFilterByStar(
                 starNumber = 1,
-                onClick = { viewModel.setFilterStar(1) },
+                onClick = {
+                    viewModel.setFilterRating(1)
+                    viewModel.filterListReview(1)
+                },
                 viewModel = viewModel
             )
         }
@@ -244,7 +244,7 @@ fun ButtonFilterByStar(
     isAll: Boolean = false,
     viewModel: ProgramRatingsViewModel
 ) {
-    val filterStar = viewModel.filterStar.collectAsState().value
+    val filterStar = viewModel.filterRating.collectAsState().value
 
     val color = if (filterStar == starNumber) Color.Black else Color.White
 

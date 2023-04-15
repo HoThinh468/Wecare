@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.exercises
 
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.vn.wecare.R
 import com.vn.wecare.core.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExercisesViewModel @Inject constructor(
-
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private var _currentWorkoutIndex = MutableStateFlow<Int>(0)
@@ -26,6 +27,10 @@ class ExercisesViewModel @Inject constructor(
         _currentWorkoutIndex.value--
     }
 
+    fun resetWorkoutIndex() {
+        _currentWorkoutIndex.value = 0
+    }
+
     private var _currentWorkoutList = MutableStateFlow<List<ProgramDetailItem>>(errorList)
     val currentWorkoutList: StateFlow<List<ProgramDetailItem>>
         get() = _currentWorkoutList
@@ -36,6 +41,52 @@ class ExercisesViewModel @Inject constructor(
 
     fun getCurrentWorkout(): ProgramDetailItem {
         return _currentWorkoutList.value[_currentWorkoutIndex.value]
+    }
+
+    private var _isReview = MutableStateFlow(false)
+    val isReview: StateFlow<Boolean>
+        get() = _isReview
+
+    fun checkIsReview(list: List<ListReviewsItem>) {
+        for (i in list) {
+            if (i.userId == auth.currentUser?.uid) {
+                _isReview.value = true
+                return
+            }
+        }
+        _isReview.value = false
+    }
+
+    private val _currentType = MutableStateFlow(ExerciseType.None)
+    val currentType: StateFlow<ExerciseType>
+        get() = _currentType
+
+    fun setCurrentType(newType: ExerciseType) {
+        _currentType.value = newType
+    }
+
+    private val _currentIndex = MutableStateFlow(0)
+    val currentIndex: StateFlow<Int>
+        get() = _currentIndex
+
+    fun setCurrentIndex(index: Int) {
+        _currentIndex.value = index
+    }
+
+    private val _onStartWorkoutTime = MutableStateFlow<Long>(0)
+    val startTime: StateFlow<Long>
+        get() = _onStartWorkoutTime
+
+    fun onStartWorkout() {
+        _onStartWorkoutTime.value = System.currentTimeMillis()
+    }
+
+    private val _onEndWorkoutTime = MutableStateFlow<Long>(0)
+    val endTime: StateFlow<Long>
+        get() = _onEndWorkoutTime
+
+    fun onEndWorkout() {
+        _onEndWorkoutTime.value = System.currentTimeMillis()
     }
 
     val enduranceList = ExerciseListScreenUI(

@@ -69,6 +69,11 @@ class ExercisesFragment : Fragment() {
                                 bundle
                             )
                         },
+                        onNavigateToFullBody = {
+                            findNavController().navigate(
+                                R.id.action_exercisesFragment_to_fullBodyFragment
+                            )
+                        }
                     )
                 }
             }
