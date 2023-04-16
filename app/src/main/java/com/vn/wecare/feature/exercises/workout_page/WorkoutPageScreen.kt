@@ -17,12 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.vn.wecare.R
+import com.vn.wecare.feature.exercises.ExercisesViewModel
 import com.vn.wecare.feature.exercises.widget.ProgressIndicator
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.halfMidPadding
@@ -35,7 +37,8 @@ fun a() {
         onQuit = { /*TODO*/ },
         title = "Jumping Jack",
         exercise = R.drawable.jumping_jack,
-        duration = 10
+        duration = 10,
+        viewModel = hiltViewModel()
     )
 }
 
@@ -47,7 +50,8 @@ fun WorkoutPageScreen(
     duration: Int,
     exercise: Int,
     onNavigateToRest: () -> Unit = {},
-    onNavigateToPreviousRest: () -> Unit = {}
+    onNavigateToPreviousRest: () -> Unit = {},
+    viewModel: ExercisesViewModel
 ) {
     var onResume by remember {
         mutableStateOf(true)
@@ -124,7 +128,9 @@ fun WorkoutPageScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    onNavigateToPreviousRest()
+                }) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
                         contentDescription = "",
@@ -141,7 +147,7 @@ fun WorkoutPageScreen(
                             .height(60.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if(onResume) {
+                        if (onResume) {
                             Icon(
                                 imageVector = Icons.Default.Pause,
                                 contentDescription = "",

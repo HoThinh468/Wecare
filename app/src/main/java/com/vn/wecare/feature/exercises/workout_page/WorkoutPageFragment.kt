@@ -13,7 +13,9 @@ import com.vn.wecare.databinding.FragmentExercisesBinding
 import com.vn.wecare.databinding.FragmentWorkoutPageBinding
 import com.vn.wecare.feature.exercises.ExercisesViewModel
 import com.vn.wecare.ui.theme.WecareTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WorkoutPageFragment : Fragment() {
 
     private var _binding: FragmentWorkoutPageBinding? = null
@@ -40,7 +42,8 @@ class WorkoutPageFragment : Fragment() {
                         duration = viewModel.getCurrentWorkout().duration,
                         exercise = viewModel.getCurrentWorkout().exercise,
                         onNavigateToRest = {
-                            if( viewModel.currentWorkoutIndex.value == viewModel.currentWorkoutList.value.size - 1 ) {
+                            if (viewModel.currentWorkoutIndex.value == viewModel.currentWorkoutList.value.size - 1) {
+                                viewModel.onEndWorkout()
                                 findNavController().navigate(R.id.action_workoutPageFragment_to_doneFragment2)
                             } else {
                                 viewModel.increaseWorkoutIndex()
@@ -50,7 +53,8 @@ class WorkoutPageFragment : Fragment() {
                         onNavigateToPreviousRest = {
                             viewModel.decreaseWorkoutIndex()
                             findNavController().navigate(R.id.action_workoutPageFragment_to_workoutRestFragment2)
-                        }
+                        },
+                        viewModel = viewModel
                     )
                 }
             }
