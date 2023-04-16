@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.water.composable
+package com.vn.wecare.feature.home.water.report
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes

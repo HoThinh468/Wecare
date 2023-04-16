@@ -25,6 +25,7 @@ import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
 import com.vn.wecare.utils.common_composable.RequestPermission
@@ -42,7 +43,8 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     cancelInExactAlarm: () -> Unit,
-    stepCountViewModel: StepCountViewModel
+    stepCountViewModel: StepCountViewModel,
+    waterViewModel: WaterViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
@@ -66,7 +68,9 @@ fun HomeScreen(
             onBicycleIcClick,
             onMeditationIcClick
         )
-        WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
+        WaterOverviewHomeCard(
+            modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
+        )
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
     }

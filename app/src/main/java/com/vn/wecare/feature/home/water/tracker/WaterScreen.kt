@@ -1,11 +1,12 @@
-package com.vn.wecare.feature.home.water.composable
+package com.vn.wecare.feature.home.water.tracker
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,9 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,15 +29,19 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.WecareAppBar
-
-private const val WATER_OPACITY_PAGE_COUNT = 7
-private val waterOpacityList = listOf(100, 200, 300, 400, 500, 600, 700)
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun WaterScreen(
-    modifier: Modifier = Modifier, onNavigateUp: () -> Unit, moveToReportScreen: () -> Unit
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit,
+    moveToReportScreen: () -> Unit,
+    viewModel: WaterViewModel
 ) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Scaffold(
         modifier = modifier,
         backgroundColor = LightBlue,
@@ -54,11 +62,22 @@ fun WaterScreen(
                 .padding(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            WaterOverView(modifier = modifier)
+            WaterOverView(
+                modifier = modifier,
+                currentIndex = uiState.value.currentIndex,
+                targetAmount = uiState.value.targetAmount,
+                onDrinkClick = viewModel::onDrinkClick,
+                progress = uiState.value.progress
+            )
             Spacer(modifier = modifier.height(halfMidPadding))
-            WaterOpacityPicker(modifier = modifier)
-//            Spacer(modifier = modifier.height(halfMidPadding))
-//            SetWaterTarget(modifier = modifier)
+            WaterOpacityPicker(
+                modifier = modifier,
+                numberOfPage = viewModel.getWaterOpacityNumber(),
+                desiredAmount = viewModel.getWaterDrinkingAmount(),
+                currentIndex = uiState.value.desiredDrinkingAmountPageIndex,
+                onNextClick = viewModel::onNextAmountClick,
+                onPreviousClick = viewModel::onPreviousAmountClick,
+            )
             Spacer(modifier = modifier.height(midPadding))
             WaterTodayRecords(modifier = modifier)
         }
@@ -67,8 +86,17 @@ fun WaterScreen(
 
 @Composable
 fun WaterOverView(
-    modifier: Modifier
+    modifier: Modifier,
+    currentIndex: Int,
+    targetAmount: Int,
+    onDrinkClick: () -> Unit,
+    progress: Float
 ) {
+
+    val progressAnimationValue by animateFloatAsState(
+        targetValue = progress, animationSpec = tween(1000)
+    )
+
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -84,11 +112,14 @@ fun WaterOverView(
             strokeWidth = 12.dp
         )
         CircularProgressIndicator(
-            modifier = modifier.size(200.dp), progress = 0.75f, color = Blue, strokeWidth = 12.dp
+            modifier = modifier.size(200.dp),
+            progress = progressAnimationValue,
+            color = Blue,
+            strokeWidth = 12.dp
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "1200 ml", style = MaterialTheme.typography.h1)
-            Text(text = "Target: 2500 ml", style = MaterialTheme.typography.body2)
+            Text(text = "$currentIndex ml", style = MaterialTheme.typography.h1)
+            Text(text = "Target: $targetAmount ml", style = MaterialTheme.typography.body2)
         }
         Box(
             modifier = modifier
@@ -98,7 +129,7 @@ fun WaterOverView(
                 .align(Alignment.TopStart), contentAlignment = Alignment.Center
         ) {
             Text(
-                "100%", style = MaterialTheme.typography.h4.copy(color = Blue)
+                "${(progress * 100).toInt()}%", style = MaterialTheme.typography.h4.copy(color = Blue)
             )
         }
         Box(
@@ -107,7 +138,9 @@ fun WaterOverView(
                 .clip(CircleShape)
                 .background(Color(0xFFDFECF7))
                 .align(Alignment.BottomEnd)
-                .clickable { }, contentAlignment = Alignment.Center
+                .clickable {
+                    onDrinkClick()
+                }, contentAlignment = Alignment.Center
         ) {
             Image(
                 modifier = modifier.size(24.dp),
@@ -121,10 +154,16 @@ fun WaterOverView(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WaterOpacityPicker(
-    modifier: Modifier
+    modifier: Modifier,
+    numberOfPage: Int,
+    desiredAmount: Int,
+    currentIndex: Int,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
 ) {
 
-    val pageState = rememberPagerState(initialPage = 3)
+    val pagerState = rememberPagerState(initialPage = 3)
+    val coroutineScope = rememberCoroutineScope()
 
     Row(
         modifier = modifier
@@ -134,46 +173,45 @@ fun WaterOpacityPicker(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
-            onClick = { /*TODO*/ }, modifier = modifier.weight(1f)
+            onClick = {
+                onPreviousClick()
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(currentIndex)
+                }
+            }, modifier = modifier.weight(1f), enabled = currentIndex > 0
         ) {
             Icon(imageVector = Icons.Default.ChevronLeft, contentDescription = null)
         }
         HorizontalPager(
-            state = pageState,
+            state = pagerState,
             modifier = modifier
                 .weight(2f)
                 .wrapContentWidth(),
-            pageCount = WATER_OPACITY_PAGE_COUNT,
-//            pageSpacing = smallPadding,
-//            pageSize = PageSize.Fixed(90.dp),
-//            userScrollEnabled = false,
+            pageCount = numberOfPage,
             verticalAlignment = Alignment.CenterVertically,
+            userScrollEnabled = false
         ) {
-            if (it == 3) {
-                Box(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(mediumRadius))
-                        .background(Blue)
-                ) {
-                    Text(
-                        "${waterOpacityList[it]} ml",
-                        modifier = modifier.padding(
-                            vertical = smallPadding, horizontal = halfMidPadding
-                        ),
-                        style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary),
-                    )
-                }
-            } else {
+            Box(
+                modifier = modifier
+                    .clip(RoundedCornerShape(mediumRadius))
+                    .background(Blue)
+            ) {
                 Text(
-                    "${waterOpacityList[it]} ml",
-                    style = MaterialTheme.typography.h4.copy(
-                        color = MaterialTheme.colors.onSecondary.copy(alpha = 0.4f)
+                    "$desiredAmount ml",
+                    modifier = modifier.padding(
+                        vertical = smallPadding, horizontal = halfMidPadding
                     ),
+                    style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary),
                 )
             }
         }
         IconButton(
-            onClick = { /*TODO*/ }, modifier = modifier.weight(1f)
+            onClick = {
+                onNextClick()
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(currentIndex)
+                }
+            }, modifier = modifier.weight(1f), enabled = currentIndex < numberOfPage - 1
         ) {
             Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
         }

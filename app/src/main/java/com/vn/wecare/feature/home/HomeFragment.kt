@@ -22,6 +22,7 @@ import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
 import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,6 +37,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val stepCountViewModel: StepCountViewModel by activityViewModels()
+    private val waterViewModel: WaterViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -78,7 +80,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
                 cancelInExactAlarm = { homeViewModel.cancelInExactAlarm() },
-                stepCountViewModel = stepCountViewModel
+                stepCountViewModel = stepCountViewModel,
+                waterViewModel = waterViewModel
             )
         }
     }
