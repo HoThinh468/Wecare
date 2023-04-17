@@ -21,4 +21,8 @@ class WaterFragment : BaseBindingFragment<FragmentWaterBinding>(FragmentWaterBin
             )
         }
     }
+
+    companion object {
+        const val waterTrackerTag = "Water tracker flow"
+    }
 }

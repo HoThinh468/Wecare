@@ -71,7 +71,7 @@ fun SignInScreen(
             is Response.Error -> {
                 viewModel.handleLoginError()
             }
-            null -> { /* do nothing */
+            else -> { /* do nothing */
             }
         }
     }

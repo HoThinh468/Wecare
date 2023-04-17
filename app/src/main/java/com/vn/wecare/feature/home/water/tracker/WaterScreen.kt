@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.launch
@@ -79,7 +80,7 @@ fun WaterScreen(
                 onPreviousClick = viewModel::onPreviousAmountClick,
             )
             Spacer(modifier = modifier.height(midPadding))
-            WaterTodayRecords(modifier = modifier)
+            WaterTodayRecords(modifier = modifier, recordList = uiState.value.recordList)
         }
     }
 }
@@ -129,7 +130,8 @@ fun WaterOverView(
                 .align(Alignment.TopStart), contentAlignment = Alignment.Center
         ) {
             Text(
-                "${(progress * 100).toInt()}%", style = MaterialTheme.typography.h4.copy(color = Blue)
+                "${(progress * 100).toInt()}%",
+                style = MaterialTheme.typography.h4.copy(color = Blue)
             )
         }
         Box(
@@ -162,7 +164,7 @@ fun WaterOpacityPicker(
     onPreviousClick: () -> Unit,
 ) {
 
-    val pagerState = rememberPagerState(initialPage = 3)
+    val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
     Row(
@@ -220,16 +222,26 @@ fun WaterOpacityPicker(
 
 @Composable
 fun WaterTodayRecords(
-    modifier: Modifier
+    modifier: Modifier,
+    recordList: List<WaterRecordEntity>,
 ) {
     Text("Today's records", style = MaterialTheme.typography.h4)
-    Spacer(modifier = modifier.height(halfMidPadding))
-    LazyColumn {
-        items(count = 2) { record ->
-            WaterRecordItem(modifier = modifier)
-            WaterRecordItem(modifier = modifier)
-            WaterRecordItem(modifier = modifier)
-            WaterRecordItem(modifier = modifier)
+    if (recordList.isEmpty()) {
+        Image(
+            painter = painterResource(id = R.drawable.img_water_data_not_found),
+            modifier = modifier
+                .padding(top = mediumPadding, bottom = halfMidPadding)
+                .size(160.dp),
+            contentDescription = null
+        )
+        Text(
+            text = "No records yet, drink now to see your record!",
+            style = MaterialTheme.typography.body2
+        )
+    } else {
+        LazyColumn {
+            items(recordList.size) { record ->
+            }
         }
     }
 }

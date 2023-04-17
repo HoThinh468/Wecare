@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +35,8 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    moveToOnboardingScreen: () -> Unit,
+    moveToAuthenticationScreen: () -> Unit,
     onFootStepCountCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
@@ -43,10 +46,24 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     cancelInExactAlarm: () -> Unit,
+    homeViewModel: HomeViewModel,
     stepCountViewModel: StepCountViewModel,
     waterViewModel: WaterViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
+
+    val homeUiState = homeViewModel.homeUIState.collectAsState()
+
+    homeUiState.value.let {
+        if (!it.hasUser) {
+            moveToAuthenticationScreen()
+            homeViewModel.resetUserNull()
+        }
+        if (it.isAdditionInfoMissing) {
+            moveToOnboardingScreen()
+            homeViewModel.resetUserAdditionalInformationRes()
+        }
+    }
 
     Column(
         modifier = modifier
