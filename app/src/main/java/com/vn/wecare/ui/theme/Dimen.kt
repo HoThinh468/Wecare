@@ -27,6 +27,7 @@ val largeIconSize = 40.dp
  * Elevation
  */
 val smallElevation = 4.dp
+val mediumElevation = 8.dp
 
 /**
  * Corner radius

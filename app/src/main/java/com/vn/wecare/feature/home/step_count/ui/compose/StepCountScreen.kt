@@ -6,7 +6,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.StepsCountUiState
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
@@ -48,6 +46,7 @@ fun StepCountScreen(
     }
 
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -61,10 +60,17 @@ fun StepCountScreen(
         Scaffold(modifier = modifier,
             backgroundColor = MaterialTheme.colors.secondaryVariant,
             topBar = {
-                StepCountAppBar(
+                WecareAppBar(
                     modifier = modifier,
-                    stepCountViewModel = stepCountViewModel,
-                    navigateUp = navigateUp
+                    trailingIconRes = R.drawable.ic_edit_calendar,
+                    title = stepsCountUiState.value.selectedDay,
+                    onLeadingIconPress = navigateUp,
+                    onTrailingIconPress = {
+                        datePicker(
+                            context = context,
+                            updateDate = stepCountViewModel::onDaySelected,
+                        ).show()
+                    }
                 )
             }) {
             Column(
@@ -92,43 +98,6 @@ fun StepCountScreen(
                     PageNotFound()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun StepCountAppBar(
-    modifier: Modifier, navigateUp: () -> Unit, stepCountViewModel: StepCountViewModel
-) {
-
-    val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
-
-    val context = LocalContext.current
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(color = MaterialTheme.colors.background)
-            .padding(horizontal = tinyPadding),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = navigateUp) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back), contentDescription = null
-            )
-        }
-        Text(text = stepsCountUiState.value.selectedDay, style = MaterialTheme.typography.h4)
-        IconButton(onClick = {
-            datePicker(
-                context = context,
-                updateDate = stepCountViewModel::onDaySelected,
-            ).show()
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_edit_calendar),
-                contentDescription = null
-            )
         }
     }
 }

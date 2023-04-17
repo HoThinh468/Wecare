@@ -4,7 +4,15 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -33,13 +41,16 @@ import coil.decode.ImageDecoderDecoder
 import com.vn.wecare.R
 import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.model.ExerciseType
-import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.exercises.ExercisesViewModel
-import com.vn.wecare.ui.theme.*
+import com.vn.wecare.ui.theme.Green500
+import com.vn.wecare.ui.theme.Grey500
+import com.vn.wecare.ui.theme.WeCareTypography
+import com.vn.wecare.ui.theme.YellowStar
+import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.utils.common_composable.CustomButton
 import com.vn.wecare.utils.common_composable.CustomTextField
 import java.text.DecimalFormat
-
 
 @Composable
 fun DoneScreen(
@@ -51,18 +62,15 @@ fun DoneScreen(
     var rating by remember { mutableStateOf(0) }
 
     Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val imageLoader = ImageLoader.Builder(LocalContext.current)
-            .components {
+        val imageLoader = ImageLoader.Builder(LocalContext.current).components {
                 if (Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
                 } else {
                     add(GifDecoder.Factory())
                 }
-            }
-            .build()
+            }.build()
 
         Image(
             modifier = modifier
@@ -70,18 +78,15 @@ fun DoneScreen(
                 .weight(4f)
                 .padding(vertical = halfMidPadding),
             painter = rememberAsyncImagePainter(
-                R.drawable.congratulation,
-                imageLoader
+                R.drawable.congratulation, imageLoader
             ),
             contentDescription = "",
         )
         Text(
-           "Congratulation!",
-            style = WeCareTypography.h3
+            "Congratulation!", style = WeCareTypography.h3
         )
         Text(
-            "You did it!",
-            style = WeCareTypography.h3
+            "You did it!", style = WeCareTypography.h3
         )
         Row(
             modifier = modifier
@@ -95,15 +100,13 @@ fun DoneScreen(
                 number = exercisesViewModel.currentWorkoutList.collectAsState().value.size.toString()
             )
             TitleAndNumber(
-                title = "Kcal",
-                number = calculateKcalBurn(
+                title = "Kcal", number = calculateKcalBurn(
                     exercisesViewModel.startTime.collectAsState().value,
                     exercisesViewModel.endTime.collectAsState().value
                 )
             )
             TitleAndNumber(
-                title = "Duration",
-                number = workoutTime(
+                title = "Duration", number = workoutTime(
                     exercisesViewModel.startTime.collectAsState().value,
                     exercisesViewModel.endTime.collectAsState().value
                 )
@@ -146,8 +149,7 @@ fun DoneScreen(
             }
         }
         Box(
-            modifier = modifier.weight(2f),
-            contentAlignment = Alignment.Center
+            modifier = modifier.weight(2f), contentAlignment = Alignment.Center
         ) {
             CustomButton(
                 text = "DONE",
@@ -157,8 +159,7 @@ fun DoneScreen(
                         doneViewModel.updateListDoneFullBody(exercisesViewModel.currentIndex.value)
                     }
                     doneViewModel.addNewReview(
-                        exercisesViewModel.currentType.value,
-                        exercisesViewModel.currentIndex.value
+                        exercisesViewModel.currentType.value, exercisesViewModel.currentIndex.value
                     )
                     onDone()
                 },
@@ -175,15 +176,12 @@ fun DoneScreen(
 
 @Composable
 fun RatingStar(
-    rating: MutableState<Int>,
-    maxRating: Int = 5,
-    viewModel: DoneViewModel = hiltViewModel()
+    rating: MutableState<Int>, maxRating: Int = 5, viewModel: DoneViewModel = hiltViewModel()
 ) {
     val selectedColor = YellowStar
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
     ) {
         for (i in 1..maxRating) {
             val icon = if (i <= rating.value) {
@@ -196,15 +194,12 @@ fun RatingStar(
                 onClick = {
                     rating.value = i
                     viewModel.setRating(i)
-                },
-                modifier = Modifier.padding(end = 8.dp)
+                }, modifier = Modifier.padding(end = 8.dp)
             ) {
-                Image(
-                    imageVector = icon,
+                Image(imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    colorFilter = starColor?.let { ColorFilter.tint(it) }
-                )
+                    colorFilter = starColor?.let { ColorFilter.tint(it) })
             }
         }
     }
@@ -212,9 +207,7 @@ fun RatingStar(
 
 @Composable
 fun TitleAndNumber(
-    title: String,
-    number: String,
-    modifier: Modifier = Modifier
+    title: String, number: String, modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -237,9 +230,7 @@ fun calculateKcalBurn(startTime: Long, endTime: Long): String {
     val time = endTime - startTime
     val durationRatio = time.toFloat() / 3600000f
 
-    val wecareUser = WecareUserSingleton.getInstance()
-    val weight = wecareUser.weight ?: 0
-
+    val weight = WecareUserSingleton.getInstance().weight ?: 0
 
     val kcalBurn = 7f * durationRatio * weight.toFloat()
     val df = DecimalFormat("#.##")

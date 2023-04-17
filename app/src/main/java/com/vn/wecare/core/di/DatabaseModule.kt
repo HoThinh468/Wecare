@@ -6,6 +6,7 @@ import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.feature.account.data.dao.UserDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
+import com.vn.wecare.feature.home.water.tracker.data.WaterRecordDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,7 +39,12 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideUserDao(database: WecareDatabase) : UserDao {
+    fun provideUserDao(database: WecareDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    fun provideWaterRecordDao(database: WecareDatabase): WaterRecordDao {
+        return database.waterRecordDao()
     }
 }

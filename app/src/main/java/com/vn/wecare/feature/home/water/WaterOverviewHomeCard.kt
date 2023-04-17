@@ -3,6 +3,7 @@ package com.vn.wecare.feature.home.water
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -14,14 +15,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WaterOverviewHomeCard(
     modifier: Modifier,
+    viewModel: WaterViewModel,
     onCardClick: () -> Unit,
 ) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -51,7 +57,7 @@ fun WaterOverviewHomeCard(
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("0")
+                        append("${uiState.value.currentIndex}")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -61,7 +67,7 @@ fun WaterOverviewHomeCard(
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("/0 ml")
+                        append("/${uiState.value.targetAmount} ml")
                     }
                 })
             }
@@ -73,7 +79,9 @@ fun WaterOverviewHomeCard(
                         tint = colorResource(id = R.color.Blue400)
                     )
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    viewModel.onDrinkClick()
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = null,

@@ -4,14 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
@@ -21,9 +17,8 @@ import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
-import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,34 +30,22 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     @Inject
     lateinit var stepCountInExactAlarms: InExactAlarms
 
-    private val stepCountViewModel: StepCountViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val stepCountViewModel: StepCountViewModel by activityViewModels()
+    private val waterViewModel: WaterViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        homeViewModel.apply {
-            checkIfUserIsNull()
-            checkIfAdditionalInformationMissing()
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.homeUIState.collect {
-                    if (it.isUserNull) {
-                        findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
-                        homeViewModel.resetUserNull()
-                    }
-                    if (it.isAdditionInfoMissing) {
-                        findNavController().navigate(R.id.action_global_onboardingFragment)
-                        homeViewModel.resetUserAdditionalInformationRes()
-                    }
-                }
-            }
-        }
-
         super.setupComposeView(
             binding.homeComposeView
         ) {
             HomeScreen(
+                moveToAuthenticationScreen = {
+                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
+                },
+                moveToOnboardingScreen = {
+                    findNavController().navigate(R.id.action_global_onboardingFragment)
+                },
                 onFootStepCountCardClick = {
                     findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
                 },
@@ -78,7 +61,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
                 cancelInExactAlarm = { homeViewModel.cancelInExactAlarm() },
-                stepCountViewModel = stepCountViewModel
+                homeViewModel = homeViewModel,
+                stepCountViewModel = stepCountViewModel,
+                waterViewModel = waterViewModel
             )
         }
     }
@@ -87,20 +72,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         super.setupWhatNeeded()
         val sharedPref =
             requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
-        // Open dialog to request for schedule exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
 //            stepCountExactAlarms.scheduleExactAlarm(null)
-        } else {
-            openSetting()
-        }
+        } else openSetting()
         // TODO: Check logic here
-        Log.d(
-            StepCountFragment.stepCountTag, "I s step count inexact set: ${
-                sharedPref.getBoolean(
-                    IS_STEP_COUNT_INEXACT_ALARM_SET, false
-                )
-            }"
-        )
         if (!sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
 //            stepCountInExactAlarms.scheduleInExactAlarm(
 //                System.currentTimeMillis(), 60_000
@@ -113,11 +88,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         }
     }
 
-    // Call this function in the main screen to get needed permissions
     private fun openSetting() {
-        // If android is higher than android 12 than open the settings to allow permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
         }
+    }
+
+    companion object {
+        const val homeTag = "Home flow tag"
     }
 }

@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count.data.datasource.local
 
+import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class LocalStepPerHourDatasource @Inject constructor(
     private val stepsPerHourDao: StepsPerHourDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : StepsDatasource<StepsPerHour> {
 
     override suspend fun insert(input: StepsPerHour) = withContext(ioDispatcher) {

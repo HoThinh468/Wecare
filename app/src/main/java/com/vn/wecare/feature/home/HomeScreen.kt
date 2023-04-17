@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -25,6 +26,7 @@ import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
 import com.vn.wecare.utils.common_composable.RequestPermission
@@ -33,6 +35,8 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    moveToOnboardingScreen: () -> Unit,
+    moveToAuthenticationScreen: () -> Unit,
     onFootStepCountCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
@@ -42,9 +46,24 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     cancelInExactAlarm: () -> Unit,
-    stepCountViewModel: StepCountViewModel
+    homeViewModel: HomeViewModel,
+    stepCountViewModel: StepCountViewModel,
+    waterViewModel: WaterViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
+
+    val homeUiState = homeViewModel.homeUIState.collectAsState()
+
+    homeUiState.value.let {
+        if (!it.hasUser) {
+            moveToAuthenticationScreen()
+            homeViewModel.resetUserNull()
+        }
+        if (it.isAdditionInfoMissing) {
+            moveToOnboardingScreen()
+            homeViewModel.resetUserAdditionalInformationRes()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -66,7 +85,9 @@ fun HomeScreen(
             onBicycleIcClick,
             onMeditationIcClick
         )
-        WaterOverviewHomeCard(modifier = modifier, onCardClick = onWaterCardClick)
+        WaterOverviewHomeCard(
+            modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
+        )
         YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
         Spacer(modifier = modifier.height(largePadding))
     }
