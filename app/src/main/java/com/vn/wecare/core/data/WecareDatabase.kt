@@ -9,7 +9,7 @@ import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordDao
+import com.vn.wecare.feature.home.water.tracker.data.dao.WaterRecordDao
 import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
 
 @Database(

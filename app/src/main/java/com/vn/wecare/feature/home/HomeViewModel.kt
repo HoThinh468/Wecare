@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
     val homeUIState = _homeUiState.asStateFlow()
 
     init {
-        if (!checkIfUserIsNull()) {
+        if (hasUser()) {
             saveWecareUserToSingletonObject()
         }
     }
@@ -54,12 +54,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun checkIfUserIsNull(): Boolean {
+    private fun hasUser(): Boolean {
         val hasUser = accountService.hasUser
         _homeUiState.update {
             it.copy(hasUser = hasUser)
         }
-        return !hasUser
+        return hasUser
     }
 
     fun resetUserNull() {

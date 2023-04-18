@@ -240,7 +240,8 @@ fun WaterTodayRecords(
         )
     } else {
         LazyColumn {
-            items(recordList.size) { record ->
+            items(recordList.size) { i ->
+                WaterRecordItem(modifier = modifier, record = recordList[i])
             }
         }
     }
@@ -248,10 +249,11 @@ fun WaterTodayRecords(
 
 @Composable
 private fun WaterRecordItem(
-    modifier: Modifier,
-    waterAmount: Int = 250,
-    time: String = "09:30 AM",
+    modifier: Modifier, record: WaterRecordEntity
 ) {
+
+    val simpleDateFormat = "hh:mm aa"
+
     Row(
         modifier = modifier.padding(smallPadding), verticalAlignment = Alignment.CenterVertically
     ) {
@@ -266,8 +268,8 @@ private fun WaterRecordItem(
                 .weight(6f)
                 .padding(horizontal = smallPadding)
         ) {
-            Text(text = "$waterAmount ml", style = MaterialTheme.typography.body1)
-            Text(text = time, style = MaterialTheme.typography.caption)
+            Text(text = "${record.amount} ml", style = MaterialTheme.typography.body1)
+            Text(text = "${record.dateTime.time}", style = MaterialTheme.typography.caption)
         }
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
