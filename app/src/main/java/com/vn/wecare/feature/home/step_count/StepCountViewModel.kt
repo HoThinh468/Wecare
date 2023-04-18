@@ -52,11 +52,15 @@ class StepCountViewModel @Inject constructor(
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
     init {
-        val currentDate = LocalDate.now()
-        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
-        updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
-        updateStepsPerDayWithHours(currentDate.year, currentDate.monthValue, currentDate.dayOfMonth)
-        initializeGoalIndex()
+        if (accountService.hasUser) {
+            val currentDate = LocalDate.now()
+            updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+            updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
+            updateStepsPerDayWithHours(
+                currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
+            )
+            initializeGoalIndex()
+        }
     }
 
     private val hoursList = mutableListOf<StepsPerHour>()
@@ -81,7 +85,7 @@ class StepCountViewModel @Inject constructor(
                     year, month, dayOfMonth
                 )
             ).collect { list ->
-                if (list != null && list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
+                if (list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
                     if (stepsPerDayWithHours != null) {
                         hoursList.add(stepsPerDayWithHours.toModel())
                         _stepsCountUiState.update {

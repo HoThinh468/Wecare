@@ -6,7 +6,7 @@ import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.feature.account.data.dao.UserDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordDao
+import com.vn.wecare.feature.home.water.tracker.data.dao.WaterRecordDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -3,10 +3,9 @@ package com.vn.wecare.feature.account.data.datasource
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.account.data.model.WecareUser
-import com.vn.wecare.feature.authentication.login.LogInFragment
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -16,8 +15,7 @@ import javax.inject.Inject
 private const val WECARE_USER_COLLECTION_PATH = "wecareUser"
 
 class FirebaseWecareUserDataSource @Inject constructor(
-    private val db: FirebaseFirestore,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val db: FirebaseFirestore, @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : WecareUserDataSource {
 
     override suspend fun insertUser(input: WecareUser) {
