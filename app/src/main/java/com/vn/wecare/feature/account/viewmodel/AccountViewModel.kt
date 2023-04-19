@@ -59,20 +59,20 @@ class AccountViewModel @Inject constructor(
     val currentUserId = accountService.currentUserId
 
     fun updateAccountScreen() = viewModelScope.launch {
-        val user = getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
-        user.collect { res ->
-            if (res is Response.Success && res.data != null) {
-                _accountUiState.update {
-                    it.copy(
-                        username = res.data.userName,
-                        email = res.data.email,
-                        isEmailVerified = res.data.emailVerified,
-                        userNameLogo = res.data.userName[0].uppercase(),
-                        avatarUri = accountService.userAvatar
-                    )
+        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
+            .collect { res ->
+                if (res is Response.Success && res.data != null) {
+                    _accountUiState.update {
+                        it.copy(
+                            username = res.data.userName,
+                            email = res.data.email,
+                            isEmailVerified = res.data.emailVerified,
+                            userNameLogo = res.data.userName[0].uppercase(),
+                            avatarUri = accountService.userAvatar
+                        )
+                    }
                 }
             }
-        }
     }
 
     fun onChangePasswordClick() {

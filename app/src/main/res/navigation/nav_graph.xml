@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -19,13 +19,14 @@
             app:destination="@id/step_count_nested_graph"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_homeFragment_to_authentication_nested_graph"
-            app:destination="@id/authentication_nested_graph"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_homeFragment_to_water_graph"
             app:destination="@id/water_graph" />
+        <action
+            android:id="@+id/action_homeFragment_to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- Nested graph for step count feature -->
@@ -69,11 +70,6 @@
             android:name="com.vn.wecare.feature.authentication.signup.SignUpFragment"
             android:label="fragment_sign_up"
             tools:layout="@layout/fragment_sign_up"/>
-        <action
-            android:id="@+id/action_global_authentication_nested_graph_to_home_fragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/authentication_nested_graph"
-            app:popUpToInclusive="true" />
         <fragment
             android:id="@+id/forgotPasswordFragment"
             android:name="com.vn.wecare.feature.authentication.forgotpassword.ForgotPasswordFragment"
@@ -94,6 +90,11 @@
                 app:popUpTo="@id/logInFragment"
                 app:popUpToInclusive="true" />
         </fragment>
+        <action
+            android:id="@+id/action_global_authentication_nested_graph_to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:popUpTo="@id/authentication_nested_graph"
+            app:popUpToInclusive="true" />
     </navigation>
 
     <!-- Account management nested section -->
@@ -261,17 +262,21 @@
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding" >
         <action
-            android:id="@+id/action_onboardingFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
+            android:id="@+id/action_onboardingFragment_to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:launchSingleTop="true"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <action
         android:id="@+id/action_global_onboardingFragment"
         app:destination="@id/onboardingFragment"
-        app:launchSingleTop="false"
         app:popUpTo="@id/onboardingFragment"
-        app:popUpToInclusive="true" />
+        app:popUpToInclusive="true"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     <!--  Nested graph for water feature  -->
     <navigation android:id="@+id/water_graph"
@@ -291,4 +296,26 @@
             android:label="fragment_water_report"
             tools:layout="@layout/fragment_water_report" />
     </navigation>
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.vn.wecare.feature.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_authentication_nested_graph"
+            app:destination="@id/authentication_nested_graph"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

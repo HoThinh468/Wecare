@@ -8,6 +8,7 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentOnboardingBinding
 import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
+import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,8 +19,11 @@ class OnboardingFragment :
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(binding.onboardingComposeView) {
-            OnboardingScreen(viewModel = onboardingViewModel, moveToHomeScreen = {
-                findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
+            OnboardingScreen(viewModel = onboardingViewModel, moveToSplashScreen = {
+                findNavController().safeNavigate(
+                    R.id.onboardingFragment,
+                    R.id.action_onboardingFragment_to_splashFragment
+                )
             })
         }
     }

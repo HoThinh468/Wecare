@@ -30,10 +30,10 @@ class WecareUserDataSourceModule {
     @LocalUserDatasource
     @Provides
     fun provideLocalUserDataSource(
-        database: WecareDatabase
+        database: WecareDatabase, @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): WecareUserDataSource {
         return LocalWecareUserDataSource(
-            database.userDao()
+            database.userDao(), ioDispatcher
         )
     }
 

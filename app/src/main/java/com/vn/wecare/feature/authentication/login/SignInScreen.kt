@@ -46,7 +46,7 @@ import com.vn.wecare.utils.common_composable.LoadingDialog
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SignInScreen(
-    navigateToHome: () -> Unit,
+    moveToSplash: () -> Unit,
     navigateToSignUp: () -> Unit,
     viewModel: LoginViewModel,
     moveToForgotPasswordScreen: () -> Unit,
@@ -66,7 +66,9 @@ fun SignInScreen(
                 LoadingDialog(loading = it == Response.Loading) {}
             }
             is Response.Success -> {
-                viewModel.handleLoginSuccess(navigateToHome)
+                viewModel.handleLoginSuccess()
+                Log.d(LogInFragment.logInTag, "Login success, move to splash screen")
+                moveToSplash()
             }
             is Response.Error -> {
                 viewModel.handleLoginError()

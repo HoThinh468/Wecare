@@ -14,6 +14,7 @@ import com.vn.wecare.databinding.FragmentLogInBinding
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
 import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
+import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,8 +25,11 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(binding.composeView) {
             SignInScreen(
-                navigateToHome = {
-                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                moveToSplash = {
+//                    findNavController().safeNavigate(
+//                        R.id.logInFragment, R.id.action_global_splashFragment
+//                    )
+                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_splashFragment)
                 },
                 navigateToSignUp = {
                     findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)

@@ -37,7 +37,7 @@ const val ONBOARDING_PAGE_COUNT = 5
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun OnboardingScreen(
-    modifier: Modifier = Modifier, viewModel: OnboardingViewModel, moveToHomeScreen: () -> Unit
+    modifier: Modifier = Modifier, viewModel: OnboardingViewModel, moveToSplashScreen: () -> Unit
 ) {
 
     val pagerState = rememberPagerState()
@@ -50,7 +50,7 @@ fun OnboardingScreen(
             is Response.Loading -> LoadingDialog(loading = it == Response.Loading) {}
             is Response.Success -> {
                 viewModel.moveToNextOnboardingPage(
-                    moveToHomeScreen
+                    moveToSplashScreen
                 ) {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(viewModel.currentIndex.value)

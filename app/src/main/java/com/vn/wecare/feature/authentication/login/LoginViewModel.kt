@@ -99,8 +99,7 @@ class LoginViewModel @Inject constructor(
         _logInUiState.update { it.copy(snackbarMessageRes = null) }
     }
 
-    fun handleLoginSuccess(moveToHome: () -> Unit) {
-        moveToHome()
+    fun handleLoginSuccess() {
         clearLogInInformation()
         viewModelScope.launch {
             saveUserInformationToLocalDb()

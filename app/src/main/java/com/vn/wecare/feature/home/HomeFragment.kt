@@ -40,12 +40,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             binding.homeComposeView
         ) {
             HomeScreen(
-                moveToAuthenticationScreen = {
-                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
-                },
-                moveToOnboardingScreen = {
-                    findNavController().navigate(R.id.action_global_onboardingFragment)
-                },
                 onFootStepCountCardClick = {
                     findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
                 },

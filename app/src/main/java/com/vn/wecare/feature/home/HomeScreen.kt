@@ -35,8 +35,6 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    moveToOnboardingScreen: () -> Unit,
-    moveToAuthenticationScreen: () -> Unit,
     onFootStepCountCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
@@ -52,18 +50,18 @@ fun HomeScreen(
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
-    val homeUiState = homeViewModel.homeUIState.collectAsState()
-
-    homeUiState.value.let {
-        if (!it.hasUser) {
-            moveToAuthenticationScreen()
-            homeViewModel.resetUserNull()
-        }
-        if (it.isAdditionInfoMissing) {
-            moveToOnboardingScreen()
-            homeViewModel.resetUserAdditionalInformationRes()
-        }
-    }
+//    val homeUiState = homeViewModel.homeUIState.collectAsState()
+//
+//    homeUiState.value.let {
+//        if (!it.hasUser) {
+//            moveToAuthenticationScreen()
+//            homeViewModel.resetUserNull()
+//        }
+//        if (it.isAdditionInfoMissing) {
+//            moveToOnboardingScreen()
+//            homeViewModel.resetUserAdditionalInformationRes()
+//        }
+//    }
 
     Column(
         modifier = modifier
