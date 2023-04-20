@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.water.tracker.data
+package com.vn.wecare.feature.home.water.tracker.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -14,3 +14,4 @@ data class WaterRecordEntity(
     val amount: Int = 0,
     @TypeConverters(DateTimeConverters::class) val dateTime: Calendar
 )
+

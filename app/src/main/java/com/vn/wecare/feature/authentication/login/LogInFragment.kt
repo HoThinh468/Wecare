@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
@@ -26,16 +24,20 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
         super.setupComposeView(binding.composeView) {
             SignInScreen(
                 moveToSplash = {
-//                    findNavController().safeNavigate(
-//                        R.id.logInFragment, R.id.action_global_splashFragment
-//                    )
-                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_splashFragment)
+                    findNavController().safeNavigate(
+                        R.id.logInFragment,
+                        R.id.action_global_authentication_nested_graph_to_splashFragment
+                    )
                 },
                 navigateToSignUp = {
                     findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
                 },
                 viewModel = loginViewModel,
-                moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) },
+                moveToForgotPasswordScreen = {
+                    findNavController().safeNavigate(
+                        R.id.logInFragment, R.id.action_logInFragment_to_forgotPasswordFragment
+                    )
+                },
             )
         }
     }

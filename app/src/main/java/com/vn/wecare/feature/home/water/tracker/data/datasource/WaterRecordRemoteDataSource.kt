@@ -4,8 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
-import com.vn.wecare.feature.home.water.tracker.WaterFragment
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.feature.home.water.tracker.ui.WaterFragment
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -39,7 +39,6 @@ class WaterRecordRemoteDataSource @Inject constructor(
     }
 
     override fun getRecordWithId(recordId: Long): Flow<Response<WaterRecordEntity?>> = flow {
-
     }
 
     override fun getRecordsWithDayId(dayId: String): Flow<Response<List<WaterRecordEntity>?>> {

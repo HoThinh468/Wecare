@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 
 @Dao
 interface WaterRecordDao {
@@ -23,8 +23,8 @@ interface WaterRecordDao {
     @Query("SELECT * FROM water_record WHERE dayId =:dayId")
     fun getRecordWithDayId(dayId: String): List<WaterRecordEntity>?
 
-    @Update
-    fun updateRecord(vararg record: WaterRecordEntity)
+    @Query("UPDATE water_record SET amount =:amount WHERE recordId =:id")
+    fun updateRecord(amount: Int, id: Int)
 
     @Query("DELETE FROM water_record")
     suspend fun deleteAllRecords()

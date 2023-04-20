@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.water.tracker.data.WaterRecordRepository
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 import com.vn.wecare.utils.getDayId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,6 +28,7 @@ data class WaterUiState(
 @HiltViewModel
 class WaterViewModel @Inject constructor(
     private val repository: WaterRecordRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WaterUiState())
@@ -58,26 +61,31 @@ class WaterViewModel @Inject constructor(
         }
     }
 
-    fun onDrinkClick() {
-        _uiState.update {
-            it.copy(
-                currentIndex = _uiState.value.currentIndex + waterOpacityList[_uiState.value.desiredDrinkingAmountPageIndex]
+    fun onDrinkClick() = viewModelScope.launch {
+        val currentTime = Calendar.getInstance()
+        val newRecord = WaterRecordEntity(
+            amount = getWaterDrinkingAmount(),
+            dateTime = currentTime,
+            userId = WecareUserSingleton.getInstance().userId,
+            dayId = getDayId(
+                currentTime.get(Calendar.DAY_OF_MONTH),
+                currentTime.get(Calendar.MONTH),
+                currentTime.get(Calendar.YEAR)
             )
-        }
-        if (_uiState.value.progress < 1f) updateProgress()
-        viewModelScope.launch {
-            val currentTime = Calendar.getInstance()
-            val newRecord = WaterRecordEntity(
-                amount = getWaterDrinkingAmount(),
-                dateTime = currentTime,
-                userId = WecareUserSingleton.getInstance().userId,
-                dayId = getDayId(
-                    currentTime.get(Calendar.DAY_OF_MONTH),
-                    currentTime.get(Calendar.MONTH),
-                    currentTime.get(Calendar.YEAR)
-                )
-            )
-            repository.insertRecord(newRecord)
+        )
+        repository.insertRecord(newRecord)
+        fetchRecordList()
+    }
+
+    fun onDeleteRecordClick(record: WaterRecordEntity) = viewModelScope.launch() {
+        repository.deleteRecord(record)
+        fetchRecordList()
+    }
+
+    fun deleteLatestRecord() {
+        val record = _uiState.value.recordList.last()
+        viewModelScope.launch(ioDispatcher) {
+            repository.deleteRecord(record)
             fetchRecordList()
         }
     }
@@ -91,12 +99,23 @@ class WaterViewModel @Inject constructor(
                 currentTime.get(Calendar.YEAR)
             )
         ).collect { res ->
-            if (res is Response.Success && !res.data.isNullOrEmpty()) {
+            if (res is Response.Success && res.data != null) {
                 _uiState.update {
                     it.copy(
                         recordList = res.data
                     )
                 }
+                calculateTotalAmountDrinkToday()
+                updateProgress()
+            }
+        }
+    }
+
+    private fun calculateTotalAmountDrinkToday() {
+        _uiState.update { it.copy(currentIndex = 0) }
+        repeat(_uiState.value.recordList.size) { index ->
+            _uiState.update {
+                it.copy(currentIndex = it.currentIndex + _uiState.value.recordList[index].amount)
             }
         }
     }
@@ -110,7 +129,10 @@ class WaterViewModel @Inject constructor(
     }
 
     private fun updateProgress() {
-        val progress = _uiState.value.currentIndex.toFloat() / _uiState.value.targetAmount.toFloat()
-        _uiState.update { it.copy(progress = progress) }
+        if (_uiState.value.progress < 1f) {
+            val progress =
+                _uiState.value.currentIndex.toFloat() / _uiState.value.targetAmount.toFloat()
+            _uiState.update { it.copy(progress = progress) }
+        }
     }
 }
