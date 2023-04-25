@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.water.tracker
+package com.vn.wecare.feature.home.water.tracker.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentWaterBinding
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 
 class WaterFragment : BaseBindingFragment<FragmentWaterBinding>(FragmentWaterBinding::inflate) {
 

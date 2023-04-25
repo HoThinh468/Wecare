@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.water.tracker
+package com.vn.wecare.feature.home.water.tracker.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,7 +18,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,11 +30,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.feature.home.water.tracker.WaterViewModel
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun WaterScreen(
@@ -80,7 +86,12 @@ fun WaterScreen(
                 onPreviousClick = viewModel::onPreviousAmountClick,
             )
             Spacer(modifier = modifier.height(midPadding))
-            WaterTodayRecords(modifier = modifier, recordList = uiState.value.recordList)
+            WaterTodayRecords(
+                modifier = modifier,
+                recordList = uiState.value.recordList,
+                onDeleteClick = viewModel::onDeleteRecordClick,
+                waterViewModel = viewModel
+            )
         }
     }
 }
@@ -224,6 +235,8 @@ fun WaterOpacityPicker(
 fun WaterTodayRecords(
     modifier: Modifier,
     recordList: List<WaterRecordEntity>,
+    onDeleteClick: (record: WaterRecordEntity) -> Unit,
+    waterViewModel: WaterViewModel
 ) {
     Text("Today's records", style = MaterialTheme.typography.h4)
     if (recordList.isEmpty()) {
@@ -241,18 +254,29 @@ fun WaterTodayRecords(
     } else {
         LazyColumn {
             items(recordList.size) { i ->
-                WaterRecordItem(modifier = modifier, record = recordList[i])
+                WaterRecordItem(
+                    modifier = modifier,
+                    record = recordList[i],
+                    onDeleteClick = onDeleteClick,
+//                    waterViewModel = waterViewModel
+                )
             }
         }
     }
 }
 
+@SuppressLint("SimpleDateFormat")
 @Composable
 private fun WaterRecordItem(
-    modifier: Modifier, record: WaterRecordEntity
+    modifier: Modifier,
+    record: WaterRecordEntity,
+    onDeleteClick: (record: WaterRecordEntity) -> Unit,
+//    waterViewModel: WaterViewModel
 ) {
 
-    val simpleDateFormat = "hh:mm aa"
+    val simpleDateFormat = SimpleDateFormat("hh:mm aa")
+    var mExpanded by remember { mutableStateOf(false) }
+    var openUpdateDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier.padding(smallPadding), verticalAlignment = Alignment.CenterVertically
@@ -269,15 +293,44 @@ private fun WaterRecordItem(
                 .padding(horizontal = smallPadding)
         ) {
             Text(text = "${record.amount} ml", style = MaterialTheme.typography.body1)
-            Text(text = "${record.dateTime.time}", style = MaterialTheme.typography.caption)
+            Text(
+                text = simpleDateFormat.format(record.dateTime.time),
+                style = MaterialTheme.typography.caption
+            )
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { mExpanded = true }) {
             Icon(
                 modifier = modifier.weight(1f),
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = null
             )
+            DropdownMenu(
+                expanded = mExpanded,
+                onDismissRequest = { mExpanded = false },
+                modifier = modifier.background(LightBlue)
+            ) {
+                DropdownMenuItem(onClick = {
+                    openUpdateDialog = true
+                    mExpanded = false
+                }) {
+                    Text(text = "Edit")
+                }
+                DropdownMenuItem(onClick = {
+                    onDeleteClick(record)
+                    mExpanded = false
+                }) {
+                    Text(text = "Delete")
+                }
+            }
         }
     }
     Divider()
+//    if (openUpdateDialog) {
+//        UpdateWaterRecordAmountDialog(
+//            modifier = modifier,
+//            onCloseClick = { openUpdateDialog = false },
+//            record = record,
+//            viewModel = waterViewModel
+//        )
+//    }
 }

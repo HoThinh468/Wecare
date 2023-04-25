@@ -72,7 +72,9 @@ fun WaterOverviewHomeCard(
                 })
             }
             Row {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    viewModel.deleteLatestRecord()
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_remove),
                         contentDescription = null,

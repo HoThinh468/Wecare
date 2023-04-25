@@ -10,7 +10,7 @@ import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.water.tracker.data.dao.WaterRecordDao
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 
 @Database(
     entities = [StepsPerDayEntity::class, StepsPerHourEntity::class, WecareUser::class, WaterRecordEntity::class],

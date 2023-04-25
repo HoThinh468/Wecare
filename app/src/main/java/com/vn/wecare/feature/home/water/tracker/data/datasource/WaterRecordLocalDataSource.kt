@@ -2,7 +2,7 @@ package com.vn.wecare.feature.home.water.tracker.data.datasource
 
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordEntity
+import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
 import com.vn.wecare.feature.home.water.tracker.data.dao.WaterRecordDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

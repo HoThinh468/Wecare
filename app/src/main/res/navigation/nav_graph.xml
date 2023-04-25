@@ -283,7 +283,7 @@
         app:startDestination="@id/waterFragment">
         <fragment
             android:id="@+id/waterFragment"
-            android:name="com.vn.wecare.feature.home.water.tracker.WaterFragment"
+            android:name="com.vn.wecare.feature.home.water.tracker.ui.WaterFragment"
             android:label="fragment_water"
             tools:layout="@layout/fragment_water" >
             <action
