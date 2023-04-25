@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.home.water.report
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,27 +13,57 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
+import com.vn.wecare.core.checkInternetConnection
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.BarChartItem
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun WaterReportScreen(
-    modifier: Modifier = Modifier, onNavigateUp: () -> Unit
+    modifier: Modifier = Modifier, onNavigateUp: () -> Unit, viewModel: WaterReportViewModel
 ) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
+    uiState.value.isLoadingData.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading, color = Blue) {}
+            }
+
+            is Response.Error -> {
+                onNavigateUp()
+            }
+
+            is Response.Success -> {
+                Toast.makeText(
+                    LocalContext.current, "Loading data successfully!", Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            else -> {/* Do nothing */
+            }
+        }
+    }
+
     Scaffold(
         backgroundColor = LightBlue,
         topBar = {
@@ -50,35 +81,76 @@ fun WaterReportScreen(
                 .padding(midPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            WaterBarChartReport(modifier = modifier)
-            Spacer(modifier = modifier.height(midPadding))
-            Row(modifier = modifier.fillMaxWidth()) {
-                SquareCardIndexInformation(
-                    modifier = modifier.weight(1f),
-                    description = "Calories burnt",
-                    iconRes = R.drawable.ic_fire_calo,
-                    colorIcon = Red400,
-                    index = "1234",
-                    unit = "kcal"
-                )
-                Spacer(modifier = modifier.width(midPadding))
-                SquareCardIndexInformation(
-                    modifier = modifier.weight(1f),
-                    description = "Average level",
-                    iconRes = R.drawable.ic_check_circle,
-                    colorIcon = MaterialTheme.colors.primary,
-                    index = "80",
-                    unit = "%"
-                )
-            }
+            if (checkInternetConnection(LocalContext.current)) {
+                ReportContent(modifier = modifier, viewModel = viewModel)
+            } else NoNetWorkConnectionUI(modifier = modifier)
         }
     }
 }
 
 @Composable
-private fun WaterBarChartReport(
-    modifier: Modifier
+private fun ReportContent(
+    modifier: Modifier, viewModel: WaterReportViewModel
 ) {
+    val uiState = viewModel.uiState.collectAsState()
+
+    if (uiState.value.dayReportList.isNotEmpty()) {
+        WaterBarChartReport(modifier = modifier, viewModel = viewModel)
+        Spacer(modifier = modifier.height(midPadding))
+        Row(modifier = modifier.fillMaxWidth()) {
+            SquareCardIndexInformation(
+                modifier = modifier.weight(1f),
+                description = "Calories burnt",
+                iconRes = R.drawable.ic_fire_calo,
+                colorIcon = Red400,
+                index = "${uiState.value.caloriesBurnt}",
+                unit = "kcal"
+            )
+            Spacer(modifier = modifier.width(midPadding))
+            SquareCardIndexInformation(
+                modifier = modifier.weight(1f),
+                description = "Average level",
+                iconRes = R.drawable.ic_check_circle,
+                colorIcon = MaterialTheme.colors.primary,
+                index = "${uiState.value.averageLevel}",
+                unit = "%"
+            )
+        }
+    } else {
+        Image(
+            painter = painterResource(id = R.drawable.img_water_data_not_found),
+            modifier = modifier.size(180.dp),
+            contentDescription = null
+        )
+        Text(
+            text = "No report for this week, drink now to see your report!",
+            style = MaterialTheme.typography.body2,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun NoNetWorkConnectionUI(modifier: Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.img_no_internet),
+        modifier = modifier.size(180.dp),
+        contentDescription = null
+    )
+    Text(
+        text = "No internet connection, please connect to the internet to view report!",
+        style = MaterialTheme.typography.body2,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+private fun WaterBarChartReport(
+    modifier: Modifier, viewModel: WaterReportViewModel
+) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -87,23 +159,29 @@ private fun WaterBarChartReport(
             .background(MaterialTheme.colors.background), elevation = 20.dp
     ) {
         Column(
-            modifier = modifier.padding(horizontal = midPadding, vertical = midPadding)
+            modifier = modifier.padding(horizontal = midPadding, vertical = midPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = modifier.weight(1f).fillMaxWidth(),
+                modifier = modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("30 Apr - 04 May, 2023", style = MaterialTheme.typography.h4)
+                Text(
+                    "${uiState.value.firstDayOfWeek} - ${uiState.value.lastDayOfWeek}",
+                    style = MaterialTheme.typography.h4
+                )
                 Row() {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { viewModel.onPreviousWeekClick() }) {
                         Icon(
                             imageVector = Icons.Default.ChevronLeft,
                             contentDescription = null,
                             tint = Blue
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { viewModel.onNextWeekClick() }) {
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
                             contentDescription = null,
@@ -120,13 +198,12 @@ private fun WaterBarChartReport(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                BarChartItem(itemTitle = "Mon", progress = 1f)
-                BarChartItem(itemTitle = "Tue", progress = 0.8f)
-                BarChartItem(itemTitle = "Wed", progress = 0.5f)
-                BarChartItem(itemTitle = "Thu", progress = 1f)
-                BarChartItem(itemTitle = "Fri", progress = 0.7f)
-                BarChartItem(itemTitle = "Sat", progress = 0.2f)
-                BarChartItem(itemTitle = "Sun", progress = 0f)
+                for (item in uiState.value.dayReportList) {
+                    BarChartItem(
+                        itemTitle = item.dayOfWeek,
+                        progress = item.drankAmount.toFloat() / item.targetAmount.toFloat()
+                    )
+                }
             }
             Spacer(modifier = modifier.height(halfMidPadding))
             Row(
@@ -146,7 +223,10 @@ private fun WaterBarChartReport(
                         .padding(horizontal = halfMidPadding)
                 ) {
                     Text(text = "Average", style = MaterialTheme.typography.body2)
-                    Text(text = "2000 ml", style = MaterialTheme.typography.h2)
+                    Text(
+                        text = "${uiState.value.averageAmount} ml",
+                        style = MaterialTheme.typography.h2
+                    )
                 }
                 Image(
                     modifier = modifier

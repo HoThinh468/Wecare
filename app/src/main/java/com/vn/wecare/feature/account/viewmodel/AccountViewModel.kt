@@ -13,6 +13,7 @@ import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.view.AccountFragment.Companion.AccountFlowTAG
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.home.water.tracker.usecase.DeleteAllLocalWaterRecordUsecase
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,8 @@ class AccountViewModel @Inject constructor(
     private val stepCountExactAlarms: ExactAlarms,
     private val stepCountInExactAlarms: InExactAlarms,
     private val deleteWecareUserUsecase: DeleteWecareUserUsecase,
-    private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase
+    private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
+    private val deleteAllWaterRecordsUsecase: DeleteAllLocalWaterRecordUsecase
 ) : ViewModel() {
 
     private val _accountUiState = MutableStateFlow(AccountUiState())
@@ -115,6 +117,7 @@ class AccountViewModel @Inject constructor(
                     )
                 }
             }
+            deleteAllWaterRecordsUsecase.deleteAllRecords()
         }
         clearAccountUIState()
     }

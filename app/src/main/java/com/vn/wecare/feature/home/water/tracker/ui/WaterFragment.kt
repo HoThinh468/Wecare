@@ -14,6 +14,7 @@ class WaterFragment : BaseBindingFragment<FragmentWaterBinding>(FragmentWaterBin
     private val viewModel: WaterViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        viewModel.initWaterView()
         super.setupComposeView(binding.waterComposeView) {
             WaterScreen(
                 onNavigateUp = { findNavController().popBackStack() },
