@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
-import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
+import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.LightBlue
 import com.vn.wecare.ui.theme.halfMidPadding
@@ -83,8 +83,13 @@ fun UpdateWaterRecordAmountDialog(
                         .height(40.dp),
                     onClick = {
                         onCloseClick()
+                        viewModel.updateRecordAmountWithId(
+                            viewModel.getWaterDrinkingAmount(), record
+                        )
                     },
-                    colors = ButtonDefaults.buttonColors(Blue),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Blue, contentColor = MaterialTheme.colors.onPrimary
+                    ),
                     shape = RoundedCornerShape(mediumRadius)
                 ) {
                     Text(text = stringResource(id = R.string.okay_dialog_title))

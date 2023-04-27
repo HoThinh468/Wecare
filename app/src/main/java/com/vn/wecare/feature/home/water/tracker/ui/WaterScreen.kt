@@ -31,13 +31,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
-import com.vn.wecare.feature.home.water.tracker.data.model.WaterRecordEntity
+import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun WaterScreen(
@@ -258,7 +257,7 @@ fun WaterTodayRecords(
                     modifier = modifier,
                     record = recordList[i],
                     onDeleteClick = onDeleteClick,
-//                    waterViewModel = waterViewModel
+                    waterViewModel = waterViewModel
                 )
             }
         }
@@ -271,7 +270,7 @@ private fun WaterRecordItem(
     modifier: Modifier,
     record: WaterRecordEntity,
     onDeleteClick: (record: WaterRecordEntity) -> Unit,
-//    waterViewModel: WaterViewModel
+    waterViewModel: WaterViewModel
 ) {
 
     val simpleDateFormat = SimpleDateFormat("hh:mm aa")
@@ -325,12 +324,12 @@ private fun WaterRecordItem(
         }
     }
     Divider()
-//    if (openUpdateDialog) {
-//        UpdateWaterRecordAmountDialog(
-//            modifier = modifier,
-//            onCloseClick = { openUpdateDialog = false },
-//            record = record,
-//            viewModel = waterViewModel
-//        )
-//    }
+    if (openUpdateDialog) {
+        UpdateWaterRecordAmountDialog(
+            modifier = modifier,
+            onCloseClick = { openUpdateDialog = false },
+            record = record,
+            viewModel = waterViewModel
+        )
+    }
 }

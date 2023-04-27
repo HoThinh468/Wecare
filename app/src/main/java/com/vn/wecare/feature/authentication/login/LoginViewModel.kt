@@ -14,6 +14,7 @@ import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorSteps
+import com.vn.wecare.feature.home.water.tracker.usecase.RefreshWaterLocalDbUsecase
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
@@ -39,7 +40,8 @@ class LoginViewModel @Inject constructor(
     private val saveUserToDbUsecase: SaveUserToDbUsecase,
     private val updateWecareUserUsecase: UpdateWecareUserUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
-    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps
+    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps,
+    private val refreshWaterLocalDbUsecase: RefreshWaterLocalDbUsecase
 ) : ViewModel() {
 
     private val _logInUiState = MutableStateFlow(LogInUiState())
@@ -103,6 +105,7 @@ class LoginViewModel @Inject constructor(
         clearLogInInformation()
         viewModelScope.launch {
             saveUserInformationToLocalDb()
+            refreshWaterLocalDbUsecase.refreshWaterLocalDbWhenUserLogin()
         }
     }
 

@@ -1,12 +1,13 @@
-package com.vn.wecare.feature.home.water.tracker.data.di
+package com.vn.wecare.feature.home.water.data.di
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.core.di.IoDispatcher
-import com.vn.wecare.feature.home.water.tracker.data.WaterRecordRepository
-import com.vn.wecare.feature.home.water.tracker.data.datasource.WaterRecordDataSource
-import com.vn.wecare.feature.home.water.tracker.data.datasource.WaterRecordLocalDataSource
-import com.vn.wecare.feature.home.water.tracker.data.datasource.WaterRecordRemoteDataSource
+import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.home.water.data.WaterRecordRepository
+import com.vn.wecare.feature.home.water.data.datasource.WaterRecordDataSource
+import com.vn.wecare.feature.home.water.data.datasource.WaterRecordLocalDataSource
+import com.vn.wecare.feature.home.water.data.datasource.WaterRecordRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,19 +45,11 @@ class WaterDataSourceModule {
     @Provides
     fun provideRemoteWaterRecordDataSource(
         firestore: FirebaseFirestore,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        accountService: AccountService
     ): WaterRecordDataSource {
         return WaterRecordRemoteDataSource(
-            firestore, ioDispatcher
+            firestore, ioDispatcher, accountService
         )
-    }
-
-    @Singleton
-    @Provides
-    fun provideWaterRepository(
-        @LocalWaterRecordDataSource localDataSource: WaterRecordDataSource,
-        @RemoteWaterRecordDataSource remoteDataSource: WaterRecordDataSource
-    ): WaterRecordRepository {
-        return WaterRecordRepository(localDataSource, remoteDataSource)
     }
 }

@@ -2,13 +2,13 @@ package com.vn.wecare.utils
 
 import android.annotation.SuppressLint
 import android.util.Patterns
-import com.google.type.DateTime
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.regex.Pattern
 
 private const val MIN_PASS_LENGTH = 6
 
@@ -68,9 +68,46 @@ fun getMonthPrefix(month: Int): String {
     }
 }
 
+fun getDayOfWeekPrefix(day: Int): String {
+    return when (day) {
+        1 -> "Sun"
+        2 -> "Mon"
+        3 -> "Tue"
+        4 -> "Wed"
+        5 -> "Thu"
+        6 -> "Fri"
+        else -> "Sat"
+    }
+}
+
 @SuppressLint("SimpleDateFormat")
 fun convertMonthAgoTimeStamp(timeStamp: Long): String {
     val currentTimestamp = System.currentTimeMillis()
     val simpleDate = SimpleDateFormat("M")
     return simpleDate.format(currentTimestamp - timeStamp) + " months ago"
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getDayFormatWithYear(dateTime: LocalDate): String {
+    val simpleDateFormat = SimpleDateFormat("dd MMM, yyyy")
+    return simpleDateFormat.format(
+        Date.from(
+            dateTime.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
+        )
+    )
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getDayFormatWithOnlyMonthPrefix(dateTime: LocalDate): String {
+    val simpleDateFormat = SimpleDateFormat("dd MMM")
+    return simpleDateFormat.format(
+        Date.from(
+            dateTime.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
+        )
+    )
+}
+
+fun caloriesFormatWithFloat(input: Float): String {
+    val dec = DecimalFormat("#,###.##")
+    return dec.format(input)
 }
