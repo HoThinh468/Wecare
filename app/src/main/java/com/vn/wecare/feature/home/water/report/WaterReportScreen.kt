@@ -31,6 +31,7 @@ import com.vn.wecare.R
 import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.ui.theme.*
+import com.vn.wecare.utils.caloriesFormatWithFloat
 import com.vn.wecare.utils.common_composable.BarChartItem
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
@@ -51,6 +52,9 @@ fun WaterReportScreen(
 
             is Response.Error -> {
                 onNavigateUp()
+                Toast.makeText(
+                    LocalContext.current, "Loading data fail!", Toast.LENGTH_SHORT
+                ).show()
             }
 
             is Response.Success -> {
@@ -94,38 +98,25 @@ private fun ReportContent(
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
-    if (uiState.value.dayReportList.isNotEmpty()) {
-        WaterBarChartReport(modifier = modifier, viewModel = viewModel)
-        Spacer(modifier = modifier.height(midPadding))
-        Row(modifier = modifier.fillMaxWidth()) {
-            SquareCardIndexInformation(
-                modifier = modifier.weight(1f),
-                description = "Calories burnt",
-                iconRes = R.drawable.ic_fire_calo,
-                colorIcon = Red400,
-                index = "${uiState.value.caloriesBurnt}",
-                unit = "kcal"
-            )
-            Spacer(modifier = modifier.width(midPadding))
-            SquareCardIndexInformation(
-                modifier = modifier.weight(1f),
-                description = "Average level",
-                iconRes = R.drawable.ic_check_circle,
-                colorIcon = MaterialTheme.colors.primary,
-                index = "${uiState.value.averageLevel}",
-                unit = "%"
-            )
-        }
-    } else {
-        Image(
-            painter = painterResource(id = R.drawable.img_water_data_not_found),
-            modifier = modifier.size(180.dp),
-            contentDescription = null
+    WaterBarChartReport(modifier = modifier, viewModel = viewModel)
+    Spacer(modifier = modifier.height(midPadding))
+    Row(modifier = modifier.fillMaxWidth()) {
+        SquareCardIndexInformation(
+            modifier = modifier.weight(1f),
+            description = "Calories burnt",
+            iconRes = R.drawable.ic_fire_calo,
+            colorIcon = Red400,
+            index = caloriesFormatWithFloat(uiState.value.caloriesBurnt),
+            unit = "kcal"
         )
-        Text(
-            text = "No report for this week, drink now to see your report!",
-            style = MaterialTheme.typography.body2,
-            textAlign = TextAlign.Center
+        Spacer(modifier = modifier.width(midPadding))
+        SquareCardIndexInformation(
+            modifier = modifier.weight(1f),
+            description = "Average level",
+            iconRes = R.drawable.ic_check_circle,
+            colorIcon = MaterialTheme.colors.primary,
+            index = "${uiState.value.averageLevel}",
+            unit = "%"
         )
     }
 }
@@ -154,7 +145,7 @@ private fun WaterBarChartReport(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(350.dp)
+            .height(400.dp)
             .clip(RoundedCornerShape(mediumRadius))
             .background(MaterialTheme.colors.background), elevation = 20.dp
     ) {
@@ -173,7 +164,7 @@ private fun WaterBarChartReport(
                     "${uiState.value.firstDayOfWeek} - ${uiState.value.lastDayOfWeek}",
                     style = MaterialTheme.typography.h4
                 )
-                Row() {
+                Row {
                     IconButton(onClick = { viewModel.onPreviousWeekClick() }) {
                         Icon(
                             imageVector = Icons.Default.ChevronLeft,
@@ -181,29 +172,45 @@ private fun WaterBarChartReport(
                             tint = Blue
                         )
                     }
-                    IconButton(onClick = { viewModel.onNextWeekClick() }) {
+                    IconButton(enabled = uiState.value.isNextClickEnable,
+                        onClick = { viewModel.onNextWeekClick() }) {
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.secondary
+                            tint = if (uiState.value.isNextClickEnable) Blue else MaterialTheme.colors.secondary
                         )
                     }
                 }
             }
             Spacer(modifier = modifier.height(midPadding))
-            Row(
-                modifier = modifier
-                    .weight(8f)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                for (item in uiState.value.dayReportList) {
-                    BarChartItem(
-                        itemTitle = item.dayOfWeek,
-                        progress = item.drankAmount.toFloat() / item.targetAmount.toFloat()
-                    )
+            if (uiState.value.isAbleToShowBarChart) {
+                Row(
+                    modifier = modifier
+                        .weight(11f)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    for (item in uiState.value.dayReportList) {
+                        val progress = item.drankAmount.toFloat() / item.targetAmount.toFloat()
+                        BarChartItem(
+                            itemTitle = item.dayOfWeek,
+                            progress = progress,
+                            index = item.drankAmount
+                        )
+                    }
                 }
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.img_water_data_not_found),
+                    modifier = modifier.size(200.dp),
+                    contentDescription = null
+                )
+                Text(
+                    text = "No report for this week!",
+                    style = MaterialTheme.typography.body2,
+                    textAlign = TextAlign.Center
+                )
             }
             Spacer(modifier = modifier.height(halfMidPadding))
             Row(

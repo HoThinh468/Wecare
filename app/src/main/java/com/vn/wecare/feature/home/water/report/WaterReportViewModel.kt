@@ -9,6 +9,9 @@ import com.vn.wecare.feature.home.water.data.WaterRecordRepository
 import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 import com.vn.wecare.feature.home.water.tracker.DEFAULT_DRANK_AMOUNT
 import com.vn.wecare.feature.home.water.tracker.DEFAULT_WATER_TARGET_AMOUNT
+import com.vn.wecare.utils.WecareUserConstantValues.KCAL_TO_CAL
+import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
+import com.vn.wecare.utils.WecareUserConstantValues.ONE_HUNDRED_PERCENT_VALUE
 import com.vn.wecare.utils.getDayFormatWithOnlyMonthPrefix
 import com.vn.wecare.utils.getDayFormatWithYear
 import com.vn.wecare.utils.getDayOfWeekPrefix
@@ -35,7 +38,9 @@ data class WaterReportUiState(
     val averageLevel: Int = 0,
     val firstDayOfWeek: String = "",
     val lastDayOfWeek: String = "",
-    val dayReportList: ArrayList<WaterDayReport> = arrayListOf()
+    val dayReportList: ArrayList<WaterDayReport> = arrayListOf(),
+    val isAbleToShowBarChart: Boolean = false,
+    val isNextClickEnable: Boolean = false,
 )
 
 @SuppressLint("SimpleDateFormat")
@@ -46,6 +51,7 @@ class WaterReportViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(WaterReportUiState())
     val uiState = _uiState.asStateFlow()
+
     private var desiredViewDay = mutableStateOf(LocalDate.now())
 
     fun initReportView() {
@@ -56,11 +62,23 @@ class WaterReportViewModel @Inject constructor(
     fun onPreviousWeekClick() {
         desiredViewDay.value = desiredViewDay.value.minusDays(7)
         updateFirstAndLastDayOfWeekWithGivenDay(desiredViewDay.value)
+        fetchWaterDayRecordDataFromFirebase()
+        updateIfViewNextWeekEnable()
     }
 
     fun onNextWeekClick() {
         desiredViewDay.value = desiredViewDay.value.plusDays(7)
         updateFirstAndLastDayOfWeekWithGivenDay(desiredViewDay.value)
+        fetchWaterDayRecordDataFromFirebase()
+        updateIfViewNextWeekEnable()
+    }
+
+    private fun updateIfViewNextWeekEnable() {
+        _uiState.update {
+            it.copy(
+                isNextClickEnable = desiredViewDay.value.dayOfYear != LocalDate.now().dayOfYear
+            )
+        }
     }
 
     private fun fetchWaterDayRecordDataFromFirebase() {
@@ -99,11 +117,26 @@ class WaterReportViewModel @Inject constructor(
         _uiState.update {
             it.copy(dayReportList = reportList)
         }
+        updateAverageDrankAmount(reportList)
+        updateAverageLevel(reportList)
+        updateCaloriesBurnedBasedOnTotalDrankAmount(reportList)
+        checkIfWaterDayReportListIsNotDefaultValue(reportList)
+    }
+
+    private fun checkIfWaterDayReportListIsNotDefaultValue(reportList: List<WaterDayReport>) {
+        var isDefaultValue = true
+        reportList.forEach {
+            if (it.drankAmount != 0) {
+                isDefaultValue = false
+                return@forEach
+            }
+        }
+        _uiState.update { it.copy(isAbleToShowBarChart = !isDefaultValue) }
     }
 
     private fun getDefaultDayReportListByWeek(): ArrayList<WaterDayReport> {
         val result = arrayListOf<WaterDayReport>()
-        for (i in 1..7) {
+        for (i in 1..NUMBER_OF_DAYS_IN_WEEK) {
             result.add(
                 WaterDayReport(
                     DEFAULT_WATER_TARGET_AMOUNT, DEFAULT_DRANK_AMOUNT, getDayOfWeekPrefix(i)
@@ -111,6 +144,52 @@ class WaterReportViewModel @Inject constructor(
             )
         }
         return result
+    }
+
+    private fun updateAverageDrankAmount(reportLis: List<WaterDayReport>) {
+        _uiState.update {
+            it.copy(
+                averageAmount = getTotalDrankAmountWithWaterDayReportList(
+                    reportLis
+                ) / NUMBER_OF_DAYS_IN_WEEK
+            )
+        }
+    }
+
+    private fun updateAverageLevel(reportList: List<WaterDayReport>) {
+        _uiState.update {
+            it.copy(
+                averageLevel = ((getTotalDrankAmountWithWaterDayReportList(reportList).toFloat() / getTotalTargetAmountWithWaterDayReportList(
+                    reportList
+                ).toFloat()) * ONE_HUNDRED_PERCENT_VALUE).toInt()
+            )
+        }
+    }
+
+    private fun updateCaloriesBurnedBasedOnTotalDrankAmount(reportList: List<WaterDayReport>) {
+        _uiState.update {
+            it.copy(
+                caloriesBurnt = (getTotalDrankAmountWithWaterDayReportList(
+                    reportList
+                ).toFloat() / KCAL_TO_CAL) * 20
+            )
+        }
+    }
+
+    private fun getTotalDrankAmountWithWaterDayReportList(reportLis: List<WaterDayReport>): Int {
+        var totalDrankAmount = 0
+        reportLis.forEach {
+            totalDrankAmount += it.drankAmount
+        }
+        return totalDrankAmount
+    }
+
+    private fun getTotalTargetAmountWithWaterDayReportList(reportLis: List<WaterDayReport>): Int {
+        var totalTarget = 0
+        reportLis.forEach {
+            totalTarget += it.targetAmount
+        }
+        return totalTarget
     }
 
     private fun createNewDayReportBasedOnRecordList(recordList: List<WaterRecordEntity>): WaterDayReport {

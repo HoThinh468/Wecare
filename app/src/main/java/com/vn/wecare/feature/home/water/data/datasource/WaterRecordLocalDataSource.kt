@@ -1,9 +1,11 @@
 package com.vn.wecare.feature.home.water.data.datasource
 
+import android.util.Log
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 import com.vn.wecare.feature.home.water.data.dao.WaterRecordDao
+import com.vn.wecare.feature.home.water.tracker.ui.WaterFragment
 import com.vn.wecare.utils.getDayId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

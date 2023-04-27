@@ -2,6 +2,7 @@ package com.vn.wecare.utils
 
 import android.annotation.SuppressLint
 import android.util.Patterns
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -104,4 +105,9 @@ fun getDayFormatWithOnlyMonthPrefix(dateTime: LocalDate): String {
             dateTime.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
         )
     )
+}
+
+fun caloriesFormatWithFloat(input: Float): String {
+    val dec = DecimalFormat("#,###.##")
+    return dec.format(input)
 }

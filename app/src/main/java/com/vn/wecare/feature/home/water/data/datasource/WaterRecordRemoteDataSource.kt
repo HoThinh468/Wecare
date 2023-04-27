@@ -10,7 +10,6 @@ import com.vn.wecare.feature.home.water.data.model.WaterRecord
 import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 import com.vn.wecare.feature.home.water.data.model.toEntity
 import com.vn.wecare.feature.home.water.data.model.toModel
-import com.vn.wecare.feature.home.water.report.WaterReportFragment
 import com.vn.wecare.feature.home.water.tracker.ui.WaterFragment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -29,33 +28,34 @@ class WaterRecordRemoteDataSource @Inject constructor(
 ) : WaterRecordDataSource {
 
     override suspend fun insert(recordEntity: WaterRecordEntity) {
-        getWaterDbDocument(recordEntity).document(recordEntity.recordId).set(recordEntity.toModel())
-            .addOnSuccessListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Save water record id ${recordEntity.recordId} to remote success!"
-                )
-            }.addOnFailureListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Save water record id ${recordEntity.recordId} to remote fail with exception ${it.message}"
-                )
-            }
+        try {
+            getWaterDbDocument(recordEntity).document(recordEntity.recordId)
+                .set(recordEntity.toModel()).addOnSuccessListener {
+                    Log.d(
+                        WaterFragment.waterTrackerTag,
+                        "Save water record id ${recordEntity.recordId} to remote success!"
+                    )
+                }
+        } catch (e: Exception) {
+            Log.d(
+                WaterFragment.waterTrackerTag,
+                "Add water record id ${recordEntity.recordId} to remote fail with exception ${e.message}"
+            )
+        }
     }
 
     override suspend fun delete(recordEntity: WaterRecordEntity) {
-        getWaterDbDocument(recordEntity).document(recordEntity.recordId).delete()
-            .addOnSuccessListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Delete water record id ${recordEntity.recordId} in remote success!"
-                )
-            }.addOnFailureListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Delete water record id ${recordEntity.recordId} in remote fail with exception: ${it.message}"
-                )
-            }
+        try {
+            getWaterDbDocument(recordEntity).document(recordEntity.recordId).delete()
+                .addOnSuccessListener {
+                    Log.d(
+                        WaterFragment.waterTrackerTag,
+                        "Delete water record id ${recordEntity.recordId} in remote success!"
+                    )
+                }
+        } catch (e: Exception) {
+            Log.d(WaterFragment.waterTrackerTag, "Delete record fail due to ${e.message}")
+        }
     }
 
     override suspend fun deleteAll() {
@@ -75,10 +75,6 @@ class WaterRecordRemoteDataSource @Inject constructor(
             val result = db.collection(WATER_COLLECTION_PATH).document(accountService.currentUserId)
                 .collection(year.toString()).document(month.toString()).collection(day.toString())
                 .get().await()
-            Log.d(
-                WaterReportFragment.waterReportTag,
-                "Response from firebase with day $day $month $year: ${result.documents[0].data}"
-            )
             if (result != null) {
                 for (i in result) {
                     recordList.add(i.toObject(WaterRecord::class.java).toEntity())
@@ -93,18 +89,20 @@ class WaterRecordRemoteDataSource @Inject constructor(
     }.flowOn(ioDispatcher)
 
     override suspend fun updateRecordAmountWithId(amount: Int, record: WaterRecordEntity) {
-        getWaterDbDocument(record).document(record.recordId).update("amount", amount)
-            .addOnFailureListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Update amount of water record id ${record.recordId} in remote success!"
-                )
-            }.addOnFailureListener {
-                Log.d(
-                    WaterFragment.waterTrackerTag,
-                    "Update amount of water record id ${record.recordId} in remote fail!"
-                )
-            }
+        try {
+            getWaterDbDocument(record).document(record.recordId).update("amount", amount)
+                .addOnFailureListener {
+                    Log.d(
+                        WaterFragment.waterTrackerTag,
+                        "Update amount of water record id ${record.recordId} in remote success!"
+                    )
+                }
+        } catch (e: Exception) {
+            Log.d(
+                WaterFragment.waterTrackerTag,
+                "Update amount of water record id ${record.recordId} in remote fail due to ${e.message}"
+            )
+        }
     }
 
     private fun getWaterDbDocument(record: WaterRecordEntity): CollectionReference {
