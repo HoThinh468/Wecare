@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.exercises.widget
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vn.wecare.feature.exercises.media_sound.Player
 import com.vn.wecare.feature.training.widget.CalculateTime
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
@@ -22,19 +24,20 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.CountDownLatch
 import kotlin.time.Duration.Companion.seconds
 
-@Preview
-@Composable
-fun a() {
-    ProgressIndicator(duration = 5, onPlay = true)
-}
+//@Preview
+//@Composable
+//fun a() {
+//    ProgressIndicator(duration = 5, onPlay = true)
+//}
 
 @Composable
 fun ProgressIndicator(
     modifier: Modifier = Modifier,
     duration: Int,
     onPlay: Boolean = true,
-    onNavigationToNext: () -> Unit = {}
-) {
+    onNavigationToNext: () -> Unit = {},
+    player: Player,
+    ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -47,6 +50,8 @@ fun ProgressIndicator(
             mutableStateOf(1f)
         }
 
+//        val player: Player = Player()
+
         onResume = !onPlay
 
         LaunchedEffect(key1 = onResume) {
@@ -56,8 +61,14 @@ fun ProgressIndicator(
                 if (ticks == 0) {
                     progression = 0f
                     onNavigationToNext()
+                    player.stopSound()
                     break
-                } else progression = ticks.toFloat() / duration.toFloat()
+                } else {
+                    if(ticks == 4) {
+                        player.playSound()
+                    }
+                    progression = ticks.toFloat() / duration.toFloat()
+                }
             }
         }
         CircularProgressIndicator(

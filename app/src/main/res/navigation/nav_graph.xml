@@ -182,6 +182,10 @@
                 android:id="@+id/action_exercisesFragment_to_fullBodyFragment"
                 app:destination="@id/fullBodyFragment"
                 app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_exercisesFragment_to_exerciseHistoryFragment"
+                app:destination="@id/exerciseHistoryFragment"
+                app:popUpToInclusive="true" />
         </fragment>
         <fragment
             android:id="@+id/programDetailFragment"
@@ -224,6 +228,11 @@
             <action
                 android:id="@+id/action_workoutPageFragment_to_doneFragment2"
                 app:destination="@id/doneFragment2" />
+            <action
+                android:id="@+id/action_workoutPageFragment_to_exercisesFragment"
+                app:destination="@id/exercisesFragment"
+                app:popUpTo="@id/exercisesFragment"
+                app:popUpToInclusive="true" />
         </fragment>
         <fragment
             android:id="@+id/workoutRestFragment2"
@@ -255,6 +264,11 @@
                 app:destination="@id/programDetailFragment"
                 app:popUpToInclusive="true" />
         </fragment>
+        <fragment
+            android:id="@+id/exerciseHistoryFragment"
+            android:name="com.vn.wecare.feature.exercises.history.ExerciseHistoryFragment"
+            android:label="fragment_exercise_history"
+            tools:layout="@layout/fragment_exercise_history" />
     </navigation>
     <fragment
         android:id="@+id/onboardingFragment"

@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.exercises.workout_rest
 
+import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,22 +23,23 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.vn.wecare.feature.exercises.media_sound.Player
 import com.vn.wecare.feature.exercises.widget.ProgressIndicator
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.WeCareTypography
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.midPadding
 
-@Composable
-@Preview
-fun a() {
-    WorkoutRestScreen(
-        title = "Jumping Jack",
-        duration = 12,
-        exercise = com.vn.wecare.R.drawable.jumping_jack,
-        onNavigateToWorkoutPage = {}
-    )
-}
+//@Composable
+//@Preview
+//fun a() {
+//    WorkoutRestScreen(
+//        title = "Jumping Jack",
+//        duration = 12,
+//        exercise = com.vn.wecare.R.drawable.jumping_jack,
+//        onNavigateToWorkoutPage = {}
+//    )
+//}
 
 @Composable
 fun WorkoutRestScreen(
@@ -45,8 +47,12 @@ fun WorkoutRestScreen(
     title: String,
     duration: Int,
     exercise: Int,
-    onNavigateToWorkoutPage: () -> Unit
+    onNavigateToWorkoutPage: () -> Unit,
+    context: Context
 ) {
+
+    val player = Player(context)
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -97,7 +103,8 @@ fun WorkoutRestScreen(
                     .weight(2f),
                 onNavigationToNext = {
                     onNavigateToWorkoutPage()
-                }
+                },
+                player = player
             )
             Text(
                 text = title,

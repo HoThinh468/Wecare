@@ -7,5 +7,7 @@ data class Usecases(
     val updateListLikeAccount: UpdateListLikeAccount,
     val getListDoneFullBody: GetListDoneFullBody,
     val addNewReview: AddNewReview,
-    val updateListDoneFullBody: UpdateListDoneFullBody
+    val updateListDoneFullBody: UpdateListDoneFullBody,
+    val getListExerciseHistory: GetListExerciseHistory,
+    val addNewExerciseHistory: AddNewExerciseHistory,
 )
