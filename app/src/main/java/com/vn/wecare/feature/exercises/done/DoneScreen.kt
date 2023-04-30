@@ -4,15 +4,7 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -41,36 +33,38 @@ import coil.decode.ImageDecoderDecoder
 import com.vn.wecare.R
 import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.model.ExerciseType
+import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.exercises.ExercisesViewModel
-import com.vn.wecare.ui.theme.Green500
-import com.vn.wecare.ui.theme.Grey500
-import com.vn.wecare.ui.theme.WeCareTypography
-import com.vn.wecare.ui.theme.YellowStar
-import com.vn.wecare.ui.theme.halfMidPadding
-import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.feature.exercises.history.ExerciseHistoryViewModel
+import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.CustomButton
 import com.vn.wecare.utils.common_composable.CustomTextField
 import java.text.DecimalFormat
+
 
 @Composable
 fun DoneScreen(
     modifier: Modifier = Modifier,
     onDone: () -> Unit,
     exercisesViewModel: ExercisesViewModel,
-    doneViewModel: DoneViewModel = hiltViewModel()
+    doneViewModel: DoneViewModel = hiltViewModel(),
+    exerciseHistoryViewModel: ExerciseHistoryViewModel = hiltViewModel()
 ) {
     var rating by remember { mutableStateOf(0) }
 
     Column(
-        modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxSize().background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val imageLoader = ImageLoader.Builder(LocalContext.current).components {
+        val imageLoader = ImageLoader.Builder(LocalContext.current)
+            .components {
                 if (Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
                 } else {
                     add(GifDecoder.Factory())
                 }
-            }.build()
+            }
+            .build()
 
         Image(
             modifier = modifier
@@ -78,42 +72,20 @@ fun DoneScreen(
                 .weight(4f)
                 .padding(vertical = halfMidPadding),
             painter = rememberAsyncImagePainter(
-                R.drawable.congratulation, imageLoader
+                R.drawable.congra,
+                imageLoader
             ),
             contentDescription = "",
         )
         Text(
-            "Congratulation!", style = WeCareTypography.h3
+            "Congratulation!",
+            style = WeCareTypography.h3
         )
         Text(
-            "You did it!", style = WeCareTypography.h3
+            "You did it!",
+            style = WeCareTypography.h3
         )
-        Row(
-            modifier = modifier
-                .padding(vertical = halfMidPadding)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            TitleAndNumber(
-                title = "Exercises",
-                number = exercisesViewModel.currentWorkoutList.collectAsState().value.size.toString()
-            )
-            TitleAndNumber(
-                title = "Kcal", number = calculateKcalBurn(
-                    exercisesViewModel.startTime.collectAsState().value,
-                    exercisesViewModel.endTime.collectAsState().value
-                )
-            )
-            TitleAndNumber(
-                title = "Duration", number = workoutTime(
-                    exercisesViewModel.startTime.collectAsState().value,
-                    exercisesViewModel.endTime.collectAsState().value
-                )
-            )
-        }
         if (!exercisesViewModel.isReview.collectAsState().value) {
-
             Box(
                 modifier = modifier
                     .clip(
@@ -123,9 +95,39 @@ fun DoneScreen(
                     .background(Grey500)
             ) {
                 Column(
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = modifier
+                        .padding(horizontal = halfMidPadding)
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Row(
+                        modifier = modifier
+                            .padding(vertical = halfMidPadding)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        TitleAndNumber(
+                            title = "Exercises",
+                            number = exercisesViewModel.currentWorkoutList.collectAsState().value.size.toString()
+                        )
+                        TitleAndNumber(
+                            title = "Kcal",
+                            number = DecimalFormat("#.##").format(
+                                doneViewModel.calculateKcalBurn(
+                                    exercisesViewModel.startTime.collectAsState().value,
+                                    exercisesViewModel.endTime.collectAsState().value
+                                )
+                            )
+                        )
+                        TitleAndNumber(
+                            title = "Duration",
+                            number = workoutTime(
+                                exercisesViewModel.endTime.collectAsState().value -
+                                        exercisesViewModel.startTime.collectAsState().value
+                            )
+                        )
+                    }
                     RatingStar(rating = remember { mutableStateOf(rating) })
                     CustomTextField(
                         modifier = modifier
@@ -149,7 +151,8 @@ fun DoneScreen(
             }
         }
         Box(
-            modifier = modifier.weight(2f), contentAlignment = Alignment.Center
+            modifier = modifier.weight(2f),
+            contentAlignment = Alignment.Center
         ) {
             CustomButton(
                 text = "DONE",
@@ -159,7 +162,17 @@ fun DoneScreen(
                         doneViewModel.updateListDoneFullBody(exercisesViewModel.currentIndex.value)
                     }
                     doneViewModel.addNewReview(
-                        exercisesViewModel.currentType.value, exercisesViewModel.currentIndex.value
+                        exercisesViewModel.currentType.value,
+                        exercisesViewModel.currentIndex.value
+                    )
+                    exerciseHistoryViewModel.addNewHistory(
+                        exercisesViewModel.currentType.value,
+                        doneViewModel.calculateKcalBurn(
+                            exercisesViewModel.startTime.value,
+                            exercisesViewModel.endTime.value
+                        ),
+                        (exercisesViewModel.endTime.value -
+                        exercisesViewModel.startTime.value).toInt() / 1000
                     )
                     onDone()
                 },
@@ -176,12 +189,15 @@ fun DoneScreen(
 
 @Composable
 fun RatingStar(
-    rating: MutableState<Int>, maxRating: Int = 5, viewModel: DoneViewModel = hiltViewModel()
+    rating: MutableState<Int>,
+    maxRating: Int = 5,
+    viewModel: DoneViewModel = hiltViewModel()
 ) {
     val selectedColor = YellowStar
 
     Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
     ) {
         for (i in 1..maxRating) {
             val icon = if (i <= rating.value) {
@@ -194,12 +210,15 @@ fun RatingStar(
                 onClick = {
                     rating.value = i
                     viewModel.setRating(i)
-                }, modifier = Modifier.padding(end = 8.dp)
+                },
+                modifier = Modifier.padding(end = 8.dp)
             ) {
-                Image(imageVector = icon,
+                Image(
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    colorFilter = starColor?.let { ColorFilter.tint(it) })
+                    colorFilter = starColor?.let { ColorFilter.tint(it) }
+                )
             }
         }
     }
@@ -207,7 +226,9 @@ fun RatingStar(
 
 @Composable
 fun TitleAndNumber(
-    title: String, number: String, modifier: Modifier = Modifier
+    title: String,
+    number: String,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -217,23 +238,8 @@ fun TitleAndNumber(
     }
 }
 
-fun workoutTime(startTime: Long, endTime: Long): String {
-    Log.e("start time", startTime.toString())
-    Log.e("end time", endTime.toString())
-    val time = endTime - startTime
+fun workoutTime(time: Long): String {
     val seconds = (time / 1000) % 60
     val minutes = (time / (1000 * 60) % 60)
     return String.format("%02d:%02d", minutes, seconds)
-}
-
-fun calculateKcalBurn(startTime: Long, endTime: Long): String {
-    val time = endTime - startTime
-    val durationRatio = time.toFloat() / 3600000f
-
-    val weight = WecareUserSingleton.getInstance().weight ?: 0
-
-    val kcalBurn = 7f * durationRatio * weight.toFloat()
-    val df = DecimalFormat("#.##")
-
-    return df.format(kcalBurn)
 }

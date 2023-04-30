@@ -2,22 +2,21 @@ package com.vn.wecare.feature.exercises.services
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
-import com.google.gson.reflect.TypeToken
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.model.ExerciseType
+import com.vn.wecare.core.model.HistoryItem
 import com.vn.wecare.core.model.ListDone
 import com.vn.wecare.core.model.ListReviewsItem
+import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 private var reviewListSize: Int = 0
 private var listDone: ListDone? = null
@@ -160,9 +159,7 @@ class ExerciseServicesImpl @Inject constructor(
                 .document(reviewListSize.toString())
                 .set(
                     ListReviewsItem(
-                        userName = if (auth.currentUser?.displayName.isNullOrBlank())
-                            "Unknown user"
-                        else auth.currentUser?.displayName ?: "",
+                        userName = WecareUserSingleton.getInstance().userName.ifBlank { "Unknown user" },
                         content = content,
                         rate = rate,
                         time = System.currentTimeMillis(),
@@ -207,4 +204,51 @@ class ExerciseServicesImpl @Inject constructor(
         Log.d("update list done ", "Fail: ${e.message}")
         Response.Error(e)
     }
+
+    override suspend fun getListHistory(): Flow<Response<List<HistoryItem>>> = flow {
+        emit(
+            try {
+                val list = firestore
+                    .collection("exercise")
+                    .document("history")
+                    .collection(auth.currentUser!!.uid)
+                    .get()
+                    .await()
+                    .toObjects(HistoryItem::class.java)
+
+                Response.Success(list)
+            } catch (e: Exception) {
+                Response.Error(e)
+            }
+        )
+    }
+
+
+    override suspend fun addNewExerciseHistory(
+        type: ExerciseType,
+        kcal: Float,
+        duration: Int
+    ): Response<Boolean> {
+        return try {
+            firestore
+                .collection("exercise")
+                .document("history")
+                .collection(auth.currentUser!!.uid)
+                .document(System.currentTimeMillis().toString())
+                .set(
+                    HistoryItem(
+                        type = type,
+                        kcal = kcal,
+                        duration = duration,
+                        time = System.currentTimeMillis()
+                    )
+                )
+
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Error(e)
+        }
+    }
+
+
 }

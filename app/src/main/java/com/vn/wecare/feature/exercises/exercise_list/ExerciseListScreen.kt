@@ -183,12 +183,14 @@ enum class ExerciseLevel {
 fun TextWithIcon(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    text: String
+    text: String,
+    tint: Color = Green500
 ) {
     Row(
-        modifier = modifier
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, "", tint = Green500)
+        Icon(icon, "", tint = tint)
         Text(
             modifier = modifier.padding(start = tinyPadding),
             text = text,

@@ -30,6 +30,8 @@ object ViewModelModule {
         updateListLikeAccount = UpdateListLikeAccount(services),
         getListDoneFullBody = GetListDoneFullBody(services),
         addNewReview = AddNewReview(services),
-        updateListDoneFullBody = UpdateListDoneFullBody(services)
+        updateListDoneFullBody = UpdateListDoneFullBody(services),
+        getListExerciseHistory = GetListExerciseHistory(services),
+        addNewExerciseHistory = AddNewExerciseHistory(services)
     )
 }

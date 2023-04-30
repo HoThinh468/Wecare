@@ -43,10 +43,15 @@ class ExercisesFragment : Fragment() {
                 WecareTheme {
                     ExercisesScreen(
                         userName = "trung",
-                        onNavigateToReport = {},
+                        onNavigateToReport = {
+                            findNavController().navigate(R.id.action_exercisesFragment_to_exerciseHistoryFragment)
+                        },
                         onNavigateToEndurance = {
                             bundle = bundleOf("exerciseList" to viewModel.enduranceList)
-                            findNavController().navigate(R.id.action_exercisesFragment_to_exerciseListFragment, bundle)
+                            findNavController().navigate(
+                                R.id.action_exercisesFragment_to_exerciseListFragment,
+                                bundle
+                            )
                         },
                         onNavigateToStrength = {
                             bundle = bundleOf("exerciseList" to viewModel.strengthList)
