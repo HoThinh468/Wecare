@@ -27,6 +27,9 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_bmi_graph"
+            app:destination="@id/bmi_graph" />
     </fragment>
 
     <!-- Nested graph for step count feature -->
@@ -318,4 +321,14 @@
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <!--  Nested graph for bmi feature  -->
+    <navigation android:id="@+id/bmi_graph"
+        app:startDestination="@id/BMIFragment">
+        <fragment
+            android:id="@+id/BMIFragment"
+            android:name="com.vn.wecare.feature.home.bmi.ui.BMIFragment"
+            android:label="fragment_b_m_i"
+            tools:layout="@layout/fragment_b_m_i" />
+    </navigation>
 </navigation>

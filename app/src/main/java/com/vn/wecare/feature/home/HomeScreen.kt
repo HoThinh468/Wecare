@@ -12,7 +12,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -22,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.bmi.YourBMIHomeCard
+import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
+import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
@@ -46,7 +46,8 @@ fun HomeScreen(
     cancelInExactAlarm: () -> Unit,
     homeViewModel: HomeViewModel,
     stepCountViewModel: StepCountViewModel,
-    waterViewModel: WaterViewModel
+    waterViewModel: WaterViewModel,
+    bmiViewModel: BMIViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
@@ -86,7 +87,7 @@ fun HomeScreen(
         WaterOverviewHomeCard(
             modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
         )
-        YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick)
+        YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick, viewModel = bmiViewModel)
         Spacer(modifier = modifier.height(largePadding))
     }
 }

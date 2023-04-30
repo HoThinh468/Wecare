@@ -14,10 +14,12 @@ import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
+import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
 import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
+import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,6 +35,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val stepCountViewModel: StepCountViewModel by activityViewModels()
     private val waterViewModel: WaterViewModel by activityViewModels()
+    private val bmiViewModel: BMIViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
@@ -41,15 +44,25 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         ) {
             HomeScreen(
                 onFootStepCountCardClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_stepCountFragment)
+                    findNavController().safeNavigate(
+                        R.id.homeFragment, R.id.action_homeFragment_to_stepCountFragment
+                    )
                 },
                 onTrainingClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_trainingFragment)
+                    findNavController().safeNavigate(
+                        R.id.homeFragment, R.id.action_homeFragment_to_trainingFragment
+                    )
                 },
                 onWaterCardClick = {
-                    findNavController().navigate(R.id.action_homeFragment_to_water_graph)
+                    findNavController().safeNavigate(
+                        R.id.homeFragment, R.id.action_homeFragment_to_water_graph
+                    )
                 },
-                onBMICardClick = {},
+                onBMICardClick = {
+                    findNavController().safeNavigate(
+                        R.id.homeFragment, R.id.action_homeFragment_to_bmi_graph
+                    )
+                },
                 onWalkingIcClick = {},
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
@@ -57,7 +70,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 cancelInExactAlarm = { homeViewModel.cancelInExactAlarm() },
                 homeViewModel = homeViewModel,
                 stepCountViewModel = stepCountViewModel,
-                waterViewModel = waterViewModel
+                waterViewModel = waterViewModel,
+                bmiViewModel = bmiViewModel
             )
         }
     }
