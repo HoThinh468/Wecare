@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.exercises.workout_page
 
+import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,27 +18,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.vn.wecare.R
+import com.vn.wecare.feature.exercises.ExercisesViewModel
+import com.vn.wecare.feature.exercises.media_sound.Player
+import com.vn.wecare.feature.exercises.widget.CtDialog
 import com.vn.wecare.feature.exercises.widget.ProgressIndicator
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.midPadding
 
-@Preview
-@Composable
-fun a() {
-    WorkoutPageScreen(
-        onQuit = { /*TODO*/ },
-        title = "Jumping Jack",
-        exercise = R.drawable.jumping_jack,
-        duration = 10
-    )
-}
+//@Preview
+//@Composable
+//fun a() {
+//    WorkoutPageScreen(
+//        onQuit = { /*TODO*/ },
+//        title = "Jumping Jack",
+//        exercise = R.drawable.jumping_jack,
+//        duration = 10,
+//        viewModel = hiltViewModel()
+//    )
+//}
 
 @Composable
 fun WorkoutPageScreen(
@@ -47,10 +54,38 @@ fun WorkoutPageScreen(
     duration: Int,
     exercise: Int,
     onNavigateToRest: () -> Unit = {},
-    onNavigateToPreviousRest: () -> Unit = {}
+    onNavigateToPreviousRest: () -> Unit = {},
+    viewModel: ExercisesViewModel,
+    context: Context
 ) {
     var onResume by remember {
         mutableStateOf(true)
+    }
+
+    var player = Player(context)
+
+
+    var openDialog by remember { mutableStateOf(false) }
+    if (openDialog) {
+        Dialog(onDismissRequest = {
+            openDialog = !openDialog
+            onResume = !onResume
+        }) {
+            onResume = false
+            CtDialog(
+                title = "Are you sure want to quit?",
+                message = "You should try to finish your workout today.",
+                onDismiss = {
+                    openDialog = !openDialog
+                    onResume = !onResume
+                },
+                onAgreeText = "Sure",
+                onAgree = {
+                    onQuit()
+                },
+                height = 300.dp
+            )
+        }
     }
 
     Scaffold(
@@ -63,7 +98,9 @@ fun WorkoutPageScreen(
                         contentAlignment = Alignment.CenterStart,
                         modifier = modifier.fillMaxWidth()
                     ) {
-                        IconButton(onClick = { onQuit() }) {
+                        IconButton(onClick = {
+                            openDialog = !openDialog
+                        }) {
                             Icon(
                                 Icons.Filled.Close,
                                 contentDescription = null,
@@ -115,7 +152,8 @@ fun WorkoutPageScreen(
                 onPlay = onResume,
                 onNavigationToNext = {
                     onNavigateToRest()
-                }
+                },
+                player = player
             )
             Row(
                 modifier = modifier
@@ -124,7 +162,10 @@ fun WorkoutPageScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    player.stopSound()
+                    onNavigateToPreviousRest()
+                }) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
                         contentDescription = "",
@@ -132,7 +173,14 @@ fun WorkoutPageScreen(
                         modifier = modifier.size(40.dp)
                     )
                 }
-                IconButton(onClick = { onResume = !onResume }) {
+                IconButton(onClick = {
+                    onResume = !onResume
+                    if (onResume) {
+                        player.playSound()
+                    } else {
+                        player.stopSound()
+                    }
+                }) {
                     Box(
                         modifier = modifier
                             .clip(RoundedCornerShape(40.dp))
@@ -141,7 +189,7 @@ fun WorkoutPageScreen(
                             .height(60.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if(onResume) {
+                        if (onResume) {
                             Icon(
                                 imageVector = Icons.Default.Pause,
                                 contentDescription = "",
@@ -160,6 +208,7 @@ fun WorkoutPageScreen(
                 }
                 IconButton(
                     onClick = {
+                        player.stopSound()
                         onNavigateToRest()
                     }
                 ) {

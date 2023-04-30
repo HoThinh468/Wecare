@@ -6,14 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentLogInBinding
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
 import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
+import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,14 +23,21 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(binding.composeView) {
             SignInScreen(
-                navigateToHome = {
-                    findNavController().navigate(R.id.action_global_authentication_nested_graph_to_home_fragment)
+                moveToSplash = {
+                    findNavController().safeNavigate(
+                        R.id.logInFragment,
+                        R.id.action_global_authentication_nested_graph_to_splashFragment
+                    )
                 },
                 navigateToSignUp = {
                     findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
                 },
                 viewModel = loginViewModel,
-                moveToForgotPasswordScreen = { findNavController().navigate(R.id.action_logInFragment_to_forgotPasswordFragment) },
+                moveToForgotPasswordScreen = {
+                    findNavController().safeNavigate(
+                        R.id.logInFragment, R.id.action_logInFragment_to_forgotPasswordFragment
+                    )
+                },
             )
         }
     }
@@ -48,5 +54,9 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
                 PREVIOUS_TOTAL_SENSOR_STEPS, 0f
             ).toString()
         )
+    }
+
+    companion object {
+        const val logInTag = "Login flow"
     }
 }

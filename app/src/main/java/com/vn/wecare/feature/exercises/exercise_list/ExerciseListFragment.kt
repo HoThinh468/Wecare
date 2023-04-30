@@ -39,7 +39,8 @@ class ExerciseListFragment : Fragment() {
                     ExerciseListScreen(
                         onNavigationBack = { findNavController().popBackStack() },
                         onNavigationProgramDetail = {
-                            bundle = bundleOf("listDetail" to uiState.listExercise[it])
+                            bundle = bundleOf("listDetail" to Pair(uiState.listExercise[it], it))
+
 
                             findNavController().navigate(
                                 R.id.action_exerciseListFragment_to_programDetailFragment,

@@ -7,17 +7,15 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
@@ -47,10 +45,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val navView: BottomNavigationView = binding.navView
         navView.setupWithNavController(setUpNavController())
 
-        if (Firebase.auth.currentUser == null) {
-            setUpNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
-        }
-
         hideBottomNavBar(setUpNavController())
     }
 
@@ -65,14 +59,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
         with(sharePref.edit()) {
-            Log.d("Sensor changes: ", p0.values[0].toString())
             putFloat(LATEST_STEPS_COUNT, p0.values[0])
             apply()
         }
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        // Nothing to do
+        /* Do nothing */
     }
 
     override fun onPause() {

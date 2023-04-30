@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,6 +25,7 @@ fun CardListTile(
     titleRes: Int,
     subTitle: String?,
     colorIconRes: Int = R.color.Green500,
+    backgroundColor: Color = MaterialTheme.colors.background,
     elevation: Dp?
     ) {
     Card(
@@ -31,7 +33,8 @@ fun CardListTile(
             .fillMaxWidth(),
         shape = Shapes.small,
         onClick = onClick,
-        elevation = elevation ?: 1.dp
+        elevation = elevation ?: 1.dp,
+        backgroundColor = backgroundColor
     ) {
         Row(
             modifier = modifier

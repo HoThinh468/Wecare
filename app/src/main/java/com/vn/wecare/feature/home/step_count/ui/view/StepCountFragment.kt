@@ -31,4 +31,8 @@ class StepCountFragment :
             )
         }
     }
+
+    companion object {
+        const val stepCountTag = "Step count flow"
+    }
 }

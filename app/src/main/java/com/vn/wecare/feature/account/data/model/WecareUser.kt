@@ -5,8 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "wecare_user")
 data class WecareUser(
-    @PrimaryKey val userId: String = "",
-    val userName: String = "",
-    val email: String = "",
-    val isEmailVerified: Boolean = false
+    @PrimaryKey var userId: String = "",
+    var userName: String = "",
+    var email: String = "",
+    var emailVerified: Boolean = false,
+    var gender: Boolean? = null,
+    var age: Int? = null,
+    var height: Int? = null,
+    var weight: Int? = null,
+    var goal: String? = null
 )

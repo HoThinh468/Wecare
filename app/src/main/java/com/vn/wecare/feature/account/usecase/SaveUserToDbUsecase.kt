@@ -4,10 +4,14 @@ import com.vn.wecare.feature.account.data.UserRepository
 import com.vn.wecare.feature.account.data.model.WecareUser
 import javax.inject.Inject
 
-class CreateNewWecareUserUsecase @Inject constructor(
-    private val userRepository: UserRepository,
+class SaveUserToDbUsecase @Inject constructor(
+    private val userRepository: UserRepository
 ) {
-    suspend fun createNewWecareUser(
+    suspend fun saveUserToLocalDb(newUser: WecareUser) {
+        userRepository.insertUserToLocaldb(newUser)
+    }
+
+    suspend fun saveUserToFirestoreDb(
         userId: String, email: String, userName: String, isEmailVerified: Boolean
     ) {
         val newUser = WecareUser(

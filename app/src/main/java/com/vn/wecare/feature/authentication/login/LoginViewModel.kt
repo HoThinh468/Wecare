@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.usecase.CreateNewWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
-import com.vn.wecare.feature.account.usecase.SaveUserToLocalDbUsecase
+import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
+import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorSteps
+import com.vn.wecare.feature.home.water.tracker.usecase.RefreshWaterLocalDbUsecase
+import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,10 +37,11 @@ data class LogInUiState(
 class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
-    private val saveUserToLocalDbUsecase: SaveUserToLocalDbUsecase,
-    private val createNewWecareUserUsecase: CreateNewWecareUserUsecase,
+    private val saveUserToDbUsecase: SaveUserToDbUsecase,
+    private val updateWecareUserUsecase: UpdateWecareUserUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
-    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps
+    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps,
+    private val refreshWaterLocalDbUsecase: RefreshWaterLocalDbUsecase
 ) : ViewModel() {
 
     private val _logInUiState = MutableStateFlow(LogInUiState())
@@ -98,11 +101,11 @@ class LoginViewModel @Inject constructor(
         _logInUiState.update { it.copy(snackbarMessageRes = null) }
     }
 
-    fun handleLoginSuccess(moveToHome: () -> Unit) {
-        moveToHome()
+    fun handleLoginSuccess() {
         clearLogInInformation()
         viewModelScope.launch {
             saveUserInformationToLocalDb()
+            refreshWaterLocalDbUsecase.refreshWaterLocalDbWhenUserLogin()
         }
     }
 
@@ -130,23 +133,20 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun saveUserInformationToLocalDb() {
-        val userFlow =
-            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId)
-        userFlow.collect {
+        getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId).collect {
             if (it is Response.Success) {
                 it.data?.let { user ->
                     Log.d("New user login with id: ${user.userId}", "")
-                    saveUserToLocalDbUsecase.saveNewUserToLocalDb(
-                        it.data.userId,
-                        it.data.email,
-                        it.data.userName,
-                        accountService.isUserEmailVerified
-                    )
+                    saveUserToDbUsecase.saveUserToLocalDb(user)
                     if (accountService.isUserEmailVerified) {
-                        createNewWecareUserUsecase.createNewWecareUser(
+                        updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
                             it.data.userId,
-                            it.data.email,
-                            it.data.userName,
+                            WecareUserConstantValues.EMAIL_VERIFIED_FIELD,
+                            accountService.isUserEmailVerified
+                        )
+                        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
+                            it.data.userId,
+                            WecareUserConstantValues.EMAIL_VERIFIED_FIELD,
                             accountService.isUserEmailVerified
                         )
                     }

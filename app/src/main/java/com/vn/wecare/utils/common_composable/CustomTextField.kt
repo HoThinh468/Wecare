@@ -34,6 +34,7 @@ fun CustomTextField(
     isError: Boolean = false,
     errorMessage: String? = null,
     onShowTextClick: () -> Unit = {},
+    isSingleLine: Boolean = true
 ) {
     Column {
         OutlinedTextField(
@@ -44,7 +45,7 @@ fun CustomTextField(
             onValueChange = { onValueChange(it) },
             placeholder = { if (hint != null) Text(text = hint) },
             label = { if (label != null) Text(text = label) },
-            singleLine = true,
+            singleLine = isSingleLine,
             visualTransformation = if (isTextVisible) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = {
                 if (leadingIcon != null) {

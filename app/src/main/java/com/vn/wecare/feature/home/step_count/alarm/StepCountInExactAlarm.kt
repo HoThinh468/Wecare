@@ -1,18 +1,23 @@
 package com.vn.wecare.feature.home.step_count.alarm
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_REQUEST_CODE
 import com.vn.wecare.core.alarm.IN_EXACT_ALARM_REQUEST_CODE
 import com.vn.wecare.core.alarm.InExactAlarms
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 const val ALARM_REQUEST_CODE_EXTRA = "alarm_request_code_extra"
 
 const val IS_STEP_COUNT_INEXACT_ALARM_SET = "is_set"
 
-class StepCountInExactAlarms @Inject constructor(private val context: Context) : InExactAlarms {
+class StepCountInExactAlarms @Inject constructor(
+    @ApplicationContext private val context: Context
+) : InExactAlarms {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -25,14 +30,17 @@ class StepCountInExactAlarms @Inject constructor(private val context: Context) :
     }
 
     private fun cancelInExactAlarm() {
-        val pendingIntent = createInExactAlarmIntent()
-        alarmManager.cancel(pendingIntent)
+        val sharedPref = context.getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)
+        }
+        if (getPendingIntent() != null) alarmManager.cancel(getPendingIntent())
     }
 
     private fun setRepeatAlarm(triggerAtMillis: Long, intervalMillis: Long) {
         val sharedPref = context.getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
-            putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)
+            putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
         }
         val pendingIntent = createInExactAlarmIntent()
         alarmManager.setRepeating(
@@ -49,6 +57,14 @@ class StepCountInExactAlarms @Inject constructor(private val context: Context) :
         // in unpopulated properties of this intent will be ignored.
         return PendingIntent.getBroadcast(
             context, IN_EXACT_ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun getPendingIntent(): PendingIntent? {
+        val intent = Intent(context, StepCountInExactAlarmBroadcastReceiver::class.java)
+        return PendingIntent.getService(
+            context, IN_EXACT_ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.feature.authentication.service.AccountService
@@ -53,11 +52,15 @@ class StepCountViewModel @Inject constructor(
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
     init {
-        val currentDate = LocalDate.now()
-        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
-        updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
-        updateStepsPerDayWithHours(currentDate.year, currentDate.monthValue, currentDate.dayOfMonth)
-        initializeGoalIndex()
+        if (accountService.hasUser) {
+            val currentDate = LocalDate.now()
+            updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+            updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
+            updateStepsPerDayWithHours(
+                currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
+            )
+            initializeGoalIndex()
+        }
     }
 
     private val hoursList = mutableListOf<StepsPerHour>()
@@ -76,18 +79,13 @@ class StepCountViewModel @Inject constructor(
     }
 
     fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
-        Log.d(
-            "day id: ", getDayId(
-                year, month, dayOfMonth
-            )
-        )
         viewModelScope.launch {
             getStepsPerDayWithHoursUsecase.getStepsPerDayWithHour(
                 dayId = getDayId(
                     year, month, dayOfMonth
                 )
             ).collect { list ->
-                if (list != null && list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
+                if (list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
                     if (stepsPerDayWithHours != null) {
                         hoursList.add(stepsPerDayWithHours.toModel())
                         _stepsCountUiState.update {
@@ -149,6 +147,16 @@ class StepCountViewModel @Inject constructor(
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(accountService.currentUserId, stepGoal)
         }
         initializeGoalIndex()
+    }
+
+    fun getProgressWithIndexAndGoal(index: Float, goal: Float): Float {
+        return if (index >= goal) {
+            100f
+        } else {
+            if (goal != 0f) {
+                (index / goal) * 100
+            } else 0f
+        }
     }
 
     private fun updateDateTitle(day: Int, month: Int, year: Int) {

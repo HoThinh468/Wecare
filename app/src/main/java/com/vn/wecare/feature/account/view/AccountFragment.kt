@@ -8,6 +8,7 @@ import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAccountBinding
 import com.vn.wecare.feature.account.viewmodel.AccountViewModel
+import com.vn.wecare.utils.safeNavigate
 
 class AccountFragment :
     BaseBindingFragment<FragmentAccountBinding>(FragmentAccountBinding::inflate) {
@@ -20,8 +21,12 @@ class AccountFragment :
         ) {
             AccountScreen(
                 moveToSignInScreen = {
-                    findNavController().popBackStack()
-                    findNavController().navigate(R.id.action_homeFragment_to_authentication_nested_graph)
+                    findNavController().apply {
+                        popBackStack()
+                        safeNavigate(
+                            R.id.homeFragment, R.id.action_homeFragment_to_splashFragment
+                        )
+                    }
                 }, viewModel = accountViewModel
             )
         }

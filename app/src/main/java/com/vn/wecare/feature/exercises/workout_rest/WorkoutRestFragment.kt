@@ -38,7 +38,8 @@ class WorkoutRestFragment : Fragment() {
                         exercise = viewModel.getCurrentWorkout().exercise,
                         onNavigateToWorkoutPage = {
                             findNavController().navigate(R.id.action_workoutRestFragment2_to_workoutPageFragment)
-                        }
+                        },
+                        context = requireContext()
                     )
                 }
             }

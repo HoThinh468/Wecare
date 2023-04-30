@@ -3,7 +3,9 @@ package com.vn.wecare.feature.goal
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ktx.toObject
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -28,18 +30,13 @@ class GoalsRepository @Inject constructor(
     }
 
     fun getGoalsWithUserId(userId: String): Flow<Goals> = flow {
-        var goals = Goals()
         try {
-            db.collection(WECARE_GOALS_COLLECTION_PATH).document(userId).get()
-                .addOnSuccessListener {
-                    if (it != null) {
-                        goals = it.toObject(Goals::class.java) ?: Goals()
-                    }
-                }.await()
-        } catch (e: FirebaseFirestoreException) {
-            Log.d("Cannot get goals from firestore: ", e.message.toString())
+            val res = db.collection(WECARE_GOALS_COLLECTION_PATH).document(userId).get().await()
+            if (res != null && res.data != null) {
+                emit(res.toObject(Goals::class.java) ?: Goals())
+            } else emit(Goals())
+        } catch (e: Exception) {
+            Log.d(StepCountFragment.stepCountTag, "Error cannot get goals!")
         }
-        Log.d("Get goals from firebase res: ", goals.toString())
-        emit(goals)
     }
 }

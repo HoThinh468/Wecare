@@ -11,12 +11,18 @@
     <string name="account_title">Account</string>
     <string name="title_activity_sign_in_screen">SignInScreen</string>
     <string name="empty_title"> </string>
-    
+
     <!-- Onboarding feature -->
     <string name="gender_selection_title">What is your gender?</string>
     <string name="gender_selection_subtitle">To give you a better experience we need to know your gender</string>
     <string name="age_picker_title">What is your age?</string>
     <string name="age_picker_subtitle">This is used to setup recommendation just for you</string>
+    <string name="height_picker_title">What is your height?</string>
+    <string name="height_picker_subtitle">This is used to setup recommendation just for you</string>
+    <string name="weight_picker_title">What is your weight?</string>
+    <string name="weight_picker_subtitle">This is used to setup recommendation just for you</string>
+    <string name="goal_selection_title">What is your goal?</string>
+    <string name="goal_selection_subtitle">Having a clear goal will help you achieve it easier</string>
 
     <!-- Footstep count -->
     <string name="footstep_title">Steps</string>
@@ -35,6 +41,8 @@
 
     <!-- Water -->
     <string name="water">Water</string>
+    <string name="set_water_target">Set target</string>
+    <string name="water_reminder">You still have %d ml for today</string>
 
     <!-- Day in week -->
     <string name="sunday">S</string>

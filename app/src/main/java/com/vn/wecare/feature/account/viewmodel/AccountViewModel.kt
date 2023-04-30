@@ -13,6 +13,7 @@ import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.view.AccountFragment.Companion.AccountFlowTAG
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.home.water.tracker.usecase.DeleteAllLocalWaterRecordUsecase
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,8 @@ class AccountViewModel @Inject constructor(
     private val stepCountExactAlarms: ExactAlarms,
     private val stepCountInExactAlarms: InExactAlarms,
     private val deleteWecareUserUsecase: DeleteWecareUserUsecase,
-    private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase
+    private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
+    private val deleteAllWaterRecordsUsecase: DeleteAllLocalWaterRecordUsecase
 ) : ViewModel() {
 
     private val _accountUiState = MutableStateFlow(AccountUiState())
@@ -59,20 +61,20 @@ class AccountViewModel @Inject constructor(
     val currentUserId = accountService.currentUserId
 
     fun updateAccountScreen() = viewModelScope.launch {
-        val user = getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
-        user.collect { res ->
-            if (res is Response.Success && res.data != null) {
-                _accountUiState.update {
-                    it.copy(
-                        username = res.data.userName,
-                        email = res.data.email,
-                        isEmailVerified = res.data.isEmailVerified,
-                        userNameLogo = res.data.userName[0].uppercase(),
-                        avatarUri = accountService.userAvatar
-                    )
+        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
+            .collect { res ->
+                if (res is Response.Success && res.data != null) {
+                    _accountUiState.update {
+                        it.copy(
+                            username = res.data.userName,
+                            email = res.data.email,
+                            isEmailVerified = res.data.emailVerified,
+                            userNameLogo = res.data.userName[0].uppercase(),
+                            avatarUri = accountService.userAvatar
+                        )
+                    }
                 }
             }
-        }
     }
 
     fun onChangePasswordClick() {
@@ -111,10 +113,11 @@ class AccountViewModel @Inject constructor(
                 Log.d(AccountFlowTAG, "Sign out user response: $it")
                 if (it is Response.Success && it.data != null) {
                     deleteWecareUserUsecase.deleteAccount(
-                        it.data.userId, it.data.userName, it.data.email, it.data.isEmailVerified
+                        it.data.userId, it.data.userName, it.data.email, it.data.emailVerified
                     )
                 }
             }
+            deleteAllWaterRecordsUsecase.deleteAllRecords()
         }
         clearAccountUIState()
     }
