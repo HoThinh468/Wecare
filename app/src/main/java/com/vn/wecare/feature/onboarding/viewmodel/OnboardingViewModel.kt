@@ -52,9 +52,6 @@ class OnboardingViewModel @Inject constructor(
             3 -> updateUserWeight()
             else -> updateUserGoal()
         }
-//        if (currentIndex.value < ONBOARDING_PAGE_COUNT - 1) {
-//            currentIndex.value++
-//        }
     }
 
     fun moveToNextOnboardingPage(

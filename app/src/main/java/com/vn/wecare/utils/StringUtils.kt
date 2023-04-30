@@ -111,3 +111,8 @@ fun caloriesFormatWithFloat(input: Float): String {
     val dec = DecimalFormat("#,###.##")
     return dec.format(input)
 }
+
+fun bmiFormatWithFloat(input: Float): String {
+    val dec = DecimalFormat("##.#")
+    return dec.format(input)
+}
