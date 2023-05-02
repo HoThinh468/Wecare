@@ -27,49 +27,50 @@ fun FootStepCountHomeCard(
     val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = midPadding),
+        modifier = modifier.fillMaxWidth(),
         elevation = smallElevation,
-        shape = Shapes.small,
+        shape = Shapes.medium,
         onClick = onCardClick
     ) {
         Row(
             modifier = modifier
                 .heightIn()
                 .fillMaxWidth()
-                .padding(horizontal = normalPadding, vertical = mediumPadding),
+                .padding(horizontal = normalPadding, vertical = midPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Box(
                 contentAlignment = Alignment.BottomCenter, modifier = modifier.weight(1f)
             ) {
                 CircularProgressAnimated(
-                    size = 125.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
+                    size = 160.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.currentSteps.toFloat(),
                         stepsCountUiState.stepGoal.toFloat()
-                    )
+                    ), indicatorThickness = 15.dp
                 )
                 CircularProgressAnimated(
-                    size = 100.dp,
+                    size = 130.dp,
                     color = colorResource(id = R.color.Red400),
                     currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.caloConsumed.toFloat(),
                         stepsCountUiState.caloriesBurnedGoal.toFloat()
-                    )
+                    ),
+                    indicatorThickness = 15.dp
                 )
                 CircularProgressAnimated(
-                    size = 75.dp,
+                    size = 100.dp,
                     color = colorResource(id = R.color.Blue400),
                     currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.moveMin.toFloat(),
                         stepsCountUiState.moveTimeGoal.toFloat()
-                    )
+                    ),
+                    indicatorThickness = 15.dp
                 )
             }
             Column(
-                modifier = modifier.weight(1.2f)
+                modifier = modifier
+                    .weight(1f)
+                    .padding(start = halfMidPadding)
             ) {
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_step,
@@ -78,6 +79,7 @@ fun FootStepCountHomeCard(
                     unitRes = R.string.footstep_unit,
                     modifier = modifier
                 )
+                Spacer(modifier = modifier.height(smallPadding))
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_fire_calo,
                     iconColorRes = R.color.Red400,
@@ -85,6 +87,7 @@ fun FootStepCountHomeCard(
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
+                Spacer(modifier = modifier.height(smallPadding))
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_time_clock,
                     iconColorRes = R.color.Blue400,
@@ -106,12 +109,11 @@ fun FootstepCountOverviewItem(
     modifier: Modifier
 ) {
     Row(
-        modifier = modifier.padding(start = smallPadding),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Bottom
     ) {
         Icon(
             modifier = modifier
-                .padding(end = 2.dp)
+                .padding(end = smallPadding)
                 .size(iconSize),
             painter = painterResource(id = iconRes),
             contentDescription = null,
@@ -123,7 +125,7 @@ fun FootstepCountOverviewItem(
         )
         Text(
             text = stringResource(id = unitRes),
-            style = MaterialTheme.typography.body1.copy(color = colorResource(id = R.color.Black450)),
+            style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450)),
         )
     }
 }

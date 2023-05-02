@@ -102,11 +102,6 @@
 
     <!-- Account management nested section -->
     <fragment
-        android:id="@+id/newFeedFragment"
-        android:name="com.vn.wecare.feature.new_feed.NewFeedFragment"
-        android:label="fragment_new_feed"
-        tools:layout="@layout/fragment_new_feed" />
-    <fragment
         android:id="@+id/accountFragment"
         android:name="com.vn.wecare.feature.account.view.AccountFragment"
         android:label="fragment_account"
@@ -344,5 +339,15 @@
             android:name="com.vn.wecare.feature.home.bmi.ui.BMIFragment"
             android:label="fragment_b_m_i"
             tools:layout="@layout/fragment_b_m_i" />
+    </navigation>
+
+
+    <navigation android:id="@+id/nutrition_graph"
+        app:startDestination="@id/dailyNutritionFragment">
+        <fragment
+            android:id="@+id/dailyNutritionFragment"
+            android:name="com.vn.wecare.feature.food.DailyNutritionFragment"
+            android:label="fragment_daily_nutrition"
+            tools:layout="@layout/fragment_daily_nutrition" />
     </navigation>
 </navigation>

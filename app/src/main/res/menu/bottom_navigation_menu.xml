@@ -3,18 +3,18 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/child_home_selector"
+        android:icon="@drawable/ic_home"
         android:title="@string/home_title"/>
     <item
-        android:id="@+id/newFeedFragment"
-        android:icon="@drawable/ic_newspaper"
-        android:title="@string/new_feed"/>
+        android:id="@+id/nutrition_graph"
+        android:icon="@drawable/ic_food_bank"
+        android:title="@string/nutrition"/>
     <item
         android:id="@+id/exercises_graph"
-        android:icon="@drawable/ic_sports"
+        android:icon="@drawable/ic_fitness_center"
         android:title="@string/exercises"/>
     <item
         android:id="@+id/accountFragment"
-        android:icon="@drawable/child_account_selector"
+        android:icon="@drawable/ic_person"
         android:title="@string/account_title" />
 </menu>
