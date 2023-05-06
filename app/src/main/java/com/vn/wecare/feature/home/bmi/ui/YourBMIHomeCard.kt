@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -17,9 +18,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
 import com.vn.wecare.ui.theme.Blue
@@ -33,6 +34,7 @@ import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.utils.bmiFormatWithFloat
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun YourBMIHomeCard(
     modifier: Modifier,
@@ -45,10 +47,10 @@ fun YourBMIHomeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = smallPadding)
-            .clickable { onCardClick() },
+            .padding(top = normalPadding),
         elevation = smallElevation,
-        shape = Shapes.small,
+        shape = Shapes.medium,
+        onClick = onCardClick
     ) {
         Row(
             modifier = modifier
@@ -60,12 +62,13 @@ fun YourBMIHomeCard(
             Column {
                 Text(
                     text = "BMI",
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.h5,
                 )
                 Text(
                     modifier = modifier.padding(top = smallPadding),
                     text = bmiFormatWithFloat(uiState.value.bmi),
                     style = MaterialTheme.typography.h1.copy(
+                        fontSize = 40.sp,
                         color = if (uiState.value.bmi in 18.5..24.9) getHappyMoodColor(
                             uiState.value.bmi
                         ) else getBadMoodColor(uiState.value.bmi)

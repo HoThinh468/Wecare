@@ -1,10 +1,12 @@
 package com.vn.wecare.feature.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +33,7 @@ import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
 import com.vn.wecare.utils.common_composable.RequestPermission
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
@@ -64,31 +67,37 @@ fun HomeScreen(
 //        }
 //    }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(halfMidPadding),
-    ) {
-        HomeHeader(modifier = modifier, cancelInExactAlarm = cancelInExactAlarm)
-        FootStepCountHomeCard(
-            modifier = modifier,
-            onCardClick = onFootStepCountCardClick,
-            viewModel = stepCountViewModel
-        )
-        TrainingNow(
-            modifier = modifier,
-            onTrainingClick,
-            onWalkingIcClick,
-            onRunningIcClick,
-            onBicycleIcClick,
-            onMeditationIcClick
-        )
-        WaterOverviewHomeCard(
-            modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
-        )
-        YourBMIHomeCard(modifier = modifier, onCardClick = onBMICardClick, viewModel = bmiViewModel)
-        Spacer(modifier = modifier.height(largePadding))
+    Scaffold(modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background),
+        topBar = { HomeHeader(modifier = modifier, cancelInExactAlarm = cancelInExactAlarm) }) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = midPadding, vertical = smallPadding),
+        ) {
+            FootStepCountHomeCard(
+                modifier = modifier,
+                onCardClick = onFootStepCountCardClick,
+                viewModel = stepCountViewModel
+            )
+            TrainingNow(
+                modifier = modifier,
+                onTrainingClick,
+                onWalkingIcClick,
+                onRunningIcClick,
+                onBicycleIcClick,
+                onMeditationIcClick
+            )
+            YourBMIHomeCard(
+                modifier = modifier, onCardClick = onBMICardClick, viewModel = bmiViewModel
+            )
+            WaterOverviewHomeCard(
+                modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
+            )
+            Spacer(modifier = modifier.height(largePadding))
+        }
     }
 }
 
@@ -98,7 +107,9 @@ fun HomeHeader(
     cancelInExactAlarm: () -> Unit,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = midPadding, vertical = halfMidPadding),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -129,46 +140,40 @@ fun TrainingNow(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = smallPadding),
+            .padding(top = normalPadding),
         elevation = smallElevation,
-        shape = Shapes.small,
+        shape = Shapes.medium,
         onClick = onTrainingClick
     ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(normalPadding),
+                .padding(midPadding),
         ) {
             Text(
                 modifier = modifier.padding(bottom = normalPadding),
                 text = stringResource(id = R.string.training_now),
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.h5,
             )
             Row(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = midPadding),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 CustomOutlinedIconButton(modifier = modifier,
                     iconRes = R.drawable.ic_walk,
-                    trainingTitleRes = R.string.training_walk_title,
                     onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid) })
                 CustomOutlinedIconButton(
-                    modifier = modifier,
-                    iconRes = R.drawable.ic_run,
-                    trainingTitleRes = R.string.training_run_title,
-                    onClick = onRunningIcClick
+                    modifier = modifier, iconRes = R.drawable.ic_run, onClick = onRunningIcClick
                 )
                 CustomOutlinedIconButton(
-                    modifier = modifier,
-                    iconRes = R.drawable.ic_bicycle,
-                    trainingTitleRes = R.string.training_bicycle_title,
-                    onClick = onBicycleIcClick
+                    modifier = modifier, iconRes = R.drawable.ic_bicycle, onClick = onBicycleIcClick
                 )
                 CustomOutlinedIconButton(
                     modifier = modifier,
                     iconRes = R.drawable.ic_self_improvement,
-                    trainingTitleRes = R.string.training_meditation_title,
                     onClick = onMeditationIcClick
                 )
             }

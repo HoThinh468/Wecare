@@ -3,8 +3,10 @@ package com.vn.wecare.utils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -26,7 +28,6 @@ fun CustomOutlinedIconButton(
     @DrawableRes iconRes: Int,
     @StringRes trainingTitleRes: Int? = null,
     @ColorRes colorRes: Int = R.color.Green500,
-    borderWidth: Dp = 2.dp,
     buttonSize: Dp = 50.dp,
     iconSize: Dp = 24.dp,
     onClick: () -> Unit = {}
@@ -38,13 +39,13 @@ fun CustomOutlinedIconButton(
             onClick = onClick,
             modifier = modifier
                 .size(buttonSize)
-                .border(borderWidth, colorResource(id = colorRes), shape = CircleShape)
+                .background(color = colorResource(id = colorRes), shape = CircleShape)
         ) {
             Icon(
                 painterResource(id = iconRes),
                 contentDescription = null,
                 modifier = modifier.size(iconSize),
-                tint = colorResource(id = colorRes)
+                tint = colorResource(id = R.color.white)
             )
         }
         if (trainingTitleRes != null) {
