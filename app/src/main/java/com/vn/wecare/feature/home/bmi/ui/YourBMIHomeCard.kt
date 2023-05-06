@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -33,6 +34,7 @@ import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.utils.bmiFormatWithFloat
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun YourBMIHomeCard(
     modifier: Modifier,
@@ -45,10 +47,10 @@ fun YourBMIHomeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = normalPadding)
-            .clickable { onCardClick() },
+            .padding(top = normalPadding),
         elevation = smallElevation,
         shape = Shapes.medium,
+        onClick = onCardClick
     ) {
         Row(
             modifier = modifier

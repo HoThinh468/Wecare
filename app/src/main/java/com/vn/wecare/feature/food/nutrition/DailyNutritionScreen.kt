@@ -1,8 +1,10 @@
-package com.vn.wecare.feature.food
+package com.vn.wecare.feature.food.nutrition
 
 import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,9 +16,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -27,6 +33,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,22 +43,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.vn.wecare.R
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.Yellow
-import com.vn.wecare.ui.theme.halfMidRadius
 import com.vn.wecare.ui.theme.mediumPadding
+import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.xxxExtraPadding
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DailyNutritionScreen(
     modifier: Modifier = Modifier,
+    moveToBreakfastScreen: () -> Unit,
+    moveToLunchScreen: () -> Unit,
+    moveToSnackScreen: () -> Unit,
+    moveToDinnerScreen: () -> Unit,
+    moveToAddMealScreen: () -> Unit,
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -59,16 +74,27 @@ fun DailyNutritionScreen(
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
         topBar = { NutritionAppbar(modifier = modifier) }) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = midPadding)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus()
-                    })
-                }) {
+        Column(modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = midPadding)
+            .verticalScroll(rememberScrollState())
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            }) {
+            Spacer(modifier = modifier.height(4.dp))
             NutritionOverview(modifier = modifier, progress = 0.6f)
+            Spacer(modifier = modifier.height(normalPadding))
+            AddMeals(
+                modifier = modifier,
+                moveToBreakfastScreen = moveToBreakfastScreen,
+                moveToLunchScreen = moveToLunchScreen,
+                moveToSnackScreen = moveToSnackScreen,
+                moveToDinnerScreen = moveToDinnerScreen,
+                moveToAddMealScreen = moveToAddMealScreen
+            )
+            Spacer(modifier = modifier.height(xxxExtraPadding))
         }
     }
 }
@@ -109,7 +135,7 @@ private fun NutritionAppbar(modifier: Modifier) {
             placeholder = {
                 Text(text = "Search food or recipe")
             },
-            trailingIcon = {
+            leadingIcon = {
                 Icon(imageVector = Icons.Default.Search, contentDescription = null)
             })
     }
@@ -207,6 +233,128 @@ private fun NutritionOverviewItem(
 }
 
 @Composable
-private fun AddYourMealItem() {
+private fun AddMeals(
+    modifier: Modifier,
+    moveToBreakfastScreen: () -> Unit,
+    moveToLunchScreen: () -> Unit,
+    moveToSnackScreen: () -> Unit,
+    moveToDinnerScreen: () -> Unit,
+    moveToAddMealScreen: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Add your meals", style = MaterialTheme.typography.h4
+        )
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
+        }
+    }
+    AddYourMealItem(
+        modifier = modifier,
+        mealName = "Breakfast",
+        currentCal = 100,
+        targetKcal = 400,
+        thumbnailIdRes = R.drawable.img_breakfast,
+        onCardClick = moveToBreakfastScreen,
+        onAddBtnClick = moveToAddMealScreen
+    )
+    Spacer(modifier = modifier.height(normalPadding))
+    AddYourMealItem(
+        modifier = modifier,
+        mealName = "Lunch",
+        currentCal = 100,
+        targetKcal = 600,
+        thumbnailIdRes = R.drawable.img_lunch,
+        onCardClick = moveToLunchScreen,
+        onAddBtnClick = moveToAddMealScreen
+    )
+    Spacer(modifier = modifier.height(normalPadding))
+    AddYourMealItem(
+        modifier = modifier,
+        mealName = "Snack",
+        currentCal = 100,
+        targetKcal = 300,
+        thumbnailIdRes = R.drawable.img_snack,
+        onCardClick = moveToSnackScreen,
+        onAddBtnClick = moveToAddMealScreen
+    )
+    Spacer(modifier = modifier.height(normalPadding))
+    AddYourMealItem(
+        modifier = modifier,
+        mealName = "Dinner",
+        currentCal = 100,
+        targetKcal = 600,
+        thumbnailIdRes = R.drawable.img_dinner,
+        onCardClick = moveToDinnerScreen,
+        onAddBtnClick = moveToAddMealScreen
+    )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun AddYourMealItem(
+    modifier: Modifier,
+    mealName: String,
+    currentCal: Int,
+    targetKcal: Int,
+    @DrawableRes thumbnailIdRes: Int,
+    onAddBtnClick: () -> Unit = {},
+    onCardClick: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        backgroundColor = MaterialTheme.colors.background,
+        shape = Shapes.medium,
+        elevation = smallElevation,
+        onClick = onCardClick
+    ) {
+        Column(
+            modifier
+                .fillMaxWidth()
+                .padding(normalPadding)
+        ) {
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        modifier = modifier.size(56.dp),
+                        painter = painterResource(id = thumbnailIdRes),
+                        contentDescription = null
+                    )
+                    Column(modifier = modifier.padding(start = normalPadding)) {
+                        Text(mealName, style = MaterialTheme.typography.h3)
+                        Text(
+                            "${currentCal}/$targetKcal kcal", style = MaterialTheme.typography.body2
+                        )
+                    }
+                }
+                Button(onClick = { onAddBtnClick() }, shape = RoundedCornerShape(mediumRadius)) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_add),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                    Text("Add")
+                }
+            }
+            Spacer(modifier = modifier.height(normalPadding))
+            LinearProgressIndicator(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(4.dp),
+                backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
+                color = MaterialTheme.colors.primary,
+                progress = currentCal.toFloat() / targetKcal.toFloat(),
+                strokeCap = StrokeCap.Round
+            )
+        }
+    }
 }

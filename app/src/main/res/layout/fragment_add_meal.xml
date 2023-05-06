@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.food.nutrition.DailyNutritionFragment">
+    tools:context=".feature.food.addmeal.ui.AddMealFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id = "@+id/daily_nutrition_compose_view"
+        android:id="@+id/add_meal_compose_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
