@@ -10,6 +10,7 @@ import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.core.model.HistoryItem
 import com.vn.wecare.feature.exercises.usecase.Usecases
 import com.vn.wecare.utils.getFirstWeekdayTimestamp
+import com.vn.wecare.utils.getLastWeekdayTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,14 +41,20 @@ class ExerciseHistoryViewModel @Inject constructor(
     val listHistoryDisplay: StateFlow<List<HistoryItem>?>
         get() = _listHistoryDisplay
 
+    private val _isNextBtnEnable = MutableStateFlow<Boolean>(false)
+    val isNextBtnEnable: StateFlow<Boolean>
+        get() = _isNextBtnEnable
+
     fun increaseViewTime() {
         _historyViewTime.value += oneWeekInMillis
         filterListHistory()
+        checkIsNextBtnEnable()
     }
 
     fun decreaseViewTime() {
         _historyViewTime.value -= oneWeekInMillis
         filterListHistory()
+        checkIsNextBtnEnable()
     }
 
     private fun loadListHistory() = viewModelScope.launch {
@@ -57,6 +64,7 @@ class ExerciseHistoryViewModel @Inject constructor(
                 _listHistory.value =
                     (listHistoryResponse as Response.Success<List<HistoryItem>>).data
                 filterListHistory()
+                checkIsNextBtnEnable()
             }
         }
     }
@@ -75,6 +83,10 @@ class ExerciseHistoryViewModel @Inject constructor(
                 listDisplay.add(i)
         }
         _listHistoryDisplay.value = listDisplay
+    }
+
+    private fun checkIsNextBtnEnable() {
+        _isNextBtnEnable.value = _historyViewTime.value + oneWeekInMillis < getLastWeekdayTimestamp(System.currentTimeMillis())
     }
 
 }
