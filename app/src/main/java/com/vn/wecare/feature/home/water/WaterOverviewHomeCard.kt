@@ -31,9 +31,9 @@ fun WaterOverviewHomeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = smallPadding),
+            .padding(top = normalPadding),
         elevation = smallElevation,
-        shape = Shapes.small,
+        shape = Shapes.medium,
         onClick = onCardClick
     ) {
         Row(
@@ -46,14 +46,14 @@ fun WaterOverviewHomeCard(
             Column {
                 Text(
                     text = stringResource(id = R.string.water),
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.h5,
                 )
                 Text(modifier = modifier.padding(top = smallPadding), text = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
                             color = colorResource(id = R.color.Blue400),
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 32.sp,
+                            fontSize = 40.sp,
                             fontFamily = OpenSans
                         )
                     ) {

@@ -64,8 +64,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        /* Do nothing */
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {/* Do nothing */
     }
 
     override fun onPause() {
@@ -87,8 +86,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun hideBottomNavBar(navController: NavController) {
         navController.addOnDestinationChangedListener { _: NavController?, navDestination: NavDestination, _: Bundle? ->
             when (navDestination.id) {
-                R.id.homeFragment, R.id.accountFragment, R.id.exercisesFragment, R.id.newFeedFragment -> binding.navView.visibility =
+                R.id.homeFragment, R.id.accountFragment, R.id.exercisesFragment, R.id.dailyNutritionFragment -> binding.navView.visibility =
                     View.VISIBLE
+
                 else -> binding.navView.visibility = View.GONE
             }
         }

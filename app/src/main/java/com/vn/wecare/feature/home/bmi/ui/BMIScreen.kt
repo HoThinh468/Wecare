@@ -1,13 +1,13 @@
 package com.vn.wecare.feature.home.bmi.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,8 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -105,14 +105,12 @@ fun BMIScreen(
     }
 
     Scaffold(modifier = modifier, backgroundColor = MaterialTheme.colors.background, topBar = {
-        WecareAppBar(
-            modifier = modifier,
+        WecareAppBar(modifier = modifier,
             onLeadingIconPress = navigateUp,
             title = "BMI",
             trailingIconRes = R.drawable.ic_timeline,
             onTrailingIconPress = { // TODO navigate to history screen
-            }
-        )
+            })
     }) {
         Column(
             modifier = modifier
@@ -123,7 +121,9 @@ fun BMIScreen(
         ) {
             UserInformation(modifier = modifier, uiState = uiState.value, viewModel = viewModel)
             Spacer(modifier = modifier.height(midPadding))
-            BMIOverview(modifier = modifier, bmi = uiState.value.bmi)
+            BMIOverview(
+                modifier = modifier, bmi = uiState.value.bmi, progress = uiState.value.bmiProgress
+            )
             Spacer(modifier = modifier.height(smallPadding))
             BMIFAQsSection(modifier = modifier, faqList = viewModel.getFAQs())
         }
@@ -229,7 +229,7 @@ private fun getBadMoodColor(bmi: Float): Color {
 }
 
 @Composable
-private fun BMIOverview(modifier: Modifier, bmi: Float) {
+private fun BMIOverview(modifier: Modifier, bmi: Float, progress: Float) {
     Card(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colors.secondaryVariant,
@@ -259,35 +259,32 @@ private fun BMIOverview(modifier: Modifier, bmi: Float) {
                     )
                 }
             }
-            Box(modifier = modifier.padding(vertical = normalPadding)) {
+            BoxWithConstraints(modifier = modifier.padding(vertical = normalPadding)) {
                 Box(modifier = Modifier
                     .fillMaxWidth()
                     .height(16.dp)
                     .clip(RoundedCornerShape(midRadius))
                     .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Blue, Green500, Yellow, Red400
-                            )
+                        brush = Brush.horizontalGradient(colorStops = arrayOf(
+                            0.0f to Blue, 0.37f to Green500, 0.5f to Yellow, 1f to Red400
+                        ),
+                            startX = with(LocalDensity.current) { 100.dp.toPx() },
+                            endX = with(LocalDensity.current) { 250.dp.toPx() }
                         )
                     )
-                    .align(Alignment.Center)
-                    .onSizeChanged { // TODO get width of the box is not right
-                        Log.d(
-                            BMIFragment.bmiFlowTag, "size is ${it.width}"
-                        )
-                    })
+                    .align(Alignment.Center))
                 Divider(
                     modifier = modifier
-                        .padding(start = 100.dp)
+                        .padding(start = maxWidth.times(progress))
                         .height(24.dp)
                         .width(4.dp)
-                        .align(Alignment.CenterStart), color = MaterialTheme.colors.secondary
+                        .align(Alignment.CenterStart),
+                    color = MaterialTheme.colors.secondary
                 )
             }
             Row {
                 Column(modifier = modifier.weight(1f)) {
-                    BMIItemIndex(modifier = modifier, color = Blue, text = "Overweight (<18.5)")
+                    BMIItemIndex(modifier = modifier, color = Blue, text = "Underweight (<18.5)")
                     Spacer(modifier = modifier.height(smallPadding))
                     BMIItemIndex(modifier = modifier, color = Green500, text = "Normal (18.5-24.9)")
                 }

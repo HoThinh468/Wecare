@@ -21,6 +21,7 @@ val xxxExtraPadding = 56.dp
  */
 val smallIconSize = 12.dp
 val iconSize = 24.dp
+val mediumIconSize = 36.dp
 val largeIconSize = 40.dp
 
 /**

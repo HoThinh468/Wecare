@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.bmi.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingleton
@@ -7,6 +8,7 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.home.bmi.data.BMIFAQs
 import com.vn.wecare.feature.home.bmi.data.BMIFAQsModel
+import com.vn.wecare.feature.home.bmi.ui.BMIFragment
 import com.vn.wecare.utils.WecareUserConstantValues.HEIGHT_FIELD
 import com.vn.wecare.utils.WecareUserConstantValues.WEIGHT_FIELD
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +25,8 @@ data class BMIUiState(
     val height: Int = 1,
     val bmi: Float = 1f,
     val gender: Boolean = true,
-    val updateInformationResult: Response<Boolean>? = null
+    val updateInformationResult: Response<Boolean>? = null,
+    val bmiProgress: Float = 0f
 )
 
 @HiltViewModel
@@ -123,9 +126,14 @@ class BMIViewModel @Inject constructor(
                     weight = user.weight ?: 30,
                     height = user.height ?: 130,
                     bmi = calculateBMI(user.weight ?: 30, user.height ?: 130),
-                    gender = user.gender ?: true
+                    gender = user.gender ?: true,
+                    bmiProgress = calculateBMI(user.weight ?: 30, user.height ?: 130) / 50f
                 )
             }
+            Log.d(
+                BMIFragment.bmiFlowTag,
+                "${calculateBMI(user.weight ?: 30, user.height ?: 130) / 50f}"
+            )
         }
     }
 
