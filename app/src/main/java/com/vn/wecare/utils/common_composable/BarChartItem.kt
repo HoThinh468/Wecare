@@ -20,11 +20,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.smallPadding
+
+@Composable
+@Preview
+fun test() {
+    BarChartItem(
+        progress = 0.5f,
+        index = 1,
+        itemTitle = "Mon"
+    )
+}
 
 @Composable
 fun BarChartItem(
