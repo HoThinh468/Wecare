@@ -72,7 +72,7 @@
             android:id="@+id/signUpFragment"
             android:name="com.vn.wecare.feature.authentication.signup.SignUpFragment"
             android:label="fragment_sign_up"
-            tools:layout="@layout/fragment_sign_up"/>
+            tools:layout="@layout/fragment_sign_up" />
         <fragment
             android:id="@+id/forgotPasswordFragment"
             android:name="com.vn.wecare.feature.authentication.forgotpassword.ForgotPasswordFragment"
@@ -105,7 +105,7 @@
         android:id="@+id/accountFragment"
         android:name="com.vn.wecare.feature.account.view.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account"/>
+        tools:layout="@layout/fragment_account" />
     <navigation
         android:id="@+id/training_graph"
         app:startDestination="@id/trainingFragment">
@@ -256,7 +256,7 @@
             android:id="@+id/fullBodyFragment"
             android:name="com.vn.wecare.feature.exercises.fullbody_workout.FullBodyFragment"
             android:label="fragment_full_body"
-            tools:layout="@layout/fragment_full_body" >
+            tools:layout="@layout/fragment_full_body">
             <action
                 android:id="@+id/action_fullBodyFragment_to_programDetailFragment"
                 app:destination="@id/programDetailFragment"
@@ -272,7 +272,7 @@
         android:id="@+id/onboardingFragment"
         android:name="com.vn.wecare.feature.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
-        tools:layout="@layout/fragment_onboarding" >
+        tools:layout="@layout/fragment_onboarding">
         <action
             android:id="@+id/action_onboardingFragment_to_splashFragment"
             app:destination="@id/splashFragment"
@@ -283,21 +283,22 @@
     <action
         android:id="@+id/action_global_onboardingFragment"
         app:destination="@id/onboardingFragment"
-        app:popUpTo="@id/onboardingFragment"
-        app:popUpToInclusive="true"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:popUpTo="@id/onboardingFragment"
+        app:popUpToInclusive="true" />
 
     <!--  Nested graph for water feature  -->
-    <navigation android:id="@+id/water_graph"
+    <navigation
+        android:id="@+id/water_graph"
         app:startDestination="@id/waterFragment">
         <fragment
             android:id="@+id/waterFragment"
             android:name="com.vn.wecare.feature.home.water.tracker.ui.WaterFragment"
             android:label="fragment_water"
-            tools:layout="@layout/fragment_water" >
+            tools:layout="@layout/fragment_water">
             <action
                 android:id="@+id/action_waterFragment_to_waterReportFragment"
                 app:destination="@id/waterReportFragment" />
@@ -313,7 +314,7 @@
         android:id="@+id/splashFragment"
         android:name="com.vn.wecare.feature.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -332,7 +333,8 @@
     </fragment>
 
     <!--  Nested graph for bmi feature  -->
-    <navigation android:id="@+id/bmi_graph"
+    <navigation
+        android:id="@+id/bmi_graph"
         app:startDestination="@id/BMIFragment">
         <fragment
             android:id="@+id/BMIFragment"
@@ -342,13 +344,14 @@
     </navigation>
 
 
-    <navigation android:id="@+id/nutrition_graph"
+    <navigation
+        android:id="@+id/nutrition_graph"
         app:startDestination="@id/dailyNutritionFragment">
         <fragment
             android:id="@+id/dailyNutritionFragment"
-            android:name="com.vn.wecare.feature.food.nutrition.DailyNutritionFragment"
+            android:name="com.vn.wecare.feature.food.nutrition.ui.DailyNutritionFragment"
             android:label="fragment_daily_nutrition"
-            tools:layout="@layout/fragment_daily_nutrition" >
+            tools:layout="@layout/fragment_daily_nutrition">
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_breakfastFragment"
                 app:destination="@id/breakfastFragment"
@@ -358,13 +361,13 @@
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_addMealFragment"
-                app:destination="@id/addMealFragment" />
+                app:destination="@id/addMealFragment"/>
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
             android:name="com.vn.wecare.feature.food.breakfast.BreakfastFragment"
             android:label="fragment_breakfast"
-            tools:layout="@layout/fragment_breakfast" >
+            tools:layout="@layout/fragment_breakfast">
             <action
                 android:id="@+id/action_breakfastFragment_to_addMealFragment"
                 app:destination="@id/addMealFragment" />
