@@ -1,53 +1,71 @@
 package com.vn.wecare.feature.food.addmeal.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.data.MealsApi
 import com.vn.wecare.feature.food.addmeal.data.MealsByNutrients
-import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
+import com.vn.wecare.feature.food.addmeal.data.MealsRepository
+import com.vn.wecare.feature.food.nutrition.WecareCaloriesObject
+import com.vn.wecare.feature.food.nutrition.usecase.CalculateNutrientsIndexUsecase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AddMealUiState(
     val getMealsDataResponse: Response<Boolean>? = null,
     val breakfastMealList: List<MealsByNutrients> = emptyList()
 )
 
-class AddMealViewModel : ViewModel() {
+@HiltViewModel
+class AddMealViewModel @Inject constructor(
+    private val repository: MealsRepository,
+    private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddMealUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        getMealsByNutrients()
-    }
+    private val caloriesForBreakfast = WecareCaloriesObject.getInstance().caloriesOfBreakfast
+    private val caloriesForLunch = WecareCaloriesObject.getInstance().caloriesOfLunch
+    private val caloriesForSnack = WecareCaloriesObject.getInstance().caloriesOfSnack
+    private val caloriesForDinner = WecareCaloriesObject.getInstance().caloriesOfDinner
 
-    private fun getMealsByNutrients() = viewModelScope.launch {
-        _uiState.update { it.copy(getMealsDataResponse = Response.Loading) }
-        try {
-            val res = MealsApi.getMealsByNutrients.getMealsByNutrients(
-                maxCalories = 300, minCalories = 100, number = 10
-            )
-            _uiState.update {
-                it.copy(breakfastMealList = res, getMealsDataResponse = Response.Success(true))
-            }
-        } catch (e: Exception) {
-            Log.d(AddMealFragment.addMealTag, "Get meal fail due to ${e.message}")
-            _uiState.update {
-                it.copy(
-                    breakfastMealList = emptyList(), getMealsDataResponse = Response.Error(null)
-                )
-            }
-        }
-    }
+    fun getBreakfastMealsByNutrients(): Flow<PagingData<MealsByNutrients>> =
+        repository.getMealsByNutrients(
+            caloriesForBreakfast,
+            caloriesForBreakfast - 100,
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
+        ).cachedIn(viewModelScope)
 
-    fun resetGetDataResponse() {
-        _uiState.update {
-            it.copy(getMealsDataResponse = null)
-        }
-    }
+    fun getLunchMealsByNutrients(): Flow<PagingData<MealsByNutrients>> =
+        repository.getMealsByNutrients(
+            caloriesForLunch,
+            caloriesForLunch - 100,
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
+        ).cachedIn(viewModelScope)
+
+    fun getSnackMealsByNutrients(): Flow<PagingData<MealsByNutrients>> =
+        repository.getMealsByNutrients(
+            caloriesForSnack,
+            caloriesForSnack - 100,
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
+            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
+        ).cachedIn(viewModelScope)
+
+    fun getDinnerMealsByNutrients(): Flow<PagingData<MealsByNutrients>> = repository.getMealsByNutrients(
+        caloriesForDinner,
+        caloriesForDinner - 100,
+        calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
+        calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
+        calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
+    ).cachedIn(viewModelScope)
 }

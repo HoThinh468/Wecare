@@ -12,5 +12,4 @@ fun getEndOfTheDayMilliseconds(): Long {
         59
     )
     return dateTime.time
-//    return LocalDateTime.now().with(LocalTime.MAX).toInstant(OffsetDateTime.now().offset).toEpochMilli()
 }

@@ -1,10 +1,8 @@
 package com.vn.wecare.feature.food.addmeal.ui
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -24,6 +22,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -38,30 +37,29 @@ import androidx.compose.material.icons.filled.BrunchDining
 import androidx.compose.material.icons.filled.DinnerDining
 import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.vn.wecare.R
-import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.addmeal.data.MealsByNutrients
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -70,33 +68,26 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AddMealScreen(
-    modifier: Modifier = Modifier, navigateUp: () -> Unit, addMealViewModel: AddMealViewModel
+    modifier: Modifier = Modifier,
+    navigateUp: () -> Unit,
+    addMealViewModel: AddMealViewModel,
+    index: Int
 ) {
-
-    val focusManager = LocalFocusManager.current
     val pagerState = rememberPagerState()
 
     val tabRowItems = listOf("Breakfast", "Lunch", "Snack", "Dinner")
     val coroutineScope = rememberCoroutineScope()
 
-    val uiState = addMealViewModel.uiState.collectAsState()
+    val meals = listOf(
+        addMealViewModel.getBreakfastMealsByNutrients().collectAsLazyPagingItems(),
+        addMealViewModel.getLunchMealsByNutrients().collectAsLazyPagingItems(),
+        addMealViewModel.getSnackMealsByNutrients().collectAsLazyPagingItems(),
+        addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
+    )
 
-    uiState.value.getMealsDataResponse.let {
-        when (it) {
-            is Response.Loading -> {
-                LoadingDialog(loading = it == Response.Loading) {}
-            }
-
-            is Response.Success -> {
-                addMealViewModel.resetGetDataResponse()
-                Toast.makeText(LocalContext.current, "Load data successfully!", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            else -> { /* do nothing */
-            }
-        }
-    }
+    LaunchedEffect(key1 = Unit, block = {
+        coroutineScope.launch { pagerState.animateScrollToPage(index) }
+    })
 
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
@@ -109,13 +100,7 @@ fun AddMealScreen(
                 navigateUp = navigateUp
             )
         }) {
-        Column(modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            }) {
+        Column(modifier = modifier.fillMaxSize()) {
             HorizontalPager(
                 state = pagerState,
                 modifier = modifier.fillMaxWidth(),
@@ -123,7 +108,23 @@ fun AddMealScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 userScrollEnabled = false
             ) {
-                FoodSelections(modifier = modifier, mealList = uiState.value.breakfastMealList)
+                when (pagerState.currentPage) {
+                    0 -> {
+                        MealsGridView(modifier = modifier, mealList = meals[0])
+                    }
+
+                    1 -> {
+                        MealsGridView(modifier = modifier, mealList = meals[1])
+                    }
+
+                    2 -> {
+                        MealsGridView(modifier = modifier, mealList = meals[2])
+                    }
+
+                    else -> {
+                        MealsGridView(modifier = modifier, mealList = meals[3])
+                    }
+                }
             }
         }
     }
@@ -152,8 +153,7 @@ private fun AddMealAppBar(
             contentColor = MaterialTheme.colors.primary
         ) {
             tabRowItems.forEachIndexed { index, item ->
-                Tab(
-                    modifier = modifier.background(MaterialTheme.colors.background),
+                Tab(modifier = modifier.background(MaterialTheme.colors.background),
                     text = {
                         Text(text = item, style = MaterialTheme.typography.button)
                     },
@@ -182,7 +182,9 @@ private fun AddMealAppBar(
 }
 
 @Composable
-private fun FoodSelections(modifier: Modifier, mealList: List<MealsByNutrients>) {
+private fun MealsGridView(
+    modifier: Modifier, mealList: LazyPagingItems<MealsByNutrients>
+) {
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
@@ -190,21 +192,50 @@ private fun FoodSelections(modifier: Modifier, mealList: List<MealsByNutrients>)
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(normalPadding)
     ) {
-        items(mealList.size) { index ->
+        items(mealList.itemCount) { index ->
             val item = mealList[index]
             FoodItem(
                 modifier = modifier,
-                recipeName = item.title,
-                calAmount = item.calories,
-                imgUrl = item.imgUrl
+                recipeName = item?.title,
+                calAmount = item?.calories,
+                imgUrl = item?.imgUrl
             )
+        }
+    }
+    when (mealList.loadState.refresh) {
+        is LoadState.Error -> {
+            // TODO Show error composable
+        }
+
+        is LoadState.Loading -> {
+            CircularProgressIndicator(
+                modifier = modifier.padding(midPadding), color = MaterialTheme.colors.primary
+            )
+        }
+
+        else -> { // Do nothing
+        }
+    }
+
+    when (mealList.loadState.append) {
+        is LoadState.Error -> {
+            // TODO Show error composable
+        }
+
+        is LoadState.Loading -> {
+            CircularProgressIndicator(
+                modifier = modifier.padding(midPadding), color = MaterialTheme.colors.primary
+            )
+        }
+
+        else -> { // Do nothing
         }
     }
 }
 
 @Composable
 private fun FoodItem(
-    modifier: Modifier, recipeName: String, calAmount: Int, imgUrl: String
+    modifier: Modifier, recipeName: String?, calAmount: Int?, imgUrl: String?
 ) {
     Card(
         modifier = modifier
@@ -230,8 +261,9 @@ private fun FoodItem(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = smallPadding, horizontal = halfMidPadding),
-                text = recipeName,
+                text = recipeName ?: "",
                 style = MaterialTheme.typography.h5,
+                minLines = 2,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -252,7 +284,7 @@ private fun FoodItem(
                         tint = Red400
                     )
                     Text(
-                        text = "$calAmount cal", style = MaterialTheme.typography.body1.copy(
+                        text = "${calAmount ?: 0} cal", style = MaterialTheme.typography.body1.copy(
                             color = MaterialTheme.colors.onSecondary.copy(0.5f)
                         )
                     )
