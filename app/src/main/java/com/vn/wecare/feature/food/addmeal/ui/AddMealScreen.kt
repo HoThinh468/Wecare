@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.food.addmeal.ui
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,11 +39,15 @@ import androidx.compose.material.icons.filled.DinnerDining
 import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,7 +56,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.vn.wecare.R
-import com.vn.wecare.feature.food.addmeal.data.MealsByNutrients
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
@@ -60,9 +67,12 @@ import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.utils.common_composable.DynamicErrorDialog
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -85,6 +95,31 @@ fun AddMealScreen(
         addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
     )
 
+    val openErrorDialog = remember { mutableStateOf(true) }
+
+    val uiState = addMealViewModel.uiState.collectAsState()
+
+    uiState.value.insertMealRecordResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Add meal successfully!", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            is Response.Error -> {
+                DynamicErrorDialog(isShowing = openErrorDialog.value,
+                    onDismissRequest = { openErrorDialog.value = false })
+            }
+
+            else -> { /* do nothing */
+            }
+        }
+    }
+
     LaunchedEffect(key1 = Unit, block = {
         coroutineScope.launch { pagerState.animateScrollToPage(index) }
     })
@@ -97,7 +132,8 @@ fun AddMealScreen(
                 pagerState = pagerState,
                 tabRowItems = tabRowItems,
                 coroutineScope = coroutineScope,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                viewModel = addMealViewModel
             )
         }) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -108,23 +144,22 @@ fun AddMealScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 userScrollEnabled = false
             ) {
-                when (pagerState.currentPage) {
-                    0 -> {
-                        MealsGridView(modifier = modifier, mealList = meals[0])
-                    }
-
-                    1 -> {
-                        MealsGridView(modifier = modifier, mealList = meals[1])
-                    }
-
-                    2 -> {
-                        MealsGridView(modifier = modifier, mealList = meals[2])
-                    }
-
-                    else -> {
-                        MealsGridView(modifier = modifier, mealList = meals[3])
-                    }
-                }
+//                MealsGridView(
+//                    modifier = modifier,
+//                    mealList = when (pagerState.currentPage) {
+//                        0 -> meals[0]
+//                        1 -> meals[1]
+//                        2 -> meals[2]
+//                        else -> meals[3]
+//                    },
+//                    addMealViewModel = addMealViewModel,
+//                    mealTypeKey = when (pagerState.currentPage) {
+//                        0 -> MealTypeKey.BREAKFAST
+//                        1 -> MealTypeKey.LUNCH
+//                        2 -> MealTypeKey.SNACK
+//                        else -> MealTypeKey.DINNER
+//                    }
+//                )
             }
         }
     }
@@ -137,15 +172,29 @@ private fun AddMealAppBar(
     pagerState: PagerState,
     tabRowItems: List<String>,
     navigateUp: () -> Unit,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    viewModel: AddMealViewModel
 ) {
+
+    val meal = MealByNutrients(
+        id = 2,
+        title = "Food",
+        calories = 100,
+        protein = "10",
+        imgUrl = "urlImg",
+        fat = "12",
+        carbs = "11",
+        imageType = "png"
+    )
+
     Column(modifier = modifier.fillMaxWidth()) {
-        WecareAppBar(
-            modifier = modifier,
+        WecareAppBar(modifier = modifier,
             title = "Meals",
             onLeadingIconPress = navigateUp,
-            trailingIconRes = R.drawable.ic_search
-        )
+            trailingIconRes = R.drawable.ic_search,
+            onTrailingIconPress = {
+//                viewModel.insertMealRecord(Calendar.getInstance(), MealTypeKey.BREAKFAST, meal)
+            })
 
         TabRow(
             modifier = modifier.fillMaxWidth(),
@@ -183,7 +232,10 @@ private fun AddMealAppBar(
 
 @Composable
 private fun MealsGridView(
-    modifier: Modifier, mealList: LazyPagingItems<MealsByNutrients>
+    modifier: Modifier,
+    mealList: LazyPagingItems<MealByNutrients>,
+    addMealViewModel: AddMealViewModel,
+    mealTypeKey: MealTypeKey
 ) {
     LazyVerticalGrid(
         modifier = modifier
@@ -194,12 +246,14 @@ private fun MealsGridView(
     ) {
         items(mealList.itemCount) { index ->
             val item = mealList[index]
-            FoodItem(
-                modifier = modifier,
-                recipeName = item?.title,
-                calAmount = item?.calories,
-                imgUrl = item?.imgUrl
-            )
+            if (item != null) {
+                FoodItem(
+                    modifier = modifier,
+                    meal = item,
+                    viewModel = addMealViewModel,
+                    mealTypeKey = mealTypeKey
+                )
+            }
         }
     }
     when (mealList.loadState.refresh) {
@@ -235,7 +289,7 @@ private fun MealsGridView(
 
 @Composable
 private fun FoodItem(
-    modifier: Modifier, recipeName: String?, calAmount: Int?, imgUrl: String?
+    modifier: Modifier, meal: MealByNutrients, viewModel: AddMealViewModel, mealTypeKey: MealTypeKey
 ) {
     Card(
         modifier = modifier
@@ -252,7 +306,7 @@ private fun FoodItem(
                         .width(maxWidth)
                         .height(maxWidth.times(0.8f))
                         .clip(shape = Shapes.medium),
-                    model = imgUrl,
+                    model = meal.imgUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )
@@ -261,7 +315,7 @@ private fun FoodItem(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = smallPadding, horizontal = halfMidPadding),
-                text = recipeName ?: "",
+                text = meal.title,
                 style = MaterialTheme.typography.h5,
                 minLines = 2,
                 maxLines = 2,
@@ -284,14 +338,20 @@ private fun FoodItem(
                         tint = Red400
                     )
                     Text(
-                        text = "${calAmount ?: 0} cal", style = MaterialTheme.typography.body1.copy(
+                        text = "${meal.calories} cal", style = MaterialTheme.typography.body1.copy(
                             color = MaterialTheme.colors.onSecondary.copy(0.5f)
                         )
                     )
                 }
                 OutlinedButton(
-                    onClick = { },
-                    modifier = Modifier.size(24.dp),
+                    onClick = {
+                        viewModel.insertMealRecord(
+                            dateTime = Calendar.getInstance(),
+                            meal = meal,
+                            mealTypeKey = mealTypeKey
+                        )
+                    },
+                    modifier = Modifier.size(32.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = MaterialTheme.colors.primary)

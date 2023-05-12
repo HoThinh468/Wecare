@@ -202,7 +202,7 @@ private fun WaterBarChartReport(
                 }
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.img_404_error),
+                    painter = painterResource(id = R.drawable.img_no_water_record),
                     modifier = modifier.size(200.dp),
                     contentDescription = null
                 )

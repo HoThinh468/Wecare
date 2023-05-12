@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.nutrition
+package com.vn.wecare.feature.food
 
 import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE

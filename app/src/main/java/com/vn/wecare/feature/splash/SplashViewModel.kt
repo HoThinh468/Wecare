@@ -10,7 +10,7 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.food.nutrition.WecareCaloriesObject
+import com.vn.wecare.feature.food.WecareCaloriesObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
