@@ -1,6 +1,8 @@
-package com.vn.wecare.feature.food.breakfast
+package com.vn.wecare.feature.food.breakfast.ui
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -28,22 +32,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.vn.wecare.R
+import com.vn.wecare.core.checkInternetConnection
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.food.breakfast.viewmodel.BreakfastViewModel
+import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Red400
@@ -54,12 +66,19 @@ import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.xxExtraPadding
+import com.vn.wecare.ui.theme.xxxExtraPadding
 import com.vn.wecare.utils.common_composable.WecareAppBar
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
+import java.util.Calendar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BreakfastScreen(
-    modifier: Modifier = Modifier, navigateUp: () -> Unit, moveToAddMealScreen: () -> Unit
+    modifier: Modifier = Modifier,
+    navigateUp: () -> Unit,
+    moveToAddMealScreen: () -> Unit,
+    breakfastViewModel: BreakfastViewModel
 ) {
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
@@ -90,18 +109,36 @@ fun BreakfastScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = midPadding)
+                .padding(horizontal = midPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = modifier.height(smallPadding))
-            BreakfastOverviewNutrition(modifier = modifier)
+            BreakfastOverviewNutrition(modifier = modifier, viewModel = breakfastViewModel)
             Spacer(modifier = modifier.height(midPadding))
-            MealRecord(modifier = modifier)
+            MealRecord(modifier = modifier, viewModel = breakfastViewModel)
         }
     }
 }
 
 @Composable
-private fun BreakfastOverviewNutrition(modifier: Modifier) {
+private fun BreakfastOverviewNutrition(
+    modifier: Modifier, viewModel: BreakfastViewModel
+) {
+
+    val calendar = Calendar.getInstance()
+
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(
+        LocalContext.current, { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+            viewModel.onDateChangeListener(mDayOfMonth, mMonth, mYear)
+        }, year, month, day
+    )
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Card(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colors.background,
@@ -119,8 +156,8 @@ private fun BreakfastOverviewNutrition(modifier: Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Today, 03 Mar", style = MaterialTheme.typography.h4)
-                IconButton(modifier = modifier.size(32.dp), onClick = { /*TODO*/ }) {
+                Text(text = uiState.value.dateTime, style = MaterialTheme.typography.h4)
+                IconButton(modifier = modifier.size(32.dp), onClick = { datePickerDialog.show() }) {
                     Icon(
                         imageVector = Icons.Default.EditCalendar,
                         contentDescription = null,
@@ -140,7 +177,7 @@ private fun BreakfastOverviewNutrition(modifier: Modifier) {
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("170")
+                        append(uiState.value.calories.toString())
                     }
                     withStyle(
                         style = SpanStyle(
@@ -150,7 +187,7 @@ private fun BreakfastOverviewNutrition(modifier: Modifier) {
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("/400 kcal")
+                        append("/${uiState.value.targetCalories} kcal")
                     }
                 })
             LinearProgressIndicator(
@@ -159,7 +196,9 @@ private fun BreakfastOverviewNutrition(modifier: Modifier) {
                     .padding(top = halfMidPadding, bottom = halfMidPadding)
                     .height(6.dp),
                 strokeCap = StrokeCap.Round,
-                progress = 0.5f,
+                progress = getProgressInFloatWithIntInput(
+                    uiState.value.calories, uiState.value.targetCalories
+                ),
                 backgroundColor = MaterialTheme.colors.secondary.copy(0.4f)
             )
             Row(
@@ -172,22 +211,22 @@ private fun BreakfastOverviewNutrition(modifier: Modifier) {
                     modifier = modifier,
                     color = Red400,
                     title = "Protein",
-                    currentIndex = 20,
-                    targetIndex = 25
+                    currentIndex = uiState.value.protein,
+                    targetIndex = uiState.value.targetProtein
                 )
                 NutritionIndexItem(
                     modifier = modifier,
                     color = Yellow,
                     title = "Fat",
-                    currentIndex = 10,
-                    targetIndex = 14
+                    currentIndex = uiState.value.fat,
+                    targetIndex = uiState.value.targetFat
                 )
                 NutritionIndexItem(
                     modifier = modifier,
                     color = Blue,
                     title = "Carbs",
-                    currentIndex = 32,
-                    targetIndex = 46
+                    currentIndex = uiState.value.carbs,
+                    targetIndex = uiState.value.targetCarbs
                 )
             }
         }
@@ -220,7 +259,10 @@ fun NutritionIndexItem(
 }
 
 @Composable
-private fun MealRecord(modifier: Modifier) {
+private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Text(
         modifier = modifier
             .fillMaxWidth()
@@ -228,32 +270,77 @@ private fun MealRecord(modifier: Modifier) {
         text = "Meal records",
         style = MaterialTheme.typography.h4
     )
-    MealRecordItem(
-        modifier = modifier, foodName = "Sandwich", calAmount = 176, foodAmount = 100, quantity = 1
-    )
-    MealRecordItem(
-        modifier = modifier,
-        foodName = "Eggs spaghetti",
-        calAmount = 26,
-        foodAmount = 200,
-        quantity = 3,
-    )
-    MealRecordItem(
-        modifier = modifier,
-        foodName = "Buffalo wings",
-        calAmount = 76,
-        foodAmount = 160,
-        quantity = 4
-    )
+
+    val isNetworkAvailable = checkInternetConnection(LocalContext.current)
+
+    if (isNetworkAvailable) {
+        uiState.value.getMealsResponse.let {
+            when (it) {
+                is Response.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = modifier.padding(vertical = xxxExtraPadding),
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+
+                is Response.Success -> {
+                    if (uiState.value.mealRecords.isNotEmpty()) {
+                        LazyColumn {
+                            items(uiState.value.mealRecords.size) { i ->
+                                val item = uiState.value.mealRecords[i]
+                                MealRecordItem(
+                                    modifier = modifier, mealRecordModel = item
+                                )
+                            }
+                        }
+                    } else {
+                        Image(
+                            modifier = modifier.padding(top = xxExtraPadding, bottom = midPadding),
+                            painter = painterResource(id = R.drawable.img_empty_dish),
+                            contentDescription = null
+                        )
+                        Text(
+                            text = "No records yet, click +Add meal to add now!",
+                            style = MaterialTheme.typography.body2,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                is Response.Error -> {
+                    Image(
+                        modifier = modifier.padding(top = xxExtraPadding, bottom = midPadding),
+                        painter = painterResource(id = R.drawable.img_oops),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Something wrong happened, please try again later!!",
+                        style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                else -> { // Do nothing
+                }
+            }
+        }
+    } else {
+        Image(
+            modifier = modifier.padding(top = xxExtraPadding, bottom = midPadding),
+            painter = painterResource(id = R.drawable.img_no_internet),
+            contentDescription = null
+        )
+        Text(
+            text = "No internet connection, please connect to the internet to view records",
+            style = MaterialTheme.typography.body2,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
 private fun MealRecordItem(
-    modifier: Modifier,
-    foodName: String,
-    calAmount: Int,
-    foodAmount: Int,
-    quantity: Int,
+    modifier: Modifier, mealRecordModel: MealRecordModel
 ) {
     Column {
         Box(
@@ -265,25 +352,25 @@ private fun MealRecordItem(
                 modifier = modifier.align(Alignment.CenterStart),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_food_example),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                AsyncImage(
                     modifier = modifier
                         .size(48.dp)
-                        .clip(shape = Shapes.medium)
+                        .clip(shape = Shapes.medium),
+                    model = mealRecordModel.imgUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
                 Column(modifier = modifier.padding(start = normalPadding)) {
                     Text(
                         modifier = modifier.width(200.dp),
-                        text = foodName,
+                        text = mealRecordModel.title,
                         style = MaterialTheme.typography.h5,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = modifier.height(4.dp))
                     Text(
-                        text = "$foodAmount g ~ $calAmount kcal",
+                        text = "${mealRecordModel.calories} cal",
                         style = MaterialTheme.typography.button.copy(
                             color = MaterialTheme.colors.onSecondary.copy(
                                 0.5f
@@ -303,7 +390,7 @@ private fun MealRecordItem(
                         tint = MaterialTheme.colors.primary
                     )
                 }
-                Text(text = "$quantity", style = MaterialTheme.typography.body1)
+                Text(text = "${mealRecordModel.quantity}", style = MaterialTheme.typography.body1)
                 IconButton(onClick = {}) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
