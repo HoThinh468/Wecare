@@ -2,6 +2,7 @@ package com.vn.wecare.feature.food.breakfast
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
@@ -12,7 +13,10 @@ class BreakfastFragment : BaseBindingFragment<FragmentBreakfastBinding>(
     FragmentBreakfastBinding::inflate
 ) {
 
+    private val breakfastViewModel: BreakfastViewModel by activityViewModels()
+
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        breakfastViewModel.initUiState()
         super.setupComposeView(
             binding.breakfastComposeView
         ) {
@@ -20,10 +24,9 @@ class BreakfastFragment : BaseBindingFragment<FragmentBreakfastBinding>(
                 findNavController().popBackStack()
             }, moveToAddMealScreen = {
                 findNavController().safeNavigate(
-                    R.id.breakfastFragment,
-                    R.id.action_breakfastFragment_to_addMealFragment
+                    R.id.breakfastFragment, R.id.action_breakfastFragment_to_addMealFragment
                 )
-            })
+            }, breakfastViewModel = breakfastViewModel)
         }
     }
 }

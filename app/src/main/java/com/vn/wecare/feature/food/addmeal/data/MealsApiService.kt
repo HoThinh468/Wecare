@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.food.addmeal.data
 
+import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
@@ -19,5 +20,5 @@ interface MealsApiService {
         @Query("number") number: Int,
         @Query("offset") offset: Int,
         @Query("random") random: Boolean
-    ): List<MealsByNutrients>
+    ): List<MealByNutrients>
 }

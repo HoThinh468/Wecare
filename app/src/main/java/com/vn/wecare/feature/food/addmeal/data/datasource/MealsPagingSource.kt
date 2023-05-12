@@ -1,7 +1,9 @@
-package com.vn.wecare.feature.food.addmeal.data
+package com.vn.wecare.feature.food.addmeal.data.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.vn.wecare.feature.food.addmeal.data.MealsApiService
+import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
 
 const val NUMBER_OF_MEALS_EACH_LOAD = 25
 
@@ -12,15 +14,15 @@ class MealsPagingSource(
     private val maxFat: Int,
     private val maxCarbs: Int,
     private val mealsApiService: MealsApiService
-) : PagingSource<Int, MealsByNutrients>() {
-    override fun getRefreshKey(state: PagingState<Int, MealsByNutrients>): Int? {
+) : PagingSource<Int, MealByNutrients>() {
+    override fun getRefreshKey(state: PagingState<Int, MealByNutrients>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MealsByNutrients> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MealByNutrients> {
         return try {
             val page = params.key ?: 1
             val result = mealsApiService.getMealsByNutrients(
