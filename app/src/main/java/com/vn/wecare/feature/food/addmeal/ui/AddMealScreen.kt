@@ -57,8 +57,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
-import com.vn.wecare.feature.food.addmeal.data.model.MealTypeKey
+import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes

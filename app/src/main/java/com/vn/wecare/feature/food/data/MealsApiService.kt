@@ -1,6 +1,6 @@
-package com.vn.wecare.feature.food.addmeal.data
+package com.vn.wecare.feature.food.data
 
-import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealByNutrients
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query

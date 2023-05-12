@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.addmeal.data.model
+package com.vn.wecare.feature.food.data.model
 
 data class MealRecordModel(
     val id: Long = 0,

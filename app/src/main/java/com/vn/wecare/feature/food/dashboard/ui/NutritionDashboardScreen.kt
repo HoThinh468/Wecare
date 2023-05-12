@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.nutrition.ui
+package com.vn.wecare.feature.food.dashboard.ui
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
@@ -43,8 +43,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.food.nutrition.viewmodel.DailyNutritionUiState
-import com.vn.wecare.feature.food.nutrition.viewmodel.DailyNutritionViewmodel
+import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardUiState
+import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
@@ -60,16 +60,16 @@ import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DailyNutritionScreen(
+fun NutritionDashboardScreen(
     modifier: Modifier = Modifier,
     moveToBreakfastScreen: () -> Unit,
     moveToLunchScreen: () -> Unit,
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
     moveToAddMealScreen: (index: Int) -> Unit,
-    dailyNutritionViewmodel: DailyNutritionViewmodel
+    nutritionDashboardViewmodel: NutritionDashboardViewmodel
 ) {
-    val uiState = dailyNutritionViewmodel.uiState.collectAsState()
+    val uiState = nutritionDashboardViewmodel.uiState.collectAsState()
 
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
@@ -139,7 +139,7 @@ private fun NutritionAppbar(modifier: Modifier) {
 
 @Composable
 private fun NutritionOverview(
-    modifier: Modifier, uiState: DailyNutritionUiState
+    modifier: Modifier, uiState: NutritionDashboardUiState
 ) {
 
     val progressAnimationValue by animateFloatAsState(
@@ -256,7 +256,7 @@ private fun AddMeals(
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
     moveToAddMealScreen: (index: Int) -> Unit,
-    uiState: DailyNutritionUiState
+    uiState: NutritionDashboardUiState
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

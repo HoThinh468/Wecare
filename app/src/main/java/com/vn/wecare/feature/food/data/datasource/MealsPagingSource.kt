@@ -1,9 +1,9 @@
-package com.vn.wecare.feature.food.addmeal.data.datasource
+package com.vn.wecare.feature.food.data.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.vn.wecare.feature.food.addmeal.data.MealsApiService
-import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.MealsApiService
+import com.vn.wecare.feature.food.data.model.MealByNutrients
 
 const val NUMBER_OF_MEALS_EACH_LOAD = 25
 

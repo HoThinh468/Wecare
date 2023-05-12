@@ -1,22 +1,19 @@
 package com.vn.wecare.feature.food.addmeal.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.data.model.MealByNutrients
-import com.vn.wecare.feature.food.addmeal.data.MealsRepository
-import com.vn.wecare.feature.food.addmeal.data.model.MealTypeKey
-import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
-import com.vn.wecare.feature.food.nutrition.WecareCaloriesObject
-import com.vn.wecare.feature.food.nutrition.usecase.CalculateNutrientsIndexUsecase
+import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.MealsRepository
+import com.vn.wecare.feature.food.data.model.MealTypeKey
+import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar

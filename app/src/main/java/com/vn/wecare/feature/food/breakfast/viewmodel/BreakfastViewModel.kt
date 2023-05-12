@@ -1,13 +1,13 @@
-package com.vn.wecare.feature.food.breakfast
+package com.vn.wecare.feature.food.breakfast.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.data.model.MealRecordModel
-import com.vn.wecare.feature.food.addmeal.data.model.MealTypeKey
-import com.vn.wecare.feature.food.addmeal.usecase.GetMealsWithDayIdUsecase
-import com.vn.wecare.feature.food.nutrition.WecareCaloriesObject
-import com.vn.wecare.feature.food.nutrition.usecase.CalculateNutrientsIndexUsecase
+import com.vn.wecare.feature.food.data.model.MealRecordModel
+import com.vn.wecare.feature.food.data.model.MealTypeKey
+import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
+import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import com.vn.wecare.utils.getMonthPrefix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

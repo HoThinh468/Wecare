@@ -1,9 +1,9 @@
-package com.vn.wecare.feature.food.nutrition.viewmodel
+package com.vn.wecare.feature.food.dashboard.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.food.nutrition.WecareCaloriesObject
-import com.vn.wecare.feature.food.nutrition.usecase.CalculateNutrientsIndexUsecase
+import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class DailyNutritionUiState(
+data class NutritionDashboardUiState(
     val currentCaloriesAmount: Int = 0,
     val targetCaloriesAmount: Int = 0,
     val currentProteinIndex: Int = 0,
@@ -31,11 +31,11 @@ data class DailyNutritionUiState(
 )
 
 @HiltViewModel
-class DailyNutritionViewmodel @Inject constructor(
+class NutritionDashboardViewmodel @Inject constructor(
     private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(DailyNutritionUiState())
+    private val _uiState = MutableStateFlow(NutritionDashboardUiState())
     val uiState = _uiState.asStateFlow()
 
     private val caloriesObject = WecareCaloriesObject.getInstanceFlow()

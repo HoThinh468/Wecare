@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.nutrition.ui
+package com.vn.wecare.feature.food.dashboard.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -8,20 +8,20 @@ import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentDailyNutritionBinding
-import com.vn.wecare.feature.food.nutrition.viewmodel.DailyNutritionViewmodel
+import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.utils.safeNavigate
 import com.vn.wecare.utils.safeNavigateWithBundle
 
-class DailyNutritionFragment :
+class FoodDashboardFragment :
     BaseBindingFragment<FragmentDailyNutritionBinding>(FragmentDailyNutritionBinding::inflate) {
 
-    private val viewModel: DailyNutritionViewmodel by activityViewModels()
+    private val viewModel: NutritionDashboardViewmodel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(
             binding.dailyNutritionComposeView
         ) {
-            DailyNutritionScreen(
+            NutritionDashboardScreen(
                 moveToBreakfastScreen = {
                     findNavController().safeNavigate(
                         R.id.dailyNutritionFragment,
@@ -39,7 +39,7 @@ class DailyNutritionFragment :
                         bundle
                     )
                 },
-                dailyNutritionViewmodel = viewModel
+                nutritionDashboardViewmodel = viewModel
             )
         }
     }

@@ -349,7 +349,7 @@
         app:startDestination="@id/dailyNutritionFragment">
         <fragment
             android:id="@+id/dailyNutritionFragment"
-            android:name="com.vn.wecare.feature.food.nutrition.ui.DailyNutritionFragment"
+            android:name="com.vn.wecare.feature.food.dashboard.ui.FoodDashboardFragment"
             android:label="fragment_daily_nutrition"
             tools:layout="@layout/fragment_daily_nutrition">
             <action
@@ -365,7 +365,7 @@
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
-            android:name="com.vn.wecare.feature.food.breakfast.BreakfastFragment"
+            android:name="com.vn.wecare.feature.food.breakfast.ui.BreakfastFragment"
             android:label="fragment_breakfast"
             tools:layout="@layout/fragment_breakfast">
             <action

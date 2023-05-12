@@ -2,7 +2,7 @@ package com.vn.wecare.core.di
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.vn.wecare.feature.food.addmeal.data.MealsApiService
+import com.vn.wecare.feature.food.data.MealsApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

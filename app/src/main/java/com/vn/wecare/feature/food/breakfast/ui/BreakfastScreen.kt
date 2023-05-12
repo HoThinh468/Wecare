@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.breakfast
+package com.vn.wecare.feature.food.breakfast.ui
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -54,7 +54,8 @@ import coil.compose.AsyncImage
 import com.vn.wecare.R
 import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.data.model.MealRecordModel
+import com.vn.wecare.feature.food.breakfast.viewmodel.BreakfastViewModel
+import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Red400

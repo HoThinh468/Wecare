@@ -1,10 +1,10 @@
-package com.vn.wecare.feature.food.addmeal.data.di
+package com.vn.wecare.feature.food.data.di
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.food.addmeal.data.datasource.MealRecordDataSource
-import com.vn.wecare.feature.food.addmeal.data.datasource.MealRecordRemoteDataSource
+import com.vn.wecare.feature.food.data.datasource.MealRecordDataSource
+import com.vn.wecare.feature.food.data.datasource.MealRecordRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

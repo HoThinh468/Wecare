@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.addmeal.data.model
+package com.vn.wecare.feature.food.data.model
 
 import com.squareup.moshi.Json
 

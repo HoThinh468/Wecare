@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.nutrition.usecase
+package com.vn.wecare.feature.food.usecase
 
 import javax.inject.Inject
 
