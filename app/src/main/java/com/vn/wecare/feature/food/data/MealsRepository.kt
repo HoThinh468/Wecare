@@ -37,4 +37,19 @@ class MealsRepository @Inject constructor(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
     ): Flow<Response<List<MealRecordModel>?>> =
         remoteDataSource.getAllMealsOfTypeInDayWithDayId(dayOfMonth, month, year, mealTypeKey)
+
+    suspend fun updateMealRecordQuantity(
+        dayOfMonth: Int,
+        month: Int,
+        year: Int,
+        mealTypeKey: MealTypeKey,
+        mealId: Long,
+        quantity: Int
+    ): Flow<Response<Boolean>?> =
+        remoteDataSource.updateQuantity(dayOfMonth, month, year, mealTypeKey, mealId, quantity)
+
+    suspend fun deleteMealRecord(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey, mealId: Long
+    ): Flow<Response<Boolean>?> =
+        remoteDataSource.delete(dayOfMonth, month, year, mealTypeKey, mealId)
 }

@@ -8,6 +8,8 @@ import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
 import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
+import com.vn.wecare.feature.food.usecase.DeleteMealRecordUsecase
+import com.vn.wecare.feature.food.usecase.UpdateMealRecordUsecase
 import com.vn.wecare.utils.getMonthPrefix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,36 +30,81 @@ data class BreakfastUiState(
     val carbs: Int = 0,
     val targetCarbs: Int = 0,
     val getMealsResponse: Response<Boolean>? = null,
-    val mealRecords: List<MealRecordModel> = emptyList()
+    val mealRecords: List<MealRecordModel> = emptyList(),
+    val updateMealRecordResponse: Response<Boolean>? = null
 )
 
 @HiltViewModel
 class BreakfastViewModel @Inject constructor(
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
-    private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase
+    private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
+    private val updateMealRecordUsecase: UpdateMealRecordUsecase,
+    private val deleteMealRecordUsecase: DeleteMealRecordUsecase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BreakfastUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var mDayOfMonth = 0
+    private var mMonth = 0
+    private var mYear = 0
+
     fun initUiState() {
         val calendar = Calendar.getInstance()
-        updateDateTime(
-            calendar.get(Calendar.DAY_OF_MONTH),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.YEAR)
-        )
-        getBreakfastMealList(
-            calendar.get(Calendar.DAY_OF_MONTH),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.YEAR)
-        )
+        mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        mMonth = calendar.get(Calendar.MONTH)
+        mYear = calendar.get(Calendar.YEAR)
+        updateDateTime(mDayOfMonth, mMonth, mYear)
+        getBreakfastMealList(mDayOfMonth, mMonth, mYear)
         updateTargetNutrientsInformation()
     }
 
     fun onDateChangeListener(dayOfMonth: Int, month: Int, year: Int) {
         updateDateTime(dayOfMonth, month, year)
         getBreakfastMealList(dayOfMonth, month, year)
+        mDayOfMonth = dayOfMonth
+        mMonth = month
+        mYear = year
+    }
+
+    fun onMealRecordItemPlusClick(mealRecordModel: MealRecordModel) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(updateMealRecordResponse = Response.Loading)
+        }
+        val quantity = mealRecordModel.quantity + 1
+        updateMealRecordUsecase.updateMealRecordQuantity(
+            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id, quantity
+        ).collect { res ->
+            _uiState.update {
+                it.copy(updateMealRecordResponse = res)
+            }
+        }
+        getBreakfastMealList(mDayOfMonth, mMonth, mYear)
+    }
+
+    fun onMealRecordItemMinusClick(mealRecordModel: MealRecordModel) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(updateMealRecordResponse = Response.Loading)
+        }
+        if (mealRecordModel.quantity == 1) {
+            deleteMealRecordUsecase.deleteMealRecord(
+                mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id
+            ).collect { res ->
+                _uiState.update {
+                    it.copy(updateMealRecordResponse = res)
+                }
+            }
+        } else {
+            val quantity = mealRecordModel.quantity - 1
+            updateMealRecordUsecase.updateMealRecordQuantity(
+                mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id, quantity
+            ).collect { res ->
+                _uiState.update {
+                    it.copy(updateMealRecordResponse = res)
+                }
+            }
+        }
+        getBreakfastMealList(mDayOfMonth, mMonth, mYear)
     }
 
     private fun updateTargetNutrientsInformation() = viewModelScope.launch {
@@ -102,7 +149,7 @@ class BreakfastViewModel @Inject constructor(
         if (recordList.isNotEmpty()) {
             var totalCalories = 0
             for (item in recordList) {
-                totalCalories += item.calories
+                totalCalories += item.calories * item.quantity
             }
             _uiState.update {
                 it.copy(

@@ -3,6 +3,7 @@ package com.vn.wecare.feature.food.breakfast.ui
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +69,7 @@ import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxExtraPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import com.vn.wecare.utils.getProgressInFloatWithIntInput
 import java.util.Calendar
@@ -80,6 +82,29 @@ fun BreakfastScreen(
     moveToAddMealScreen: () -> Unit,
     breakfastViewModel: BreakfastViewModel
 ) {
+
+    val uiState = breakfastViewModel.uiState.collectAsState()
+
+    uiState.value.updateMealRecordResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Update successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(LocalContext.current, "Update fail", Toast.LENGTH_SHORT).show()
+            }
+
+            else -> { /* do nothing */
+            }
+        }
+    }
+
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
@@ -289,7 +314,9 @@ private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
                             items(uiState.value.mealRecords.size) { i ->
                                 val item = uiState.value.mealRecords[i]
                                 MealRecordItem(
-                                    modifier = modifier, mealRecordModel = item
+                                    modifier = modifier,
+                                    mealRecordModel = item,
+                                    viewModel = viewModel
                                 )
                             }
                         }
@@ -340,7 +367,7 @@ private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
 
 @Composable
 private fun MealRecordItem(
-    modifier: Modifier, mealRecordModel: MealRecordModel
+    modifier: Modifier, mealRecordModel: MealRecordModel, viewModel: BreakfastViewModel
 ) {
     Column {
         Box(
@@ -383,7 +410,9 @@ private fun MealRecordItem(
                 modifier = modifier.align(Alignment.CenterEnd),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    viewModel.onMealRecordItemMinusClick(mealRecordModel)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_remove),
                         contentDescription = null,
@@ -391,7 +420,9 @@ private fun MealRecordItem(
                     )
                 }
                 Text(text = "${mealRecordModel.quantity}", style = MaterialTheme.typography.body1)
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    viewModel.onMealRecordItemPlusClick(mealRecordModel)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = null,
