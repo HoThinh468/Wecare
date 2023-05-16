@@ -6,6 +6,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,7 +81,8 @@ fun BreakfastScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     moveToAddMealScreen: () -> Unit,
-    breakfastViewModel: BreakfastViewModel
+    breakfastViewModel: BreakfastViewModel,
+    navigateToDetailScreen: (mealRecordModel: MealRecordModel) -> Unit
 ) {
 
     val uiState = breakfastViewModel.uiState.collectAsState()
@@ -94,10 +96,12 @@ fun BreakfastScreen(
             is Response.Success -> {
                 Toast.makeText(LocalContext.current, "Update successfully", Toast.LENGTH_SHORT)
                     .show()
+                breakfastViewModel.resetUpdateRecordResponse()
             }
 
             is Response.Error -> {
                 Toast.makeText(LocalContext.current, "Update fail", Toast.LENGTH_SHORT).show()
+                breakfastViewModel.resetUpdateRecordResponse()
             }
 
             else -> { /* do nothing */
@@ -140,7 +144,11 @@ fun BreakfastScreen(
             Spacer(modifier = modifier.height(smallPadding))
             BreakfastOverviewNutrition(modifier = modifier, viewModel = breakfastViewModel)
             Spacer(modifier = modifier.height(midPadding))
-            MealRecord(modifier = modifier, viewModel = breakfastViewModel)
+            MealRecord(
+                modifier = modifier,
+                viewModel = breakfastViewModel,
+                navigateToDetailScreen = navigateToDetailScreen
+            )
         }
     }
 }
@@ -284,7 +292,11 @@ fun NutritionIndexItem(
 }
 
 @Composable
-private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
+private fun MealRecord(
+    modifier: Modifier,
+    viewModel: BreakfastViewModel,
+    navigateToDetailScreen: (mealRecordModel: MealRecordModel) -> Unit
+) {
 
     val uiState = viewModel.uiState.collectAsState()
 
@@ -313,11 +325,12 @@ private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
                         LazyColumn {
                             items(uiState.value.mealRecords.size) { i ->
                                 val item = uiState.value.mealRecords[i]
-                                MealRecordItem(
-                                    modifier = modifier,
+                                MealRecordItem(modifier = modifier,
                                     mealRecordModel = item,
-                                    viewModel = viewModel
-                                )
+                                    viewModel = viewModel,
+                                    navigateToDetailScreen = {
+                                        navigateToDetailScreen(item)
+                                    })
                             }
                         }
                     } else {
@@ -367,14 +380,18 @@ private fun MealRecord(modifier: Modifier, viewModel: BreakfastViewModel) {
 
 @Composable
 private fun MealRecordItem(
-    modifier: Modifier, mealRecordModel: MealRecordModel, viewModel: BreakfastViewModel
+    modifier: Modifier,
+    mealRecordModel: MealRecordModel,
+    viewModel: BreakfastViewModel,
+    navigateToDetailScreen: () -> Unit
 ) {
     Column {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = normalPadding)
-        ) {
+        Box(modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = normalPadding)
+            .clickable {
+                navigateToDetailScreen()
+            }) {
             Row(
                 modifier = modifier.align(Alignment.CenterStart),
                 verticalAlignment = Alignment.CenterVertically

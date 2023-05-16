@@ -343,7 +343,7 @@
             tools:layout="@layout/fragment_b_m_i" />
     </navigation>
 
-
+    <!-- Nutrition graph -->
     <navigation
         android:id="@+id/nutrition_graph"
         app:startDestination="@id/dailyNutritionFragment">
@@ -377,5 +377,13 @@
             android:name="com.vn.wecare.feature.food.addmeal.ui.AddMealFragment"
             android:label="fragment_add_meal"
             tools:layout="@layout/fragment_add_meal" />
+        <fragment
+            android:id="@+id/mealDetailFragment"
+            android:name="com.vn.wecare.feature.food.mealdetail.MealDetailFragment"
+            android:label="fragment_meal_detail"
+            tools:layout="@layout/fragment_meal_detail" />
+        <action
+            android:id="@+id/action_global_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
     </navigation>
 </navigation>

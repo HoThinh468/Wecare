@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.data.model.MealByNutrients
-import com.vn.wecare.feature.food.data.MealsRepository
-import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.food.data.MealsRepository
+import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,6 @@ import javax.inject.Inject
 
 data class AddMealUiState(
     val insertMealRecordResponse: Response<Boolean>? = null,
-    val breakfastMealList: List<MealByNutrients> = emptyList()
 )
 
 @HiltViewModel
@@ -76,21 +75,10 @@ class AddMealViewModel @Inject constructor(
 
     fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients) =
         viewModelScope.launch {
-            _uiState.update { it.copy(insertMealRecordResponse = Response.Loading) }
-            _uiState.update { it.copy() }
+//            _uiState.update { it.copy(insertMealRecordResponse = Response.Loading) }
             repository.insertMeal(dateTime, mealTypeKey, meal).collect { res ->
-                when (res) {
-                    Response.Success(true) -> {
-                        _uiState.update {
-                            it.copy(insertMealRecordResponse = res)
-                        }
-                    }
-
-                    else -> {
-                        _uiState.update {
-                            it.copy(insertMealRecordResponse = res)
-                        }
-                    }
+                _uiState.update {
+                    it.copy(insertMealRecordResponse = res)
                 }
             }
         }

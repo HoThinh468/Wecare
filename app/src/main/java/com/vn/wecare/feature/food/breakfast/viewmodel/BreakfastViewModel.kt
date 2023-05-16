@@ -49,11 +49,21 @@ class BreakfastViewModel @Inject constructor(
     private var mMonth = 0
     private var mYear = 0
 
-    fun initUiState() {
+    init {
+        initUiState()
+    }
+
+    private fun initUiState() {
         val calendar = Calendar.getInstance()
         mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
         mMonth = calendar.get(Calendar.MONTH)
         mYear = calendar.get(Calendar.YEAR)
+        updateDateTime(mDayOfMonth, mMonth, mYear)
+        getBreakfastMealList(mDayOfMonth, mMonth, mYear)
+        updateTargetNutrientsInformation()
+    }
+
+    fun reUpdateUiState() {
         updateDateTime(mDayOfMonth, mMonth, mYear)
         getBreakfastMealList(mDayOfMonth, mMonth, mYear)
         updateTargetNutrientsInformation()
@@ -105,6 +115,10 @@ class BreakfastViewModel @Inject constructor(
             }
         }
         getBreakfastMealList(mDayOfMonth, mMonth, mYear)
+    }
+
+    fun resetUpdateRecordResponse() {
+        _uiState.update { it.copy(updateMealRecordResponse = null) }
     }
 
     private fun updateTargetNutrientsInformation() = viewModelScope.launch {

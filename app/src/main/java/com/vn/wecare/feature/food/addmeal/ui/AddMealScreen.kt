@@ -101,9 +101,9 @@ fun AddMealScreen(
 
     uiState.value.insertMealRecordResponse.let {
         when (it) {
-            is Response.Loading -> {
-                LoadingDialog(loading = it == Response.Loading) {}
-            }
+//            is Response.Loading -> {
+//                LoadingDialog(loading = it == Response.Loading) {}
+//            }
 
             is Response.Success -> {
                 Toast.makeText(LocalContext.current, "Add meal successfully!", Toast.LENGTH_SHORT)
@@ -133,7 +133,6 @@ fun AddMealScreen(
                 tabRowItems = tabRowItems,
                 coroutineScope = coroutineScope,
                 navigateUp = navigateUp,
-                viewModel = addMealViewModel
             )
         }) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -144,22 +143,24 @@ fun AddMealScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 userScrollEnabled = false
             ) {
-//                MealsGridView(
-//                    modifier = modifier,
+                MealsGridView(
+                    modifier = modifier,
 //                    mealList = when (pagerState.currentPage) {
 //                        0 -> meals[0]
 //                        1 -> meals[1]
 //                        2 -> meals[2]
 //                        else -> meals[3]
 //                    },
-//                    addMealViewModel = addMealViewModel,
-//                    mealTypeKey = when (pagerState.currentPage) {
-//                        0 -> MealTypeKey.BREAKFAST
-//                        1 -> MealTypeKey.LUNCH
-//                        2 -> MealTypeKey.SNACK
-//                        else -> MealTypeKey.DINNER
-//                    }
-//                )
+                    mealList = addMealViewModel.getBreakfastMealsByNutrients()
+                        .collectAsLazyPagingItems(),
+                    addMealViewModel = addMealViewModel,
+                    mealTypeKey = when (pagerState.currentPage) {
+                        0 -> MealTypeKey.BREAKFAST
+                        1 -> MealTypeKey.LUNCH
+                        2 -> MealTypeKey.SNACK
+                        else -> MealTypeKey.DINNER
+                    }
+                )
             }
         }
     }
@@ -173,19 +174,7 @@ private fun AddMealAppBar(
     tabRowItems: List<String>,
     navigateUp: () -> Unit,
     coroutineScope: CoroutineScope,
-    viewModel: AddMealViewModel
 ) {
-
-    val meal = MealByNutrients(
-        id = 2,
-        title = "Food",
-        calories = 100,
-        protein = "10",
-        imgUrl = "urlImg",
-        fat = "12",
-        carbs = "11",
-        imageType = "png"
-    )
 
     Column(modifier = modifier.fillMaxWidth()) {
         WecareAppBar(modifier = modifier,
@@ -193,7 +182,6 @@ private fun AddMealAppBar(
             onLeadingIconPress = navigateUp,
             trailingIconRes = R.drawable.ic_search,
             onTrailingIconPress = {
-//                viewModel.insertMealRecord(Calendar.getInstance(), MealTypeKey.BREAKFAST, meal)
             })
 
         TabRow(
