@@ -25,8 +25,8 @@ class AddMealFragment : BaseBindingFragment<FragmentAddMealBinding>(
             val meals = listOf(
                 addMealViewModel.breakFastMealList.collectAsLazyPagingItems(),
                 addMealViewModel.getLunchMealsByNutrients().collectAsLazyPagingItems(),
-//                addMealViewModel.getSnackMealsByNutrients().collectAsLazyPagingItems(),
-//                addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
+                addMealViewModel.getSnackMealsByNutrients().collectAsLazyPagingItems(),
+                addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
             )
             AddMealScreen(navigateUp = {
                 findNavController().popBackStack()

@@ -362,6 +362,12 @@
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_lunchFragment"
                 app:destination="@id/lunchFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_snackFragment"
+                app:destination="@id/snackFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_dinnerFragment"
+                app:destination="@id/dinnerFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
@@ -389,5 +395,15 @@
             android:name="com.vn.wecare.feature.food.lunch.LunchFragment"
             android:label="fragment_lunch"
             tools:layout="@layout/fragment_lunch" />
+        <fragment
+            android:id="@+id/snackFragment"
+            android:name="com.vn.wecare.feature.food.snack.SnackFragment"
+            android:label="fragment_snack"
+            tools:layout="@layout/fragment_snack" />
+        <fragment
+            android:id="@+id/dinnerFragment"
+            android:name="com.vn.wecare.feature.food.dinner.DinnerFragment"
+            android:label="fragment_dinner"
+            tools:layout="@layout/fragment_dinner" />
     </navigation>
 </navigation>
