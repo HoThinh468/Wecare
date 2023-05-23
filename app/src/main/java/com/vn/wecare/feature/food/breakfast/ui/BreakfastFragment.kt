@@ -25,16 +25,21 @@ class BreakfastFragment : BaseBindingFragment<FragmentBreakfastBinding>(
         super.setupComposeView(
             binding.breakfastComposeView
         ) {
-            BreakfastScreen(navigateUp = {
-                findNavController().popBackStack()
-            }, moveToAddMealScreen = {
-                findNavController().navigate(R.id.action_global_addMealFragment)
-            }, breakfastViewModel = breakfastViewModel, navigateToDetailScreen = { meal ->
-                val bundle = Bundle()
-                bundle.putParcelable(MEAL_RECORD, meal)
-                bundle.putSerializable(MEAL_KEY, MealTypeKey.BREAKFAST)
-                findNavController().navigate(R.id.action_global_mealDetailFragment, bundle)
-            })
+            BreakfastScreen(
+                navigateUp = {
+                    findNavController().popBackStack()
+                },
+                moveToAddMealScreen = {
+                    findNavController().navigate(R.id.action_global_addMealFragment)
+                },
+                breakfastViewModel = breakfastViewModel,
+                navigateToDetailScreen = { meal ->
+                    val bundle = Bundle()
+                    bundle.putParcelable(MEAL_RECORD, meal)
+                    bundle.putSerializable(MEAL_KEY, MealTypeKey.BREAKFAST)
+                    findNavController().navigate(R.id.action_global_mealDetailFragment, bundle)
+                },
+            )
         }
     }
 }

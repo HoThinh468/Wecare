@@ -30,7 +30,6 @@ import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -116,13 +115,11 @@ private fun NutritionAppbar(modifier: Modifier) {
                     text = "Wed, 1 May", style = MaterialTheme.typography.h3
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Default.BarChart,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-            }
+            Image(
+                modifier = modifier.height(64.dp),
+                painter = painterResource(id = R.drawable.img_hamburger),
+                contentDescription = null
+            )
         }
     }
 }
