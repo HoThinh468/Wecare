@@ -32,7 +32,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -117,21 +116,12 @@ private fun NutritionAppbar(modifier: Modifier) {
                     text = "Wed, 1 May", style = MaterialTheme.typography.h3
                 )
             }
-            Row {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.BarChart,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                }
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.BarChart,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
             }
         }
     }

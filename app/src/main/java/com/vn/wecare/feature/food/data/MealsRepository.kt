@@ -2,6 +2,7 @@ package com.vn.wecare.feature.food.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.data.datasource.MealRecordDataSource
 import com.vn.wecare.feature.food.data.datasource.MealsPagingSource
@@ -11,6 +12,7 @@ import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 import javax.inject.Inject
@@ -37,4 +39,19 @@ class MealsRepository @Inject constructor(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
     ): Flow<Response<List<MealRecordModel>?>> =
         remoteDataSource.getAllMealsOfTypeInDayWithDayId(dayOfMonth, month, year, mealTypeKey)
+
+    suspend fun updateMealRecordQuantity(
+        dayOfMonth: Int,
+        month: Int,
+        year: Int,
+        mealTypeKey: MealTypeKey,
+        mealId: Long,
+        quantity: Int
+    ): Flow<Response<Boolean>?> =
+        remoteDataSource.updateQuantity(dayOfMonth, month, year, mealTypeKey, mealId, quantity)
+
+    suspend fun deleteMealRecord(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey, mealId: Long
+    ): Flow<Response<Boolean>?> =
+        remoteDataSource.delete(dayOfMonth, month, year, mealTypeKey, mealId)
 }

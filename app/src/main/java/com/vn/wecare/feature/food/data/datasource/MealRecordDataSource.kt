@@ -13,11 +13,22 @@ interface MealRecordDataSource {
         dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealRecordModel
     ): Flow<Response<Boolean>?>
 
-    suspend fun delete(meal: MealByNutrients)
+    suspend fun delete(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey, mealId: Long
+    ): Flow<Response<Boolean>?>
 
     suspend fun getMealWithId(dateTime: Calendar, id: Long): Flow<Response<MealByNutrients?>>
 
     suspend fun getAllMealsOfTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
     ): Flow<Response<List<MealRecordModel>?>>
+
+    suspend fun updateQuantity(
+        dayOfMonth: Int,
+        month: Int,
+        year: Int,
+        mealTypeKey: MealTypeKey,
+        mealId: Long,
+        quantity: Int
+    ): Flow<Response<Boolean>?>
 }

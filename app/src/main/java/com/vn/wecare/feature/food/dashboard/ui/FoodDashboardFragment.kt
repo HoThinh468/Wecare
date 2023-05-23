@@ -10,7 +10,6 @@ import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentDailyNutritionBinding
 import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.utils.safeNavigate
-import com.vn.wecare.utils.safeNavigateWithBundle
 
 class FoodDashboardFragment :
     BaseBindingFragment<FragmentDailyNutritionBinding>(FragmentDailyNutritionBinding::inflate) {
@@ -21,25 +20,22 @@ class FoodDashboardFragment :
         super.setupComposeView(
             binding.dailyNutritionComposeView
         ) {
-            NutritionDashboardScreen(
-                moveToBreakfastScreen = {
-                    findNavController().safeNavigate(
-                        R.id.dailyNutritionFragment,
-                        R.id.action_dailyNutritionFragment_to_breakfastFragment
-                    )
-                },
-                moveToLunchScreen = {},
-                moveToSnackScreen = {},
-                moveToDinnerScreen = {},
-                moveToAddMealScreen = {
-                    val bundle = bundleOf(KEY_FOR_INDEX_OF_MEAL to it)
-                    findNavController().safeNavigateWithBundle(
-                        R.id.dailyNutritionFragment,
-                        R.id.action_dailyNutritionFragment_to_addMealFragment,
-                        bundle
-                    )
-                },
-                nutritionDashboardViewmodel = viewModel
+            NutritionDashboardScreen(moveToBreakfastScreen = {
+                findNavController().safeNavigate(
+                    R.id.dailyNutritionFragment,
+                    R.id.action_dailyNutritionFragment_to_breakfastFragment
+                )
+            }, moveToLunchScreen = {
+                findNavController().safeNavigate(
+                    R.id.dailyNutritionFragment,
+                    R.id.action_dailyNutritionFragment_to_lunchFragment
+                )
+            }, moveToSnackScreen = {}, moveToDinnerScreen = {}, moveToAddMealScreen = {
+                val bundle = bundleOf(KEY_FOR_INDEX_OF_MEAL to it)
+                findNavController().navigate(
+                    R.id.action_global_addMealFragment, bundle
+                )
+            }, nutritionDashboardViewmodel = viewModel
             )
         }
     }
