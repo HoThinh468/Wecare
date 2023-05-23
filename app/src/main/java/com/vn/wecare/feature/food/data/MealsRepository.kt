@@ -2,6 +2,7 @@ package com.vn.wecare.feature.food.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.data.datasource.MealRecordDataSource
 import com.vn.wecare.feature.food.data.datasource.MealsPagingSource
@@ -11,6 +12,7 @@ import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 import javax.inject.Inject

@@ -99,14 +99,14 @@ private fun MealOverview(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        HeaderItem(
+        NutrientSubInfoItem(
             modifier = modifier,
             icon = Icons.Default.LocalFireDepartment,
             color = Red400,
             index = "${record.calories} cal"
         )
         Spacer(modifier = modifier.width(normalPadding))
-        HeaderItem(
+        NutrientSubInfoItem(
             modifier = modifier,
             icon = Icons.Default.BreakfastDining,
             color = MaterialTheme.colors.primary,
@@ -127,7 +127,7 @@ private fun MealOverview(
 }
 
 @Composable
-private fun HeaderItem(
+fun NutrientSubInfoItem(
     modifier: Modifier, icon: ImageVector, color: Color, index: String,
 ) {
     Card(

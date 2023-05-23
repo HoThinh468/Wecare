@@ -10,7 +10,6 @@ import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentBreakfastBinding
 import com.vn.wecare.feature.food.breakfast.viewmodel.BreakfastViewModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.utils.safeNavigate
 
 const val MEAL_KEY = "MEAL_KEY"
 const val MEAL_RECORD = "MEAL_RECORD"
@@ -28,19 +27,14 @@ class BreakfastFragment : BaseBindingFragment<FragmentBreakfastBinding>(
         ) {
             BreakfastScreen(navigateUp = {
                 findNavController().popBackStack()
-            },
-                moveToAddMealScreen = {
-                    findNavController().safeNavigate(
-                        R.id.breakfastFragment, R.id.action_breakfastFragment_to_addMealFragment
-                    )
-                },
-                breakfastViewModel = breakfastViewModel,
-                navigateToDetailScreen = { meal ->
-                    val bundle = Bundle()
-                    bundle.putParcelable(MEAL_RECORD, meal)
-                    bundle.putSerializable(MEAL_KEY, MealTypeKey.BREAKFAST)
-                    findNavController().navigate(R.id.action_global_mealDetailFragment, bundle)
-                })
+            }, moveToAddMealScreen = {
+                findNavController().navigate(R.id.action_global_addMealFragment)
+            }, breakfastViewModel = breakfastViewModel, navigateToDetailScreen = { meal ->
+                val bundle = Bundle()
+                bundle.putParcelable(MEAL_RECORD, meal)
+                bundle.putSerializable(MEAL_KEY, MealTypeKey.BREAKFAST)
+                findNavController().navigate(R.id.action_global_mealDetailFragment, bundle)
+            })
         }
     }
 }

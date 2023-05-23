@@ -360,18 +360,14 @@
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
             <action
-                android:id="@+id/action_dailyNutritionFragment_to_addMealFragment"
-                app:destination="@id/addMealFragment"/>
+                android:id="@+id/action_dailyNutritionFragment_to_lunchFragment"
+                app:destination="@id/lunchFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
             android:name="com.vn.wecare.feature.food.breakfast.ui.BreakfastFragment"
             android:label="fragment_breakfast"
-            tools:layout="@layout/fragment_breakfast">
-            <action
-                android:id="@+id/action_breakfastFragment_to_addMealFragment"
-                app:destination="@id/addMealFragment" />
-        </fragment>
+            tools:layout="@layout/fragment_breakfast"/>
         <fragment
             android:id="@+id/addMealFragment"
             android:name="com.vn.wecare.feature.food.addmeal.ui.AddMealFragment"
@@ -385,5 +381,13 @@
         <action
             android:id="@+id/action_global_mealDetailFragment"
             app:destination="@id/mealDetailFragment" />
+        <action
+            android:id="@+id/action_global_addMealFragment"
+            app:destination="@id/addMealFragment" />
+        <fragment
+            android:id="@+id/lunchFragment"
+            android:name="com.vn.wecare.feature.food.lunch.LunchFragment"
+            android:label="fragment_lunch"
+            tools:layout="@layout/fragment_lunch" />
     </navigation>
 </navigation>
