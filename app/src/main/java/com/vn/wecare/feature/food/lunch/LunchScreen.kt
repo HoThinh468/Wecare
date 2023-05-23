@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.breakfast.ui
+package com.vn.wecare.feature.food.lunch
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.breakfast.viewmodel.BreakfastViewModel
 import com.vn.wecare.feature.food.common.AddMealButton
 import com.vn.wecare.feature.food.common.MealRecordSection
 import com.vn.wecare.feature.food.common.MealTypeOverviewNutrition
@@ -27,15 +26,15 @@ import com.vn.wecare.utils.common_composable.WecareAppBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BreakfastScreen(
+fun LunchScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    moveToAddMealScreen: () -> Unit,
-    breakfastViewModel: BreakfastViewModel,
-    navigateToDetailScreen: (mealRecordModel: MealRecordModel) -> Unit
+    moveToAddMealScreen: (index: Int) -> Unit,
+    navigateToDetailScreen: (meal: MealRecordModel) -> Unit,
+    viewModel: LunchViewModel
 ) {
 
-    val uiState = breakfastViewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
 
     uiState.value.updateMealRecordResponse.let {
         when (it) {
@@ -46,12 +45,12 @@ fun BreakfastScreen(
             is Response.Success -> {
                 Toast.makeText(LocalContext.current, "Update successfully", Toast.LENGTH_SHORT)
                     .show()
-                breakfastViewModel.resetUpdateRecordResponse()
+                viewModel.resetUpdateRecordResponse()
             }
 
             is Response.Error -> {
                 Toast.makeText(LocalContext.current, "Update fail", Toast.LENGTH_SHORT).show()
-                breakfastViewModel.resetUpdateRecordResponse()
+                viewModel.resetUpdateRecordResponse()
             }
 
             else -> { /* do nothing */
@@ -63,12 +62,12 @@ fun BreakfastScreen(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
             WecareAppBar(
-                modifier = modifier, title = "Breakfast", onLeadingIconPress = navigateUp
+                modifier = modifier, title = "Lunch", onLeadingIconPress = navigateUp
             )
         },
         bottomBar = {
-            AddMealButton(modifier = modifier, isEnable = uiState.value.isAddMealEnable) {
-                moveToAddMealScreen()
+            AddMealButton(modifier = modifier, isEnable = true) {
+                moveToAddMealScreen(1)
             }
         }) {
         Column(
@@ -81,16 +80,16 @@ fun BreakfastScreen(
             MealTypeOverviewNutrition(
                 modifier = modifier,
                 mealUiState = uiState.value,
-                onDateChangeListener = breakfastViewModel::onDateChangeListener
+                onDateChangeListener = viewModel::onDateChangeListener
             )
             Spacer(modifier = modifier.height(midPadding))
             MealRecordSection(
                 modifier = modifier,
                 mealUiState = uiState.value,
                 navigateToDetailScreen = navigateToDetailScreen,
-                deleteMealRecord = breakfastViewModel::deleteMealRecord,
-                onMinusClick = breakfastViewModel::onMealRecordItemMinusClick,
-                onAddClick = breakfastViewModel::onMealRecordItemPlusClick
+                deleteMealRecord = viewModel::deleteMealRecord,
+                onMinusClick = viewModel::onMealRecordItemMinusClick,
+                onAddClick = viewModel::onMealRecordItemPlusClick
             )
         }
     }
