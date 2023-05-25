@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.food.dashboard.ui
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -38,9 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardUiState
 import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.ui.theme.Blue
@@ -54,6 +57,7 @@ import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -69,9 +73,28 @@ fun NutritionDashboardScreen(
 ) {
     val uiState = nutritionDashboardViewmodel.uiState.collectAsState()
 
+    uiState.value.updateState.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Update successfully!", Toast.LENGTH_SHORT).show()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(LocalContext.current, "Update fail!", Toast.LENGTH_SHORT).show()
+            }
+
+            else -> { // do nothing
+            }
+        }
+    }
+
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
-        topBar = { NutritionAppbar(modifier = modifier) }) {
+        topBar = { NutritionAppbar(modifier = modifier, dateTime = uiState.value.dateTime) }) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -79,7 +102,14 @@ fun NutritionDashboardScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = modifier.height(4.dp))
-            NutritionOverview(modifier = modifier, uiState = uiState.value)
+            NutritionOverview(
+                modifier = modifier,
+                uiState = uiState.value,
+                currentCalories = nutritionDashboardViewmodel.totalCalories,
+                currentProtein = nutritionDashboardViewmodel.totalProtein,
+                currentFat = nutritionDashboardViewmodel.totalFat,
+                currentCarbs = nutritionDashboardViewmodel.totalCarbs
+            )
             Spacer(modifier = modifier.height(normalPadding))
             AddMeals(
                 modifier = modifier,
@@ -96,7 +126,9 @@ fun NutritionDashboardScreen(
 }
 
 @Composable
-private fun NutritionAppbar(modifier: Modifier) {
+private fun NutritionAppbar(
+    modifier: Modifier, dateTime: String
+) {
     Column(
         modifier
             .fillMaxWidth()
@@ -112,7 +144,7 @@ private fun NutritionAppbar(modifier: Modifier) {
                     text = "Today", style = MaterialTheme.typography.body2
                 )
                 Text(
-                    text = "Wed, 1 May", style = MaterialTheme.typography.h3
+                    text = dateTime, style = MaterialTheme.typography.h3
                 )
             }
             Image(
@@ -126,12 +158,17 @@ private fun NutritionAppbar(modifier: Modifier) {
 
 @Composable
 private fun NutritionOverview(
-    modifier: Modifier, uiState: NutritionDashboardUiState
+    modifier: Modifier,
+    uiState: NutritionDashboardUiState,
+    currentCalories: Int,
+    currentProtein: Int,
+    currentFat: Int,
+    currentCarbs: Int,
 ) {
 
     val progressAnimationValue by animateFloatAsState(
         targetValue = getProgressInFloatWithIntInput(
-            uiState.currentCaloriesAmount, uiState.targetCaloriesAmount
+            currentCalories, uiState.targetCaloriesAmount
         ), animationSpec = tween(1000)
     )
 
@@ -165,7 +202,7 @@ private fun NutritionOverview(
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${uiState.currentCaloriesAmount}",
+                        text = "$currentCalories",
                         style = MaterialTheme.typography.h1
                     )
                     Text(
@@ -183,7 +220,7 @@ private fun NutritionOverview(
                 NutritionOverviewItem(
                     modifier = modifier,
                     title = "Protein",
-                    index = uiState.currentProteinIndex,
+                    index = currentProtein,
                     target = uiState.targetProteinIndex,
                     color = Red400
                 )
@@ -191,7 +228,7 @@ private fun NutritionOverview(
                 NutritionOverviewItem(
                     modifier = modifier,
                     title = "Fat",
-                    index = uiState.currentFatIndex,
+                    index = currentFat,
                     target = uiState.targetFatIndex,
                     color = Yellow
                 )
@@ -199,7 +236,7 @@ private fun NutritionOverview(
                 NutritionOverviewItem(
                     modifier = modifier,
                     title = "Carbs",
-                    index = uiState.currentCarbsIndex,
+                    index = currentCarbs,
                     target = uiState.targetCarbsIndex,
                     color = Blue
                 )

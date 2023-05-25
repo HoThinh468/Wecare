@@ -51,6 +51,10 @@ fun String.passwordMatches(repeated: String): Boolean {
     return this == repeated
 }
 
+fun String.getNutrientIndexFromString(): Int {
+    return this.dropLast(1).toInt()
+}
+
 fun getMonthPrefix(month: Int): String {
     return when (month) {
         1 -> "Jan"
