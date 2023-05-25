@@ -17,6 +17,7 @@ class FoodDashboardFragment :
     private val viewModel: NutritionDashboardViewmodel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        viewModel.initUiState()
         super.setupComposeView(
             binding.dailyNutritionComposeView
         ) {
@@ -54,6 +55,11 @@ class FoodDashboardFragment :
                 nutritionDashboardViewmodel = viewModel,
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.resetNutrientIndex()
     }
 
     companion object {
