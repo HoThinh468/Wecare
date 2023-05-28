@@ -5,7 +5,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_REQUEST_CODE
 import com.vn.wecare.core.alarm.IN_EXACT_ALARM_REQUEST_CODE
 import com.vn.wecare.core.alarm.InExactAlarms
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -13,10 +12,10 @@ import javax.inject.Inject
 
 const val ALARM_REQUEST_CODE_EXTRA = "alarm_request_code_extra"
 
-const val IS_STEP_COUNT_INEXACT_ALARM_SET = "is_set"
+const val IS_STEP_COUNT_INEXACT_ALARM_SET = "is_in_exact_alarm_set"
 
 class StepCountInExactAlarms @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : InExactAlarms {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

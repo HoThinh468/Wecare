@@ -124,13 +124,13 @@ fun Overview(
                 modifier = modifier.padding(bottom = normalPadding)
             ) {
                 CircularProgressAnimated(
-                    size = 200.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
+                    size = 180.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.currentSteps.toFloat(),
                         stepsCountUiState.stepGoal.toFloat()
                     ), indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
-                    size = 160.dp,
+                    size = 140.dp,
                     color = colorResource(id = R.color.Red400),
                     currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.caloConsumed.toFloat(),
@@ -139,7 +139,7 @@ fun Overview(
                     indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
-                    size = 120.dp,
+                    size = 100.dp,
                     color = colorResource(id = R.color.Blue400),
                     currentValue = viewModel.getProgressWithIndexAndGoal(
                         stepsCountUiState.moveMin.toFloat(),
@@ -158,21 +158,21 @@ fun Overview(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 StepCountIndexItem(
-                    iconRes = R.drawable.ic_step,
-                    titleRes = R.string.footstep_title,
-                    iconColorRes = R.color.Green500,
-                    index = stepsCountUiState.currentSteps,
-                    goal = stepsCountUiState.stepGoal,
-                    unitRes = null,
-                    modifier = modifier
-                )
-                StepCountIndexItem(
                     iconRes = R.drawable.ic_fire_calo,
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
                     index = stepsCountUiState.caloConsumed,
                     goal = stepsCountUiState.caloriesBurnedGoal,
                     unitRes = R.string.calo_unit,
+                    modifier = modifier
+                )
+                StepCountIndexItem(
+                    iconRes = R.drawable.ic_step,
+                    titleRes = R.string.footstep_title,
+                    iconColorRes = R.color.Green500,
+                    index = stepsCountUiState.currentSteps,
+                    goal = stepsCountUiState.stepGoal,
+                    unitRes = null,
                     modifier = modifier
                 )
                 StepCountIndexItem(
@@ -204,6 +204,7 @@ fun StepCountIndexItem(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
+                modifier = modifier.size(16.dp),
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
                 tint = colorResource(
@@ -212,13 +213,13 @@ fun StepCountIndexItem(
             )
             Spacer(modifier = modifier.width(4.dp))
             Text(
-                text = stringResource(id = titleRes), style = MaterialTheme.typography.body1
+                text = stringResource(id = titleRes), style = MaterialTheme.typography.body2
             )
         }
-        Text(text = index.toString(), style = MaterialTheme.typography.h2)
+        Text(text = index.toString(), style = MaterialTheme.typography.h3)
         Text(
             text = if (unitRes == null) "/$goal" else "/$goal " + stringResource(id = unitRes),
-            style = MaterialTheme.typography.h4.copy(
+            style = MaterialTheme.typography.body1.copy(
                 color = colorResource(id = R.color.Black450)
             )
         )

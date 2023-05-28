@@ -13,7 +13,7 @@ import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
-import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorSteps
+import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorStepsUsecase
 import com.vn.wecare.feature.home.water.tracker.usecase.RefreshWaterLocalDbUsecase
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
     private val saveUserToDbUsecase: SaveUserToDbUsecase,
     private val updateWecareUserUsecase: UpdateWecareUserUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
-    private val updatePreviousTotalSensorSteps: UpdatePreviousTotalSensorSteps,
+    private val updatePreviousTotalSensorStepsUsecase: UpdatePreviousTotalSensorStepsUsecase,
     private val refreshWaterLocalDbUsecase: RefreshWaterLocalDbUsecase
 ) : ViewModel() {
 

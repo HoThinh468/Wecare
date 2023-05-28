@@ -142,7 +142,7 @@ class WaterViewModel @Inject constructor(
             val progress =
                 _uiState.value.currentIndex.toFloat() / _uiState.value.targetAmount.toFloat()
             _uiState.update { it.copy(progress = progress) }
-        }
+        } else _uiState.update { it.copy(progress = 1f) }
     }
 
     private fun generateRecordId(time: Calendar): String {

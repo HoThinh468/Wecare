@@ -3,7 +3,6 @@ package com.vn.wecare.feature.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,8 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
 import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
@@ -53,19 +50,6 @@ fun HomeScreen(
     bmiViewModel: BMIViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
-
-//    val homeUiState = homeViewModel.homeUIState.collectAsState()
-//
-//    homeUiState.value.let {
-//        if (!it.hasUser) {
-//            moveToAuthenticationScreen()
-//            homeViewModel.resetUserNull()
-//        }
-//        if (it.isAdditionInfoMissing) {
-//            moveToOnboardingScreen()
-//            homeViewModel.resetUserAdditionalInformationRes()
-//        }
-//    }
 
     Scaffold(modifier = modifier
         .fillMaxSize()
@@ -164,7 +148,7 @@ fun TrainingNow(
             ) {
                 CustomOutlinedIconButton(modifier = modifier,
                     iconRes = R.drawable.ic_walk,
-                    onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid) })
+                    onClick = { })
                 CustomOutlinedIconButton(
                     modifier = modifier, iconRes = R.drawable.ic_run, onClick = onRunningIcClick
                 )

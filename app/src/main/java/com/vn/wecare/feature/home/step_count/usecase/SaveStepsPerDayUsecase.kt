@@ -3,6 +3,8 @@ package com.vn.wecare.feature.home.step_count.usecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerDayRepository
+import com.vn.wecare.feature.home.step_count.getCaloriesBurnedFromStepCount
+import com.vn.wecare.feature.home.step_count.getMoveTimeFromStepCount
 import com.vn.wecare.utils.getCurrentDayId
 import javax.inject.Inject
 
@@ -15,8 +17,8 @@ class SaveStepsPerDayUsecase @Inject constructor(
             getCurrentDayId(),
             accountService.currentUserId,
             steps.toInt(),
-            (steps * 0.04).toInt(),
-            (steps * 0.01).toInt()
+            steps.getCaloriesBurnedFromStepCount(),
+            steps.getMoveTimeFromStepCount()
         )
         stepsPerDayRepository.insertStepsPerDay(stepsPerDay)
     }

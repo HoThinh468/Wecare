@@ -32,9 +32,9 @@ data class StepsCountUiState(
     val selectedDay: String = "",
     val hasData: Boolean = true,
     val hoursList: MutableList<StepsPerHour> = mutableListOf(),
-    val stepGoal: Int = 6000,
-    val caloriesBurnedGoal: Int = (6000 * 0.04).toInt(),
-    val moveTimeGoal: Int = (6000 * 0.01).toInt()
+    val stepGoal: Int = 0,
+    val caloriesBurnedGoal: Int = 0,
+    val moveTimeGoal: Int = 0
 )
 
 @HiltViewModel
@@ -52,26 +52,28 @@ class StepCountViewModel @Inject constructor(
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
     init {
-        if (accountService.hasUser) {
-            val currentDate = LocalDate.now()
-            updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
-            updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
-            updateStepsPerDayWithHours(
-                currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
-            )
-            initializeGoalIndex()
-        }
+        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
     }
 
     private val hoursList = mutableListOf<StepsPerHour>()
+
+    fun initUIState() {
+        val currentDate = LocalDate.now()
+        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
+        updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
+        updateStepsPerDayWithHours(
+            currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
+        )
+        initializeGoalIndex()
+    }
 
     fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
         getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
             _stepsCountUiState.update {
                 it.copy(
                     currentSteps = steps.toInt(),
-                    caloConsumed = (steps * 0.04).toInt(),
-                    moveMin = (steps * 0.01).toInt(),
+                    caloConsumed = steps.getCaloriesBurnedFromStepCount(),
+                    moveMin = steps.getMoveTimeFromStepCount(),
                     hasData = true
                 )
             }
@@ -143,8 +145,14 @@ class StepCountViewModel @Inject constructor(
     }
 
     fun updateGoal(stepGoal: Int) {
+        val uiState = _stepsCountUiState.value
         viewModelScope.launch {
-            saveGoalsToFirebaseUsecase.saveGoalsToFirebase(accountService.currentUserId, stepGoal)
+            saveGoalsToFirebaseUsecase.saveGoalsToFirebase(
+                accountService.currentUserId,
+                stepGoal,
+                uiState.caloriesBurnedGoal,
+                uiState.moveTimeGoal
+            )
         }
         initializeGoalIndex()
     }

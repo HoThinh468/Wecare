@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "goals")
 data class Goals(
     @PrimaryKey val userId: String = "",
-    val stepsGoal: Int = 6000,
-    val caloriesBurnedGoal: Int = (6000 * 0.04).toInt(),
-    val moveTimeGoal: Int = (6000 * 0.01).toInt()
+    val stepsGoal: Int = 0,
+    val caloriesBurnedGoal: Int = 0,
+    val moveTimeGoal: Int = 0
 )

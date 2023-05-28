@@ -1,20 +1,14 @@
 package com.vn.wecare.feature.home.step_count.usecase
 
-import android.content.SharedPreferences
-import androidx.compose.runtime.mutableStateOf
-import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
-import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerDayRepository
-import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
-import com.vn.wecare.feature.home.step_count.di.StepCountSharePref
-import com.vn.wecare.utils.getCurrentDayId
-import com.vn.wecare.utils.getCurrentHourId
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
 class StepCountUsecase @Inject constructor(
-    @StepCountSharePref private val sharedPreferences: SharedPreferences,
     private val stepsPerDayRepository: StepsPerDayRepository
 ) {
 

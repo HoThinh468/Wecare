@@ -4,10 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import com.vn.wecare.core.alarm.ExactAlarms
-import com.vn.wecare.core.checkInternetConnection
-import com.vn.wecare.feature.home.HomeFragment
 import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.step_count.usecase.*
 import dagger.hilt.android.AndroidEntryPoint

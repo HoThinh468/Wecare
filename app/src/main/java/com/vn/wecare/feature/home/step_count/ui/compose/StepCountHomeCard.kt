@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.ui.theme.*
-import com.vn.wecare.utils.common_composable.CircularProgressAnimated
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,54 +31,22 @@ fun FootStepCountHomeCard(
         shape = Shapes.medium,
         onClick = onCardClick
     ) {
-        Row(
+        Column(
             modifier = modifier
                 .heightIn()
                 .fillMaxWidth()
-                .padding(horizontal = normalPadding, vertical = midPadding),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(normalPadding)
         ) {
-            Box(
-                contentAlignment = Alignment.BottomCenter, modifier = modifier.weight(1f)
+            Text(
+                modifier = modifier.fillMaxWidth(),
+                text = "Pedometers",
+                style = MaterialTheme.typography.h5,
+            )
+            Spacer(modifier = modifier.height(normalPadding))
+            Row(
+                modifier = modifier.fillMaxSize().padding(horizontal = normalPadding),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CircularProgressAnimated(
-                    size = 160.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.currentSteps.toFloat(),
-                        stepsCountUiState.stepGoal.toFloat()
-                    ), indicatorThickness = 15.dp
-                )
-                CircularProgressAnimated(
-                    size = 130.dp,
-                    color = colorResource(id = R.color.Red400),
-                    currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.caloConsumed.toFloat(),
-                        stepsCountUiState.caloriesBurnedGoal.toFloat()
-                    ),
-                    indicatorThickness = 15.dp
-                )
-                CircularProgressAnimated(
-                    size = 100.dp,
-                    color = colorResource(id = R.color.Blue400),
-                    currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.moveMin.toFloat(),
-                        stepsCountUiState.moveTimeGoal.toFloat()
-                    ),
-                    indicatorThickness = 15.dp
-                )
-            }
-            Column(
-                modifier = modifier
-                    .weight(1f)
-                    .padding(start = halfMidPadding)
-            ) {
-                FootstepCountOverviewItem(
-                    iconRes = R.drawable.ic_step,
-                    iconColorRes = R.color.Green500,
-                    index = stepsCountUiState.currentSteps,
-                    unitRes = R.string.footstep_unit,
-                    modifier = modifier
-                )
-                Spacer(modifier = modifier.height(smallPadding))
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_fire_calo,
                     iconColorRes = R.color.Red400,
@@ -87,7 +54,13 @@ fun FootStepCountHomeCard(
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
-                Spacer(modifier = modifier.height(smallPadding))
+                FootstepCountOverviewItem(
+                    iconRes = R.drawable.ic_step,
+                    iconColorRes = R.color.Green500,
+                    index = stepsCountUiState.currentSteps,
+                    unitRes = R.string.footstep_unit,
+                    modifier = modifier
+                )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_time_clock,
                     iconColorRes = R.color.Blue400,
@@ -108,12 +81,12 @@ fun FootstepCountOverviewItem(
     index: Int,
     modifier: Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.Bottom
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             modifier = modifier
-                .padding(end = smallPadding)
+                .padding(bottom = 4.dp)
                 .size(iconSize),
             painter = painterResource(id = iconRes),
             contentDescription = null,

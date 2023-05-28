@@ -21,12 +21,16 @@ class StepCountFragment :
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        stepCountViewModel.initUIState()
         super.setupComposeView(
             binding.stepCountComposeView
         ) {
             val currentDate = LocalDate.now()
-            stepCountViewModel.updateStepsPerDayWithHours(currentDate.year, currentDate.monthValue, currentDate.dayOfMonth)
-            StepCountScreen(navigateUp = { findNavController().popBackStack() },
+            stepCountViewModel.updateStepsPerDayWithHours(
+                currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
+            )
+            StepCountScreen(
+                navigateUp = { findNavController().popBackStack() },
                 stepCountViewModel = stepCountViewModel
             )
         }
