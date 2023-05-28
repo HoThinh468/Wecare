@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         navView.setupWithNavController(setUpNavController())
 
         hideBottomNavBar(setUpNavController())
+//        Kommunicate.init(this, "31b15638bfbbbc21ae6b0020e64f3fe9f");
     }
 
     override fun onResume() {

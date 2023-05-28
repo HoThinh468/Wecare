@@ -34,6 +34,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Forum
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,7 +80,8 @@ fun PreviewScreen() {
         onNavigateToStrength ={},
         onNavigateToFlexibility = {},
         onNavigateToBalance = {},
-        onNavigateToFullBody = {}
+        onNavigateToFullBody = {},
+        onNavigateToChatBox = {}
     )
 }
 
@@ -93,6 +95,7 @@ fun ExercisesScreen(
     onNavigateToBalance: () -> Unit,
     onNavigateToFlexibility: () -> Unit,
     onNavigateToFullBody: () -> Unit,
+    onNavigateToChatBox: () -> Unit,
     auth: FirebaseAuth = Firebase.auth
 ) {
     Scaffold(
@@ -125,6 +128,17 @@ fun ExercisesScreen(
                     }
                 ) {
                     Icon(Icons.Default.Assessment, "", tint = Color.Black)
+                }
+                IconButton(
+                    modifier = modifier
+                        .width(32.dp)
+                        .height(40.dp)
+                        .padding(top = normalPadding),
+                    onClick = {
+                        onNavigateToChatBox()
+                    }
+                ) {
+                    Icon(Icons.Default.Forum, "", tint = Color.Black)
                 }
             }
             Column(

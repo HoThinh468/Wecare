@@ -184,6 +184,10 @@
                 android:id="@+id/action_exercisesFragment_to_exerciseHistoryFragment"
                 app:destination="@id/exerciseHistoryFragment"
                 app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_exercisesFragment_to_chatBoxFragment"
+                app:destination="@id/chatBoxFragment"
+                app:popUpToInclusive="true" />
         </fragment>
         <fragment
             android:id="@+id/programDetailFragment"
@@ -267,6 +271,11 @@
             android:name="com.vn.wecare.feature.exercises.history.ExerciseHistoryFragment"
             android:label="fragment_exercise_history"
             tools:layout="@layout/fragment_exercise_history" />
+        <fragment
+            android:id="@+id/chatBoxFragment"
+            android:name="com.vn.wecare.feature.chatbox.ChatBoxFragment"
+            android:label="fragment_chat_box"
+            tools:layout="@layout/fragment_chat_box" />
     </navigation>
     <fragment
         android:id="@+id/onboardingFragment"
