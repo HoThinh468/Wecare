@@ -6,6 +6,7 @@ import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -36,7 +37,7 @@ class FirebaseStepsPerDayDataSource @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
+    override fun getStepsPerHourWithDayId(dayId: String): Flow<List<StepsPerHourEntity?>> {
         TODO("Not yet implemented")
     }
 
@@ -48,8 +49,11 @@ class FirebaseStepsPerDayDataSource @Inject constructor(
                     stepsPerDay = it.toObject(StepsPerDay::class.java) ?: StepsPerDay()
                 }
             }.await()
-        Log.d("Get steps per day from firestore: ", stepsPerDay.toString())
+        Log.d(StepCountFragment.stepCountTag, "Get steps per day from firestore: $stepsPerDay")
         emit(stepsPerDay)
     }
 
+    override fun getStepsPerHourWithHourId(hourId: String): Flow<StepsPerHourEntity?> {
+        TODO("Not yet implemented")
+    }
 }

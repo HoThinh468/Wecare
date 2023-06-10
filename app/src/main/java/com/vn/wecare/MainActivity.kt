@@ -12,18 +12,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
-import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
+import com.vn.wecare.feature.home.step_count.usecase.CURRENT_STEP_FROM_SENSOR
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SensorEventListener {
+
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var sensorManager: SensorManager
@@ -59,12 +59,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
         with(sharePref.edit()) {
-            putFloat(LATEST_STEPS_COUNT, p0.values[0])
+            putFloat(CURRENT_STEP_FROM_SENSOR, p0.values[0])
             apply()
         }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {/* Do nothing */
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) { /* Do nothing */
     }
 
     override fun onPause() {

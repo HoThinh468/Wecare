@@ -1,9 +1,9 @@
 package com.vn.wecare.feature.home
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -14,11 +14,10 @@ import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
-import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
-import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.alarm.IS_STEP_COUNT_INEXACT_ALARM_SET
-import com.vn.wecare.feature.home.step_count.alarm.STEP_COUNT_ALARM
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
+import com.vn.wecare.utils.getCurrentTimeInMilliseconds
+import com.vn.wecare.utils.getTheEndOfCurrentHourMilliseconds
 import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,15 +32,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val stepCountViewModel: StepCountViewModel by activityViewModels()
     private val waterViewModel: WaterViewModel by activityViewModels()
-    private val bmiViewModel: BMIViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         super.setupComposeView(
             binding.homeComposeView
         ) {
+            homeViewModel.initHomeUIState()
             HomeScreen(
                 onFootStepCountCardClick = {
                     findNavController().safeNavigate(
@@ -67,32 +65,39 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
-                cancelInExactAlarm = { homeViewModel.cancelInExactAlarm() },
-                homeViewModel = homeViewModel,
-                stepCountViewModel = stepCountViewModel,
-                waterViewModel = waterViewModel,
-                bmiViewModel = bmiViewModel
+                cancelInExactAlarm = {
+                    homeViewModel.cancelInExactAlarm()
+                },
+                cancelExactAlarm = { homeViewModel.clearExactAlarm() },
+                homeViewModel = homeViewModel
             )
         }
     }
 
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
-        val sharedPref =
-            requireActivity().getSharedPreferences(STEP_COUNT_ALARM, Context.MODE_PRIVATE)
+        setupStepCountAlarm()
+    }
+
+    private fun setupStepCountAlarm() {
+        // Setup exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
-//            stepCountExactAlarms.scheduleExactAlarm(null)
+            if (stepCountExactAlarms.isExactAlarmSet()) {
+                Log.d(StepCountFragment.stepCountTag, "Exact alarm set up already")
+            } else {
+                stepCountExactAlarms.scheduleExactAlarm(getCurrentTimeInMilliseconds() + 600_000)
+                Log.d(StepCountFragment.stepCountTag, "Setting up exact alarm")
+            }
         } else openSetting()
-        // TODO: Check logic here
-        if (!sharedPref.getBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, false)) {
-//            stepCountInExactAlarms.scheduleInExactAlarm(
-//                System.currentTimeMillis(), 60_000
-//            )
-//            Log.d("Step count in exact alarm set: ", "true")
-//            with(sharedPref.edit()) {
-//                putBoolean(IS_STEP_COUNT_INEXACT_ALARM_SET, true)
-//                apply()
-//            }
+
+        // Setup inexact repeating alarm
+        if (stepCountInExactAlarms.isInExactAlarmSet()) {
+            Log.d(StepCountFragment.stepCountTag, "Repeating alarm setup already")
+        } else {
+            stepCountInExactAlarms.scheduleRepeatingInExactAlarm(
+                getCurrentTimeInMilliseconds(), 180_000
+            )
+            Log.d(StepCountFragment.stepCountTag, "Setting up repeating alarm")
         }
     }
 
@@ -103,6 +108,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     }
 
     companion object {
-        const val homeTag = "Home flow tag"
+        const val homeTag = "Home flow"
     }
 }

@@ -3,7 +3,6 @@ package com.vn.wecare.feature.home.water
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -15,19 +14,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WaterOverviewHomeCard(
     modifier: Modifier,
-    viewModel: WaterViewModel,
+    currentIndex: Int,
+    targetAmount: Int,
+    onAddAmountClick: () -> Unit,
+    onMinusAmountClick: () -> Unit,
     onCardClick: () -> Unit,
 ) {
-
-    val uiState = viewModel.uiState.collectAsState()
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -57,7 +55,7 @@ fun WaterOverviewHomeCard(
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("${uiState.value.currentIndex}")
+                        append("$currentIndex")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -67,23 +65,19 @@ fun WaterOverviewHomeCard(
                             fontFamily = OpenSans
                         )
                     ) {
-                        append("/${uiState.value.targetAmount} ml")
+                        append("/$targetAmount ml")
                     }
                 })
             }
             Row {
-                IconButton(onClick = {
-                    viewModel.deleteLatestRecord()
-                }) {
+                IconButton(onClick = onMinusAmountClick) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_remove),
                         contentDescription = null,
                         tint = colorResource(id = R.color.Blue400)
                     )
                 }
-                IconButton(onClick = {
-                    viewModel.onDrinkClick()
-                }) {
+                IconButton(onClick = onAddAmountClick) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = null,

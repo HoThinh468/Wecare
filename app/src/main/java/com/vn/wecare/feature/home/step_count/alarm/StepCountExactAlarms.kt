@@ -1,36 +1,47 @@
 package com.vn.wecare.feature.home.step_count.alarm
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
+import androidx.core.content.edit
+import com.vn.wecare.core.WecareSharePreferences
 import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE
-import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_REQUEST_CODE
 import com.vn.wecare.core.alarm.ExactAlarms
-import com.vn.wecare.utils.getEndOfTheDayMilliseconds
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 const val STEP_COUNT_ALARM = "step_count_alarm"
+const val IS_STEP_COUNT_EXACT_ALARM_SET = "is_step_count_exact_alarm_set"
 
 class StepCountExactAlarms @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context, private val sharedPref: WecareSharePreferences
 ) : ExactAlarms {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun scheduleExactAlarm(triggerAtMillis: Long) {
-        setExactAlarm(triggerAtMillis)
-    }
-
-    override fun scheduleExactAlarm(triggerAtMillis: Long?) {
-        triggerSaveDataAtTheEndOfTheDay()
+        val pendingIntent = getExactAlarmPendingIntent()
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM).edit {
+            putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
+            apply()
+        }
     }
 
     override fun clearExactAlarm() {
-        if (getPendingIntent() != null) alarmManager.cancel(getPendingIntent())
+        val pendingIntent = getExactAlarmPendingIntent()
+        alarmManager.cancel(pendingIntent)
+        sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM).edit {
+            putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)
+            apply()
+        }
+        Log.d(
+            StepCountFragment.stepCountTag, "Exact alarm cleared"
+        )
     }
 
     override fun canScheduleExactAlarm(): Boolean {
@@ -40,40 +51,19 @@ class StepCountExactAlarms @Inject constructor(
         } else true
     }
 
-    private fun setExactAlarm(triggerAtMillis: Long) {
-        val pendingIntent = createExactAlarmIntent(null)
-        // Alarm repeat every hour
-        alarmManager.setExact(
-            AlarmManager.RTC, triggerAtMillis, pendingIntent
+    override fun isExactAlarmSet(): Boolean {
+        return sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM).getBoolean(
+            IS_STEP_COUNT_EXACT_ALARM_SET, false
         )
     }
 
-    private fun triggerSaveDataAtTheEndOfTheDay() {
-        val pendingIntent = createExactAlarmIntent(EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE)
-        alarmManager.setExact(AlarmManager.RTC, getEndOfTheDayMilliseconds(), pendingIntent)
-    }
-
-    /**
-     * Create pending intent for an exact alarm
-     */
-    private fun createExactAlarmIntent(
-        requestCode: Int?
-    ): PendingIntent {
+    private fun getExactAlarmPendingIntent(): PendingIntent {
         val intent = Intent(context, StepCountExactAlarmBroadCastReceiver::class.java)
-        // Flag indicating that the created PendingIntent should be immutable.
-        // This means that the additional intent argument passed to the send methods to fill
-        // in unpopulated properties of this intent will be ignored.
         return PendingIntent.getBroadcast(
             context,
-            requestCode ?: EXACT_ALARM_INTENT_REQUEST_CODE,
+            EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private fun getPendingIntent(): PendingIntent? {
-        val intent = Intent(context, StepCountExactAlarmBroadCastReceiver::class.java)
-        return PendingIntent.getService(context, EXACT_ALARM_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE)
     }
 }

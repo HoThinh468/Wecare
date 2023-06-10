@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.ClearSharedPreferencesUsecase
 import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
@@ -119,6 +121,7 @@ class AccountViewModel @Inject constructor(
             }
             deleteAllWaterRecordsUsecase.deleteAllRecords()
         }
+        WecareUserSingleton.updateInstance(WecareUser())
         clearAccountUIState()
     }
 
@@ -162,7 +165,7 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun clearReAutheticateResult() {
+    fun clearReAuthenticateResult() {
         _changePasswordUiState.update {
             it.copy(reAuthenticateResult = null)
         }

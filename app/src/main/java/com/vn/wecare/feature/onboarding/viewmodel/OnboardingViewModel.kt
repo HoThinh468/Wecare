@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
 import com.vn.wecare.feature.onboarding.ONBOARDING_PAGE_COUNT
 import com.vn.wecare.utils.WecareUserConstantValues.AGE_FIELD
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
@@ -39,7 +41,8 @@ data class OnboardingUiState(
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val updateWecareUserUsecase: UpdateWecareUserUsecase,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase
 ) : ViewModel() {
 
     var currentIndex = mutableStateOf(0)
@@ -55,8 +58,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun moveToNextOnboardingPage(
-        moveToHomeScreen: () -> Unit,
-        moveToPageAtIndex: () -> Unit
+        moveToHomeScreen: () -> Unit, moveToPageAtIndex: () -> Unit
     ) {
         if (currentIndex.value < ONBOARDING_PAGE_COUNT - 1) {
             _onboardingUiState.update { it.copy(updateInformationResult = null) }
@@ -65,6 +67,7 @@ class OnboardingViewModel @Inject constructor(
         } else {
             moveToHomeScreen()
             clearOnboardingResult()
+            saveGoalToFirebase()
             currentIndex.value = 0
         }
     }
@@ -249,6 +252,27 @@ class OnboardingViewModel @Inject constructor(
 
     private fun getGenderWithId(id: Int): Boolean {
         return id == 0
+    }
+
+    private fun saveGoalToFirebase() {
+        val stepsGoal = when (_onboardingUiState.value.goalSelectionId) {
+            0 -> 10000
+            1 -> 12000
+            2 -> 8000
+            else -> 6000
+        }
+        val moveTimeGoal = when (_onboardingUiState.value.goalSelectionId) {
+            0 -> 120
+            1 -> 90
+            2 -> 60
+            else -> 30
+        }
+        val caloriesGoal = WecareCaloriesObject.getInstance().caloriesOutEachDay
+        viewModelScope.launch {
+            saveGoalsToFirebaseUsecase.saveGoalsToFirebase(
+                accountService.currentUserId, stepsGoal, caloriesGoal, moveTimeGoal
+            )
+        }
     }
 
     private fun getGoalWithId(id: Int): String {

@@ -101,10 +101,10 @@ class NutritionDashboardViewmodel @Inject constructor(
         ).collect {
             if (it is Response.Success && it.data != null) {
                 for (i in it.data) {
-                    totalCalo += i.calories
-                    totalProtein += i.protein.getNutrientIndexFromString()
-                    totalFat += i.fat.getNutrientIndexFromString()
-                    totalCarbs += i.carbs.getNutrientIndexFromString()
+                    totalCalo += i.calories * i.quantity
+                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
+                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
+                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
                 }
                 totalCalories += totalCalo
             }
@@ -119,10 +119,10 @@ class NutritionDashboardViewmodel @Inject constructor(
         ).collect {
             if (it is Response.Success && it.data != null) {
                 for (i in it.data) {
-                    totalCalo += i.calories
-                    totalProtein += i.protein.getNutrientIndexFromString()
-                    totalFat += i.fat.getNutrientIndexFromString()
-                    totalCarbs += i.carbs.getNutrientIndexFromString()
+                    totalCalo += i.calories * i.quantity
+                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
+                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
+                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
                 }
                 totalCalories += totalCalo
             }
@@ -137,10 +137,10 @@ class NutritionDashboardViewmodel @Inject constructor(
         ).collect {
             if (it is Response.Success && it.data != null) {
                 for (i in it.data) {
-                    totalCalo += i.calories
-                    totalProtein += i.protein.getNutrientIndexFromString()
-                    totalFat += i.fat.getNutrientIndexFromString()
-                    totalCarbs += i.carbs.getNutrientIndexFromString()
+                    totalCalo += i.calories * i.quantity
+                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
+                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
+                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
                 }
                 totalCalories += totalCalo
             }
@@ -155,10 +155,10 @@ class NutritionDashboardViewmodel @Inject constructor(
         ).collect {
             if (it is Response.Success && it.data != null) {
                 for (i in it.data) {
-                    totalCalo += i.calories
-                    totalProtein += i.protein.getNutrientIndexFromString()
-                    totalFat += i.fat.getNutrientIndexFromString()
-                    totalCarbs += i.carbs.getNutrientIndexFromString()
+                    totalCalo += i.calories * i.quantity
+                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
+                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
+                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
                 }
                 totalCalories += totalCalo
             }

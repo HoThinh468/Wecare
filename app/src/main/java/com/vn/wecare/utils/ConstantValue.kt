@@ -32,6 +32,6 @@ object WecareUserConstantValues {
     const val IMPROVE_MOOD = "Improve mood"
 
     /* Step count */
-    const val MIN_STEPS_GOAL = 1000
+    const val MIN_STEPS_GOAL = 6000
     const val MAX_STEPS_GOAL = 12000
 }
