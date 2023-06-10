@@ -12,6 +12,7 @@ import com.vn.wecare.feature.food.usecase.DeleteMealRecordUsecase
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
 import com.vn.wecare.feature.food.usecase.UpdateMealRecordUsecase
 import com.vn.wecare.utils.getMonthPrefix
+import com.vn.wecare.utils.getNutrientIndexFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,7 @@ class LunchViewModel @Inject constructor(
     private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
     private val updateMealRecordUsecase: UpdateMealRecordUsecase,
     private val deleteMealRecordUsecase: DeleteMealRecordUsecase
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MealUiState())
     val uiState = _uiState.asStateFlow()
@@ -121,34 +122,39 @@ class LunchViewModel @Inject constructor(
         }
     }
 
-    private fun getLunchMealList(dayOfMonth: Int, month: Int, year: Int) =
-        viewModelScope.launch {
-            _uiState.update { it.copy(getMealsResponse = Response.Loading) }
-            getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-                dayOfMonth, month, year, MealTypeKey.LUNCH
-            ).collect { res ->
-                if (res is Response.Success) {
-                    _uiState.update { it.copy(mealRecords = res.data ?: emptyList()) }
-                    updateNutritionIndex(res.data ?: emptyList())
-                    _uiState.update { it.copy(getMealsResponse = Response.Success(true)) }
-                } else {
-                    _uiState.update { it.copy(getMealsResponse = Response.Error(null)) }
-                }
+    private fun getLunchMealList(dayOfMonth: Int, month: Int, year: Int) = viewModelScope.launch {
+        _uiState.update { it.copy(getMealsResponse = Response.Loading) }
+        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
+            dayOfMonth, month, year, MealTypeKey.LUNCH
+        ).collect { res ->
+            if (res is Response.Success) {
+                _uiState.update { it.copy(mealRecords = res.data ?: emptyList()) }
+                updateNutritionIndex(res.data ?: emptyList())
+                _uiState.update { it.copy(getMealsResponse = Response.Success(true)) }
+            } else {
+                _uiState.update { it.copy(getMealsResponse = Response.Error(null)) }
             }
         }
+    }
 
     private fun updateNutritionIndex(recordList: List<MealRecordModel>) {
         if (recordList.isNotEmpty()) {
             var totalCalories = 0
+            var totalProtein = 0
+            var totalFat = 0
+            var totalCarbs = 0
             for (item in recordList) {
                 totalCalories += item.calories * item.quantity
+                totalProtein += item.protein.getNutrientIndexFromString() * item.quantity
+                totalFat += item.fat.getNutrientIndexFromString() * item.quantity
+                totalCarbs += item.carbs.getNutrientIndexFromString() * item.quantity
             }
             _uiState.update {
                 it.copy(
                     calories = totalCalories,
-                    protein = calculateNutrientsIndexUsecase.getProteinIndexInGram(totalCalories),
-                    fat = calculateNutrientsIndexUsecase.getFatIndexInGram(totalCalories),
-                    carbs = calculateNutrientsIndexUsecase.getCarbIndexInGram(totalCalories),
+                    protein = totalProtein,
+                    fat = totalFat,
+                    carbs = totalCarbs,
                 )
             }
         } else {

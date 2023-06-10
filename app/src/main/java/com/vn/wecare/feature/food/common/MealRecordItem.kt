@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.food.common
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,7 @@ import com.vn.wecare.R
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.xxxExtraPadding
 
 @Composable
 fun MealRecordItem(
@@ -77,7 +79,9 @@ fun MealRecordItem(
                 navigateToDetailScreen()
             }) {
             Row(
-                modifier = modifier.align(Alignment.CenterStart),
+                modifier = modifier
+                    .align(Alignment.CenterStart)
+                    .padding(end = xxxExtraPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(

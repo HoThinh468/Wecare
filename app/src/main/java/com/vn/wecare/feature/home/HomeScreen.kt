@@ -3,7 +3,6 @@ package com.vn.wecare.feature.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,22 +12,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
-import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
-import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.ui.compose.FootStepCountHomeCard
+import com.vn.wecare.feature.home.step_count.ui.compose.StepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
-import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.CustomOutlinedIconButton
 import com.vn.wecare.utils.common_composable.RequestPermission
@@ -47,40 +43,36 @@ fun HomeScreen(
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
     cancelInExactAlarm: () -> Unit,
+    cancelExactAlarm: () -> Unit,
     homeViewModel: HomeViewModel,
-    stepCountViewModel: StepCountViewModel,
-    waterViewModel: WaterViewModel,
-    bmiViewModel: BMIViewModel
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
-//    val homeUiState = homeViewModel.homeUIState.collectAsState()
-//
-//    homeUiState.value.let {
-//        if (!it.hasUser) {
-//            moveToAuthenticationScreen()
-//            homeViewModel.resetUserNull()
-//        }
-//        if (it.isAdditionInfoMissing) {
-//            moveToOnboardingScreen()
-//            homeViewModel.resetUserAdditionalInformationRes()
-//        }
-//    }
+    val homeUIState = homeViewModel.homeUiState.collectAsState()
 
-    Scaffold(modifier = modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background),
-        topBar = { HomeHeader(modifier = modifier, cancelInExactAlarm = cancelInExactAlarm) }) {
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
+        topBar = {
+            HomeHeader(
+                modifier = modifier,
+                cancelInExactAlarm = cancelInExactAlarm,
+                cancelExactAlarm = cancelExactAlarm,
+            )
+        }) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = midPadding, vertical = smallPadding),
         ) {
-            FootStepCountHomeCard(
+            StepCountHomeCard(
                 modifier = modifier,
                 onCardClick = onFootStepCountCardClick,
-                viewModel = stepCountViewModel
+                calories = homeUIState.value.caloriesBurnt,
+                steps = homeUIState.value.stepCount,
+                time = homeUIState.value.timeConsumed
             )
             TrainingNow(
                 modifier = modifier,
@@ -91,10 +83,21 @@ fun HomeScreen(
                 onMeditationIcClick
             )
             YourBMIHomeCard(
-                modifier = modifier, onCardClick = onBMICardClick, viewModel = bmiViewModel
+                modifier = modifier,
+                onCardClick = onBMICardClick,
+                bmiIndex = homeUIState.value.bmiIndex
             )
             WaterOverviewHomeCard(
-                modifier = modifier, onCardClick = onWaterCardClick, viewModel = waterViewModel
+                modifier = modifier,
+                onCardClick = onWaterCardClick,
+                currentIndex = homeUIState.value.waterIndex,
+                targetAmount = homeUIState.value.waterTargetAmount,
+                onAddAmountClick = {
+                    homeViewModel.addNewWaterRecord()
+                },
+                onMinusAmountClick = {
+                    homeViewModel.deleteLatestRecord()
+                },
             )
             Spacer(modifier = modifier.height(largePadding))
         }
@@ -105,6 +108,7 @@ fun HomeScreen(
 fun HomeHeader(
     modifier: Modifier,
     cancelInExactAlarm: () -> Unit,
+    cancelExactAlarm: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -123,6 +127,11 @@ fun HomeHeader(
         )
         IconButton(onClick = cancelInExactAlarm) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+        }
+        IconButton(onClick = {
+            cancelExactAlarm()
+        }) {
+            Icon(imageVector = Icons.Filled.Done, contentDescription = null)
         }
     }
 }
@@ -162,9 +171,9 @@ fun TrainingNow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CustomOutlinedIconButton(modifier = modifier,
-                    iconRes = R.drawable.ic_walk,
-                    onClick = { Log.e("trung test", Firebase.auth.currentUser!!.uid) })
+                CustomOutlinedIconButton(
+                    modifier = modifier, iconRes = R.drawable.ic_walk, onClick = onWalkingIcClick
+                )
                 CustomOutlinedIconButton(
                     modifier = modifier, iconRes = R.drawable.ic_run, onClick = onRunningIcClick
                 )

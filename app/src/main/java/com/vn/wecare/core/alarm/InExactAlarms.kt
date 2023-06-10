@@ -2,7 +2,9 @@ package com.vn.wecare.core.alarm
 
 interface InExactAlarms {
 
-    fun scheduleInExactAlarm(triggerAtMillis: Long, intervalMillis: Long)
+    fun scheduleRepeatingInExactAlarm(triggerAtMillis: Long, intervalMillis: Long)
 
     fun clearInExactAlarm()
+
+    fun isInExactAlarmSet(): Boolean
 }
