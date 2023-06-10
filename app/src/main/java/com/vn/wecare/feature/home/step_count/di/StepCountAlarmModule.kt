@@ -26,6 +26,6 @@ object StepCountAlarmModule {
     @Provides
     @Singleton
     fun provideStepCountInExactAlarm(
-        @ApplicationContext context: Context
-    ): InExactAlarms = StepCountInExactAlarms(context)
+        @ApplicationContext context: Context, sharedPref: WecareSharePreferences
+    ): InExactAlarms = StepCountInExactAlarms(context, sharedPref)
 }

@@ -13,7 +13,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
@@ -37,12 +35,9 @@ import com.vn.wecare.utils.bmiFormatWithFloat
 @Composable
 fun YourBMIHomeCard(
     modifier: Modifier,
-    viewModel: BMIViewModel,
+    bmiIndex: Float,
     onCardClick: () -> Unit,
 ) {
-
-    val uiState = viewModel.uiState.collectAsState()
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -65,12 +60,12 @@ fun YourBMIHomeCard(
                 )
                 Text(
                     modifier = modifier.padding(top = smallPadding),
-                    text = bmiFormatWithFloat(uiState.value.bmi),
+                    text = bmiFormatWithFloat(bmiIndex),
                     style = MaterialTheme.typography.h1.copy(
                         fontSize = 40.sp,
-                        color = if (uiState.value.bmi in 18.5..24.9) getHappyMoodColor(
-                            uiState.value.bmi
-                        ) else getBadMoodColor(uiState.value.bmi)
+                        color = if (bmiIndex in 18.5..24.9) getHappyMoodColor(
+                            bmiIndex
+                        ) else getBadMoodColor(bmiIndex)
                     )
                 )
             }
@@ -78,13 +73,13 @@ fun YourBMIHomeCard(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_happy),
                     contentDescription = null,
-                    tint = getHappyMoodColor(uiState.value.bmi)
+                    tint = getHappyMoodColor(bmiIndex)
                 )
                 Spacer(modifier = modifier.width(4.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ic_sad),
                     contentDescription = null,
-                    tint = getBadMoodColor(uiState.value.bmi)
+                    tint = getBadMoodColor(bmiIndex)
                 )
             }
         }

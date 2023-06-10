@@ -3,16 +3,11 @@ package com.vn.wecare.feature.home.step_count.data.datasource.local
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
-import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayEntity
-import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
-import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.feature.home.step_count.data.model.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -33,8 +28,8 @@ class LocalStepPerHourDatasource @Inject constructor(
         stepsPerHourDao.deleteHours(hours)
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
-        return stepsPerHourDao.getStepsPerDayWithHours(dayId)
+    override fun getStepsPerHourWithDayId(dayId: String): Flow<List<StepsPerHourEntity?>> {
+        return stepsPerHourDao.getStepsPerHourWithDayId(dayId)
     }
 
     override suspend fun deleteAll() = withContext(ioDispatcher) {
@@ -45,4 +40,7 @@ class LocalStepPerHourDatasource @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun getStepsPerHourWithHourId(hourId: String): Flow<StepsPerHourEntity?> {
+        return stepsPerHourDao.getStepPerHourWithHourId(hourId)
+    }
 }

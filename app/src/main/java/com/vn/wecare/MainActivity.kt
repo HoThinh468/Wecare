@@ -19,7 +19,6 @@ import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.usecase.CURRENT_STEP_FROM_SENSOR
-import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,12 +58,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (p0 == null) return
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
-        if (sharePref.getFloat(PREVIOUS_TOTAL_SENSOR_STEPS, 0f) == 0f) {
-            with(sharePref.edit()) {
-                putFloat(PREVIOUS_TOTAL_SENSOR_STEPS, p0.values[0])
-                apply()
-            }
-        }
         with(sharePref.edit()) {
             putFloat(CURRENT_STEP_FROM_SENSOR, p0.values[0])
             apply()

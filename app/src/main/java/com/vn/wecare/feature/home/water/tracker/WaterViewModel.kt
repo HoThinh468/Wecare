@@ -87,14 +87,6 @@ class WaterViewModel @Inject constructor(
         fetchRecordList()
     }
 
-    fun deleteLatestRecord() {
-        val record = _uiState.value.recordList.last()
-        viewModelScope.launch(ioDispatcher) {
-            repository.deleteRecord(record)
-            fetchRecordList()
-        }
-    }
-
     fun updateRecordAmountWithId(amount: Int, record: WaterRecordEntity) =
         viewModelScope.launch(ioDispatcher) {
             repository.updateRecordAmountWithId(amount, record)

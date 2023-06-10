@@ -19,11 +19,9 @@ import com.vn.wecare.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FootStepCountHomeCard(
-    modifier: Modifier, onCardClick: () -> Unit, viewModel: StepCountViewModel
+fun StepCountHomeCard(
+    modifier: Modifier, onCardClick: () -> Unit, steps: Int, calories: Int, time: Int
 ) {
-
-    val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -44,27 +42,29 @@ fun FootStepCountHomeCard(
             )
             Spacer(modifier = modifier.height(normalPadding))
             Row(
-                modifier = modifier.fillMaxSize().padding(horizontal = normalPadding),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = normalPadding),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_fire_calo,
                     iconColorRes = R.color.Red400,
-                    index = stepsCountUiState.caloConsumed,
+                    index = calories,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_step,
                     iconColorRes = R.color.Green500,
-                    index = stepsCountUiState.currentSteps,
+                    index = steps,
                     unitRes = R.string.footstep_unit,
                     modifier = modifier
                 )
                 FootstepCountOverviewItem(
                     iconRes = R.drawable.ic_time_clock,
                     iconColorRes = R.color.Blue400,
-                    index = stepsCountUiState.moveMin,
+                    index = time,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
                 )

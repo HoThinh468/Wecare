@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.authentication.login
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -8,10 +7,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
-import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.databinding.FragmentLogInBinding
-import com.vn.wecare.feature.home.step_count.usecase.CURRENT_STEP_FROM_SENSOR
-import com.vn.wecare.feature.home.step_count.usecase.PREVIOUS_TOTAL_SENSOR_STEPS
 import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 

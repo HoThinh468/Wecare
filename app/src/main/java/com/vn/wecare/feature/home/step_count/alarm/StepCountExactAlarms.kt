@@ -5,15 +5,17 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.content.edit
 import com.vn.wecare.core.WecareSharePreferences
 import com.vn.wecare.core.alarm.EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE
 import com.vn.wecare.core.alarm.ExactAlarms
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 const val STEP_COUNT_ALARM = "step_count_alarm"
-const val IS_STEP_COUNT_EXACT_ALARM_SET = "is_exact_alarm_set"
+const val IS_STEP_COUNT_EXACT_ALARM_SET = "is_step_count_exact_alarm_set"
 
 class StepCountExactAlarms @Inject constructor(
     @ApplicationContext private val context: Context, private val sharedPref: WecareSharePreferences
@@ -23,7 +25,7 @@ class StepCountExactAlarms @Inject constructor(
 
     override fun scheduleExactAlarm(triggerAtMillis: Long) {
         val pendingIntent = getExactAlarmPendingIntent()
-        alarmManager.setExact(AlarmManager.RTC, triggerAtMillis, pendingIntent)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM).edit {
             putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
             apply()
@@ -37,6 +39,9 @@ class StepCountExactAlarms @Inject constructor(
             putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, false)
             apply()
         }
+        Log.d(
+            StepCountFragment.stepCountTag, "Exact alarm cleared"
+        )
     }
 
     override fun canScheduleExactAlarm(): Boolean {

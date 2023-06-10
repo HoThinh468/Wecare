@@ -4,5 +4,3 @@ package com.vn.wecare.core.alarm
 const val EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE = 1002
 
 const val IN_EXACT_ALARM_REQUEST_CODE = 1003
-
-const val ONE_HOUR_INTERVAL_MILLIS = 3_600_000L

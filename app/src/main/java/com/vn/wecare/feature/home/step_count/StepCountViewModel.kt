@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.feature.authentication.service.AccountService
@@ -7,9 +8,10 @@ import com.vn.wecare.feature.goal.GetGoalsFromFirebaseUsecase
 import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
+import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
-import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayWithHoursUsecase
+import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerHourWithDayIdUsecase
 import com.vn.wecare.utils.getCurrentDayId
 import com.vn.wecare.utils.getDayId
 import com.vn.wecare.utils.getMonthPrefix
@@ -31,7 +33,7 @@ data class StepsCountUiState(
     val isLoading: Boolean = false,
     val selectedDay: String = "",
     val hasData: Boolean = true,
-    val hoursList: MutableList<StepsPerHour> = mutableListOf(),
+    val hoursList: List<StepsPerHour> = emptyList(),
     val stepGoal: Int = 0,
     val caloriesBurnedGoal: Int = 0,
     val moveTimeGoal: Int = 0
@@ -42,7 +44,7 @@ class StepCountViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
-    private val getStepsPerDayWithHoursUsecase: GetStepsPerDayWithHoursUsecase,
+    private val getStepsPerHourWithDayIdUsecase: GetStepsPerHourWithDayIdUsecase,
     private val getGoalsFromFirebaseUsecase: GetGoalsFromFirebaseUsecase,
     private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase
 ) : ViewModel() {
@@ -54,8 +56,6 @@ class StepCountViewModel @Inject constructor(
     init {
         updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
     }
-
-    private val hoursList = mutableListOf<StepsPerHour>()
 
     fun initUIState() {
         val currentDate = LocalDate.now()
@@ -80,22 +80,21 @@ class StepCountViewModel @Inject constructor(
         }
     }
 
-    fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
+    private fun updateStepsPerDayWithHours(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
-            getStepsPerDayWithHoursUsecase.getStepsPerDayWithHour(
-                dayId = getDayId(
-                    year, month, dayOfMonth
-                )
+            val hoursList = mutableListOf<StepsPerHour>()
+            getStepsPerHourWithDayIdUsecase.getStepsPerHourWithDayId(
+                dayId = getDayId(dayOfMonth, month, year)
             ).collect { list ->
-                if (list.isNotEmpty()) list.forEach { stepsPerDayWithHours ->
-                    if (stepsPerDayWithHours != null) {
-                        hoursList.add(stepsPerDayWithHours.toModel())
-                        _stepsCountUiState.update {
-                            it.copy(
-                                hoursList = hoursList
-                            )
+                if (list.isNotEmpty()) {
+                    list.forEach { stepsPerDayWithHours ->
+                        if (stepsPerDayWithHours != null) {
+                            hoursList.add(stepsPerDayWithHours.toModel())
                         }
                     }
+                    _stepsCountUiState.update { it.copy(hoursList = hoursList) }
+                } else {
+                    _stepsCountUiState.update { it.copy(hoursList = emptyList()) }
                 }
             }
         }

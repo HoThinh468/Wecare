@@ -25,10 +25,7 @@ class StepCountFragment :
         super.setupComposeView(
             binding.stepCountComposeView
         ) {
-            val currentDate = LocalDate.now()
-            stepCountViewModel.updateStepsPerDayWithHours(
-                currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
-            )
+            stepCountViewModel.initUIState()
             StepCountScreen(
                 navigateUp = { findNavController().popBackStack() },
                 stepCountViewModel = stepCountViewModel
