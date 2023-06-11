@@ -129,17 +129,6 @@ fun ExercisesScreen(
                 ) {
                     Icon(Icons.Default.Assessment, "", tint = Color.Black)
                 }
-                IconButton(
-                    modifier = modifier
-                        .width(32.dp)
-                        .height(40.dp)
-                        .padding(top = normalPadding),
-                    onClick = {
-                        onNavigateToChatBox()
-                    }
-                ) {
-                    Icon(Icons.Default.Forum, "", tint = Color.Black)
-                }
             }
             Column(
                 modifier = modifier

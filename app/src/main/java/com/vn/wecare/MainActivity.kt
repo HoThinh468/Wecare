@@ -7,20 +7,30 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.di.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.feature.home.step_count.usecase.LATEST_STEPS_COUNT
 import dagger.hilt.android.AndroidEntryPoint
+import io.kommunicate.KmConversationBuilder
+import io.kommunicate.KmConversationHelper
+import io.kommunicate.Kommunicate
+import io.kommunicate.callbacks.KMLoginHandler
+import io.kommunicate.callbacks.KmCallback
+import io.kommunicate.users.KMUser
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SensorEventListener {
@@ -46,7 +56,82 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         navView.setupWithNavController(setUpNavController())
 
         hideBottomNavBar(setUpNavController())
-//        Kommunicate.init(this, "31b15638bfbbbc21ae6b0020e64f3fe9f");
+        Kommunicate.init(this, "6d3b6023fedc7bb814dbab55d41a18ed")
+
+        openChat()
+    }
+
+    private fun openChat() {
+        val fab: View = findViewById(R.id.fab)
+        fab.setOnClickListener {
+            if (WecareUserSingleton.getInstance().userId != "") {
+                openChatWithUser()
+            } else {
+                openChatWithGuest()
+            }
+        }
+    }
+
+    private fun openChatWithUser() {
+        val user = KMUser()
+        user.userId = WecareUserSingleton.getInstance().userId
+
+        Kommunicate.login(this, user, object : KMLoginHandler {
+            override fun onSuccess(registrationResponse: RegistrationResponse, context: Context) {
+                KmConversationHelper.openConversation(this@MainActivity,
+                    false,
+                    null,
+                    object : KmCallback {
+                        override fun onSuccess(message: Any) {}
+                        override fun onFailure(error: Any) {}
+                    })
+            }
+
+            override fun onFailure(
+                registrationResponse: RegistrationResponse,
+                exception: java.lang.Exception
+            ) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Open chat bot fail: " + exception.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
+
+    private fun openChatWithGuest() {
+        Kommunicate.loginAsVisitor(this, object : KMLoginHandler {
+            override fun onSuccess(registrationResponse: RegistrationResponse, context: Context) {
+                KmConversationBuilder(this@MainActivity)
+                    .setSingleConversation(true)
+                    .launchConversation(object : KmCallback {
+                        override fun onSuccess(message: Any) {
+                            Log.d("Conversation", "Success : $message")
+                        }
+
+                        override fun onFailure(error: Any) {
+                            Log.d("Conversation", "Failure : $error")
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Open chat bot fail: $error",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
+            }
+
+            override fun onFailure(
+                registrationResponse: RegistrationResponse,
+                exception: Exception
+            ) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Open chat bot fail: " + exception.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 
     override fun onResume() {

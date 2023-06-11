@@ -157,14 +157,9 @@ dependencies {
     //kommunicate
 //    implementation "io.kommunicate.sdk:kommunicateui:2.7.0"
 
-    //cloud_dialogflow
-    implementation ('com.google.cloud:google-cloud-dialogflow') {
-//        exclude group: 'com.google.api.grpc'
-//        exclude group: 'com.google.api.grpc', module: 'proto-google-common-protos'
-//        exclude group: 'com.google.protobuf', module: 'protobuf-javalite'
-//        exclude group: 'com.google.protobuf', module: 'protobuf-java'
-    }
+
     implementation 'ai.api:libai:1.6.12'
+    implementation 'io.kommunicate.sdk:kommunicateui:2.3.8'
 
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.2.2'
 }

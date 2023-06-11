@@ -8,7 +8,6 @@ import com.vn.wecare.core.model.ListReviewsItem
 import kotlinx.coroutines.flow.Flow
 
 interface ExerciseServices {
-
     suspend fun getReviewsList(type: ExerciseType, index: Int) : Flow<Response<List<ListReviewsItem>>>
     suspend fun likeReview(type: ExerciseType, index: Int, indexReview: Int, newLikeCount: Int): Response<Boolean>
     suspend fun getReviewLikeCount(type: ExerciseType, index: Int, indexReview: Int): Flow<Response<Int>>
