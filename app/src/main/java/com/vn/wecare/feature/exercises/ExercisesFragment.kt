@@ -78,6 +78,11 @@ class ExercisesFragment : Fragment() {
                             findNavController().navigate(
                                 R.id.action_exercisesFragment_to_fullBodyFragment
                             )
+                        },
+                        onNavigateToChatBox = {
+                            findNavController().navigate(
+                                R.id.action_exercisesFragment_to_chatBoxFragment
+                            )
                         }
                     )
                 }

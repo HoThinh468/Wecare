@@ -14,7 +14,21 @@ object WecareUserSingleton {
         return instance.asStateFlow()
     }
 
-    fun updateInstance(user: WecareUser) {
-        instance.value = user
+    fun updateInstance(user: WecareUser?) {
+        if (user == null) {
+            instance.value = WecareUser(
+                userId = "",
+                userName = "",
+                email = "",
+                emailVerified = false,
+                gender = null,
+                age = null,
+                height = null,
+                weight = null,
+                goal = null
+            )
+        } else {
+            instance.value = user
+        }
     }
 }

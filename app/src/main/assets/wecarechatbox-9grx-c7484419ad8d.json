@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "wecarechatbox-9grx",
+  "private_key_id": "c7484419ad8d222f3b03840b6f465c9fcf034108",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC1Jhc0sKwIp0qs\nsn49zDzokT/5rCVYTF6YOMGDWODInL+33SpA/rfuVPX34Qnk4kFyyGnmMmiBjssp\nl2PtGpYIrv1vFOR1uZ3mBuLAU0vV3yk9JIMSeRr3v4AzqVg6gs1xJYz1fKafEg+c\nT1SBV0PG6ldsxIF6mEnxVOl7Y73ggVhumq4h4rypCIbo6m1+YNYNXMG4G7ERQ+5A\nRg6Hd0Ttb5LFWLDDfsFCUkC38V5PCNCo/8+cl4YWECz4RTehR+X3ZFGzkWC0CkC+\nqlwkHjHkbXGL5HmRZH3qSFUk/GoLIuXZ01twON9SrgGo2DfbQrfS/EXCAAMi5iKn\nrqY450cHAgMBAAECggEAWMr+/PjMmsFFvTkQ4EHIaUcpULys4YctpvfLAxMBu9P5\ntapXF9zDU7OZjZNlQigVZKoQHqH+z+KqewyWEpbBjCgaWeSnx3zghOxDIXqy5Xap\nxCqthNSP/3iC4s/TS3rqMNfzLDGZisdTl47bITshIdOkXtBDl1AmjoDMoYrWe8CW\nS262fNcUOQSCQvNWDFM+zrTTadJjoYlwfsyQvQ9nhtCKuSFRQFHlOpuDII65+o4C\n//RjTEt/JYS1xtXcqH++P+7UzRZN1T9SeSuO5/6BiPN0wCyXE2qPChveGxbwXMnO\nsThFK5x4Rt3cL0pZcxPKjXxMiSWu++ZByoqsfpAegQKBgQD0MUh0GeqP8d0uz2a2\n++VkbCjZK/2E/dAFxjm28lIkeWT5xyj1vvENAyMEMFsIUTd6B8B7DUV6P9Z3D4rA\nzhOM3fTHg0a6fkZ7STvF4rWpAqEuQ51snpth1KRE0wp9pHu9K5zv2Kwuz+oiwk+D\nrFJ8rG4RQQ0yEPXCKlYtbwiSFwKBgQC96G0VUCATV0+X67H9V4jGb/0INiH0MnXF\nyxHcRXwMm8JKHf+0oSM5bDhW2+rqdj9Emp84gMtfYIG5pGuCmbpd4ic889xlqenV\nhUImiDHatpjtme80eaRWKH0TvTugUGLJum32QXApM0/ZDtZprTkenGl3n8FgDirr\np+3J99S4kQKBgQCIzQ9FE7vHtnzuG3z0qDvDvaBIwg8+MR8YDQwKRMjl7Cg4km2M\n9tJ+MrKsRxbImw9USwF3LmEs8pSIkOlvyENFmJboKtA17EY6DTXyT2br7zAzBegs\nkNKFxSXd9MkcyEgWG1fJOn6DnzERFgCLyL9RXxwuiF4HHV9Azo0G2PxZMwKBgAfY\nGOFffOOvoI8C4kg3nGOt7oKvUbm3d9vipms1x4jxyhWrpYs9eKn/iVg1Hz/uAHEB\n/f+kekIHR3R2kSZE2UjVdY9z9y+P1CPIrFHRIFYLYse1qwa824ffhkMRduwJRftV\nIwOf8lURVIP/s+WLjSdxiH2zcJZaH3W6av0DqpqxAoGARkwacrUDiq20n8qRnB2a\nTIAuJnBd8DdMzju4j438IBwIY2L0pyGX4W0ht2sI+rsphkU+zERRa70C01F7Ti9/\nGnbUoI9WNC7e3BoxLPrjaTRsUHEj0Ob5OvoIaUBIWCEKhThlA2x6pkZavaThah5i\nRV2YH+QKOEktHPF9gTOvTGw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "wecare-chat-bot@wecarechatbox-9grx.iam.gserviceaccount.com",
+  "client_id": "116297510877860285063",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/wecare-chat-bot%40wecarechatbox-9grx.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
