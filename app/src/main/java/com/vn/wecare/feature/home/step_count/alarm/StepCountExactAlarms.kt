@@ -24,8 +24,11 @@ class StepCountExactAlarms @Inject constructor(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun scheduleExactAlarm(triggerAtMillis: Long) {
+        Log.d(StepCountFragment.stepCountTag, "Setting up exact alarm")
         val pendingIntent = getExactAlarmPendingIntent()
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent
+        )
         sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM).edit {
             putBoolean(IS_STEP_COUNT_EXACT_ALARM_SET, true)
             apply()
@@ -60,10 +63,7 @@ class StepCountExactAlarms @Inject constructor(
     private fun getExactAlarmPendingIntent(): PendingIntent {
         val intent = Intent(context, StepCountExactAlarmBroadCastReceiver::class.java)
         return PendingIntent.getBroadcast(
-            context,
-            EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, EXACT_ALARM_INTENT_AT_THE_END_OF_DAY_CODE, intent, PendingIntent.FLAG_IMMUTABLE
         )
     }
 }

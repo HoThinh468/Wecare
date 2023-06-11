@@ -54,7 +54,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun cancelInExactAlarm() {
-        stepCountInExactAlarms.clearInExactAlarm()
+//        stepCountInExactAlarms.clearInExactAlarm()
+        stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis() + 180_000)
     }
 
     fun clearExactAlarm() {

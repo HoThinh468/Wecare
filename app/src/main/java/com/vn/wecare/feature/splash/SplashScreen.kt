@@ -20,7 +20,6 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     viewModel: SplashViewModel,
     moveToOnboardingScreen: () -> Unit,
-    moveToAuthenticationScreen: () -> Unit,
     resetStartDestination: () -> Unit,
     moveToHomeScreen: () -> Unit
 ) {
@@ -28,9 +27,19 @@ fun SplashScreen(
 
     splashUiState.value.saveUserRes.let {
         when (it) {
-            is Response.Loading -> LoadingDialog(loading = it == Response.Loading) {}
+            is Response.Loading ->{
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
             is Response.Success -> {
-                Log.d(SplashFragment.splashFlowTag, "All data is enough, move to home")
+                Log.d(SplashFragment.splashFlowTag, "Data present in local db")
+                if (viewModel.shouldMoveToOnboarding) {
+                    moveToOnboardingScreen()
+                }
+                if (viewModel.shouldMoveToHomeScreen) {
+                    resetStartDestination()
+                    moveToHomeScreen()
+                } else { /* Do nothing */
+                }
             }
 
             is Response.Error -> {
@@ -40,16 +49,6 @@ fun SplashScreen(
             else -> {/* do nothing */
             }
         }
-    }
-
-    if (viewModel.shouldMoveToAuthentication) {
-        Log.d(SplashFragment.splashFlowTag, "No user, move to authentication")
-        moveToAuthenticationScreen()
-    } else if (viewModel.shouldMoveToOnboarding) {
-        moveToOnboardingScreen()
-    } else {
-        resetStartDestination()
-        moveToHomeScreen()
     }
 
     Box(
