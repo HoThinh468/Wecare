@@ -1,13 +1,9 @@
 package com.vn.wecare.feature.home.step_count.data.repository
 
 import com.vn.wecare.feature.home.step_count.data.datasource.StepsDatasource
-import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerDayDataSource
 import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerHourDataSource
-import com.vn.wecare.feature.home.step_count.data.entity.StepsPerDayWithHours
 import com.vn.wecare.feature.home.step_count.data.entity.StepsPerHourEntity
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -41,15 +37,19 @@ class StepsPerHoursRepository @Inject constructor(
         }
     }
 
-    override fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>> {
-        return stepsLocalDataSource.getStepsPerDayWithHours(dayId)
+    override fun getStepsPerHourWithDayId(dayId: String): Flow<List<StepsPerHourEntity?>> {
+        return stepsLocalDataSource.getStepsPerHourWithDayId(dayId)
     }
 
     suspend fun insertStepsPerHourToFirebase(input: StepsPerHour) {
         firebaseStepsPerHourDataSource.insert(input)
     }
 
-    fun getStepsPerHours(dayId: String) : Flow<List<StepsPerHour?>> {
+    fun getStepsPerHoursFromRemoteWithDayId(dayId: String): Flow<List<StepsPerHour?>> {
         return firebaseStepsPerHourDataSource.getStepsPerHours(dayId)
+    }
+
+    fun getStepsPerHourWithHourId(hourId: String): Flow<StepsPerHourEntity?> {
+        return stepsLocalDataSource.getStepsPerHourWithHourId(hourId)
     }
 }

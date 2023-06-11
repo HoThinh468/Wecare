@@ -1,8 +1,13 @@
 package com.vn.wecare.feature.home.step_count.ui.compose
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -17,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
-import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.training.widget.numberPickerSpinner
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.mediumRadius
@@ -67,7 +71,6 @@ fun SetYourStepCountGoalModalBottomSheetContent(
                     .height(40.dp),
                 onClick = {
                     onCloseClick()
-                    Log.d(StepCountFragment.stepCountTag, "set goal to: ${currentIndex.value} steps")
                     stepCountViewModel.updateGoal(if (currentIndex.value < 1000) 1000 else currentIndex.value)
                 },
                 shape = RoundedCornerShape(mediumRadius)

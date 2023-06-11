@@ -4,9 +4,9 @@ interface ExactAlarms {
 
     fun scheduleExactAlarm(triggerAtMillis: Long)
 
-    fun scheduleExactAlarm(triggerAtMillis: Long?)
-
     fun clearExactAlarm()
 
     fun canScheduleExactAlarm(): Boolean
+
+    fun isExactAlarmSet(): Boolean
 }

@@ -47,7 +47,7 @@ fun ReAuthenticateDialog(
                     "Wrong password, please try again!",
                     Toast.LENGTH_SHORT
                 ).show()
-                viewModel.clearReAutheticateResult()
+                viewModel.clearReAuthenticateResult()
             }
             else -> {/*do nothing*/
             }

@@ -87,14 +87,6 @@ class WaterViewModel @Inject constructor(
         fetchRecordList()
     }
 
-    fun deleteLatestRecord() {
-        val record = _uiState.value.recordList.last()
-        viewModelScope.launch(ioDispatcher) {
-            repository.deleteRecord(record)
-            fetchRecordList()
-        }
-    }
-
     fun updateRecordAmountWithId(amount: Int, record: WaterRecordEntity) =
         viewModelScope.launch(ioDispatcher) {
             repository.updateRecordAmountWithId(amount, record)
@@ -142,7 +134,7 @@ class WaterViewModel @Inject constructor(
             val progress =
                 _uiState.value.currentIndex.toFloat() / _uiState.value.targetAmount.toFloat()
             _uiState.update { it.copy(progress = progress) }
-        }
+        } else _uiState.update { it.copy(progress = 1f) }
     }
 
     private fun generateRecordId(time: Calendar): String {

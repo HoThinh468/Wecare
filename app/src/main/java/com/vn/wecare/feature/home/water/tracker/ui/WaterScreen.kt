@@ -242,7 +242,7 @@ fun WaterTodayRecords(
     Text("Today's records", style = MaterialTheme.typography.h4)
     if (recordList.isEmpty()) {
         Image(
-            painter = painterResource(id = R.drawable.img_404_error),
+            painter = painterResource(id = R.drawable.img_no_water_record),
             modifier = modifier
                 .padding(top = mediumPadding, bottom = halfMidPadding)
                 .size(160.dp),

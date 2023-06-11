@@ -1,11 +1,11 @@
-package com.vn.wecare.feature.food.nutrition
+package com.vn.wecare.feature.food.dashboard.ui
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,25 +27,25 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardUiState
+import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
@@ -57,34 +57,59 @@ import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
+import com.vn.wecare.utils.common_composable.LoadingDialog
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DailyNutritionScreen(
+fun NutritionDashboardScreen(
     modifier: Modifier = Modifier,
     moveToBreakfastScreen: () -> Unit,
     moveToLunchScreen: () -> Unit,
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
-    moveToAddMealScreen: () -> Unit,
+    moveToAddMealScreen: (index: Int) -> Unit,
+    nutritionDashboardViewmodel: NutritionDashboardViewmodel
 ) {
+    val uiState = nutritionDashboardViewmodel.uiState.collectAsState()
 
-    val focusManager = LocalFocusManager.current
+    uiState.value.updateState.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Update successfully!", Toast.LENGTH_SHORT).show()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(LocalContext.current, "Update fail!", Toast.LENGTH_SHORT).show()
+            }
+
+            else -> { // do nothing
+            }
+        }
+    }
 
     Scaffold(modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.background,
-        topBar = { NutritionAppbar(modifier = modifier) }) {
-        Column(modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = midPadding)
-            .verticalScroll(rememberScrollState())
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            }) {
+        topBar = { NutritionAppbar(modifier = modifier, dateTime = uiState.value.dateTime) }) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = midPadding)
+                .verticalScroll(rememberScrollState())
+        ) {
             Spacer(modifier = modifier.height(4.dp))
-            NutritionOverview(modifier = modifier, progress = 0.6f)
+            NutritionOverview(
+                modifier = modifier,
+                uiState = uiState.value,
+                currentCalories = nutritionDashboardViewmodel.totalCalories,
+                currentProtein = nutritionDashboardViewmodel.totalProtein,
+                currentFat = nutritionDashboardViewmodel.totalFat,
+                currentCarbs = nutritionDashboardViewmodel.totalCarbs
+            )
             Spacer(modifier = modifier.height(normalPadding))
             AddMeals(
                 modifier = modifier,
@@ -92,7 +117,8 @@ fun DailyNutritionScreen(
                 moveToLunchScreen = moveToLunchScreen,
                 moveToSnackScreen = moveToSnackScreen,
                 moveToDinnerScreen = moveToDinnerScreen,
-                moveToAddMealScreen = moveToAddMealScreen
+                moveToAddMealScreen = moveToAddMealScreen,
+                uiState = uiState.value
             )
             Spacer(modifier = modifier.height(xxxExtraPadding))
         }
@@ -100,7 +126,9 @@ fun DailyNutritionScreen(
 }
 
 @Composable
-private fun NutritionAppbar(modifier: Modifier) {
+private fun NutritionAppbar(
+    modifier: Modifier, dateTime: String
+) {
     Column(
         modifier
             .fillMaxWidth()
@@ -116,38 +144,32 @@ private fun NutritionAppbar(modifier: Modifier) {
                     text = "Today", style = MaterialTheme.typography.body2
                 )
                 Text(
-                    text = "Wed, 1 May", style = MaterialTheme.typography.h3
+                    text = dateTime, style = MaterialTheme.typography.h3
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Default.BarChart,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-            }
+            Image(
+                modifier = modifier.height(64.dp),
+                painter = painterResource(id = R.drawable.img_hamburger),
+                contentDescription = null
+            )
         }
-        OutlinedTextField(modifier = modifier
-            .fillMaxWidth()
-            .padding(top = normalPadding),
-            value = "",
-            onValueChange = {},
-            placeholder = {
-                Text(text = "Search food or recipe")
-            },
-            leadingIcon = {
-                Icon(imageVector = Icons.Default.Search, contentDescription = null)
-            })
     }
 }
 
 @Composable
 private fun NutritionOverview(
-    modifier: Modifier, progress: Float
+    modifier: Modifier,
+    uiState: NutritionDashboardUiState,
+    currentCalories: Int,
+    currentProtein: Int,
+    currentFat: Int,
+    currentCarbs: Int,
 ) {
 
     val progressAnimationValue by animateFloatAsState(
-        targetValue = progress, animationSpec = tween(1000)
+        targetValue = getProgressInFloatWithIntInput(
+            currentCalories, uiState.targetCaloriesAmount
+        ), animationSpec = tween(1000)
     )
 
     Card(
@@ -179,8 +201,14 @@ private fun NutritionOverview(
                     strokeCap = StrokeCap.Round
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "1000", style = MaterialTheme.typography.h1)
-                    Text(text = "Goal: 1650 kcal", style = MaterialTheme.typography.body2)
+                    Text(
+                        text = "$currentCalories",
+                        style = MaterialTheme.typography.h1
+                    )
+                    Text(
+                        text = "Goal: ${uiState.targetCaloriesAmount} cal",
+                        style = MaterialTheme.typography.body2
+                    )
                 }
             }
             Column(
@@ -190,15 +218,27 @@ private fun NutritionOverview(
                 horizontalAlignment = Alignment.Start
             ) {
                 NutritionOverviewItem(
-                    modifier = modifier, title = "Protein", index = 22, target = 29, color = Red400
+                    modifier = modifier,
+                    title = "Protein",
+                    index = currentProtein,
+                    target = uiState.targetProteinIndex,
+                    color = Red400
                 )
                 Spacer(modifier = modifier.height(smallPadding))
                 NutritionOverviewItem(
-                    modifier = modifier, title = "Fat", index = 40, target = 42, color = Yellow
+                    modifier = modifier,
+                    title = "Fat",
+                    index = currentFat,
+                    target = uiState.targetFatIndex,
+                    color = Yellow
                 )
                 Spacer(modifier = modifier.height(smallPadding))
                 NutritionOverviewItem(
-                    modifier = modifier, title = "Carbs", index = 32, target = 100, color = Blue
+                    modifier = modifier,
+                    title = "Carbs",
+                    index = currentCarbs,
+                    target = uiState.targetCarbsIndex,
+                    color = Blue
                 )
             }
         }
@@ -211,7 +251,7 @@ private fun NutritionOverviewItem(
 ) {
 
     val animatedProgress = animateFloatAsState(
-        targetValue = index.toFloat() / target.toFloat(),
+        targetValue = getProgressInFloatWithIntInput(index, target),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     ).value
 
@@ -239,7 +279,8 @@ private fun AddMeals(
     moveToLunchScreen: () -> Unit,
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
-    moveToAddMealScreen: () -> Unit
+    moveToAddMealScreen: (index: Int) -> Unit,
+    uiState: NutritionDashboardUiState
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -249,49 +290,49 @@ private fun AddMeals(
         Text(
             text = "Add your meals", style = MaterialTheme.typography.h4
         )
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { moveToAddMealScreen(0) }) {
             Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
         }
     }
-    AddYourMealItem(
-        modifier = modifier,
+    AddYourMealItem(modifier = modifier,
         mealName = "Breakfast",
-        currentCal = 100,
-        targetKcal = 400,
+        currentCal = uiState.breakfastCurrentCalories,
+        targetCal = uiState.breakfastTargetCalories,
         thumbnailIdRes = R.drawable.img_breakfast,
         onCardClick = moveToBreakfastScreen,
-        onAddBtnClick = moveToAddMealScreen
-    )
+        onAddBtnClick = {
+            moveToAddMealScreen(0)
+        })
     Spacer(modifier = modifier.height(normalPadding))
-    AddYourMealItem(
-        modifier = modifier,
+    AddYourMealItem(modifier = modifier,
         mealName = "Lunch",
-        currentCal = 100,
-        targetKcal = 600,
+        currentCal = uiState.lunchCurrentCalories,
+        targetCal = uiState.lunchTargetCalories,
         thumbnailIdRes = R.drawable.img_lunch,
         onCardClick = moveToLunchScreen,
-        onAddBtnClick = moveToAddMealScreen
-    )
+        onAddBtnClick = {
+            moveToAddMealScreen(1)
+        })
     Spacer(modifier = modifier.height(normalPadding))
-    AddYourMealItem(
-        modifier = modifier,
+    AddYourMealItem(modifier = modifier,
         mealName = "Snack",
-        currentCal = 100,
-        targetKcal = 300,
+        currentCal = uiState.snackCurrentCalories,
+        targetCal = uiState.snackTargetCalories,
         thumbnailIdRes = R.drawable.img_snack,
         onCardClick = moveToSnackScreen,
-        onAddBtnClick = moveToAddMealScreen
-    )
+        onAddBtnClick = {
+            moveToAddMealScreen(2)
+        })
     Spacer(modifier = modifier.height(normalPadding))
-    AddYourMealItem(
-        modifier = modifier,
+    AddYourMealItem(modifier = modifier,
         mealName = "Dinner",
-        currentCal = 100,
-        targetKcal = 600,
+        currentCal = uiState.dinnerCurrentCalories,
+        targetCal = uiState.dinnerTargetCalories,
         thumbnailIdRes = R.drawable.img_dinner,
         onCardClick = moveToDinnerScreen,
-        onAddBtnClick = moveToAddMealScreen
-    )
+        onAddBtnClick = {
+            moveToAddMealScreen(3)
+        })
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -300,7 +341,7 @@ private fun AddYourMealItem(
     modifier: Modifier,
     mealName: String,
     currentCal: Int,
-    targetKcal: Int,
+    targetCal: Int,
     @DrawableRes thumbnailIdRes: Int,
     onAddBtnClick: () -> Unit = {},
     onCardClick: () -> Unit = {}
@@ -331,7 +372,7 @@ private fun AddYourMealItem(
                     Column(modifier = modifier.padding(start = normalPadding)) {
                         Text(mealName, style = MaterialTheme.typography.h3)
                         Text(
-                            "${currentCal}/$targetKcal kcal", style = MaterialTheme.typography.body2
+                            "${currentCal}/$targetCal cal", style = MaterialTheme.typography.body2
                         )
                     }
                 }
@@ -352,7 +393,7 @@ private fun AddYourMealItem(
                     .height(4.dp),
                 backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
                 color = MaterialTheme.colors.primary,
-                progress = currentCal.toFloat() / targetKcal.toFloat(),
+                progress = getProgressInFloatWithIntInput(currentCal, targetCal),
                 strokeCap = StrokeCap.Round
             )
         }

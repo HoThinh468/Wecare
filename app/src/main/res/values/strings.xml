@@ -29,7 +29,7 @@
     <string name="calo_amount_title">Calo</string>
     <string name="move_min_title">Time</string>
     <string name="footstep_unit">steps</string>
-    <string name="calo_unit">kcal</string>
+    <string name="calo_unit">cal</string>
     <string name="move_time_unit">min</string>
 
     <!-- Training -->

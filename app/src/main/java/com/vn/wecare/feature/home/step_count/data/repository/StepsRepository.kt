@@ -11,5 +11,5 @@ interface StepsRepository<I> {
 
     suspend fun deleteAll()
 
-    fun getStepsPerDayWithHours(dayId: String): Flow<List<StepsPerHourEntity?>>
+    fun getStepsPerHourWithDayId(dayId: String): Flow<List<StepsPerHourEntity?>>
 }

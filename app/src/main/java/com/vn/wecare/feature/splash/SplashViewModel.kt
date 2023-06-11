@@ -10,6 +10,7 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.food.WecareCaloriesObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,11 +52,11 @@ class SplashViewModel @Inject constructor(
             .collect { res ->
                 if (res is Response.Success && res.data != null) {
                     WecareUserSingleton.updateInstance(res.data)
+                    WecareCaloriesObject.calculateUserCaloriesAmount()
                     checkIfAdditionalInformationMissing(res.data)
                     _splashUiState.update { it.copy(saveUserRes = Response.Success(true)) }
                 } else _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
             }
-
     }
 
     private fun checkIfAdditionalInformationMissing(res: WecareUser) {
