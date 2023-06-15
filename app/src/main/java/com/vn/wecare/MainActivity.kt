@@ -17,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.databinding.ActivityMainBinding
+import com.vn.wecare.feature.home.HomeViewModel
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.usecase.CURRENT_STEP_FROM_SENSOR
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var motionSensor: Sensor? = null
 
     private val stepCountViewModel: StepCountViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(p0: SensorEvent?) {
         if (p0 == null) return
         stepCountViewModel.updateCurrentSteps(p0.values[0])
+        homeViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
         with(sharePref.edit()) {
             putFloat(CURRENT_STEP_FROM_SENSOR, p0.values[0])

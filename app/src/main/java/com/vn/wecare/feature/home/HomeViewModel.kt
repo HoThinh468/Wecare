@@ -54,15 +54,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun cancelInExactAlarm() {
-//        stepCountInExactAlarms.clearInExactAlarm()
-        stepCountExactAlarms.scheduleExactAlarm(System.currentTimeMillis() + 180_000)
+        stepCountInExactAlarms.clearInExactAlarm()
     }
 
     fun clearExactAlarm() {
         stepCountExactAlarms.clearExactAlarm()
     }
 
-    private fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
+    fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
         getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
             _homeUiState.update {
                 it.copy(

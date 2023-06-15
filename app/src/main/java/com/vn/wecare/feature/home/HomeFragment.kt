@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home
 
+import android.app.AlarmManager
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -18,6 +19,8 @@ import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.utils.getCurrentTimeInMilliseconds
+import com.vn.wecare.utils.getEndOfTheDayMilliseconds
+import com.vn.wecare.utils.getTheEndOfCurrentHourMilliseconds
 import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,7 +35,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val waterViewModel: WaterViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
@@ -78,7 +80,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
         setupStepCountExactAlarm()
-//        setUpStepCountInExactAlarm()
+        setUpStepCountInExactAlarm()
     }
 
     private fun setupStepCountExactAlarm() {
@@ -87,7 +89,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             if (stepCountExactAlarms.isExactAlarmSet()) {
                 Log.d(StepCountFragment.stepCountTag, "Exact alarm set up already")
             } else {
-                stepCountExactAlarms.scheduleExactAlarm(getCurrentTimeInMilliseconds() + 180_000)
+                stepCountExactAlarms.scheduleExactAlarm(getEndOfTheDayMilliseconds())
             }
         } else openSetting()
     }
@@ -97,7 +99,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             Log.d(StepCountFragment.stepCountTag, "Repeating alarm setup already")
         } else {
             stepCountInExactAlarms.scheduleRepeatingInExactAlarm(
-                getCurrentTimeInMilliseconds(), 180_000
+                getTheEndOfCurrentHourMilliseconds(), AlarmManager.INTERVAL_HOUR
             )
         }
     }

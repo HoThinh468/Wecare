@@ -27,8 +27,7 @@ fun SplashScreen(
 
     splashUiState.value.saveUserRes.let {
         when (it) {
-            is Response.Loading ->{
-                LoadingDialog(loading = it == Response.Loading) {}
+            is Response.Loading ->{ LoadingDialog(loading = it == Response.Loading) {}
             }
             is Response.Success -> {
                 Log.d(SplashFragment.splashFlowTag, "Data present in local db")

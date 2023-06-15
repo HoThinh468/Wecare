@@ -40,6 +40,11 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loginViewModel.clearLogInInformation()
+    }
+
     companion object {
         const val logInTag = "Login flow"
     }

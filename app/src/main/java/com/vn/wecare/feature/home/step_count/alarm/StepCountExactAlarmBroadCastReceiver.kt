@@ -56,17 +56,17 @@ class StepCountExactAlarmBroadCastReceiver : BroadcastReceiver() {
             // Get current day steps and save it to db
             getStepsPerDayUsecase.getCurrentDaySteps(currentSensorSteps).collect {
                 saveStepsPerDayUsecase.saveStepsPerDayToDb(it)
-//                if (checkInternetConnection(context)) {
-//                    saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
-//                }
+                if (checkInternetConnection(context)) {
+                    saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
+                }
             }
         }
         // Update total steps from sensor
         updatePreviousTotalSensorStepsUsecase.updatePreviousTotalSensorStepCount(
             currentSensorSteps
         )
-//        stepCountExactAlarms.scheduleExactAlarm(
-//            getEndOfTheDayMilliseconds() + AlarmManager.INTERVAL_DAY
-//        )
+        stepCountExactAlarms.scheduleExactAlarm(
+            getEndOfTheDayMilliseconds() + AlarmManager.INTERVAL_DAY
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.splash
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,21 +41,23 @@ class SplashViewModel @Inject constructor(
     }
 
     fun hasUser(): Boolean {
-        val hasUser = accountService.hasUser
-        return hasUser
+        return accountService.hasUser
     }
 
     fun saveWecareUserToSingletonObject() = viewModelScope.launch {
         _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
         getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
             .collect { res ->
+                Log.d(SplashFragment.splashFlowTag, "Get user from local db result: $res")
                 if (res is Response.Success && res.data != null) {
                     WecareUserSingleton.updateInstance(res.data)
                     WecareCaloriesObject.calculateUserCaloriesAmount()
                     checkIfAdditionalInformationMissing()
                     checkIfUserInformationIsUpdated()
                     _splashUiState.update { it.copy(saveUserRes = Response.Success(true)) }
-                } else _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
+                } else {
+                    _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
+                }
             }
     }
 
