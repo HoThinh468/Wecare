@@ -65,14 +65,16 @@ fun SignInScreen(
             is Response.Loading -> {
                 LoadingDialog(loading = it == Response.Loading) {}
             }
+
             is Response.Success -> {
                 viewModel.handleLoginSuccess()
                 Log.d(LogInFragment.logInTag, "Login success, move to splash screen")
-                moveToSplash()
             }
+
             is Response.Error -> {
                 viewModel.handleLoginError()
             }
+
             else -> { /* do nothing */
             }
         }
@@ -84,6 +86,10 @@ fun SignInScreen(
             scaffoldState.snackbarHostState.showSnackbar(snackBarMessage)
             viewModel.snackbarMessageShown()
         }
+    }
+
+    if (logInUiState.value.saveDataResponse is Response.Success) {
+        moveToSplash()
     }
 
     Scaffold(scaffoldState = scaffoldState) {

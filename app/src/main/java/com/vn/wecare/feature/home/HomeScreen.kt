@@ -48,7 +48,7 @@ fun HomeScreen(
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
-    val homeUIState = homeViewModel.homeUiState.collectAsState()
+    val homeUIState = homeViewModel.homeUiState.collectAsState().value
 
     Scaffold(
         modifier = modifier
@@ -70,9 +70,9 @@ fun HomeScreen(
             StepCountHomeCard(
                 modifier = modifier,
                 onCardClick = onFootStepCountCardClick,
-                calories = homeUIState.value.caloriesBurnt,
-                steps = homeUIState.value.stepCount,
-                time = homeUIState.value.timeConsumed
+                calories = homeUIState.caloriesBurnt,
+                steps = homeUIState.stepCount,
+                time = homeUIState.timeConsumed
             )
             TrainingNow(
                 modifier = modifier,
@@ -85,13 +85,13 @@ fun HomeScreen(
             YourBMIHomeCard(
                 modifier = modifier,
                 onCardClick = onBMICardClick,
-                bmiIndex = homeUIState.value.bmiIndex
+                bmiIndex = homeUIState.bmiIndex
             )
             WaterOverviewHomeCard(
                 modifier = modifier,
                 onCardClick = onWaterCardClick,
-                currentIndex = homeUIState.value.waterIndex,
-                targetAmount = homeUIState.value.waterTargetAmount,
+                currentIndex = homeUIState.waterIndex,
+                targetAmount = homeUIState.waterTargetAmount,
                 onAddAmountClick = {
                     homeViewModel.addNewWaterRecord()
                 },

@@ -25,6 +25,7 @@ class StepCountInExactAlarms @Inject constructor(
     private val stepCountSharedPref = sharedPref.getDefaultSharedPref(STEP_COUNT_ALARM)
 
     override fun scheduleRepeatingInExactAlarm(triggerAtMillis: Long, intervalMillis: Long) {
+        Log.d(StepCountFragment.stepCountTag, "Setting up repeating alarm")
         val pendingIntent = getInExactPendingIntent()
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP, triggerAtMillis, intervalMillis, pendingIntent

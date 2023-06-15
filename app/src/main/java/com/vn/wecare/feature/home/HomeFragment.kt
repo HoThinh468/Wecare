@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home
 
+import android.app.AlarmManager
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -11,12 +12,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
+import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.databinding.FragmentHomeBinding
 import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.water.tracker.WaterViewModel
 import com.vn.wecare.utils.getCurrentTimeInMilliseconds
+import com.vn.wecare.utils.getEndOfTheDayMilliseconds
 import com.vn.wecare.utils.getTheEndOfCurrentHourMilliseconds
 import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,10 +35,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     lateinit var stepCountInExactAlarms: InExactAlarms
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val waterViewModel: WaterViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        Log.d(homeTag, "User singleton: ${WecareUserSingleton.getInstance()}")
         super.setupComposeView(
             binding.homeComposeView
         ) {
@@ -76,28 +79,28 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     override fun setupWhatNeeded() {
         super.setupWhatNeeded()
-        setupStepCountAlarm()
+        setupStepCountExactAlarm()
+        setUpStepCountInExactAlarm()
     }
 
-    private fun setupStepCountAlarm() {
+    private fun setupStepCountExactAlarm() {
         // Setup exact alarm
         if (stepCountExactAlarms.canScheduleExactAlarm()) {
             if (stepCountExactAlarms.isExactAlarmSet()) {
                 Log.d(StepCountFragment.stepCountTag, "Exact alarm set up already")
             } else {
-                stepCountExactAlarms.scheduleExactAlarm(getCurrentTimeInMilliseconds() + 600_000)
-                Log.d(StepCountFragment.stepCountTag, "Setting up exact alarm")
+                stepCountExactAlarms.scheduleExactAlarm(getEndOfTheDayMilliseconds())
             }
         } else openSetting()
+    }
 
-        // Setup inexact repeating alarm
+    private fun setUpStepCountInExactAlarm() {
         if (stepCountInExactAlarms.isInExactAlarmSet()) {
             Log.d(StepCountFragment.stepCountTag, "Repeating alarm setup already")
         } else {
             stepCountInExactAlarms.scheduleRepeatingInExactAlarm(
-                getCurrentTimeInMilliseconds(), 180_000
+                getTheEndOfCurrentHourMilliseconds(), AlarmManager.INTERVAL_HOUR
             )
-            Log.d(StepCountFragment.stepCountTag, "Setting up repeating alarm")
         }
     }
 

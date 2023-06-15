@@ -22,6 +22,7 @@ import com.vn.wecare.feature.food.common.MealTypeOverviewNutrition
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.xxxExtraPadding
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 

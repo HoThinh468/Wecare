@@ -8,7 +8,6 @@ import com.vn.wecare.utils.WecareUserConstantValues.LOOSE_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +23,9 @@ data class UserCaloriesAmount(
 
 object WecareCaloriesObject {
 
-    private val wecareUser = WecareUserSingleton.getInstanceFlow()
+    private val wecareUserFlow = WecareUserSingleton.getInstanceFlow()
+
+    private val wecareUser = WecareUserSingleton.getInstance()
 
     private val instance = MutableStateFlow(UserCaloriesAmount())
 
@@ -32,8 +33,8 @@ object WecareCaloriesObject {
 
     fun getInstanceFlow() = instance.asStateFlow()
 
-    suspend fun calculateUserCaloriesAmount() = coroutineScope {
-        wecareUser.collect { user ->
+    fun calculateUserCaloriesAmount() {
+        wecareUser.let { user ->
             updateCaloriesInAmountOfDay(
                 user.goal ?: IMPROVE_MOOD,
                 user.weight ?: MIN_WEIGHT,

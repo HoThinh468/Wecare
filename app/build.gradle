@@ -31,6 +31,9 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
+
+        resValue "string", "google_credentials",
+                (new File("${projectDir}/google_credentials.json")).text
     }
 
     buildTypes {
@@ -55,7 +58,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/*'
         }
     }
 }
@@ -109,10 +112,18 @@ dependencies {
     // Kotlin coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutine_version"
 
-    // frirebase
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
     implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation('com.google.firebase:firebase-firestore-ktx') {
+//        exclude group: 'com.google.protobuf', module: 'protobuf-lite'
+//        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+//        exclude group: 'com.google.protobuf', module: 'protobuf-javalite'
+//        exclude group: 'com.google.firebase', module: 'protolite-well-known-types'
+//        exclude module: 'protobuf-javalite'
+//        exclude module: 'protobuf-java'
+//        exclude module: 'protobuf-java-util'
+    }
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation 'com.facebook.android:facebook-android-sdk:14.1.0'
 
@@ -142,6 +153,15 @@ dependencies {
     // Paging
     implementation "androidx.paging:paging-runtime:3.1.1"
     implementation "androidx.paging:paging-compose:1.0.0-alpha19"
+
+    //kommunicate
+//    implementation "io.kommunicate.sdk:kommunicateui:2.7.0"
+
+
+    implementation 'ai.api:libai:1.6.12'
+    implementation 'io.kommunicate.sdk:kommunicateui:2.3.8'
+
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.2.2'
 }
 
 // Allow references to generated code

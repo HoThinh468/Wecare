@@ -95,6 +95,7 @@ class AccountViewModel @Inject constructor(
         Log.d(AccountFlowTAG, "Signing out user with id: ${accountService.currentUserId}")
         _accountUiState.update { it.copy(signOutResponse = Response.Loading) }
         _accountUiState.update { it.copy(signOutResponse = accountService.signOut()) }
+        WecareUserSingleton.updateInstance(null)
     }
 
     fun sendVerificationEmail() = viewModelScope.launch {

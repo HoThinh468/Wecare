@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
         stepCountExactAlarms.clearExactAlarm()
     }
 
-    private fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
+    fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
         getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
             _homeUiState.update {
                 it.copy(
