@@ -12,22 +12,24 @@ import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
-import com.vn.wecare.feature.home.step_count.usecase.UpdatePreviousTotalSensorStepsUsecase
 import com.vn.wecare.feature.home.water.tracker.usecase.RefreshWaterLocalDbUsecase
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class LogInUiState(
     val authenticationResponse: Response<Boolean>? = null,
+    val saveDataResponse: Response<Boolean>? = null,
     val snackbarMessageRes: Int? = null,
     val isEmailValid: Boolean = true,
     val isPasswordValid: Boolean = true
@@ -39,8 +41,6 @@ class LoginViewModel @Inject constructor(
     private val getWecareUserWithIdUsecase: GetWecareUserWithIdUsecase,
     private val saveUserToDbUsecase: SaveUserToDbUsecase,
     private val updateWecareUserUsecase: UpdateWecareUserUsecase,
-    private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
-    private val updatePreviousTotalSensorStepsUsecase: UpdatePreviousTotalSensorStepsUsecase,
     private val refreshWaterLocalDbUsecase: RefreshWaterLocalDbUsecase
 ) : ViewModel() {
 
@@ -107,6 +107,7 @@ class LoginViewModel @Inject constructor(
             saveUserInformationToLocalDb()
             refreshWaterLocalDbUsecase.refreshWaterLocalDbWhenUserLogin()
         }
+        updateResponseIfSaveDataSuccess()
     }
 
     fun handleLoginError() {
@@ -155,9 +156,27 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    private fun updateResponseIfSaveDataSuccess() = viewModelScope.launch {
+        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
+            .stateIn(viewModelScope)
+            .collect { res ->
+                Log.d(LogInFragment.logInTag, "User result at login screen: $res")
+                if (res is Response.Success && res.data?.userId != null) {
+                    _logInUiState.update {
+                        it.copy(saveDataResponse = Response.Success(true))
+                    }
+                } else {
+                    _logInUiState.update {
+                        it.copy(saveDataResponse = Response.Error(null))
+                    }
+                    Log.d(LogInFragment.logInTag, "Data does not exist in room db")
+                }
+            }
+    }
+
     fun clearLogInInformation() {
         _logInUiState.update {
-            it.copy(authenticationResponse = null)
+            it.copy(authenticationResponse = null, saveDataResponse = null)
         }
         inputEmail = ""
         inputPassword = ""

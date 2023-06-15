@@ -377,6 +377,12 @@
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_dinnerFragment"
                 app:destination="@id/dinnerFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_searchFoodFragment"
+                app:destination="@id/searchFoodFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_addYourOwnMealFragment"
+                app:destination="@id/addYourOwnMealFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
@@ -387,7 +393,11 @@
             android:id="@+id/addMealFragment"
             android:name="com.vn.wecare.feature.food.addmeal.ui.AddMealFragment"
             android:label="fragment_add_meal"
-            tools:layout="@layout/fragment_add_meal" />
+            tools:layout="@layout/fragment_add_meal" >
+            <action
+                android:id="@+id/action_addMealFragment_to_searchFoodFragment"
+                app:destination="@id/searchFoodFragment" />
+        </fragment>
         <fragment
             android:id="@+id/mealDetailFragment"
             android:name="com.vn.wecare.feature.food.mealdetail.MealDetailFragment"
@@ -414,5 +424,19 @@
             android:name="com.vn.wecare.feature.food.dinner.DinnerFragment"
             android:label="fragment_dinner"
             tools:layout="@layout/fragment_dinner" />
+        <fragment
+            android:id="@+id/searchFoodFragment"
+            android:name="com.vn.wecare.feature.food.search.ui.SearchFoodFragment"
+            android:label="fragment_search_food"
+            tools:layout="@layout/fragment_search_food" >
+            <action
+                android:id="@+id/action_searchFoodFragment_to_addYourOwnMealFragment"
+                app:destination="@id/addYourOwnMealFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/addYourOwnMealFragment"
+            android:name="com.vn.wecare.feature.food.addyourownmeal.AddYourOwnMealFragment"
+            android:label="fragment_add_your_own_meal"
+            tools:layout="@layout/fragment_add_your_own_meal" />
     </navigation>
 </navigation>

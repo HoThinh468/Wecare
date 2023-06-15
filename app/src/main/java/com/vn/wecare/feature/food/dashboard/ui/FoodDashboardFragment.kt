@@ -52,6 +52,18 @@ class FoodDashboardFragment :
                         R.id.action_global_addMealFragment, bundle
                     )
                 },
+                moveToSearchFoodScreen = {
+                    findNavController().safeNavigate(
+                        R.id.dailyNutritionFragment,
+                        R.id.action_dailyNutritionFragment_to_searchFoodFragment
+                    )
+                },
+                moveToAddYourOwnMealsScreen = {
+                    findNavController().safeNavigate(
+                        R.id.dailyNutritionFragment,
+                        R.id.action_dailyNutritionFragment_to_addYourOwnMealFragment
+                    )
+                },
                 nutritionDashboardViewmodel = viewModel,
             )
         }

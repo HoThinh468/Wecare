@@ -65,8 +65,8 @@ class StepCountExactAlarmBroadCastReceiver : BroadcastReceiver() {
         updatePreviousTotalSensorStepsUsecase.updatePreviousTotalSensorStepCount(
             currentSensorSteps
         )
-//        stepCountExactAlarms.scheduleExactAlarm(
-//            getEndOfTheDayMilliseconds() + AlarmManager.INTERVAL_DAY
-//        )
+        stepCountExactAlarms.scheduleExactAlarm(
+            getEndOfTheDayMilliseconds() + AlarmManager.INTERVAL_DAY
+        )
     }
 }

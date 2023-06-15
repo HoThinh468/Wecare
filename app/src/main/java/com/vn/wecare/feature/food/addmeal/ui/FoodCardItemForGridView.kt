@@ -30,25 +30,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.vn.wecare.R
-import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.feature.food.data.model.MealByNutrients
-import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
-import java.util.Calendar
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FoodCardItemForGridView(
-    modifier: Modifier,
-    meal: MealByNutrients,
-    viewModel: AddMealViewModel,
-    mealTypeKey: MealTypeKey,
-    onCardClick: () -> Unit
+    modifier: Modifier, meal: MealByNutrients, onCardClick: () -> Unit, onAddMealClick: () -> Unit
 ) {
     Card(
         modifier = modifier
@@ -105,11 +98,7 @@ fun FoodCardItemForGridView(
                 }
                 OutlinedButton(
                     onClick = {
-                        viewModel.insertMealRecord(
-                            dateTime = Calendar.getInstance(),
-                            meal = meal,
-                            mealTypeKey = mealTypeKey
-                        )
+                        onAddMealClick()
                     },
                     modifier = Modifier.size(32.dp),
                     shape = CircleShape,

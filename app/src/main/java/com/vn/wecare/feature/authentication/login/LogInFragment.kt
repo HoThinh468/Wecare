@@ -18,6 +18,7 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
     private val loginViewModel: LoginViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
+        Log.d(logInTag, "user singleton: ${WecareUserSingleton.getInstance()}")
         super.setupComposeView(binding.composeView) {
             SignInScreen(
                 moveToSplash = {
@@ -37,6 +38,11 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
                 },
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loginViewModel.clearLogInInformation()
     }
 
     companion object {

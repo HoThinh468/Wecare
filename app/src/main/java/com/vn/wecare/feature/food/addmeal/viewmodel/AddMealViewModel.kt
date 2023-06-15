@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.food.addmeal.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.WecareCaloriesObject
-import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
 import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
@@ -22,12 +19,7 @@ import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMap
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -53,18 +45,12 @@ class AddMealViewModel @Inject constructor(
     private val caloriesForSnack = WecareCaloriesObject.getInstance().caloriesOfSnack
     private val caloriesForDinner = WecareCaloriesObject.getInstance().caloriesOfDinner
 
-    private val currentDayBreakfastRecord = mutableListOf<MealRecordModel>()
+    private var currentDayBreakfastRecord = mutableListOf<MealRecordModel>()
     private var currentDayLunchRecord = mutableListOf<MealRecordModel>()
     private var currentDaySnackRecord = mutableListOf<MealRecordModel>()
     private var currentDayDinnerRecord = mutableListOf<MealRecordModel>()
 
     var breakFastMealList: Flow<PagingData<MealByNutrients>>
-
-    var searchText by mutableStateOf("")
-    fun onSearchTextChanged(newVal: String) {
-        searchText = newVal
-//        searchMeal(newVal)
-    }
 
     init {
         breakFastMealList = getBreakfastMealsByNutrients()
@@ -93,8 +79,15 @@ class AddMealViewModel @Inject constructor(
         )
     }
 
+    fun resetMealListOfAllType() {
+        currentDayBreakfastRecord.clear()
+        currentDayLunchRecord.clear()
+        currentDaySnackRecord.clear()
+        currentDayDinnerRecord.clear()
+    }
+
     private fun getBreakfastMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrients(
+        return repository.getMealsByNutrientsWithPagingSource(
             caloriesForBreakfast,
             getMinCalories(caloriesForBreakfast),
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
@@ -104,7 +97,7 @@ class AddMealViewModel @Inject constructor(
     }
 
     fun getLunchMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrients(
+        return repository.getMealsByNutrientsWithPagingSource(
             caloriesForLunch,
             getMinCalories(caloriesForLunch),
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
@@ -114,7 +107,7 @@ class AddMealViewModel @Inject constructor(
     }
 
     fun getSnackMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrients(
+        return repository.getMealsByNutrientsWithPagingSource(
             caloriesForSnack,
             getMinCalories(caloriesForSnack),
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
@@ -124,7 +117,7 @@ class AddMealViewModel @Inject constructor(
     }
 
     fun getDinnerMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrients(
+        return repository.getMealsByNutrientsWithPagingSource(
             caloriesForDinner,
             getMinCalories(caloriesForDinner),
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
@@ -187,24 +180,6 @@ class AddMealViewModel @Inject constructor(
         _uiState.update { it.copy(insertMealRecordResponse = null, currentChosenMeal = null) }
     }
 
-//    private fun searchMeal(searchText: String) = viewModelScope.launch {
-//        breakFastMealList.collect {
-//            Log.d(AddMealFragment.addMealTag, "initial meal list: $it")
-//        }
-//        breakFastMealList = if (searchText.isNotEmpty()) {
-//            breakFastMealList.map {
-//                it.filter { meal ->
-//                    isMealNameMatchSearch(meal.title, searchText)
-//                }
-//            }
-//        } else {
-//            breakFastMealList
-//        }
-//        breakFastMealList.collect {
-//            Log.d(AddMealFragment.addMealTag, "after filter meal list: ${it.toString()}")
-//        }
-//    }
-
     private fun updateMealListByType(mealTypeKey: MealTypeKey, mealRecordModel: MealRecordModel) {
         when (mealTypeKey) {
             MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.add(mealRecordModel)
@@ -215,8 +190,4 @@ class AddMealViewModel @Inject constructor(
     }
 
     private fun getMinCalories(maxCalories: Int): Int = maxCalories / 3
-
-    private fun isMealNameMatchSearch(mealName: String, searchText: String): Boolean {
-        return mealName.contains(searchText)
-    }
 }

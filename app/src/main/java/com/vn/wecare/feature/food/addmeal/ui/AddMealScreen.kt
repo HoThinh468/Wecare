@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -29,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.vn.wecare.R
@@ -36,12 +38,13 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealTypeKey
+import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.utils.common_composable.DynamicErrorDialog
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-private val DEFAULT_MEAL_BY_NUTRIENT = MealByNutrients(
+val DEFAULT_MEAL_BY_NUTRIENT = MealByNutrients(
     0, "This is a title", "img", "png", 100, "12g", "13g", "20g"
 )
 
@@ -53,6 +56,7 @@ fun AddMealScreen(
     navigateUp: () -> Unit,
     addMealViewModel: AddMealViewModel,
     index: Int,
+    moveToSearchMealScreen: () -> Unit,
     meals: List<LazyPagingItems<MealByNutrients>>
 ) {
     val pagerState = rememberPagerState()
@@ -124,7 +128,7 @@ fun AddMealScreen(
                 tabRowItems = tabRowItems,
                 coroutineScope = coroutineScope,
                 navigateUp = navigateUp,
-                viewModel = addMealViewModel
+                moveToSearchMealScreen = moveToSearchMealScreen
             )
         }) {
             Column(modifier = modifier
@@ -172,10 +176,12 @@ fun AddMealScreen(
 
 @Composable
 fun LoadingDataErrorUI(modifier: Modifier, message: String) {
-    Image(
-        modifier = modifier.size(100.dp),
-        painter = painterResource(id = R.drawable.img_oops),
-        contentDescription = null
-    )
-    Text(message)
+    Column(modifier.padding(mediumPadding), horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            modifier = modifier.size(100.dp),
+            painter = painterResource(id = R.drawable.img_oops),
+            contentDescription = null
+        )
+        Text(message, textAlign = TextAlign.Center)
+    }
 }

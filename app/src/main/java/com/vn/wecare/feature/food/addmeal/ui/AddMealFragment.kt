@@ -5,10 +5,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAddMealBinding
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
 import com.vn.wecare.feature.food.dashboard.ui.FoodDashboardFragment
+import com.vn.wecare.utils.safeNavigate
 
 class AddMealFragment : BaseBindingFragment<FragmentAddMealBinding>(
     FragmentAddMealBinding::inflate
@@ -28,15 +30,27 @@ class AddMealFragment : BaseBindingFragment<FragmentAddMealBinding>(
                 addMealViewModel.getSnackMealsByNutrients().collectAsLazyPagingItems(),
                 addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
             )
-            AddMealScreen(navigateUp = {
-                findNavController().popBackStack()
-            }, addMealViewModel = addMealViewModel, index = index ?: 0, meals = meals)
+            AddMealScreen(
+                navigateUp = {
+                    findNavController().popBackStack()
+                },
+                addMealViewModel = addMealViewModel,
+                index = index ?: 0,
+                meals = meals,
+                moveToSearchMealScreen = {
+                    findNavController().safeNavigate(
+                        R.id.addMealFragment,
+                        R.id.action_addMealFragment_to_searchFoodFragment
+                    )
+                },
+            )
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         addMealViewModel.resetInsertMealRecordResponse()
+        addMealViewModel.resetMealListOfAllType()
     }
 
     companion object {
