@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.food.addyourownmeal
+package com.vn.wecare.feature.food.addyourownmeal.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAddYourOwnMealBinding
+import com.vn.wecare.feature.food.addyourownmeal.AddYourOwnMealViewModel
 
 class AddYourOwnMealFragment : BaseBindingFragment<FragmentAddYourOwnMealBinding>(
     FragmentAddYourOwnMealBinding::inflate

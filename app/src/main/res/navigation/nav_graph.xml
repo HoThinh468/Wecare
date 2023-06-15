@@ -435,7 +435,7 @@
         </fragment>
         <fragment
             android:id="@+id/addYourOwnMealFragment"
-            android:name="com.vn.wecare.feature.food.addyourownmeal.AddYourOwnMealFragment"
+            android:name="com.vn.wecare.feature.food.addyourownmeal.ui.AddYourOwnMealFragment"
             android:label="fragment_add_your_own_meal"
             tools:layout="@layout/fragment_add_your_own_meal" />
     </navigation>

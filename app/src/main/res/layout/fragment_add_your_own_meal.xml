@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.food.addyourownmeal.AddYourOwnMealFragment">
+    tools:context=".feature.food.addyourownmeal.ui.AddYourOwnMealFragment">
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/add_your_own_meal_compose_view"
