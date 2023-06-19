@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -126,15 +127,23 @@ private fun MealOverview(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NutrientSubInfoItem(
-    modifier: Modifier, icon: ImageVector, color: Color, index: String,
+    modifier: Modifier,
+    icon: ImageVector,
+    color: Color = MaterialTheme.colors.primary,
+    bgColor: Color = MaterialTheme.colors.background,
+    contentColor: Color? = null,
+    index: String,
+    onClick: () -> Unit = {}
 ) {
-    Card(
-        shape = Shapes.large,
+    Card(shape = Shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colors.secondary),
-        backgroundColor = MaterialTheme.colors.background
-    ) {
+        backgroundColor = bgColor,
+        onClick = {
+            onClick()
+        }) {
         Row(
             modifier = modifier.padding(horizontal = 12.dp, vertical = smallPadding),
             verticalAlignment = Alignment.CenterVertically
@@ -143,12 +152,12 @@ fun NutrientSubInfoItem(
                 modifier = modifier.size(16.dp),
                 imageVector = icon,
                 contentDescription = null,
-                tint = color
+                tint = contentColor ?: color
             )
             Spacer(modifier = modifier.width(4.dp))
             Text(
                 text = index, style = MaterialTheme.typography.button.copy(
-                    MaterialTheme.colors.onSecondary.copy(0.5f)
+                    contentColor ?: MaterialTheme.colors.onSecondary.copy(0.5f)
                 )
             )
         }
@@ -166,26 +175,26 @@ private fun NutrientsIndexInformation(modifier: Modifier, record: MealRecordMode
         NutrientIndexItem(
             modifier = modifier,
             title = "PROTEIN",
-            index = record.protein.dropLast(1).toInt(),
+            index = record.protein,
             color = Red400
         )
         NutrientIndexItem(
             modifier = modifier,
             title = "FAT",
-            index = record.fat.dropLast(1).toInt(),
+            index = record.fat,
             color = Yellow
         )
         NutrientIndexItem(
             modifier = modifier,
             title = "CARBS",
-            index = record.carbs.dropLast(1).toInt(),
+            index = record.carbs,
             color = Blue
         )
     }
 }
 
 @Composable
-fun NutrientIndexItem(modifier: Modifier, title: String, index: Int, color: Color) {
+fun NutrientIndexItem(modifier: Modifier, title: String, index: String, color: Color) {
     Box(
         modifier = modifier
             .size(84.dp)
@@ -198,7 +207,7 @@ fun NutrientIndexItem(modifier: Modifier, title: String, index: Int, color: Colo
                 style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onPrimary)
             )
             Text(
-                text = "${index}g",
+                text = index,
                 style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary)
             )
         }

@@ -381,8 +381,8 @@
                 android:id="@+id/action_dailyNutritionFragment_to_searchFoodFragment"
                 app:destination="@id/searchFoodFragment" />
             <action
-                android:id="@+id/action_dailyNutritionFragment_to_addYourOwnMealFragment"
-                app:destination="@id/addYourOwnMealFragment" />
+                android:id="@+id/action_dailyNutritionFragment_to_yourOwnMealListFragment"
+                app:destination="@id/yourOwnMealListFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
@@ -435,8 +435,17 @@
         </fragment>
         <fragment
             android:id="@+id/addYourOwnMealFragment"
-            android:name="com.vn.wecare.feature.food.addyourownmeal.AddYourOwnMealFragment"
+            android:name="com.vn.wecare.feature.food.yourownmeal.addyourownmeal.ui.AddYourOwnMealFragment"
             android:label="fragment_add_your_own_meal"
             tools:layout="@layout/fragment_add_your_own_meal" />
+        <fragment
+            android:id="@+id/yourOwnMealListFragment"
+            android:name="com.vn.wecare.feature.food.yourownmeal.yourownmeal.YourOwnMealListFragment"
+            android:label="fragment_your_own_meal_list"
+            tools:layout="@layout/fragment_your_own_meal_list" >
+            <action
+                android:id="@+id/action_yourOwnMealListFragment_to_addYourOwnMealFragment"
+                app:destination="@id/addYourOwnMealFragment" />
+        </fragment>
     </navigation>
 </navigation>

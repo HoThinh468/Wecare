@@ -143,9 +143,13 @@ class BreakfastViewModel @Inject constructor(
                 dayOfMonth, month, year, MealTypeKey.BREAKFAST
             ).collect { res ->
                 if (res is Response.Success) {
-                    _uiState.update { it.copy(mealRecords = res.data ?: emptyList()) }
+                    _uiState.update {
+                        it.copy(
+                            mealRecords = res.data ?: emptyList(),
+                            getMealsResponse = Response.Success(true)
+                        )
+                    }
                     updateNutritionIndex(res.data ?: emptyList())
-                    _uiState.update { it.copy(getMealsResponse = Response.Success(true)) }
                 } else {
                     _uiState.update { it.copy(getMealsResponse = Response.Error(null)) }
                 }
