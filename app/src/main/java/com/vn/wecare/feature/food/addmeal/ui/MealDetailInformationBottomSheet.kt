@@ -161,7 +161,7 @@ fun MealDetailInformationBottomSheet(
 }
 
 @Composable
-private fun NutrientIndexItem(modifier: Modifier, color: Color, title: String, index: String) {
+fun NutrientIndexItem(modifier: Modifier, color: Color, title: String, index: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = modifier

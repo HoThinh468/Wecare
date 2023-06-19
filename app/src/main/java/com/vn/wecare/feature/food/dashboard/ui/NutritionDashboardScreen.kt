@@ -41,7 +41,7 @@ fun NutritionDashboardScreen(
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
     moveToAddMealScreen: (index: Int) -> Unit,
-    moveToAddYourOwnMealsScreen: () -> Unit,
+    moveToAddYourOwnMealsListScreen: () -> Unit,
     moveToSearchFoodScreen: () -> Unit,
     nutritionDashboardViewmodel: NutritionDashboardViewmodel
 ) {
@@ -98,7 +98,7 @@ fun NutritionDashboardScreen(
                 moveToLunchScreen = moveToLunchScreen,
                 moveToSnackScreen = moveToSnackScreen,
                 moveToDinnerScreen = moveToDinnerScreen,
-                moveToAddYourOwnMealsScreen = moveToAddYourOwnMealsScreen,
+                moveToAddYourOwnMealsScreen = moveToAddYourOwnMealsListScreen,
                 moveToAddMealScreen = moveToAddMealScreen,
                 uiState = uiState.value
             )

@@ -86,7 +86,7 @@ class MealRecordRemoteDataSource @Inject constructor(
                     Log.d(AddMealFragment.addMealTag, "Get meals from remote successfully!")
                 }.addOnFailureListener { e ->
                     Log.d(
-                        AddMealFragment.addMealTag, "Insert food to remote fail due to ${e.message}"
+                        AddMealFragment.addMealTag, "Get meals from remote fail due to ${e.message}"
                     )
                 }.await()
             if (result != null) {

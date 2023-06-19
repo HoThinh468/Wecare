@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.food.yourownmeal.addyourownmeal.ui.AddYourOwnMealFragment">
+    tools:context=".feature.food.yourownmeal.yourownmeal.YourOwnMealListFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/add_your_own_meal_compose_view"
+        android:id="@+id/your_own_meal_list_compose_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

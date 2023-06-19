@@ -175,26 +175,26 @@ private fun NutrientsIndexInformation(modifier: Modifier, record: MealRecordMode
         NutrientIndexItem(
             modifier = modifier,
             title = "PROTEIN",
-            index = record.protein.dropLast(1).toInt(),
+            index = record.protein,
             color = Red400
         )
         NutrientIndexItem(
             modifier = modifier,
             title = "FAT",
-            index = record.fat.dropLast(1).toInt(),
+            index = record.fat,
             color = Yellow
         )
         NutrientIndexItem(
             modifier = modifier,
             title = "CARBS",
-            index = record.carbs.dropLast(1).toInt(),
+            index = record.carbs,
             color = Blue
         )
     }
 }
 
 @Composable
-fun NutrientIndexItem(modifier: Modifier, title: String, index: Int, color: Color) {
+fun NutrientIndexItem(modifier: Modifier, title: String, index: String, color: Color) {
     Box(
         modifier = modifier
             .size(84.dp)
@@ -207,7 +207,7 @@ fun NutrientIndexItem(modifier: Modifier, title: String, index: Int, color: Colo
                 style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onPrimary)
             )
             Text(
-                text = "${index}g",
+                text = index,
                 style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary)
             )
         }
