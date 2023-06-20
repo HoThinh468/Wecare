@@ -446,6 +446,14 @@
             <action
                 android:id="@+id/action_yourOwnMealListFragment_to_addYourOwnMealFragment"
                 app:destination="@id/addYourOwnMealFragment" />
+            <action
+                android:id="@+id/action_yourOwnMealListFragment_to_editYourOwnMealFragment"
+                app:destination="@id/editYourOwnMealFragment" />
         </fragment>
+        <fragment
+            android:id="@+id/editYourOwnMealFragment"
+            android:name="com.vn.wecare.feature.food.yourownmeal.edityourownmeal.EditYourOwnMealFragment"
+            android:label="fragment_edit_your_own_meal"
+            tools:layout="@layout/fragment_edit_your_own_meal" />
     </navigation>
 </navigation>
