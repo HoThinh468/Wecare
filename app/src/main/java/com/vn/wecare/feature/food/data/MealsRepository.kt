@@ -78,11 +78,14 @@ class MealsRepository @Inject constructor(
         yourOwnMealRemoteDataSource.insertMealToFirebase(meal)
 
     fun insertMealImageToFirebaseStorage(
-        timeStamp: Long,
-        uri: Uri,
-        mealKey: String
-    ): Flow<Response<Boolean>?> =
-        yourOwnMealRemoteDataSource.insertImage(timeStamp, uri, mealKey)
+        timeStamp: Long, uri: Uri, mealKey: String
+    ): Flow<Response<Boolean>?> = yourOwnMealRemoteDataSource.insertImage(timeStamp, uri, mealKey)
+
+    fun deleteMealFromFirebase(meal: Meal): Flow<Response<Boolean>?> =
+        yourOwnMealRemoteDataSource.deleteMealFromFirebase(meal)
+
+    fun deleteMealImageFromFirebase(mealId: Long): Flow<Response<Boolean>?> =
+        yourOwnMealRemoteDataSource.deleteMealImage(mealId)
 
     fun getYourOwnMealWithCategory(category: String): Flow<Response<List<Meal>>> =
         yourOwnMealRemoteDataSource.getYourOwnMealWithCategory(category)

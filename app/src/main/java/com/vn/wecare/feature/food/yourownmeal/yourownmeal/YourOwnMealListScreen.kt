@@ -2,6 +2,7 @@ package com.vn.wecare.feature.food.yourownmeal.yourownmeal
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
@@ -36,10 +38,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.vn.wecare.R
 import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.addmeal.ui.NutrientIndexItem
@@ -70,6 +74,7 @@ fun YourOwnMealListScreen(
     navigateBack: () -> Unit,
     viewModel: YourOwnMealViewModel,
     moveToAddYourOwnMealScreen: () -> Unit,
+    moveToEditScreen: (meal: Meal) -> Unit
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -167,18 +172,28 @@ fun YourOwnMealListScreen(
                                     }
                                     resultList
                                 }
-                                items(filteredMeals.size) { i ->
-                                    val item = filteredMeals[i]
-                                    MyOwnMealItem(
-                                        modifier = modifier,
-                                        onAddBtnClick = {
-                                            viewModel.insertMealRecord(
-                                                uiState.currentCategory ?: MealTypeKey.BREAKFAST,
-                                                item.toMealByNutrients()
-                                            )
-                                        },
-                                        meal = item, moveToEditScreen = {},
-                                    )
+                                if (filteredMeals.isNotEmpty()) {
+                                    items(filteredMeals.size) { i ->
+                                        val item = filteredMeals[i]
+                                        MyOwnMealItem(
+                                            modifier = modifier,
+                                            onAddBtnClick = {
+                                                viewModel.insertMealRecord(
+                                                    uiState.currentCategory
+                                                        ?: MealTypeKey.BREAKFAST,
+                                                    item.toMealByNutrients()
+                                                )
+                                            },
+                                            meal = item,
+                                            moveToEditScreen = { meal ->
+                                                moveToEditScreen(meal)
+                                            },
+                                        )
+                                    }
+                                } else {
+                                    item {
+                                        NoMealWithGivenKeyword(modifier = modifier)
+                                    }
                                 }
                             }
                         } else {
@@ -207,7 +222,7 @@ private fun MyOwnMealItem(
     modifier: Modifier,
     onAddBtnClick: () -> Unit,
     meal: Meal,
-    moveToEditScreen: () -> Unit,
+    moveToEditScreen: (meal: Meal) -> Unit,
 ) {
     Column {
         Box(
@@ -269,7 +284,7 @@ private fun MyOwnMealItem(
                 }
             }
             Row(modifier = modifier.align(Alignment.TopEnd)) {
-                IconButton(onClick = { /*Move to edit screen*/ }) {
+                IconButton(onClick = { moveToEditScreen(meal) }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = null,
@@ -309,5 +324,21 @@ private fun NoOwnMealYet(modifier: Modifier, moveToAddYourOwnMealScreen: () -> U
                 moveToAddYourOwnMealScreen()
             },
         )
+    }
+}
+
+@Composable
+fun NoMealWithGivenKeyword(modifier: Modifier) {
+    Column(
+        modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = modifier.size(200.dp),
+            painter = painterResource(id = R.drawable.img_no_meal_available),
+            contentDescription = null
+        )
+        Text(text = "No meal found with the given keyword!", textAlign = TextAlign.Center)
     }
 }

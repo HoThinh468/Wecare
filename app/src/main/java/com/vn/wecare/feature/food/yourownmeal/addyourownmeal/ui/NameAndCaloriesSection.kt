@@ -28,36 +28,36 @@ import com.vn.wecare.ui.theme.normalPadding
 
 @Composable
 fun NameAndCaloriesSection(
-    modifier: Modifier, viewModel: AddYourOwnMealViewModel
+    modifier: Modifier,
+    mealName: String,
+    onClearMealNameClick: () -> Unit,
+    onNameChange: (new: String) -> Unit,
+    calories: String,
+    onClearCaloriesClick: () -> Unit,
+    onCaloriesChange: (new: String) -> Unit,
+    isNameValid: Boolean,
+    isCaloriesValid: Boolean,
+    protein: Int,
+    fat: Int,
+    carbs: Int,
 ) {
-
-    val uiState = viewModel.addMealUiState.collectAsState().value
-
     Text("Name", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
-        value = viewModel.mealName,
-        onValueChange = {
-            viewModel.onNameChange(it)
-        },
-        label = { Text("Meal's name") },
-        maxLines = 1,
-        singleLine = true,
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Title, contentDescription = null)
-        },
-        trailingIcon = {
-            IconButton(onClick = { viewModel.clearMealName() }) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null)
-            }
-        },
-        isError = !uiState.isNameValid
+    OutlinedTextField(modifier = modifier.fillMaxWidth(), value = mealName, onValueChange = {
+        onNameChange(it)
+    }, label = { Text("Meal's name") }, maxLines = 1, singleLine = true, leadingIcon = {
+        Icon(imageVector = Icons.Default.Title, contentDescription = null)
+    }, trailingIcon = {
+        IconButton(onClick = { onClearMealNameClick() }) {
+            Icon(imageVector = Icons.Default.Close, contentDescription = null)
+        }
+    }, isError = !isNameValid
     )
     Spacer(modifier = modifier.height(normalPadding))
     Text("Calories", style = MaterialTheme.typography.body1)
     OutlinedTextField(modifier = modifier.fillMaxWidth(),
-        value = viewModel.calories,
+        value = calories,
         onValueChange = {
-            viewModel.onCaloriesChange(it)
+            onCaloriesChange(it)
         },
         label = { Text("Meal's calories") },
         maxLines = 1,
@@ -66,25 +66,25 @@ fun NameAndCaloriesSection(
             Icon(imageVector = Icons.Default.LocalFireDepartment, contentDescription = null)
         },
         trailingIcon = {
-            IconButton(onClick = { viewModel.clearCalories() }) {
+            IconButton(onClick = { onClearCaloriesClick() }) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = null)
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
-        isError = !uiState.isCaloriesValid
+        isError = !isCaloriesValid
     )
     Spacer(modifier = modifier.height(normalPadding))
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NutrientIndexItem(
-            modifier = modifier, title = "PROTEIN", index = "${uiState.protein}g", color = Red400
+            modifier = modifier, title = "PROTEIN", index = "${protein}g", color = Red400
         )
         NutrientIndexItem(
-            modifier = modifier, title = "FAT", index = "${uiState.fat}g", color = Yellow
+            modifier = modifier, title = "FAT", index = "${fat}g", color = Yellow
         )
         NutrientIndexItem(
-            modifier = modifier, title = "CARBS", index = "${uiState.carbs}g", color = Blue
+            modifier = modifier, title = "CARBS", index = "${carbs}g", color = Blue
         )
     }
 }

@@ -12,6 +12,7 @@ import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
 import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.ui.AddYourOwnMealFragment
+import com.vn.wecare.feature.food.yourownmeal.yourownmeal.YourOwnMealListFragment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -91,6 +92,39 @@ class YourOwnMealRemoteDataSource @Inject constructor(
             emit(Response.Success(recordList))
         } catch (e: Exception) {
             emit(Response.Error(e))
+        }
+    }
+
+    fun deleteMealFromFirebase(meal: Meal): Flow<Response<Boolean>?> = flow {
+        try {
+            val result = getYourOwnMealDb(meal.category).document(meal.id.toString()).delete()
+                .addOnSuccessListener {
+                    Log.d(
+                        YourOwnMealListFragment.yourOwnMealTag, "Delete your meal successfully"
+                    )
+                }.isSuccessful
+            emit(Response.Success(result))
+        } catch (e: Exception) {
+            Log.d(
+                YourOwnMealListFragment.yourOwnMealTag,
+                "Delete your own meal fail due to ${e.message}"
+            )
+        }
+    }
+
+    fun deleteMealImage(mealId: Long): Flow<Response<Boolean>?> = flow {
+        try {
+            val result = getStorageRef(mealId).delete().addOnSuccessListener {
+                Log.d(
+                    YourOwnMealListFragment.yourOwnMealTag, "Delete your meal image successfully"
+                )
+            }.isSuccessful
+            emit(Response.Success(result))
+        } catch (e: Exception) {
+            Log.d(
+                YourOwnMealListFragment.yourOwnMealTag,
+                "Delete your meal image fail due to ${e.message}"
+            )
         }
     }
 
