@@ -58,10 +58,10 @@ class FoodDashboardFragment :
                         R.id.action_dailyNutritionFragment_to_searchFoodFragment
                     )
                 },
-                moveToAddYourOwnMealsScreen = {
+                moveToAddYourOwnMealsListScreen = {
                     findNavController().safeNavigate(
                         R.id.dailyNutritionFragment,
-                        R.id.action_dailyNutritionFragment_to_addYourOwnMealFragment
+                        R.id.action_dailyNutritionFragment_to_yourOwnMealListFragment
                     )
                 },
                 nutritionDashboardViewmodel = viewModel,
