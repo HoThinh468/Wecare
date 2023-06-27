@@ -43,7 +43,7 @@ class MealsRepository @Inject constructor(
 
     suspend fun getMealOfEachTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
-    ): Flow<Response<List<MealRecordModel>?>> =
+    ): Flow<Response<List<MealRecordModel>>> =
         remoteDataSource.getAllMealsOfTypeInDayWithDayId(dayOfMonth, month, year, mealTypeKey)
 
     suspend fun updateMealRecordQuantity(

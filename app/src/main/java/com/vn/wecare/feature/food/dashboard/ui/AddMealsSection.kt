@@ -15,14 +15,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,18 +43,10 @@ fun AddMealsSection(
     moveToAddMealScreen: (index: Int) -> Unit,
     uiState: NutritionDashboardUiState
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Add your own meals", style = MaterialTheme.typography.h4
-        )
-        IconButton(onClick = { moveToAddYourOwnMealsScreen() }) {
-            Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
-        }
+    AddYourOwnMealSection(modifier = modifier) {
+        moveToAddYourOwnMealsScreen()
     }
+    Spacer(modifier = modifier.height(normalPadding))
     AddYourMealItem(modifier = modifier,
         mealName = "Breakfast",
         currentCal = uiState.breakfastCurrentCalories,

@@ -78,7 +78,7 @@ class MealRecordRemoteDataSource @Inject constructor(
 
     override suspend fun getAllMealsOfTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
-    ): Flow<Response<List<MealRecordModel>?>> = flow {
+    ): Flow<Response<List<MealRecordModel>>> = flow {
         val recordList = arrayListOf<MealRecordModel>()
         try {
             val result =

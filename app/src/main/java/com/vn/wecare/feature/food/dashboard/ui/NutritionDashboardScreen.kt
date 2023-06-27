@@ -18,6 +18,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +44,7 @@ fun NutritionDashboardScreen(
     moveToAddMealScreen: (index: Int) -> Unit,
     moveToAddYourOwnMealsListScreen: () -> Unit,
     moveToSearchFoodScreen: () -> Unit,
+    moveToReportScreen: () -> Unit,
     nutritionDashboardViewmodel: NutritionDashboardViewmodel
 ) {
     val uiState = nutritionDashboardViewmodel.uiState.collectAsState()
@@ -73,7 +75,8 @@ fun NutritionDashboardScreen(
             NutritionAppbar(
                 modifier = modifier,
                 dateTime = uiState.value.dateTime,
-                moveToSearchFoodScreen = moveToSearchFoodScreen
+                moveToSearchFoodScreen = moveToSearchFoodScreen,
+                moveToReportScreen = moveToReportScreen
             )
         }) {
         Column(
@@ -109,7 +112,10 @@ fun NutritionDashboardScreen(
 
 @Composable
 private fun NutritionAppbar(
-    modifier: Modifier, dateTime: String, moveToSearchFoodScreen: () -> Unit
+    modifier: Modifier,
+    dateTime: String,
+    moveToSearchFoodScreen: () -> Unit,
+    moveToReportScreen: () -> Unit
 ) {
     Column(
         modifier
@@ -129,8 +135,13 @@ private fun NutritionAppbar(
                     text = dateTime, style = MaterialTheme.typography.h3
                 )
             }
-            IconButton(onClick = moveToSearchFoodScreen) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = null)
+            Row() {
+                IconButton(onClick = moveToSearchFoodScreen) {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                }
+                IconButton(onClick = moveToReportScreen) {
+                    Icon(imageVector = Icons.Default.BarChart, contentDescription = null)
+                }
             }
         }
     }

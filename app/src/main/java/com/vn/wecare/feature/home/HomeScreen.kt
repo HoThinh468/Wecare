@@ -114,7 +114,7 @@ fun HomeHeader(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = midPadding, vertical = halfMidPadding),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -125,14 +125,6 @@ fun HomeHeader(
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
-        IconButton(onClick = cancelInExactAlarm) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = null)
-        }
-        IconButton(onClick = {
-            cancelExactAlarm()
-        }) {
-            Icon(imageVector = Icons.Filled.Done, contentDescription = null)
-        }
     }
 }
 
