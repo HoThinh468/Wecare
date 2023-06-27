@@ -64,6 +64,12 @@ class FoodDashboardFragment :
                         R.id.action_dailyNutritionFragment_to_yourOwnMealListFragment
                     )
                 },
+                moveToReportScreen = {
+                    findNavController().safeNavigate(
+                        R.id.dailyNutritionFragment,
+                        R.id.action_dailyNutritionFragment_to_foodReportFragment
+                    )
+                },
                 nutritionDashboardViewmodel = viewModel,
             )
         }

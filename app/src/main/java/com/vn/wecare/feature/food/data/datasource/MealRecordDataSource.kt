@@ -21,7 +21,7 @@ interface MealRecordDataSource {
 
     suspend fun getAllMealsOfTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
-    ): Flow<Response<List<MealRecordModel>?>>
+    ): Flow<Response<List<MealRecordModel>>>
 
     suspend fun updateQuantity(
         dayOfMonth: Int,

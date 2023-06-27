@@ -383,6 +383,9 @@
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_yourOwnMealListFragment"
                 app:destination="@id/yourOwnMealListFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_foodReportFragment"
+                app:destination="@id/foodReportFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
@@ -455,5 +458,10 @@
             android:name="com.vn.wecare.feature.food.yourownmeal.edityourownmeal.EditYourOwnMealFragment"
             android:label="fragment_edit_your_own_meal"
             tools:layout="@layout/fragment_edit_your_own_meal" />
+        <fragment
+            android:id="@+id/foodReportFragment"
+            android:name="com.vn.wecare.feature.food.report.FoodReportFragment"
+            android:label="fragment_food_report"
+            tools:layout="@layout/fragment_food_report" />
     </navigation>
 </navigation>
