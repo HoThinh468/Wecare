@@ -33,28 +33,28 @@ fun OnboardingGoalSelection(
             .padding(horizontal = midPadding)
             .height(300.dp)
     ) {
-        SquareIconButton(
+        RoundedIconButton(
             modifier = modifier.align(alignment = Alignment.TopStart),
             iconRes = R.drawable.ic_muscle,
             buttonText = GAIN_MUSCLE,
             bgColor = getBgColor(id = 0, uiId = uiState.value.goalSelectionId),
             contentColor = getContentColor(id = 0, uiId = uiState.value.goalSelectionId),
         ) { viewModel.onGoalSelect(0) }
-        SquareIconButton(
+        RoundedIconButton(
             modifier = modifier.align(alignment = Alignment.TopEnd),
             iconRes = R.drawable.ic_weight,
             buttonText = LOOSE_WEIGHT,
             bgColor = getBgColor(id = 1, uiId = uiState.value.goalSelectionId),
             contentColor = getContentColor(id = 1, uiId = uiState.value.goalSelectionId),
         ) { viewModel.onGoalSelect(1) }
-        SquareIconButton(
+        RoundedIconButton(
             modifier = modifier.align(alignment = Alignment.BottomStart),
             iconRes = R.drawable.ic_heart,
             buttonText = GET_HEALTHIER,
             bgColor = getBgColor(id = 2, uiId = uiState.value.goalSelectionId),
             contentColor = getContentColor(id = 2, uiId = uiState.value.goalSelectionId),
         ) { viewModel.onGoalSelect(2) }
-        SquareIconButton(
+        RoundedIconButton(
             modifier = modifier.align(alignment = Alignment.BottomEnd),
             iconRes = R.drawable.ic_mood_happy,
             buttonText = IMPROVE_MOOD,
@@ -65,7 +65,7 @@ fun OnboardingGoalSelection(
 }
 
 @Composable
-fun SquareIconButton(
+fun RoundedIconButton(
     modifier: Modifier,
     @DrawableRes iconRes: Int,
     buttonText: String,

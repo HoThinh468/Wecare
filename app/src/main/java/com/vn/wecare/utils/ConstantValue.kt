@@ -18,8 +18,8 @@ object WecareUserConstantValues {
     const val GOAL_FIELD = "goal"
 
     /* Constant index */
-    const val MIN_HEIGHT = 140
-    const val MAX_HEIGHT = 220
+    const val MIN_HEIGHT = 130
+    const val MAX_HEIGHT = 250
     const val MAX_WEIGHT = 120
     const val MIN_WEIGHT = 30
     const val MIN_AGE = 13

@@ -14,7 +14,7 @@
         android:icon="@drawable/ic_fitness_center"
         android:title="@string/exercises"/>
     <item
-        android:id="@+id/accountFragment"
+        android:id="@+id/account_graph"
         android:icon="@drawable/ic_person"
         android:title="@string/account_title" />
 </menu>
