@@ -24,10 +24,6 @@ class FoodReportFragment : BaseBindingFragment<FragmentFoodReportBinding>(
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     companion object {
         const val foodReportTag = "Food report flow"
     }

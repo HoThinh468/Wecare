@@ -2,12 +2,12 @@ package com.vn.wecare.feature.food.data
 
 import android.net.Uri
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.feature.food.data.datasource.MealRecordDataSource
-import com.vn.wecare.feature.food.data.datasource.MealsPagingSource
-import com.vn.wecare.feature.food.data.datasource.NUMBER_OF_MEALS_EACH_LOAD
 import com.vn.wecare.feature.food.data.datasource.YourOwnMealRemoteDataSource
 import com.vn.wecare.feature.food.data.di.RemoteMealsRecordDataSource
 import com.vn.wecare.feature.food.data.model.Meal
@@ -15,7 +15,7 @@ import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealNameSearchResult
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toModel
+import com.vn.wecare.feature.food.data.model.toRecordModel
 import com.vn.wecare.feature.food.search.ui.SearchFoodFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -25,21 +25,34 @@ import javax.inject.Inject
 class MealsRepository @Inject constructor(
     private val mealsApiService: MealsApiService,
     @RemoteMealsRecordDataSource private val remoteDataSource: MealRecordDataSource,
-    private val yourOwnMealRemoteDataSource: YourOwnMealRemoteDataSource
+    private val yourOwnMealRemoteDataSource: YourOwnMealRemoteDataSource,
+    private val wecareDatabase: WecareDatabase
 ) {
+    @OptIn(ExperimentalPagingApi::class)
     fun getMealsByNutrientsWithPagingSource(
         maxCalories: Int, minCalories: Int, maxProtein: Int, maxFat: Int, maxCarbs: Int
-    ) = Pager(config = PagingConfig(
-        pageSize = NUMBER_OF_MEALS_EACH_LOAD
-    ), pagingSourceFactory = {
-        MealsPagingSource(
-            maxCalories, minCalories, maxProtein, maxFat, maxCarbs, mealsApiService
-        )
-    }).flow
+    ) = Pager(
+        config = PagingConfig(
+            pageSize = NUMBER_OF_MEALS_EACH_LOAD, initialLoadSize = NUMBER_OF_MEALS_EACH_LOAD
+        ),
+        pagingSourceFactory = {
+            wecareDatabase.mealByNutrientsDao().pagingSource()
+        },
+        remoteMediator = MealByNutrientsRemoteMediator(
+            wecareDatabase,
+            mealsApiService,
+            maxCalories,
+            minCalories,
+            maxProtein,
+            maxFat,
+            maxCarbs,
+        ),
+    ).flow
 
     suspend fun insertMeal(
         dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients
-    ): Flow<Response<Boolean>?> = remoteDataSource.insert(dateTime, mealTypeKey, meal.toModel())
+    ): Flow<Response<Boolean>?> =
+        remoteDataSource.insert(dateTime, mealTypeKey, meal.toRecordModel())
 
     suspend fun getMealOfEachTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey

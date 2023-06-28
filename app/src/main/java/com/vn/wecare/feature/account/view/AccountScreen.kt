@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,12 +18,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.AccountUiState
@@ -42,6 +38,8 @@ fun AccountScreen(
     modifier: Modifier = Modifier,
     moveToSignInScreen: () -> Unit,
     viewModel: AccountViewModel,
+    onEditInfoClick: () -> Unit,
+    onAboutUsClick: () -> Unit
 ) {
 
     val uiState = viewModel.accountUiState.collectAsState()
@@ -51,9 +49,11 @@ fun AccountScreen(
             is Response.Loading -> {
                 LoadingDialog(loading = it == Response.Loading) {}
             }
+
             is Response.Success -> viewModel.handleSignOutSuccess {
                 moveToSignInScreen()
             }
+
             is Response.Error -> viewModel.handleSignOutError()
             null -> {/* do nothing */
             }
@@ -91,7 +91,9 @@ fun AccountScreen(
             AccountBody(
                 modifier = modifier,
                 onSignOutClick = { viewModel.onSignOutClick() },
-                onChangePasswordClick = viewModel::onChangePasswordClick
+                onChangePasswordClick = viewModel::onChangePasswordClick,
+                onAboutUsClick = onAboutUsClick,
+                onEditInfoClick = onEditInfoClick
             )
         }
     }
@@ -132,32 +134,17 @@ fun AccountHeader(
                 style = MaterialTheme.typography.h4,
             )
         }
-        if (uiState.value.avatarUri == null) {
-            Box(contentAlignment = Alignment.Center,
-                modifier = modifier
-                    .background(MaterialTheme.colors.primary, shape = CircleShape)
-                    .size(80.dp)
-                    .padding(vertical = halfMidPadding)
-                    .clickable {
-                        galleryLauncher.launch("image/*")
-                    }) {
-                Text(
-                    text = uiState.value.userNameLogo,
-                    style = MaterialTheme.typography.h1,
-                    color = MaterialTheme.colors.onPrimary
-                )
-            }
-        } else {
-            AsyncImage(
-                model = uiState.value.avatarUri,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        galleryLauncher.launch("image/*")
-                    }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .background(MaterialTheme.colors.primary, shape = CircleShape)
+                .size(80.dp)
+                .padding(vertical = halfMidPadding)
+        ) {
+            Text(
+                text = uiState.value.userNameLogo,
+                style = MaterialTheme.typography.h1,
+                color = MaterialTheme.colors.onPrimary
             )
         }
         Text(
@@ -187,7 +174,9 @@ fun AccountHeader(
 fun AccountBody(
     modifier: Modifier,
     onSignOutClick: () -> Unit,
-    onChangePasswordClick: () -> Unit
+    onChangePasswordClick: () -> Unit,
+    onEditInfoClick: () -> Unit,
+    onAboutUsClick: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -211,7 +200,8 @@ fun AccountBody(
             titleRes = R.string.edit_information,
             subTitle = "Change your height and weight",
             elevation = 0.dp,
-            colorIconRes = R.color.Pink
+            colorIconRes = R.color.Pink,
+            onClick = onEditInfoClick
         )
         Spacer(modifier = modifier.height(halfMidPadding))
         CardListTile(
@@ -221,7 +211,8 @@ fun AccountBody(
             titleRes = R.string.about_us,
             subTitle = "Check more about us",
             elevation = 0.dp,
-            colorIconRes = R.color.Blue400
+            colorIconRes = R.color.Blue400,
+            onClick = onAboutUsClick
         )
         Spacer(modifier = modifier.height(halfMidPadding))
         CardListTile(

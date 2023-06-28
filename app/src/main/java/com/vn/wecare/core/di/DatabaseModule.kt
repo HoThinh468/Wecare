@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.feature.account.data.dao.UserDao
+import com.vn.wecare.feature.food.data.dao.MealByNutrientsDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerDayDao
 import com.vn.wecare.feature.home.step_count.data.dao.StepsPerHourDao
 import com.vn.wecare.feature.home.water.data.dao.WaterRecordDao
@@ -46,5 +47,10 @@ object DatabaseModule {
     @Provides
     fun provideWaterRecordDao(database: WecareDatabase): WaterRecordDao {
         return database.waterRecordDao()
+    }
+
+    @Provides
+    fun provideMealByNutrientsDao(database: WecareDatabase): MealByNutrientsDao {
+        return database.mealByNutrientsDao()
     }
 }

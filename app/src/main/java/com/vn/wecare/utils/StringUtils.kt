@@ -51,6 +51,10 @@ fun String.passwordMatches(repeated: String): Boolean {
     return this == repeated
 }
 
+fun String.toIntSafely(): Int {
+    return if (this.isBlank()) 0 else this.toInt()
+}
+
 fun String.getNutrientIndexFromString(): Int {
     return this.dropLast(1).toInt()
 }

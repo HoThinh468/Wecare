@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Female
 import androidx.compose.material.icons.filled.Male
 import androidx.compose.runtime.Composable
@@ -42,15 +41,15 @@ fun OnboardingGenderSelection(
     ) {
         viewModel.onGenderSelect(1)
     }
-    Spacer(modifier = modifier.height(halfMidPadding))
-    IconButtonWithFullWidth(
-        buttonText = "Prefer not to say",
-        iconVector = Icons.Filled.Close,
-        buttonColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.primary
-        else MaterialTheme.colors.onPrimary,
-        contentColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.onPrimary
-        else MaterialTheme.colors.onSecondary
-    ) {
-        viewModel.onGenderSelect(2)
-    }
+//    Spacer(modifier = modifier.height(halfMidPadding))
+//    IconButtonWithFullWidth(
+//        buttonText = "Prefer not to say",
+//        iconVector = Icons.Filled.Close,
+//        buttonColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.primary
+//        else MaterialTheme.colors.onPrimary,
+//        contentColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.onPrimary
+//        else MaterialTheme.colors.onSecondary
+//    ) {
+//        viewModel.onGenderSelect(2)
+//    }
 }

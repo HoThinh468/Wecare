@@ -1,9 +1,7 @@
 package com.vn.wecare.feature.food.data
 
-import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealNameSearchResult
-import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query

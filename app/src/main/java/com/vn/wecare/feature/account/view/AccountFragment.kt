@@ -30,7 +30,18 @@ class AccountFragment :
                             R.id.homeFragment, R.id.action_homeFragment_to_splashFragment
                         )
                     }
-                }, viewModel = accountViewModel
+                },
+                onEditInfoClick = {
+                    findNavController().safeNavigate(
+                        R.id.accountFragment, R.id.action_accountFragment_to_editInformationFragment
+                    )
+                },
+                onAboutUsClick = {
+                    findNavController().safeNavigate(
+                        R.id.accountFragment, R.id.action_accountFragment_to_aboutUsFragment
+                    )
+                },
+                viewModel = accountViewModel,
             )
         }
         accountViewModel.updateAccountScreen()

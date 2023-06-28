@@ -1,25 +1,27 @@
 package com.vn.wecare.feature.food.addmeal.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealByNutrientsEntity
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toModel
+import com.vn.wecare.feature.food.data.model.toMealByNutrients
+import com.vn.wecare.feature.food.data.model.toRecordModel
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -93,7 +95,11 @@ class AddMealViewModel @Inject constructor(
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
             calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForBreakfast),
             calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForBreakfast),
-        ).cachedIn(viewModelScope)
+        ).map { pagingData ->
+            pagingData.map {
+                it.toMealByNutrients()
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun getLunchMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
@@ -103,7 +109,11 @@ class AddMealViewModel @Inject constructor(
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
             calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForLunch),
             calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForLunch),
-        ).cachedIn(viewModelScope)
+        ).map { pagingData ->
+            pagingData.map {
+                it.toMealByNutrients()
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun getSnackMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
@@ -113,7 +123,11 @@ class AddMealViewModel @Inject constructor(
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
             calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForSnack),
             calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForSnack),
-        ).cachedIn(viewModelScope)
+        ).map { pagingData ->
+            pagingData.map {
+                it.toMealByNutrients()
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun getDinnerMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
@@ -123,7 +137,11 @@ class AddMealViewModel @Inject constructor(
             calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
             calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForDinner),
             calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForDinner),
-        ).cachedIn(viewModelScope)
+        ).map { pagingData ->
+            pagingData.map {
+                it.toMealByNutrients()
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun updateCurrentChosenMeal(meal: MealByNutrients) {
@@ -134,10 +152,10 @@ class AddMealViewModel @Inject constructor(
 
     fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients) {
         val isMealExist = when (mealTypeKey) {
-            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toModel())
-            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toModel())
-            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toModel())
-            else -> currentDayDinnerRecord.contains(meal.toModel())
+            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toRecordModel())
+            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toRecordModel())
+            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toRecordModel())
+            else -> currentDayDinnerRecord.contains(meal.toRecordModel())
         }
 
         if (isMealExist) {
@@ -151,7 +169,7 @@ class AddMealViewModel @Inject constructor(
                         it.copy(insertMealRecordResponse = res)
                     }
                     if (res is Response.Success) {
-                        updateMealListByType(mealTypeKey, meal.toModel())
+                        updateMealListByType(mealTypeKey, meal.toRecordModel())
                     }
                 }
             }
