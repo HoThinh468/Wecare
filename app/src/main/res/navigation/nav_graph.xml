@@ -101,11 +101,6 @@
     </navigation>
 
     <!-- Account management nested section -->
-    <fragment
-        android:id="@+id/accountFragment"
-        android:name="com.vn.wecare.feature.account.view.AccountFragment"
-        android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
     <navigation
         android:id="@+id/training_graph"
         app:startDestination="@id/trainingFragment">
@@ -383,17 +378,20 @@
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_yourOwnMealListFragment"
                 app:destination="@id/yourOwnMealListFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_foodReportFragment"
+                app:destination="@id/foodReportFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
             android:name="com.vn.wecare.feature.food.breakfast.ui.BreakfastFragment"
             android:label="fragment_breakfast"
-            tools:layout="@layout/fragment_breakfast"/>
+            tools:layout="@layout/fragment_breakfast" />
         <fragment
             android:id="@+id/addMealFragment"
             android:name="com.vn.wecare.feature.food.addmeal.ui.AddMealFragment"
             android:label="fragment_add_meal"
-            tools:layout="@layout/fragment_add_meal" >
+            tools:layout="@layout/fragment_add_meal">
             <action
                 android:id="@+id/action_addMealFragment_to_searchFoodFragment"
                 app:destination="@id/searchFoodFragment" />
@@ -428,7 +426,7 @@
             android:id="@+id/searchFoodFragment"
             android:name="com.vn.wecare.feature.food.search.ui.SearchFoodFragment"
             android:label="fragment_search_food"
-            tools:layout="@layout/fragment_search_food" >
+            tools:layout="@layout/fragment_search_food">
             <action
                 android:id="@+id/action_searchFoodFragment_to_addYourOwnMealFragment"
                 app:destination="@id/addYourOwnMealFragment" />
@@ -442,7 +440,7 @@
             android:id="@+id/yourOwnMealListFragment"
             android:name="com.vn.wecare.feature.food.yourownmeal.yourownmeal.YourOwnMealListFragment"
             android:label="fragment_your_own_meal_list"
-            tools:layout="@layout/fragment_your_own_meal_list" >
+            tools:layout="@layout/fragment_your_own_meal_list">
             <action
                 android:id="@+id/action_yourOwnMealListFragment_to_addYourOwnMealFragment"
                 app:destination="@id/addYourOwnMealFragment" />
@@ -455,5 +453,38 @@
             android:name="com.vn.wecare.feature.food.yourownmeal.edityourownmeal.EditYourOwnMealFragment"
             android:label="fragment_edit_your_own_meal"
             tools:layout="@layout/fragment_edit_your_own_meal" />
+        <fragment
+            android:id="@+id/foodReportFragment"
+            android:name="com.vn.wecare.feature.food.report.FoodReportFragment"
+            android:label="fragment_food_report"
+            tools:layout="@layout/fragment_food_report" />
+    </navigation>
+
+    <!-- Account nested graph -->
+    <navigation
+        android:id="@+id/account_graph"
+        app:startDestination="@id/accountFragment">
+        <fragment
+            android:id="@+id/accountFragment"
+            android:name="com.vn.wecare.feature.account.view.AccountFragment"
+            android:label="fragment_account"
+            tools:layout="@layout/fragment_account">
+            <action
+                android:id="@+id/action_accountFragment_to_editInformationFragment"
+                app:destination="@id/editInformationFragment" />
+            <action
+                android:id="@+id/action_accountFragment_to_aboutUsFragment"
+                app:destination="@id/aboutUsFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/editInformationFragment"
+            android:name="com.vn.wecare.feature.account.view.EditInformationFragment"
+            android:label="fragment_edit_information"
+            tools:layout="@layout/fragment_edit_information" />
+        <fragment
+            android:id="@+id/aboutUsFragment"
+            android:name="com.vn.wecare.feature.account.view.AboutUsFragment"
+            android:label="fragment_about_us"
+            tools:layout="@layout/fragment_about_us" />
     </navigation>
 </navigation>

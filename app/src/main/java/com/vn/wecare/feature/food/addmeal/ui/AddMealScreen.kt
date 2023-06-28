@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel

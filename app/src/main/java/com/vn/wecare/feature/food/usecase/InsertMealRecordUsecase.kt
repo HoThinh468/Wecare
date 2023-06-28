@@ -6,7 +6,7 @@ import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toModel
+import com.vn.wecare.feature.food.data.model.toRecordModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -59,10 +59,10 @@ class InsertMealRecordUsecase @Inject constructor(
         dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients
     ): Flow<Response<Boolean>> = flow {
         val isMealExist = when (mealTypeKey) {
-            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toModel())
-            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toModel())
-            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toModel())
-            else -> currentDayDinnerRecord.contains(meal.toModel())
+            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toRecordModel())
+            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toRecordModel())
+            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toRecordModel())
+            else -> currentDayDinnerRecord.contains(meal.toRecordModel())
         }
 
         if (isMealExist) {
@@ -72,7 +72,7 @@ class InsertMealRecordUsecase @Inject constructor(
             repository.insertMeal(dateTime, mealTypeKey, meal).collect { res ->
                 emit(res ?: Response.Error(null))
                 if (res is Response.Success) {
-                    updateMealListByType(mealTypeKey, meal.toModel())
+                    updateMealListByType(mealTypeKey, meal.toRecordModel())
                 }
             }
         }

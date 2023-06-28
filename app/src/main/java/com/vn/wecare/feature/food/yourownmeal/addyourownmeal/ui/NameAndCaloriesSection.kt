@@ -42,19 +42,26 @@ fun NameAndCaloriesSection(
     carbs: Int,
 ) {
     Text("Name", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(), value = mealName, onValueChange = {
-        onNameChange(it)
-    }, label = { Text("Meal's name") }, maxLines = 1, singleLine = true, leadingIcon = {
-        Icon(imageVector = Icons.Default.Title, contentDescription = null)
-    }, trailingIcon = {
-        IconButton(onClick = { onClearMealNameClick() }) {
-            Icon(imageVector = Icons.Default.Close, contentDescription = null)
-        }
-    }, isError = !isNameValid
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(), value = mealName,
+        onValueChange = {
+            onNameChange(it)
+        },
+        label = { Text("Meal's name") }, maxLines = 1, singleLine = true,
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Title, contentDescription = null)
+        },
+        trailingIcon = {
+            IconButton(onClick = { onClearMealNameClick() }) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+            }
+        },
+        isError = !isNameValid,
     )
     Spacer(modifier = modifier.height(normalPadding))
     Text("Calories", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = calories,
         onValueChange = {
             onCaloriesChange(it)

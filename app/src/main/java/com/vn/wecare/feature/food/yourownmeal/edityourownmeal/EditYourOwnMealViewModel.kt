@@ -98,36 +98,6 @@ class EditYourOwnMealViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Work well with the same category
-     */
-//    fun onSaveMealClick() = viewModelScope.launch {
-//        checkIfNameIsError()
-//        checkIfCaloriesIsError()
-//        checkIfImageIsUploaded()
-//        if (_editMealUiState.value.isNameValid && _editMealUiState.value.isCaloriesValid && _editMealUiState.value.isImageUploaded) {
-//            _editMealUiState.update { it.copy(saveMealToFirebaseResponse = Response.Loading) }
-//            if (_editMealUiState.value.currentMeal.category != _editMealUiState.value.currentChosenCategory.value) {
-//                mealsRepository.deleteMealFromFirebase(_editMealUiState.value.currentMeal)
-//            }
-//            val result = combine(
-//                mealsRepository.insertYourOwnMealToFirebase(getNewUpdatedMeal()),
-//                mealsRepository.insertMealImageToFirebaseStorage(
-//                    _editMealUiState.value.currentMeal.id,
-//                    _editMealUiState.value.imageUri!!,
-//                    _editMealUiState.value.currentChosenCategory.value
-//                )
-//            ) { res1, res2 ->
-//                if (res1 is Response.Success && res2 is Response.Success) {
-//                    Response.Success(true)
-//                } else Response.Error(null)
-//            }
-//            result.collect { res ->
-//                _editMealUiState.update { it.copy(saveMealToFirebaseResponse = res) }
-//            }
-//        }
-//    }
-
     fun onSaveMealClick() = viewModelScope.launch {
         checkIfNameIsError()
         checkIfCaloriesIsError()

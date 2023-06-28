@@ -122,7 +122,7 @@ private fun ReportContent(
 }
 
 @Composable
-private fun NoNetWorkConnectionUI(modifier: Modifier) {
+fun NoNetWorkConnectionUI(modifier: Modifier) {
     Image(
         painter = painterResource(id = R.drawable.img_no_internet),
         modifier = modifier.size(180.dp),

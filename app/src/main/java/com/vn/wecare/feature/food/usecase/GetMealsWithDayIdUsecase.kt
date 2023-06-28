@@ -12,7 +12,6 @@ class GetMealsWithDayIdUsecase @Inject constructor(
 ) {
     suspend fun getMealOfEachTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
-    ): Flow<Response<List<MealRecordModel>?>> =
+    ): Flow<Response<List<MealRecordModel>>> =
         mealsRepository.getMealOfEachTypeInDayWithDayId(dayOfMonth, month, year, mealTypeKey)
-
 }
