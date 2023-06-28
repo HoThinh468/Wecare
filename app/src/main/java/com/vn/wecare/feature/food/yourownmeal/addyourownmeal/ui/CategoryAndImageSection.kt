@@ -146,7 +146,6 @@ private fun ChooseImage(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri -> onImagePick(uri) },
     )
-
     Text("Choose image", style = MaterialTheme.typography.body1)
     Spacer(modifier = modifier.height(smallPadding))
     Card(

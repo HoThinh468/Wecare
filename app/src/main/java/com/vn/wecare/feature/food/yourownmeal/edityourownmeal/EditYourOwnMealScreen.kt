@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.ui.CategoryAndImageSection
-import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.ui.NameAndCaloriesSection
+import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.ui.NameAndNutrientsSection
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.largePadding
@@ -147,19 +147,34 @@ fun EditYourOwnMealScreen(
                 .padding(midPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            NameAndCaloriesSection(
+//            NameAndCaloriesSection(
+//                modifier = modifier,
+//                mealName = viewModel.mealName,
+//                onClearMealNameClick = viewModel::clearMealName,
+//                onNameChange = viewModel::onNameChange,
+//                calories = viewModel.calories,
+//                onClearCaloriesClick = viewModel::clearCalories,
+//                onCaloriesChange = viewModel::onCaloriesChange,
+//                isNameValid = uiState.isNameValid,
+//                isCaloriesValid = uiState.isCaloriesValid,
+//                protein = uiState.protein,
+//                fat = uiState.fat,
+//                carbs = uiState.carbs
+//            )
+            NameAndNutrientsSection(
                 modifier = modifier,
                 mealName = viewModel.mealName,
-                onClearMealNameClick = viewModel::clearMealName,
+                onClearMealNameClick = { viewModel.clearMealName() },
                 onNameChange = viewModel::onNameChange,
-                calories = viewModel.calories,
-                onClearCaloriesClick = viewModel::clearCalories,
-                onCaloriesChange = viewModel::onCaloriesChange,
                 isNameValid = uiState.isNameValid,
-                isCaloriesValid = uiState.isCaloriesValid,
-                protein = uiState.protein,
-                fat = uiState.fat,
-                carbs = uiState.carbs
+                protein = viewModel.protein,
+                onProteinChange = viewModel::onProteinChange,
+                fat = viewModel.fat,
+                onFatChange = viewModel::onFatChange,
+                carbs = viewModel.carbs,
+                onCarbsChange = viewModel::onCarbsChange,
+                calories = uiState.calories.toString(),
+                areNutrientsValid = uiState.areNutrientsValid
             )
             Spacer(modifier = modifier.height(normalPadding))
             CategoryAndImageSection(

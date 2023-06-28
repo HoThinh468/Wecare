@@ -3,6 +3,7 @@ package com.vn.wecare.feature.food.mealdetail
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -176,28 +177,21 @@ private fun NutrientsIndexInformation(modifier: Modifier, record: MealRecordMode
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NutrientIndexItem(
-            modifier = modifier,
-            title = "PROTEIN",
-            index = record.protein,
-            color = Red400
+            modifier = modifier, title = "PROTEIN", index = record.protein, color = Red400
         )
         NutrientIndexItem(
-            modifier = modifier,
-            title = "FAT",
-            index = record.fat,
-            color = Yellow
+            modifier = modifier, title = "FAT", index = record.fat, color = Yellow
         )
         NutrientIndexItem(
-            modifier = modifier,
-            title = "CARBS",
-            index = record.carbs,
-            color = Blue
+            modifier = modifier, title = "CARBS", index = record.carbs, color = Blue
         )
     }
 }
 
 @Composable
-fun NutrientIndexItem(modifier: Modifier, title: String, index: String, color: Color) {
+fun NutrientIndexItem(
+    modifier: Modifier, title: String, index: String, color: Color
+) {
     Box(
         modifier = modifier
             .size(84.dp)

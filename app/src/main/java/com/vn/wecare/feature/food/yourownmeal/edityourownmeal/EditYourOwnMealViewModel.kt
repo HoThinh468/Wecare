@@ -12,6 +12,7 @@ import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import com.vn.wecare.utils.isLetters
+import com.vn.wecare.utils.toIntSafely
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,17 +22,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class EditMealUiState(
-    val protein: Int = 0,
-    val fat: Int = 0,
-    val carbs: Int = 0,
+    val calories: Int = 0,
     val currentChosenCategory: MealTypeKey = MealTypeKey.BREAKFAST,
     val imageUri: Uri? = null,
     val isNameValid: Boolean = true,
-    val isCaloriesValid: Boolean = true,
     val isImageUploaded: Boolean = true,
     val saveMealToFirebaseResponse: Response<Boolean>? = null,
     val deleteMealResponse: Response<Boolean>? = null,
-    val currentMeal: Meal = Meal()
+    val currentMeal: Meal = Meal(),
+    val areNutrientsValid: Boolean = true,
 )
 
 @HiltViewModel
@@ -52,25 +51,29 @@ class EditYourOwnMealViewModel @Inject constructor(
         mealName = ""
     }
 
-    var calories by mutableStateOf("0")
-    fun onCaloriesChange(newCalories: String) {
-        calories = newCalories
-        if (calories.isNotBlank()) {
-            val intCalo = calories.toInt()
-            if (intCalo <= 1000) {
-                _editMealUiState.update {
-                    it.copy(
-                        protein = calculateNutrientsIndexUsecase.getProteinIndexInGram(intCalo),
-                        fat = calculateNutrientsIndexUsecase.getFatIndexInGram(intCalo),
-                        carbs = calculateNutrientsIndexUsecase.getCarbIndexInGram(intCalo),
-                    )
-                }
-            }
-        }
+    var fat by mutableStateOf("0")
+    fun onFatChange(newFat: String) {
+        fat = newFat
+        updateCaloriesValue()
     }
 
-    fun clearCalories() {
-        calories = ""
+    var protein by mutableStateOf("0")
+    fun onProteinChange(newProtein: String) {
+        protein = newProtein
+        updateCaloriesValue()
+    }
+
+    var carbs by mutableStateOf("0")
+    fun onCarbsChange(newCarbs: String) {
+        carbs = newCarbs
+        updateCaloriesValue()
+    }
+
+    private fun updateCaloriesValue() {
+        val calories = calculateNutrientsIndexUsecase.getCaloriesFromNutrients(
+            protein.toIntSafely(), fat.toIntSafely(), carbs.toIntSafely()
+        )
+        _editMealUiState.update { it.copy(calories = calories) }
     }
 
     fun updateChosenCategory(key: MealTypeKey) {
@@ -85,12 +88,12 @@ class EditYourOwnMealViewModel @Inject constructor(
 
     fun initEditMealUiState(meal: Meal) {
         mealName = meal.name
-        calories = meal.calories.toString()
+        protein = meal.protein.toString()
+        fat = meal.fat.toString()
+        carbs = meal.carbs.toString()
         _editMealUiState.update {
             it.copy(
-                protein = meal.protein,
-                fat = meal.fat,
-                carbs = meal.carbs,
+                calories = meal.calories,
                 currentChosenCategory = getMealTypeKeyByKey(meal.category),
                 imageUri = Uri.parse(meal.imgUrl),
                 currentMeal = meal
@@ -100,9 +103,9 @@ class EditYourOwnMealViewModel @Inject constructor(
 
     fun onSaveMealClick() = viewModelScope.launch {
         checkIfNameIsError()
-        checkIfCaloriesIsError()
         checkIfImageIsUploaded()
-        if (_editMealUiState.value.isNameValid && _editMealUiState.value.isCaloriesValid && _editMealUiState.value.isImageUploaded) {
+        checkIfNutrientsAreValid()
+        if (_editMealUiState.value.isNameValid && _editMealUiState.value.areNutrientsValid && _editMealUiState.value.isImageUploaded) {
             _editMealUiState.update { it.copy(saveMealToFirebaseResponse = Response.Loading) }
             val result = combine(
                 mealsRepository.insertYourOwnMealToFirebase(getNewUpdatedMeal()),
@@ -149,14 +152,6 @@ class EditYourOwnMealViewModel @Inject constructor(
         }
     }
 
-    private fun checkIfCaloriesIsError() {
-        _editMealUiState.update {
-            it.copy(
-                isCaloriesValid = calories.toInt() in 1..9_000
-            )
-        }
-    }
-
     private fun checkIfImageIsUploaded() {
         _editMealUiState.update {
             it.copy(isImageUploaded = _editMealUiState.value.imageUri != null)
@@ -167,11 +162,11 @@ class EditYourOwnMealViewModel @Inject constructor(
         id = _editMealUiState.value.currentMeal.id,
         name = mealName,
         category = _editMealUiState.value.currentChosenCategory.value,
-        calories = calories.toInt(),
-        protein = _editMealUiState.value.protein,
-        fat = _editMealUiState.value.fat,
-        carbs = _editMealUiState.value.carbs,
-        imgUrl = _editMealUiState.value.imageUri.toString()
+        protein = protein.toIntSafely(),
+        fat = fat.toIntSafely(),
+        carbs = carbs.toIntSafely(),
+        imgUrl = _editMealUiState.value.imageUri.toString(),
+        calories = _editMealUiState.value.calories
     )
 
     private fun getMealTypeKeyByKey(key: String): MealTypeKey = when (key) {
@@ -179,6 +174,13 @@ class EditYourOwnMealViewModel @Inject constructor(
         "lunch" -> MealTypeKey.LUNCH
         "snack" -> MealTypeKey.SNACK
         else -> MealTypeKey.DINNER
+    }
+
+    private fun checkIfNutrientsAreValid() {
+        val isProteinValid = protein.toIntSafely() in 1..1000
+        val isFatValid = fat.toIntSafely() in 1..1000
+        val isCarbsValid = carbs.toIntSafely() in 1..1000
+        _editMealUiState.update { it.copy(areNutrientsValid = isProteinValid && isCarbsValid && isFatValid) }
     }
 
     fun resetUiState() {
