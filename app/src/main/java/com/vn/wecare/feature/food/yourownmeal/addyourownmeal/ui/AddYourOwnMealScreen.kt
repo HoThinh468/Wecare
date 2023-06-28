@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.viewmodel.AddYourOwnMealViewModel
 import com.vn.wecare.ui.theme.Shapes
+import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.largePadding
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -87,21 +88,22 @@ fun AddYourOwnMealScreen(
                 .padding(midPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            NameAndCaloriesSection(
+            NameAndNutrientsSection(
                 modifier = modifier,
                 mealName = viewModel.mealName,
-                onClearMealNameClick = viewModel::clearMealName,
+                onClearMealNameClick = { viewModel.clearMealName() },
                 onNameChange = viewModel::onNameChange,
-                calories = viewModel.calories,
-                onClearCaloriesClick = viewModel::clearCalories,
-                onCaloriesChange = viewModel::onCaloriesChange,
                 isNameValid = uiState.isNameValid,
-                isCaloriesValid = uiState.isCaloriesValid,
-                protein = uiState.protein,
-                fat = uiState.fat,
-                carbs = uiState.carbs
+                protein = viewModel.protein,
+                onProteinChange = viewModel::onProteinChange,
+                fat = viewModel.fat,
+                onFatChange = viewModel::onFatChange,
+                carbs = viewModel.carbs,
+                onCarbsChange = viewModel::onCarbsChange,
+                calories = uiState.calories.toString(),
+                areNutrientsValid = uiState.areNutrientsValid
             )
-            Spacer(modifier = modifier.height(normalPadding))
+            Spacer(modifier = modifier.height(halfMidPadding))
             CategoryAndImageSection(
                 modifier = modifier,
                 chosenMealTypeKey = uiState.currentChosenCategory,

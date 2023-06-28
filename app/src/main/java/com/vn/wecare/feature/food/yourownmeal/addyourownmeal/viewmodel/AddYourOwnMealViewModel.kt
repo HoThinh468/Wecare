@@ -11,8 +11,8 @@ import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
-import com.vn.wecare.feature.food.usecase.InsertMealRecordUsecase
 import com.vn.wecare.utils.isLetters
+import com.vn.wecare.utils.toIntSafely
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,15 +22,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AddMealUiState(
-    val protein: Int = 0,
-    val fat: Int = 0,
-    val carbs: Int = 0,
+    val calories: Int = 0,
     val currentChosenCategory: MealTypeKey = MealTypeKey.BREAKFAST,
     val imageUri: Uri? = null,
     val isNameValid: Boolean = true,
-    val isCaloriesValid: Boolean = true,
+    val areNutrientsValid: Boolean = true,
     val isImageUploaded: Boolean = true,
-    val saveMealToFirebaseResponse: Response<Boolean>? = null
+    val saveMealToFirebaseResponse: Response<Boolean>? = null,
 )
 
 @HiltViewModel
@@ -51,25 +49,29 @@ class AddYourOwnMealViewModel @Inject constructor(
         mealName = ""
     }
 
-    var calories by mutableStateOf("0")
-    fun onCaloriesChange(newCalories: String) {
-        calories = newCalories
-        if (calories.isNotBlank()) {
-            val intCalo = calories.toInt()
-            if (intCalo <= 1000) {
-                _addMealUiState.update {
-                    it.copy(
-                        protein = calculateNutrientsIndexUsecase.getProteinIndexInGram(intCalo),
-                        fat = calculateNutrientsIndexUsecase.getFatIndexInGram(intCalo),
-                        carbs = calculateNutrientsIndexUsecase.getCarbIndexInGram(intCalo)
-                    )
-                }
-            }
-        }
+    var fat by mutableStateOf("0")
+    fun onFatChange(newFat: String) {
+        fat = newFat
+        updateCaloriesValue()
     }
 
-    fun clearCalories() {
-        calories = ""
+    var protein by mutableStateOf("0")
+    fun onProteinChange(newProtein: String) {
+        protein = newProtein
+        updateCaloriesValue()
+    }
+
+    var carbs by mutableStateOf("0")
+    fun onCarbsChange(newCarbs: String) {
+        carbs = newCarbs
+        updateCaloriesValue()
+    }
+
+    private fun updateCaloriesValue() {
+        val calories = calculateNutrientsIndexUsecase.getCaloriesFromNutrients(
+            protein.toIntSafely(), fat.toIntSafely(), carbs.toIntSafely()
+        )
+        _addMealUiState.update { it.copy(calories = calories) }
     }
 
     fun updateChosenCategory(key: MealTypeKey) {
@@ -84,9 +86,9 @@ class AddYourOwnMealViewModel @Inject constructor(
 
     fun onSaveMealClick() = viewModelScope.launch {
         checkIfNameIsError()
-        checkIfCaloriesIsError()
         checkIfImageIsUploaded()
-        if (_addMealUiState.value.isNameValid && _addMealUiState.value.isCaloriesValid && _addMealUiState.value.isImageUploaded) {
+        checkIfNutrientsAreValid()
+        if (_addMealUiState.value.isNameValid && _addMealUiState.value.isImageUploaded && _addMealUiState.value.areNutrientsValid) {
             val timeStamp = System.currentTimeMillis()
             _addMealUiState.update { it.copy(saveMealToFirebaseResponse = Response.Loading) }
             val result = combine(
@@ -115,33 +117,32 @@ class AddYourOwnMealViewModel @Inject constructor(
         }
     }
 
-    private fun checkIfCaloriesIsError() {
-        _addMealUiState.update {
-            it.copy(
-                isCaloriesValid = calories.toInt() in 1..9_000
-            )
-        }
-    }
-
     private fun checkIfImageIsUploaded() {
         _addMealUiState.update {
             it.copy(isImageUploaded = _addMealUiState.value.imageUri != null)
         }
     }
 
+    private fun checkIfNutrientsAreValid() {
+        val isProteinValid = protein.toIntSafely() in 1..1000
+        val isFatValid = fat.toIntSafely() in 1..1000
+        val isCarbsValid = carbs.toIntSafely() in 1..1000
+        _addMealUiState.update { it.copy(areNutrientsValid = isProteinValid && isCarbsValid && isFatValid) }
+    }
+
     private fun createMealWithTimeStamp(timeStamp: Long): Meal = Meal(
         id = timeStamp,
         name = mealName,
         category = _addMealUiState.value.currentChosenCategory.value,
-        calories = calories.toInt(),
-        protein = _addMealUiState.value.protein,
-        fat = _addMealUiState.value.fat,
-        carbs = _addMealUiState.value.carbs
+        calories = _addMealUiState.value.calories,
+        protein = protein.toIntSafely(),
+        fat = fat.toIntSafely(),
+        carbs = carbs.toIntSafely()
     )
 
     fun resetUiState() {
         _addMealUiState.update { AddMealUiState() }
         mealName = ""
-        calories = "0"
+        fat = "0"
     }
 }
