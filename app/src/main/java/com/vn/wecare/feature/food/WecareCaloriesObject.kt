@@ -1,10 +1,10 @@
 package com.vn.wecare.feature.food
 
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
 import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
 import com.vn.wecare.utils.WecareUserConstantValues.IMPROVE_MOOD
-import com.vn.wecare.utils.WecareUserConstantValues.LOOSE_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
@@ -22,43 +22,42 @@ data class UserCaloriesAmount(
 )
 
 object WecareCaloriesObject {
-
-    private val wecareUserFlow = WecareUserSingleton.getInstanceFlow()
-
-    private val wecareUser = WecareUserSingleton.getInstance()
-
     private val instance = MutableStateFlow(UserCaloriesAmount())
 
     fun getInstance() = instance.value
 
     fun getInstanceFlow() = instance.asStateFlow()
 
-    fun calculateUserCaloriesAmount() {
-        wecareUser.let { user ->
-            updateCaloriesInAmountOfDay(
+    fun updateUserCaloriesAmount() {
+        WecareUserSingletonObject.getInstance().let { user ->
+            val caloriesIn = calculateCaloriesInWithUserPersonalInfo(
                 user.goal ?: IMPROVE_MOOD,
                 user.weight ?: MIN_WEIGHT,
                 user.height ?: MIN_HEIGHT,
                 user.gender ?: true,
                 user.age ?: MIN_AGE
             )
+            updateCaloriesInAmountOfDay(caloriesIn)
+            val caloriesOut =
+                calculateCaloriesOutBasedOnCaloriesIn(caloriesIn, user.goal ?: IMPROVE_MOOD)
+            updateCaloriesOutAmountOfDay(caloriesOut)
         }
     }
 
-    private fun updateCaloriesInAmountOfDay(
+    fun calculateCaloriesInWithUserPersonalInfo(
         goal: String, weight: Int, height: Int, gender: Boolean, age: Int
-    ) {
+    ): Int {
         var calories = if (gender) {
             (6.25 * height).toInt() + (10 * weight) - (5 * age) + 5
         } else {
             (6.25 * height).toInt() + (10 * weight) - (5 * age) - 161
         }
         calories = when (goal) {
-            GAIN_MUSCLE, LOOSE_WEIGHT -> {
+            GAIN_MUSCLE -> {
                 (calories * 1.725).toInt()
             }
 
-            GET_HEALTHIER -> {
+            LOSE_WEIGHT, GET_HEALTHIER -> {
                 (calories * 1.55).toInt()
             }
 
@@ -66,6 +65,10 @@ object WecareCaloriesObject {
                 (calories * 1.375).toInt()
             }
         }
+        return calories
+    }
+
+    private fun updateCaloriesInAmountOfDay(calories: Int) {
         instance.update {
             it.copy(
                 caloriesInEachDay = calories,
@@ -75,23 +78,29 @@ object WecareCaloriesObject {
                 caloriesOfDinner = getCaloriesForDinner(calories)
             )
         }
-        updateCaloriesOutAmountOfDay(calories, goal)
     }
 
-    private fun updateCaloriesOutAmountOfDay(caloriesIn: Int, goal: String) {
-        val caloriesOut = when (goal) {
-            LOOSE_WEIGHT -> {
-                caloriesIn - 500
+    fun calculateCaloriesOutBasedOnCaloriesIn(caloriesIn: Int, goal: String): Int {
+        return when (goal) {
+            LOSE_WEIGHT -> {
+                caloriesIn + 1100
             }
 
             GAIN_MUSCLE -> {
-                caloriesIn.times(1.1).toInt()
+                caloriesIn - 1100
+            }
+
+            GET_HEALTHIER -> {
+                caloriesIn + 500
             }
 
             else -> {
-                caloriesIn
+                caloriesIn + 300
             }
         }
+    }
+
+    private fun updateCaloriesOutAmountOfDay(caloriesOut: Int) {
         instance.update { it.copy(caloriesOutEachDay = caloriesOut) }
     }
 

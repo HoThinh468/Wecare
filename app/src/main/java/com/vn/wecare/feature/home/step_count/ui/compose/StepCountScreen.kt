@@ -48,55 +48,45 @@ fun StepCountScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    ModalBottomSheetLayout(
-        sheetContent = {
-            SetYourStepCountGoalModalBottomSheetContent(
+    Scaffold(modifier = modifier,
+        backgroundColor = MaterialTheme.colors.secondaryVariant,
+        topBar = {
+            WecareAppBar(
                 modifier = modifier,
-                onCloseClick = { scope.launch { bottomSheetState.hide() } },
-                stepCountViewModel = stepCountViewModel
-            )
-        }, sheetState = bottomSheetState
-    ) {
-        Scaffold(modifier = modifier,
-            backgroundColor = MaterialTheme.colors.secondaryVariant,
-            topBar = {
-                WecareAppBar(
-                    modifier = modifier,
-                    trailingIconRes = R.drawable.ic_edit_calendar,
-                    title = stepsCountUiState.value.selectedDay,
-                    onLeadingIconPress = navigateUp,
-                    onTrailingIconPress = {
-                        datePicker(
-                            context = context,
-                            updateDate = stepCountViewModel::onDaySelected,
-                        ).show()
-                    }
-                )
-            }) {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (stepsCountUiState.value.hasData) {
-                    Spacer(modifier = modifier.height(halfMidPadding))
-                    Overview(modifier = modifier, viewModel = stepCountViewModel)
-                    Spacer(modifier = modifier.height(halfMidPadding))
-                    SetYourGoal(modifier = modifier) {
-                        showModalBottomSheet.value = !showModalBottomSheet.value
-                        scope.launch { bottomSheetState.show() }
-                    }
-                    Spacer(modifier = modifier.height(halfMidPadding))
-                    DetailStatistic(
-                        modifier = modifier, hoursList = stepsCountUiState.value.hoursList
-                    )
-                    Spacer(modifier = modifier.height(halfMidPadding))
-                    HealthTip(modifier = modifier)
-                    Spacer(modifier = modifier.height(normalPadding))
-                } else {
-                    PageNotFound()
+                trailingIconRes = R.drawable.ic_edit_calendar,
+                title = stepsCountUiState.value.selectedDay,
+                onLeadingIconPress = navigateUp,
+                onTrailingIconPress = {
+                    datePicker(
+                        context = context,
+                        updateDate = stepCountViewModel::onDaySelected,
+                    ).show()
                 }
+            )
+        }) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(smallPadding), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (stepsCountUiState.value.hasData) {
+                Spacer(modifier = modifier.height(halfMidPadding))
+                Overview(modifier = modifier, viewModel = stepCountViewModel)
+                Spacer(modifier = modifier.height(halfMidPadding))
+                SetYourGoal(modifier = modifier) {
+                    showModalBottomSheet.value = !showModalBottomSheet.value
+                    scope.launch { bottomSheetState.show() }
+                }
+                Spacer(modifier = modifier.height(halfMidPadding))
+                DetailStatistic(
+                    modifier = modifier, hoursList = stepsCountUiState.value.hoursList
+                )
+                Spacer(modifier = modifier.height(halfMidPadding))
+                HealthTip(modifier = modifier)
+                Spacer(modifier = modifier.height(normalPadding))
+            } else {
+                PageNotFound()
             }
         }
     }

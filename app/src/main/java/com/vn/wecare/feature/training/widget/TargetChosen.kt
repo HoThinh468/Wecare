@@ -1,7 +1,5 @@
 package com.vn.wecare.feature.training.widget
 
-import android.opengl.Visibility
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,13 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mapbox.maps.extension.style.expressions.dsl.generated.distance
 import com.vn.wecare.R
 import com.vn.wecare.feature.training.onWalking.UserTarget
 import com.vn.wecare.ui.theme.mediumRadius
-import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
-import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
 fun TargetChosen(
@@ -122,14 +117,14 @@ fun distanceTarget(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        first = numberPickerSpinner(modifier = modifier, max = 999, min = 0)
+        first = NumberPickerSpinner(modifier = modifier, max = 999, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ".",
             fontSize = 32.sp,
             color = MaterialTheme.colors.primary
         )
-        second = numberPickerSpinner(modifier = modifier, max = 99, min = 0)
+        second = NumberPickerSpinner(modifier = modifier, max = 99, min = 0)
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "km", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
@@ -148,21 +143,21 @@ fun timeTarget(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        hour = numberPickerSpinner(modifier = modifier, max = 12, min = 0)
+        hour = NumberPickerSpinner(modifier = modifier, max = 12, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
             fontSize = 32.sp,
             color = MaterialTheme.colors.primary
         )
-        min = numberPickerSpinner(modifier = modifier, max = 59, min = 0)
+        min = NumberPickerSpinner(modifier = modifier, max = 59, min = 0)
         Text(
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
             text = ":",
             fontSize = 32.sp,
             color = MaterialTheme.colors.primary
         )
-        sec = numberPickerSpinner(modifier = modifier, max = 50, min = 0)
+        sec = NumberPickerSpinner(modifier = modifier, max = 50, min = 0)
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "hour", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }
@@ -179,7 +174,7 @@ fun calorieTarget(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        time = numberPickerSpinner(modifier = modifier, max = 9999, min = 50)
+        time = NumberPickerSpinner(modifier = modifier, max = 9999, min = 50)
         Spacer(modifier = modifier.width(32.dp))
         Text(text = "Cal", fontSize = 28.sp, color = MaterialTheme.colors.primary)
     }

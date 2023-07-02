@@ -27,4 +27,8 @@ class OnboardingFragment :
             })
         }
     }
+
+    companion object {
+        const val onboardingTag = "Onboarding flow"
+    }
 }

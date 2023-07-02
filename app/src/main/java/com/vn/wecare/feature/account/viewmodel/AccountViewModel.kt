@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.alarm.ExactAlarms
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
@@ -95,7 +95,7 @@ class AccountViewModel @Inject constructor(
         Log.d(AccountFlowTAG, "Signing out user with id: ${accountService.currentUserId}")
         _accountUiState.update { it.copy(signOutResponse = Response.Loading) }
         _accountUiState.update { it.copy(signOutResponse = accountService.signOut()) }
-        WecareUserSingleton.updateInstance(null)
+        WecareUserSingletonObject.updateInstance(null)
     }
 
     fun sendVerificationEmail() = viewModelScope.launch {
@@ -122,7 +122,7 @@ class AccountViewModel @Inject constructor(
             }
             deleteAllWaterRecordsUsecase.deleteAllRecords()
         }
-        WecareUserSingleton.updateInstance(WecareUser())
+        WecareUserSingletonObject.updateInstance(WecareUser())
         clearAccountUIState()
     }
 

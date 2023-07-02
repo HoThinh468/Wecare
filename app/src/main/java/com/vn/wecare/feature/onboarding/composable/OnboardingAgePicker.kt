@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
-import com.vn.wecare.feature.training.widget.numberPickerSpinner
+import com.vn.wecare.feature.training.widget.NumberPickerSpinner
 import com.vn.wecare.ui.theme.largePadding
 import com.vn.wecare.ui.theme.midRadius
 import com.vn.wecare.ui.theme.smallPadding
@@ -31,7 +31,7 @@ fun OnboardingAgePicker(
         elevation = 0.dp,
         backgroundColor = MaterialTheme.colors.secondaryVariant
     ) {
-        numberPickerSpinner(
+        NumberPickerSpinner(
             modifier = modifier.padding(smallPadding),
             max = MAX_AGE,
             min = MIN_AGE,

@@ -18,7 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.home.HomeViewModel
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun openChat() {
         val fab: View = findViewById(R.id.fab)
         fab.setOnClickListener {
-            if (WecareUserSingleton.getInstance().userId != "") {
+            if (WecareUserSingletonObject.getInstance().userId != "") {
                 openChatWithUser()
             } else {
                 openChatWithGuest()
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun openChatWithUser() {
         val user = KMUser()
-        user.userId = WecareUserSingleton.getInstance().userId
+        user.userId = WecareUserSingletonObject.getInstance().userId
 
         Kommunicate.login(this, user, object : KMLoginHandler {
             override fun onSuccess(registrationResponse: RegistrationResponse, context: Context) {
