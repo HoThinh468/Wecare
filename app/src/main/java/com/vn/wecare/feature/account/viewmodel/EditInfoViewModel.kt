@@ -1,20 +1,25 @@
 package com.vn.wecare.feature.account.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.UserRepository
 import com.vn.wecare.feature.account.data.model.WecareUser
-import com.vn.wecare.feature.account.view.EditInformationFragment
+import com.vn.wecare.feature.food.WecareCaloriesObject
+import com.vn.wecare.feature.goal.EnumGoal
+import com.vn.wecare.feature.goal.GoalSingletonObject
+import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
+import com.vn.wecare.feature.onboarding.model.BMIState
+import com.vn.wecare.feature.onboarding.usecase.DefineGoalBasedOnInputsUsecase
+import com.vn.wecare.feature.onboarding.viewmodel.OnboardingDialogUiState
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
 import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
-import com.vn.wecare.utils.WecareUserConstantValues.LOOSE_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MAX_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MAX_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MAX_WEIGHT
@@ -29,33 +34,43 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.pow
 
 data class EditInfoUiState(
-    val currentChosenGoal: Int = 0,
+    val currentChosenGoal: EnumGoal = EnumGoal.GETHEALTHIER,
     val currentChosenGender: Int = 0,
     val isNewInfoDifferent: Boolean = false,
     val isUserNameValid: Boolean = true,
     val isHeightValid: Boolean = true,
     val isWeightValid: Boolean = true,
     val isAgeValid: Boolean = true,
-    val updateInfoResult: Response<Boolean>? = null
+    val updateInfoResult: Response<Boolean>? = null,
+    val desiredWeightDifferencePicker: Int = 0,
+    val estimatedWeeks: Int = 0,
 )
 
 @HiltViewModel
 class EditInfoViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
+    private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase
 ) : ViewModel() {
 
     private val _editInfoUiState = MutableStateFlow(EditInfoUiState())
     val editInfoUiState = _editInfoUiState.asStateFlow()
 
+    private val _onboardingDialogUiState = MutableStateFlow(OnboardingDialogUiState())
+    val onboardingDialogUiState = _onboardingDialogUiState.asStateFlow()
+
+    private val bmiState = MutableStateFlow(BMIState.NORMAL)
+
     fun initEditInfoScreenUiState() = viewModelScope.launch {
-        WecareUserSingleton.getInstanceFlow().collect {
+        WecareUserSingletonObject.getInstanceFlow().collect {
             onUserNameChange(it.userName)
             onHeightChange(it.height.toString())
             onWeightChange(it.weight.toString())
             onAgeChange(it.age.toString())
-            updateCurrentGoalIdWhenInit(it.goal ?: "")
+            updateCurrentGoalWhenInit(it.goal ?: EnumGoal.GETHEALTHIER.value)
             updateCurrentGenderWhenInit(it.gender ?: true)
         }
     }
@@ -96,16 +111,22 @@ class EditInfoViewModel @Inject constructor(
         age = ""
     }
 
-    fun onGoalSelected(id: Int) {
-        _editInfoUiState.update { it.copy(currentChosenGoal = id) }
+    fun onGoalSelected(goal: EnumGoal) {
+        _editInfoUiState.update { it.copy(currentChosenGoal = goal) }
     }
 
     fun onGenderSelected(id: Int) {
         _editInfoUiState.update { it.copy(currentChosenGender = id) }
     }
 
+    fun onPickDesiredWeightDifferenceScroll(difference: Int) {
+        _editInfoUiState.update {
+            it.copy(desiredWeightDifferencePicker = difference, estimatedWeeks = difference)
+        }
+    }
+
     fun checkIfNewInfoIsDifferent(): WecareUser? {
-        val oldUser = WecareUserSingleton.getInstance()
+        val oldUser = WecareUserSingletonObject.getInstance()
         val newUser = WecareUser(
             userId = oldUser.userId,
             emailVerified = oldUser.emailVerified,
@@ -114,7 +135,7 @@ class EditInfoViewModel @Inject constructor(
             height = height.toIntSafely(),
             weight = weight.toIntSafely(),
             age = age.toIntSafely(),
-            goal = getGoalFromId(_editInfoUiState.value.currentChosenGoal),
+            goal = _editInfoUiState.value.currentChosenGoal.value,
             gender = getGenderFromId(_editInfoUiState.value.currentChosenGender)
         )
         _editInfoUiState.update { it.copy(isNewInfoDifferent = newUser != oldUser) }
@@ -122,19 +143,16 @@ class EditInfoViewModel @Inject constructor(
     }
 
     fun onSaveInfoClick(showToast: () -> Unit) {
-        val newUser = checkIfNewInfoIsDifferent()
-        if (_editInfoUiState.value.isNewInfoDifferent && newUser != null) {
+        checkIfNewInfoIsDifferent()
+        if (_editInfoUiState.value.isNewInfoDifferent) {
             checkIfUserNameValid()
             checkIfHeightValid()
             checkIfWeightValid()
             checkIfAgeValid()
             if (_editInfoUiState.value.isUserNameValid && _editInfoUiState.value.isHeightValid && _editInfoUiState.value.isWeightValid && _editInfoUiState.value.isAgeValid) {
-                _editInfoUiState.update { it.copy(updateInfoResult = Response.Loading) }
-                viewModelScope.launch {
-                    userRepository.insertUserToFirebase(newUser)
-                    userRepository.insertUserToLocaldb(newUser)
-                    WecareUserSingleton.updateInstance(newUser)
-                    _editInfoUiState.update { it.copy(updateInfoResult = Response.Success(true)) }
+                checkIfGoalIsAppropriate()
+                if (!_onboardingDialogUiState.value.shouldShowRecommendationDialog && !_onboardingDialogUiState.value.shouldShowWarningDialog) {
+                    saveNewUserInfoAndNewGoal()
                 }
             }
         } else {
@@ -142,32 +160,51 @@ class EditInfoViewModel @Inject constructor(
         }
     }
 
+    fun saveNewUserInfoAndNewGoal() {
+        val newUser = checkIfNewInfoIsDifferent()
+        val enumGoal = _editInfoUiState.value.currentChosenGoal
+        if (newUser != null) {
+            _editInfoUiState.update { it.copy(updateInfoResult = Response.Loading) }
+            viewModelScope.launch {
+                userRepository.insertUserToFirebase(newUser)
+                userRepository.insertUserToLocaldb(newUser)
+                WecareUserSingletonObject.updateInstance(newUser)
+                val goal = defineGoalBasedOnInputsUsecase.getGoalFromInputs(
+                    userId = newUser.userId,
+                    goal = enumGoal,
+                    height = height.toIntSafely(),
+                    weight = weight.toIntSafely(),
+                    age = age.toIntSafely(),
+                    gender = getGenderFromId(_editInfoUiState.value.currentChosenGender),
+                    weightDifference = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) 0 else _editInfoUiState.value.desiredWeightDifferencePicker,
+                    timeToReachGoal = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) 0 else _editInfoUiState.value.estimatedWeeks
+                )
+                saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
+                    _editInfoUiState.update { it.copy(updateInfoResult = res) }
+                }
+                GoalSingletonObject.updateInStance(goal)
+                WecareCaloriesObject.updateUserCaloriesAmount()
+            }
+        }
+    }
+
     fun resetUiState() {
         _editInfoUiState.update { EditInfoUiState() }
     }
 
-    private fun updateCurrentGoalIdWhenInit(goal: String) {
-        val id = when (goal) {
-            GAIN_MUSCLE -> 1
-            LOOSE_WEIGHT -> 2
-            GET_HEALTHIER -> 3
-            else -> 4
+    private fun updateCurrentGoalWhenInit(goal: String) {
+        val goalEnum = when (goal) {
+            GAIN_MUSCLE -> EnumGoal.GAINMUSCLE
+            LOSE_WEIGHT -> EnumGoal.LOSEWEIGHT
+            GET_HEALTHIER -> EnumGoal.GETHEALTHIER
+            else -> EnumGoal.IMPROVEMOOD
         }
-        _editInfoUiState.update { it.copy(currentChosenGoal = id) }
+        _editInfoUiState.update { it.copy(currentChosenGoal = goalEnum) }
     }
 
     private fun updateCurrentGenderWhenInit(gender: Boolean) {
         val id = if (gender) 1 else 2
         _editInfoUiState.update { it.copy(currentChosenGender = id) }
-    }
-
-    private fun getGoalFromId(id: Int): String {
-        return when (id) {
-            1 -> GAIN_MUSCLE
-            2 -> LOOSE_WEIGHT
-            3 -> GET_HEALTHIER
-            else -> WecareUserConstantValues.IMPROVE_MOOD
-        }
     }
 
     private fun getGenderFromId(id: Int): Boolean {
@@ -188,5 +225,73 @@ class EditInfoViewModel @Inject constructor(
 
     private fun checkIfAgeValid() {
         _editInfoUiState.update { it.copy(isAgeValid = age.toIntSafely() in MIN_AGE..MAX_AGE) }
+    }
+
+    private fun checkIfGoalIsAppropriate() {
+        val bmi = when ((weight.toFloat() / (height.toFloat() / 100).pow(2))) {
+            in WecareUserConstantValues.BMI_UNDERWEIGHT_RANGE -> BMIState.UNDERWEIGHT
+            in WecareUserConstantValues.BMI_NORMAL_RANGE -> BMIState.NORMAL
+            in WecareUserConstantValues.BMI_OVERWEIGHT_RANGE -> BMIState.OVERWEIGHT
+            in WecareUserConstantValues.BMI_FAT_RANGE -> BMIState.FAT
+            else -> BMIState.OBESITY
+        }
+        bmiState.value = bmi
+
+        val goal = _editInfoUiState.value.currentChosenGoal
+        val shouldShowDialogAboutOverWeight =
+            (goal == EnumGoal.GAINMUSCLE) && (bmiState.value == BMIState.FAT || bmiState.value == BMIState.OBESITY)
+        if (shouldShowDialogAboutOverWeight) {
+            _onboardingDialogUiState.update {
+                it.copy(
+                    shouldShowWarningDialog = true,
+                    warningDialogMessage = "You seem to be overweight, you should lose weight before gaining muscle"
+                )
+            }
+        }
+
+        val shouldShowDialogAboutUnderWeight =
+            (goal == EnumGoal.LOSEWEIGHT) && (bmiState.value == BMIState.UNDERWEIGHT || bmiState.value == BMIState.NORMAL)
+        if (shouldShowDialogAboutUnderWeight) {
+            _onboardingDialogUiState.update {
+                it.copy(
+                    shouldShowWarningDialog = true,
+                    warningDialogMessage = "You shouldn't try to lose more weight. You should pick the gain muscle to do more"
+                )
+            }
+        }
+
+        val shouldShowGainWeightRecommendation =
+            (goal == EnumGoal.GETHEALTHIER || goal == EnumGoal.IMPROVEMOOD) && (bmiState.value == BMIState.UNDERWEIGHT || bmiState.value == BMIState.NORMAL)
+        if (shouldShowGainWeightRecommendation) {
+            _onboardingDialogUiState.update {
+                it.copy(
+                    shouldShowRecommendationDialog = true,
+                    recommendationDialogMessage = "Let us help you. You can do more by set your goal to Gain muscle!"
+                )
+            }
+        }
+
+        val shouldShowLoseWeightRecommendation =
+            (goal == EnumGoal.GETHEALTHIER || goal == EnumGoal.IMPROVEMOOD) && (bmiState.value == BMIState.OVERWEIGHT || bmiState.value == BMIState.FAT || bmiState.value == BMIState.OBESITY)
+        if (shouldShowLoseWeightRecommendation) {
+            _onboardingDialogUiState.update {
+                it.copy(
+                    shouldShowRecommendationDialog = true,
+                    recommendationDialogMessage = "You seem to a little bit overweight. You can do more by set your goal to Lose weight!"
+                )
+            }
+        }
+    }
+
+    fun dismissWarningDialog() {
+        _onboardingDialogUiState.update {
+            it.copy(shouldShowWarningDialog = false)
+        }
+    }
+
+    fun dismissRecommendationDialog() {
+        _onboardingDialogUiState.update {
+            it.copy(shouldShowRecommendationDialog = false)
+        }
     }
 }

@@ -1,17 +1,11 @@
 package com.vn.wecare.feature.exercises.done
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.core.WecareUserSingleton
-import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.model.ExerciseType
-import com.vn.wecare.core.model.HistoryItem
 import com.vn.wecare.feature.exercises.usecase.Usecases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -68,7 +62,7 @@ class DoneViewModel @Inject constructor(
         val time = endTime - startTime
         val durationRatio = time.toFloat() / 3600000f
 
-        val wecareUser = WecareUserSingleton.getInstance()
+        val wecareUser = WecareUserSingletonObject.getInstance()
         val weight = wecareUser.weight ?: 0
 
 

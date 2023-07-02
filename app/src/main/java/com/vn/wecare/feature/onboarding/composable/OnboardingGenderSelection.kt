@@ -15,41 +15,29 @@ import com.vn.wecare.utils.common_composable.IconButtonWithFullWidth
 
 @Composable
 fun OnboardingGenderSelection(
-    modifier: Modifier, viewModel: OnboardingViewModel
+    modifier: Modifier,
+    onGenderSelect: (id: Int) -> Unit,
+    selectedGender: Int
 ) {
-
-    val uiState = viewModel.onboardingUiState.collectAsState()
-
     IconButtonWithFullWidth(
         buttonText = "Male",
         iconVector = Icons.Filled.Male,
-        buttonColor = if (uiState.value.genderSelectionId == 0) MaterialTheme.colors.primary
+        buttonColor = if (selectedGender == 0) MaterialTheme.colors.primary
         else MaterialTheme.colors.secondaryVariant,
-        contentColor = if (uiState.value.genderSelectionId == 0) MaterialTheme.colors.onPrimary
+        contentColor = if (selectedGender == 0) MaterialTheme.colors.onPrimary
         else MaterialTheme.colors.onSecondary
     ) {
-        viewModel.onGenderSelect(0)
+        onGenderSelect(0)
     }
     Spacer(modifier = modifier.height(halfMidPadding))
     IconButtonWithFullWidth(
         buttonText = "Female",
         iconVector = Icons.Filled.Female,
-        buttonColor = if (uiState.value.genderSelectionId == 1) MaterialTheme.colors.primary
+        buttonColor = if (selectedGender == 1) MaterialTheme.colors.primary
         else MaterialTheme.colors.secondaryVariant,
-        contentColor = if (uiState.value.genderSelectionId == 1) MaterialTheme.colors.onPrimary
+        contentColor = if (selectedGender == 1) MaterialTheme.colors.onPrimary
         else MaterialTheme.colors.onSecondary
     ) {
-        viewModel.onGenderSelect(1)
+        onGenderSelect(1)
     }
-//    Spacer(modifier = modifier.height(halfMidPadding))
-//    IconButtonWithFullWidth(
-//        buttonText = "Prefer not to say",
-//        iconVector = Icons.Filled.Close,
-//        buttonColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.primary
-//        else MaterialTheme.colors.onPrimary,
-//        contentColor = if (uiState.value.genderSelectionId == 2) MaterialTheme.colors.onPrimary
-//        else MaterialTheme.colors.onSecondary
-//    ) {
-//        viewModel.onGenderSelect(2)
-//    }
 }

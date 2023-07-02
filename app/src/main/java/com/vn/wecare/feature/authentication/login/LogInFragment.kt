@@ -7,7 +7,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.databinding.FragmentLogInBinding
 import com.vn.wecare.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +18,7 @@ class LogInFragment : BaseBindingFragment<FragmentLogInBinding>(FragmentLogInBin
     private val loginViewModel: LoginViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        Log.d(logInTag, "user singleton: ${WecareUserSingleton.getInstance()}")
+        Log.d(logInTag, "user singleton: ${WecareUserSingletonObject.getInstance()}")
         super.setupComposeView(binding.composeView) {
             SignInScreen(
                 moveToSplash = {

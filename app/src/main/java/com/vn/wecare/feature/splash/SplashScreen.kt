@@ -27,8 +27,10 @@ fun SplashScreen(
 
     splashUiState.value.saveUserRes.let {
         when (it) {
-            is Response.Loading ->{ LoadingDialog(loading = it == Response.Loading) {}
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
             }
+
             is Response.Success -> {
                 Log.d(SplashFragment.splashFlowTag, "Data present in local db")
                 if (viewModel.shouldMoveToOnboarding) {
@@ -37,6 +39,7 @@ fun SplashScreen(
                 if (viewModel.shouldMoveToHomeScreen) {
                     resetStartDestination()
                     moveToHomeScreen()
+//                    moveToOnboardingScreen()
                 } else { /* Do nothing */
                 }
             }
@@ -45,7 +48,7 @@ fun SplashScreen(
                 Log.d(SplashFragment.splashFlowTag, "Fail to get data from Room")
             }
 
-            else -> {/* do nothing */
+            else -> { /* do nothing */
             }
         }
     }

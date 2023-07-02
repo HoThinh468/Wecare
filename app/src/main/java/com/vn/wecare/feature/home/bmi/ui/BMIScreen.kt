@@ -64,6 +64,11 @@ import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.midRadius
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_FAT_RANGE
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_NORMAL_RANGE
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_OBESITY_RANGE
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_OVERWEIGHT_RANGE
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_UNDERWEIGHT_RANGE
 import com.vn.wecare.utils.bmiFormatWithFloat
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.VerticalExpandableView
@@ -157,8 +162,7 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.weight.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-                IconButton(
-                    modifier = modifier.size(18.dp),
+                IconButton(modifier = modifier.size(18.dp),
                     onClick = { openUpdateWeightDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Edit, contentDescription = null
@@ -172,8 +176,7 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.height.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-                IconButton(
-                    modifier = modifier.size(18.dp),
+                IconButton(modifier = modifier.size(18.dp),
                     onClick = { openUpdateHeightDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Edit, contentDescription = null
@@ -186,13 +189,13 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
             Spacer(modifier = modifier.height(smallPadding))
             Text(
                 bmiFormatWithFloat(uiState.bmi), style = MaterialTheme.typography.h1.copy(
-                    color = if (uiState.bmi in 18.5..24.9) Green500 else getBadMoodColor(uiState.bmi),
+                    color = if (uiState.bmi in BMI_NORMAL_RANGE) Green500 else getBadMoodColor(uiState.bmi),
                     fontSize = 40.sp
                 )
             )
             Text(
                 "BMI", style = MaterialTheme.typography.body2.copy(
-                    color = if (uiState.bmi in 18.5..24.9) getHappyMoodColor(
+                    color = if (uiState.bmi in BMI_NORMAL_RANGE) getHappyMoodColor(
                         uiState.bmi
                     ) else getBadMoodColor(uiState.bmi)
                 )
@@ -218,14 +221,16 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
 }
 
 private fun getHappyMoodColor(bmi: Float): Color {
-    return if (bmi in 18.5..24.9) Green500 else Grey500
+    return if (bmi in BMI_NORMAL_RANGE) Green500 else Grey500
 }
 
 private fun getBadMoodColor(bmi: Float): Color {
-    return if (bmi <= 18.5) Blue
-    else if (bmi in 25.0..29.9) Yellow
-    else if (bmi > 30) Red400
-    else Grey500
+    return when (bmi) {
+        in BMI_UNDERWEIGHT_RANGE -> Blue
+        in BMI_OVERWEIGHT_RANGE -> Yellow
+        in BMI_FAT_RANGE, in BMI_OBESITY_RANGE -> Red400
+        else -> Grey500
+    }
 }
 
 @Composable
@@ -269,8 +274,7 @@ private fun BMIOverview(modifier: Modifier, bmi: Float, progress: Float) {
                             0.0f to Blue, 0.37f to Green500, 0.5f to Yellow, 1f to Red400
                         ),
                             startX = with(LocalDensity.current) { 100.dp.toPx() },
-                            endX = with(LocalDensity.current) { 250.dp.toPx() }
-                        )
+                            endX = with(LocalDensity.current) { 250.dp.toPx() })
                     )
                     .align(Alignment.Center))
                 Divider(
