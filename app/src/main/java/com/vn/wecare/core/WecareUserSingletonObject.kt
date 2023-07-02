@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-object WecareUserSingleton {
+object WecareUserSingletonObject {
     private val instance = MutableStateFlow(WecareUser())
 
     fun getInstance() = instance.value

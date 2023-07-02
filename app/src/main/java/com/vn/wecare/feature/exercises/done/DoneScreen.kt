@@ -1,7 +1,6 @@
 package com.vn.wecare.feature.exercises.done
 
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,9 +30,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.vn.wecare.R
-import com.vn.wecare.core.WecareUserSingleton
 import com.vn.wecare.core.model.ExerciseType
-import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.exercises.ExercisesViewModel
 import com.vn.wecare.feature.exercises.history.ExerciseHistoryViewModel
 import com.vn.wecare.ui.theme.*

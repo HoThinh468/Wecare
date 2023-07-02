@@ -3,13 +3,16 @@ package com.vn.wecare.feature.home.bmi.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.home.bmi.data.BMIFAQs
 import com.vn.wecare.feature.home.bmi.data.BMIFAQsModel
 import com.vn.wecare.feature.home.bmi.ui.BMIFragment
 import com.vn.wecare.utils.WecareUserConstantValues.HEIGHT_FIELD
+import com.vn.wecare.utils.WecareUserConstantValues.MAX_HEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.WEIGHT_FIELD
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +53,7 @@ class BMIViewModel @Inject constructor(
     fun updateUserWeight(weight: String) {
         if (isWeightInputValid(weight)) {
             _uiState.update { it.copy(updateInformationResult = Response.Loading) }
-            val user = WecareUserSingleton.getInstance()
+            val user = WecareUserSingletonObject.getInstance()
             viewModelScope.launch {
                 updateWecareUserUsecase.updateWecareUserRoomDbWithId(
                     user.userId, WEIGHT_FIELD, weight.toInt()
@@ -65,7 +68,7 @@ class BMIViewModel @Inject constructor(
                                 _uiState.update {
                                     it.copy(updateInformationResult = res2)
                                 }
-                                WecareUserSingleton.updateInstance(user.copy(weight = weight.toInt()))
+                                WecareUserSingletonObject.updateInstance(user.copy(weight = weight.toInt()))
                             } else _uiState.update {
                                 it.copy(updateInformationResult = Response.Error(null))
                             }
@@ -86,7 +89,7 @@ class BMIViewModel @Inject constructor(
     fun updateUserHeight(height: String) {
         if (isHeightInputValid(height)) {
             _uiState.update { it.copy(updateInformationResult = Response.Loading) }
-            val user = WecareUserSingleton.getInstance()
+            val user = WecareUserSingletonObject.getInstance()
             viewModelScope.launch {
                 updateWecareUserUsecase.updateWecareUserRoomDbWithId(
                     user.userId, HEIGHT_FIELD, height.toInt()
@@ -101,7 +104,7 @@ class BMIViewModel @Inject constructor(
                                 _uiState.update {
                                     it.copy(updateInformationResult = res2)
                                 }
-                                WecareUserSingleton.updateInstance(user.copy(height = height.toInt()))
+                                WecareUserSingletonObject.updateInstance(user.copy(height = height.toInt()))
                             } else _uiState.update {
                                 it.copy(updateInformationResult = Response.Error(null))
                             }
@@ -116,18 +119,20 @@ class BMIViewModel @Inject constructor(
 
     private fun isHeightInputValid(height: String): Boolean {
         if (height.isEmpty()) return false
-        return height.toInt() in 65..260
+        return height.toInt() in MIN_HEIGHT..MAX_HEIGHT
     }
 
     private fun updateUserInformation() = viewModelScope.launch {
-        WecareUserSingleton.getInstanceFlow().collect { user ->
+        WecareUserSingletonObject.getInstanceFlow().collect { user ->
             _uiState.update {
                 it.copy(
-                    weight = user.weight ?: 30,
-                    height = user.height ?: 130,
-                    bmi = calculateBMI(user.weight ?: 30, user.height ?: 130),
+                    weight = user.weight ?: MIN_WEIGHT,
+                    height = user.height ?: MIN_HEIGHT,
+                    bmi = calculateBMI(user.weight ?: MIN_WEIGHT, user.height ?: MIN_HEIGHT),
                     gender = user.gender ?: true,
-                    bmiProgress = calculateBMI(user.weight ?: 30, user.height ?: 130) / 50f
+                    bmiProgress = calculateBMI(
+                        user.weight ?: MIN_WEIGHT, user.height ?: MIN_HEIGHT
+                    ) / 50f
                 )
             }
             Log.d(

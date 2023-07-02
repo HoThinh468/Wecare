@@ -3,17 +3,14 @@ package com.vn.wecare.feature.training.widget
 import android.os.Build
 import android.widget.NumberPicker
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.vn.wecare.R
-import kotlinx.coroutines.selects.select
 
 @Composable
-fun numberPickerSpinner(
+fun NumberPickerSpinner(
     modifier: Modifier,
     max: Int = 10,
     min: Int = 0,

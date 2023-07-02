@@ -21,6 +21,11 @@
     <string name="height_picker_subtitle">This is used to setup recommendation just for you</string>
     <string name="weight_picker_title">What is your weight?</string>
     <string name="weight_picker_subtitle">This is used to setup recommendation just for you</string>
+    <string name="Lose_weight_title">How much weight do you want to lose?</string>
+    <string name="Gain_weight_title">How much weight do you want to gain?</string>
+    <string name="desired_weight_picker_subtitle">Imagine how you will look like with your desired weight ^^</string>
+    <string name="desired_week_picker_title">How long do you wish to achieve this weight?</string>
+    <string name="desired_week_picker_subtitle">You can edit it later ^^</string>
     <string name="goal_selection_title">What is your goal?</string>
     <string name="goal_selection_subtitle">Having a clear goal will help you achieve it easier</string>
 

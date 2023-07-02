@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -13,33 +15,28 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.vn.wecare.feature.food.yourownmeal.addyourownmeal.viewmodel.AddYourOwnMealViewModel
-import com.vn.wecare.feature.food.mealdetail.NutrientIndexItem
-import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
-import com.vn.wecare.ui.theme.Yellow
-import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
-fun NameAndCaloriesSection(
+fun NameAndNutrientsSection(
     modifier: Modifier,
     mealName: String,
     onClearMealNameClick: () -> Unit,
     onNameChange: (new: String) -> Unit,
-    calories: String,
-    onClearCaloriesClick: () -> Unit,
-    onCaloriesChange: (new: String) -> Unit,
     isNameValid: Boolean,
-    isCaloriesValid: Boolean,
-    protein: Int,
-    fat: Int,
-    carbs: Int,
+    protein: String,
+    onProteinChange: (new: String) -> Unit,
+    fat: String,
+    onFatChange: (new: String) -> Unit,
+    carbs: String,
+    onCarbsChange: (new: String) -> Unit,
+    calories: String,
+    areNutrientsValid: Boolean
 ) {
     Text("Name", style = MaterialTheme.typography.body1)
     OutlinedTextField(
@@ -58,40 +55,58 @@ fun NameAndCaloriesSection(
         },
         isError = !isNameValid,
     )
-    Spacer(modifier = modifier.height(normalPadding))
-    Text("Calories", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = calories,
-        onValueChange = {
-            onCaloriesChange(it)
-        },
-        label = { Text("Meal's calories") },
-        maxLines = 1,
-        singleLine = true,
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.LocalFireDepartment, contentDescription = null)
-        },
-        trailingIcon = {
-            IconButton(onClick = { onClearCaloriesClick() }) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null)
-            }
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
-        isError = !isCaloriesValid
-    )
-    Spacer(modifier = modifier.height(normalPadding))
+    Spacer(modifier = modifier.height(smallPadding))
+    Text("Nutrients (gram)", style = MaterialTheme.typography.body1)
     Row(
-        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = smallPadding),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        NutrientIndexItem(
-            modifier = modifier, title = "PROTEIN", index = "${protein}g", color = Red400
+        OutlinedTextField(
+            modifier = modifier.weight(1f),
+            value = protein,
+            onValueChange = {
+                onProteinChange(it)
+            },
+            label = { Text("Protein") },
+            maxLines = 1,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
         )
-        NutrientIndexItem(
-            modifier = modifier, title = "FAT", index = "${fat}g", color = Yellow
+        Spacer(modifier = modifier.width(smallPadding))
+        OutlinedTextField(
+            modifier = modifier.weight(1f),
+            value = fat,
+            onValueChange = {
+                onFatChange(it)
+            },
+            label = { Text("Fat") },
+            maxLines = 1,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
         )
-        NutrientIndexItem(
-            modifier = modifier, title = "CARBS", index = "${carbs}g", color = Blue
+        Spacer(modifier = modifier.width(smallPadding))
+        OutlinedTextField(
+            modifier = modifier.weight(1f),
+            value = carbs,
+            onValueChange = {
+                onCarbsChange(it)
+            },
+            label = { Text("Carbs") },
+            maxLines = 1,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
         )
     }
+    if (!areNutrientsValid) {
+        Text(
+            text = "*All the nutrients value must be greater than 0",
+            style = MaterialTheme.typography.caption.copy(color = Red400)
+        )
+    }
+    Text(
+        text = "Estimated calories => $calories cal",
+        style = MaterialTheme.typography.button.copy(color = MaterialTheme.colors.primary)
+    )
 }

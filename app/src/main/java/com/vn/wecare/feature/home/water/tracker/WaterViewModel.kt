@@ -2,7 +2,7 @@ package com.vn.wecare.feature.home.water.tracker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.home.water.data.WaterRecordRepository
@@ -70,7 +70,7 @@ class WaterViewModel @Inject constructor(
             recordId = generateRecordId(currentTime),
             amount = getWaterDrinkingAmount(),
             dateTime = currentTime,
-            userId = WecareUserSingleton.getInstance().userId,
+            userId = WecareUserSingletonObject.getInstance().userId,
             dayId = getDayId(
                 currentTime.get(Calendar.DAY_OF_MONTH),
                 currentTime.get(Calendar.MONTH),
@@ -122,7 +122,7 @@ class WaterViewModel @Inject constructor(
     }
 
     private fun getWaterTarget() = viewModelScope.launch {
-        WecareUserSingleton.getInstanceFlow().collect { user ->
+        WecareUserSingletonObject.getInstanceFlow().collect { user ->
             _uiState.update {
                 it.copy(targetAmount = (user.weight?.times(30) ?: 2000f).toInt())
             }

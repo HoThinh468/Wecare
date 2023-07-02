@@ -7,7 +7,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.databinding.FragmentAccountBinding
 import com.vn.wecare.feature.account.viewmodel.AccountViewModel
 import com.vn.wecare.utils.safeNavigate
@@ -18,7 +18,7 @@ class AccountFragment :
     private val accountViewModel: AccountViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        Log.d(AccountFlowTAG, "User singleton: ${WecareUserSingleton.getInstance()}")
+        Log.d(AccountFlowTAG, "User singleton: ${WecareUserSingletonObject.getInstance()}")
         super.setupComposeView(
             binding.accountComposeView
         ) {

@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.core.model.HistoryItem
@@ -159,7 +159,7 @@ class ExerciseServicesImpl @Inject constructor(
                 .document(reviewListSize.toString())
                 .set(
                     ListReviewsItem(
-                        userName = WecareUserSingleton.getInstance().userName.ifBlank { "Unknown user" },
+                        userName = WecareUserSingletonObject.getInstance().userName.ifBlank { "Unknown user" },
                         content = content,
                         rate = rate,
                         time = System.currentTimeMillis(),

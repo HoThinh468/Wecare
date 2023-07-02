@@ -1,17 +1,15 @@
 package com.vn.wecare.feature.home.step_count
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.goal.GetGoalsFromFirebaseUsecase
-import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
+import com.vn.wecare.feature.goal.EnumGoal
+import com.vn.wecare.feature.goal.GoalSingletonObject
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.home.step_count.ui.view.StepCountFragment
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerHourWithDayIdUsecase
+import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.getCurrentDayId
 import com.vn.wecare.utils.getDayId
 import com.vn.wecare.utils.getMonthPrefix
@@ -23,9 +21,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
-/**
- * Define a model for view presentation
- */
 data class StepsCountUiState(
     val currentSteps: Int = 0,
     val caloConsumed: Int = 0,
@@ -41,12 +36,9 @@ data class StepsCountUiState(
 
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
-    private val accountService: AccountService,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
     private val getStepsPerHourWithDayIdUsecase: GetStepsPerHourWithDayIdUsecase,
-    private val getGoalsFromFirebaseUsecase: GetGoalsFromFirebaseUsecase,
-    private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase
 ) : ViewModel() {
 
     // Define a variable of ui state
@@ -130,30 +122,16 @@ class StepCountViewModel @Inject constructor(
 
     private fun initializeGoalIndex() {
         viewModelScope.launch {
-            getGoalsFromFirebaseUsecase.getGoalsFromFirebase(accountService.currentUserId)
-                .collect { goals ->
-                    _stepsCountUiState.update {
-                        it.copy(
-                            stepGoal = goals.stepsGoal,
-                            caloriesBurnedGoal = goals.caloriesBurnedGoal,
-                            moveTimeGoal = goals.moveTimeGoal
-                        )
-                    }
+            GoalSingletonObject.getInStanceFlow().collect { goals ->
+                _stepsCountUiState.update {
+                    it.copy(
+                        stepGoal = goals.stepsGoal,
+                        caloriesBurnedGoal = getCaloriesToBurnGoal(goals.goalName),
+                        moveTimeGoal = goals.moveTimeGoal
+                    )
                 }
+            }
         }
-    }
-
-    fun updateGoal(stepGoal: Int) {
-        val uiState = _stepsCountUiState.value
-        viewModelScope.launch {
-            saveGoalsToFirebaseUsecase.saveGoalsToFirebase(
-                accountService.currentUserId,
-                stepGoal,
-                uiState.caloriesBurnedGoal,
-                uiState.moveTimeGoal
-            )
-        }
-        initializeGoalIndex()
     }
 
     fun getProgressWithIndexAndGoal(index: Float, goal: Float): Float {
@@ -171,6 +149,14 @@ class StepCountViewModel @Inject constructor(
             it.copy(
                 selectedDay = "${getMonthPrefix(month)} $day, $year"
             )
+        }
+    }
+
+    private fun getCaloriesToBurnGoal(goal: String): Int {
+        return when (goal) {
+            EnumGoal.GAINMUSCLE.value -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE
+            EnumGoal.LOSEWEIGHT.value -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT
+            else -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY
         }
     }
 }

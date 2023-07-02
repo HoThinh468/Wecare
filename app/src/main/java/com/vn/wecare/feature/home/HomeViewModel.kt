@@ -2,7 +2,7 @@ package com.vn.wecare.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.core.WecareUserSingleton
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.step_count.alarm.StepCountExactAlarms
@@ -74,7 +74,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updateBMIInformation() = viewModelScope.launch {
-        WecareUserSingleton.getInstanceFlow().collect { user ->
+        WecareUserSingletonObject.getInstanceFlow().collect { user ->
             _homeUiState.update {
                 it.copy(
                     bmiIndex = calculateBMI(user.weight ?: 30, user.height ?: 130),
@@ -106,7 +106,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getWaterTarget() = viewModelScope.launch {
-        WecareUserSingleton.getInstanceFlow().collect { user ->
+        WecareUserSingletonObject.getInstanceFlow().collect { user ->
             _homeUiState.update {
                 it.copy(waterTargetAmount = (user.weight?.times(30) ?: 2000f).toInt())
             }
@@ -119,7 +119,7 @@ class HomeViewModel @Inject constructor(
             recordId = generateRecordId(currentTime),
             amount = 250,
             dateTime = currentTime,
-            userId = WecareUserSingleton.getInstance().userId,
+            userId = WecareUserSingletonObject.getInstance().userId,
             dayId = getDayId(
                 currentTime.get(Calendar.DAY_OF_MONTH),
                 currentTime.get(Calendar.MONTH),
