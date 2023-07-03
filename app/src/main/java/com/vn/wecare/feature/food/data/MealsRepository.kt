@@ -59,6 +59,30 @@ class MealsRepository @Inject constructor(
     ): Flow<Response<List<MealRecordModel>>> =
         remoteDataSource.getAllMealsOfTypeInDayWithDayId(dayOfMonth, month, year, mealTypeKey)
 
+    fun getTotalCaloriesFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = remoteDataSource.getTotalCaloriesFromMealRecordInDayOfEachType(
+        dayOfMonth, month, year, mealTypeKey
+    )
+
+    fun getTotalProteinFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = remoteDataSource.getTotalProteinFromMealRecordInDayOfEachType(
+        dayOfMonth, month, year, mealTypeKey
+    )
+
+    fun getTotalFatFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = remoteDataSource.getTotalFatFromMealRecordInDayOfEachType(
+        dayOfMonth, month, year, mealTypeKey
+    )
+
+    fun getTotalCarbsFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = remoteDataSource.getTotalCarbsFromMealRecordInDayOfEachType(
+        dayOfMonth, month, year, mealTypeKey
+    )
+
     suspend fun updateMealRecordQuantity(
         dayOfMonth: Int,
         month: Int,

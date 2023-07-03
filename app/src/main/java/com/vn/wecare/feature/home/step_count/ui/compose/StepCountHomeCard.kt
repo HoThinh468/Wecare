@@ -22,7 +22,6 @@ import com.vn.wecare.ui.theme.*
 fun StepCountHomeCard(
     modifier: Modifier, onCardClick: () -> Unit, steps: Int, calories: Int, time: Int
 ) {
-
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = smallElevation,

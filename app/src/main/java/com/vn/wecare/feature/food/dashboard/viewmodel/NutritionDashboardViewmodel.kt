@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.WecareCaloriesObject
-import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
-import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
+import com.vn.wecare.feature.food.usecase.GetTotalInputCaloriesUsecase
+import com.vn.wecare.feature.food.usecase.GetTotalNutrientsIndexUsecase
 import com.vn.wecare.utils.getDayOfWeekPrefix
 import com.vn.wecare.utils.getMonthPrefix
-import com.vn.wecare.utils.getNutrientIndexFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +40,8 @@ data class NutritionDashboardUiState(
 @HiltViewModel
 class NutritionDashboardViewmodel @Inject constructor(
     private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
-    private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
+    private val getTotalInputCaloriesUsecase: GetTotalInputCaloriesUsecase,
+    private val getTotalNutrientsIndexUsecase: GetTotalNutrientsIndexUsecase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NutritionDashboardUiState())
@@ -62,10 +62,14 @@ class NutritionDashboardViewmodel @Inject constructor(
     fun initUiState() {
         updateDailyNutrientsUiState()
         updateDateTime()
+        updateTotalInputCaloriesOfToday()
         updateBreakfastCurrentCalories()
         updateLunchCurrentCalories()
         updateSnackCurrentCalories()
         updateDinnerCurrentCalories()
+        updateTotalProteinToday()
+        updateTotalFatToday()
+        updateTotalCarbsToday()
     }
 
     private fun updateDailyNutrientsUiState() = viewModelScope.launch {
@@ -94,76 +98,84 @@ class NutritionDashboardViewmodel @Inject constructor(
         }
     }
 
-    private fun updateBreakfastCurrentCalories() = viewModelScope.launch {
-        var totalCalo = 0
-        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            currentDay, currentMonth, currentYear, MealTypeKey.BREAKFAST
-        ).collect {
-            if (it is Response.Success && it.data != null) {
-                for (i in it.data) {
-                    totalCalo += i.calories * i.quantity
-                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
-                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
-                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
-                }
-                totalCalories += totalCalo
-            }
+    private fun updateTotalInputCaloriesOfToday() = viewModelScope.launch {
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDay(
+            currentDay, currentMonth, currentYear
+        ).collect { res ->
+            totalCalories = if (res is Response.Success) {
+                res.data
+            } else 0
         }
-        _uiState.update { it.copy(breakfastCurrentCalories = totalCalo) }
+    }
+
+    private fun updateBreakfastCurrentCalories() = viewModelScope.launch {
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForBreakfast(
+            currentDay, currentMonth, currentYear
+        ).collect { res ->
+            if (res is Response.Success) {
+                _uiState.update { it.copy(breakfastCurrentCalories = res.data) }
+            } else _uiState.update { it.copy(breakfastCurrentCalories = 0) }
+        }
     }
 
     private fun updateLunchCurrentCalories() = viewModelScope.launch {
-        var totalCalo = 0
-        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            currentDay, currentMonth, currentYear, MealTypeKey.LUNCH
-        ).collect {
-            if (it is Response.Success && it.data != null) {
-                for (i in it.data) {
-                    totalCalo += i.calories * i.quantity
-                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
-                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
-                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
-                }
-                totalCalories += totalCalo
-            }
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForLunch(
+            currentDay, currentMonth, currentYear
+        ).collect { res ->
+            if (res is Response.Success) {
+                _uiState.update { it.copy(lunchCurrentCalories = res.data) }
+            } else _uiState.update { it.copy(lunchCurrentCalories = 0) }
         }
-        _uiState.update { it.copy(lunchCurrentCalories = totalCalo) }
     }
 
     private fun updateSnackCurrentCalories() = viewModelScope.launch {
-        var totalCalo = 0
-        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            currentDay, currentMonth, currentYear, MealTypeKey.SNACK
-        ).collect {
-            if (it is Response.Success && it.data != null) {
-                for (i in it.data) {
-                    totalCalo += i.calories * i.quantity
-                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
-                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
-                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
-                }
-                totalCalories += totalCalo
-            }
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForSnack(
+            currentDay, currentMonth, currentYear
+        ).collect { res ->
+            if (res is Response.Success) {
+                _uiState.update { it.copy(snackCurrentCalories = res.data) }
+            } else _uiState.update { it.copy(snackCurrentCalories = 0) }
         }
-        _uiState.update { it.copy(snackCurrentCalories = totalCalo) }
     }
 
     private fun updateDinnerCurrentCalories() = viewModelScope.launch {
-        var totalCalo = 0
-        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            currentDay, currentMonth, currentYear, MealTypeKey.DINNER
-        ).collect {
-            if (it is Response.Success && it.data != null) {
-                for (i in it.data) {
-                    totalCalo += i.calories * i.quantity
-                    totalProtein += i.protein.getNutrientIndexFromString() * i.quantity
-                    totalFat += i.fat.getNutrientIndexFromString() * i.quantity
-                    totalCarbs += i.carbs.getNutrientIndexFromString() * i.quantity
-                }
-                totalCalories += totalCalo
-            }
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForDinner(
+            currentDay, currentMonth, currentYear
+        ).collect { res ->
+            if (res is Response.Success) {
+                _uiState.update { it.copy(dinnerCurrentCalories = res.data) }
+            } else _uiState.update { it.copy(dinnerCurrentCalories = 0) }
         }
-        _uiState.update { it.copy(dinnerCurrentCalories = totalCalo) }
+    }
+
+    private fun updateTotalProteinToday() = viewModelScope.launch {
+        getTotalNutrientsIndexUsecase.getTotalProteinOfEachDay(
+            currentDay, currentMonth, currentYear,
+        ).collect { res ->
+            totalProtein = if (res is Response.Success) {
+                res.data
+            } else 0
+        }
+    }
+
+    private fun updateTotalFatToday() = viewModelScope.launch {
+        getTotalNutrientsIndexUsecase.getTotalFatOfEachDay(
+            currentDay, currentMonth, currentYear,
+        ).collect { res ->
+            totalFat = if (res is Response.Success) {
+                res.data
+            } else 0
+        }
+    }
+
+    private fun updateTotalCarbsToday() = viewModelScope.launch {
+        getTotalNutrientsIndexUsecase.getTotalCarbsOfEachDay(
+            currentDay, currentMonth, currentYear,
+        ).collect { res ->
+            totalCarbs = if (res is Response.Success) {
+                res.data
+            } else 0
+        }
     }
 
     fun resetNutrientIndex() {
