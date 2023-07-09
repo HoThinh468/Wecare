@@ -43,7 +43,7 @@ class BMIHistoryViewModel @Inject constructor(
             listHistoryResponse = response
             if (listHistoryResponse is Response.Success) {
                 _listHistory.emit(
-                    (listHistoryResponse as Response.Success<List<BMIHistoryEntity>>).data
+                    (listHistoryResponse as Response.Success<List<BMIHistoryEntity>>).data.reversed()
                 )
             }
         }
