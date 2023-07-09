@@ -89,7 +89,7 @@ fun UpdateHeightDialog(
                         .padding(start = smallPadding)
                         .height(40.dp),
                     onClick = {
-                        viewModel.updateUserHeight(text.text)
+                        viewModel.updateUserHeight(text.text, true)
                         onCloseClick()
                     },
                     colors = ButtonDefaults.buttonColors(

@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private val stepCountViewModel: StepCountViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var fab: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +60,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         navView.setupWithNavController(setUpNavController())
 
         hideBottomNavBar(setUpNavController())
-        Kommunicate.init(this, "6d3b6023fedc7bb814dbab55d41a18ed")
+        Kommunicate.init(this, "2e65f69598334ef0acd5522dc37930b8e")
 
+        fab = findViewById(R.id.fab)
         openChat()
     }
 
     private fun openChat() {
-        val fab: View = findViewById(R.id.fab)
         fab.setOnClickListener {
             if (WecareUserSingletonObject.getInstance().userId != "") {
                 openChatWithUser()
@@ -176,10 +177,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun hideBottomNavBar(navController: NavController) {
         navController.addOnDestinationChangedListener { _: NavController?, navDestination: NavDestination, _: Bundle? ->
             when (navDestination.id) {
-                R.id.homeFragment, R.id.accountFragment, R.id.exercisesFragment, R.id.dailyNutritionFragment -> binding.navView.visibility =
-                    View.VISIBLE
+                R.id.homeFragment, R.id.accountFragment, R.id.exercisesFragment, R.id.dailyNutritionFragment -> {
+                    binding.navView.visibility = View.VISIBLE
+                    binding.fab.visibility = View.VISIBLE
+                }
+                R.id.signUpFragment, R.id.logInFragment -> binding.fab.visibility = View.VISIBLE
 
-                else -> binding.navView.visibility = View.GONE
+                else -> {
+                    binding.navView.visibility = View.GONE
+                    binding.fab.visibility = View.GONE
+                }
             }
         }
     }

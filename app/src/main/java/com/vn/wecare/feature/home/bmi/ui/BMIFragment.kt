@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentBMIBinding
 import com.vn.wecare.feature.home.bmi.viewmodel.BMIViewModel
@@ -17,7 +18,10 @@ class BMIFragment : BaseBindingFragment<FragmentBMIBinding>(FragmentBMIBinding::
             BMIScreen(
                 navigateUp = {
                     findNavController().popBackStack()
-                }, viewModel = viewModel
+                }, viewModel = viewModel,
+                onNavigateToHistory = {
+                    findNavController().navigate(R.id.action_BMIFragment_to_BMIHistoryFragment)
+                }
             )
         }
     }

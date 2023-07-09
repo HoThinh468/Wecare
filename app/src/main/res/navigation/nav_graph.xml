@@ -344,7 +344,17 @@
             android:id="@+id/BMIFragment"
             android:name="com.vn.wecare.feature.home.bmi.ui.BMIFragment"
             android:label="fragment_b_m_i"
-            tools:layout="@layout/fragment_b_m_i" />
+            tools:layout="@layout/fragment_b_m_i" >
+            <action
+                android:id="@+id/action_BMIFragment_to_BMIHistoryFragment"
+                app:destination="@id/BMIHistoryFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/BMIHistoryFragment"
+            android:name="com.vn.wecare.feature.home.bmi.ui.BMIHistoryFragment"
+            android:label="fragment_b_m_i_history"
+            tools:layout="@layout/fragment_b_m_i_history" />
     </navigation>
 
     <!-- Nutrition graph -->
