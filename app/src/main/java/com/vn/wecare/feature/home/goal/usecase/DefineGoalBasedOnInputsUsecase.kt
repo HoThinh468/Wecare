@@ -1,26 +1,23 @@
-package com.vn.wecare.feature.onboarding.usecase
+package com.vn.wecare.feature.home.goal.usecase
 
 import com.vn.wecare.feature.food.WecareCaloriesObject
-import com.vn.wecare.feature.goal.EnumGoal
-import com.vn.wecare.feature.goal.Goal
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK
 import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
 import javax.inject.Inject
 
 class DefineGoalBasedOnInputsUsecase @Inject constructor() {
     fun getGoalFromInputs(
-        userId: String,
         goal: EnumGoal,
         height: Int,
         weight: Int,
         age: Int,
         gender: Boolean,
-        weightDifference: Int,
-        timeToReachGoal: Int
+        weightDifference: Int?,
+        timeToReachGoal: Int?
     ): Goal {
         val caloriesInEachDay = WecareCaloriesObject.calculateCaloriesInWithUserPersonalInfo(
             goal.value, weight, height, gender, age
@@ -42,16 +39,19 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
         }
         val currentDateTime = System.currentTimeMillis()
         return Goal(
-            userId = userId,
+            goalId = currentDateTime.toString(),
             goalName = goal.value,
             caloriesInEachDayGoal = caloriesInEachDay,
             caloriesBurnedEachDayGoal = caloriesOutEachDay,
             stepsGoal = stepsGoal,
             moveTimeGoal = moveTimeGoal,
-            timeToReachGoal = timeToReachGoal,
-            weightDifference = weightDifference,
+            timeToReachGoalInWeek = timeToReachGoal ?: DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK,
+            weightDifference = weightDifference ?: 0,
             dateSetGoal = currentDateTime,
-            dateEndGoal = currentDateTime.plus(timeToReachGoal * NUMBER_OF_DAYS_IN_WEEK * DAY_TO_MILLISECONDS)
+            dateEndGoal = currentDateTime.plus(
+                (timeToReachGoal
+                    ?: DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK) * NUMBER_OF_DAYS_IN_WEEK * DAY_TO_MILLISECONDS
+            ),
         )
     }
 }

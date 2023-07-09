@@ -7,6 +7,8 @@ import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toRecordModel
+import com.vn.wecare.feature.home.goal.usecase.InsertGoalDailyRecordUsecase
+import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +21,7 @@ class InsertMealRecordUsecase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
     private val repository: MealsRepository,
+    private val updateGoalRecordUsecase: UpdateGoalRecordUsecase
 ) {
     private val currentDayBreakfastRecord = mutableListOf<MealRecordModel>()
     private val currentDayLunchRecord = mutableListOf<MealRecordModel>()
@@ -68,13 +71,17 @@ class InsertMealRecordUsecase @Inject constructor(
         if (isMealExist) {
             val e = Exception("This item has been added, check your list")
             emit(Response.Error(e))
-        } else {
-            repository.insertMeal(dateTime, mealTypeKey, meal).collect { res ->
-                emit(res ?: Response.Error(null))
-                if (res is Response.Success) {
-                    updateMealListByType(mealTypeKey, meal.toRecordModel())
-                }
+            return@flow
+        }
+        repository.insertMealRecord(dateTime, mealTypeKey, meal).collect { res ->
+            emit(res ?: Response.Error(null))
+            if (res is Response.Success) {
+                updateMealListByType(mealTypeKey, meal.toRecordModel())
             }
+        }
+        updateGoalRecordUsecase.apply {
+            updateCaloriesInForCurrentDayRecord(meal.calories)
+            updateCaloriesInForCurrentWeekRecord(meal.calories)
         }
     }
 

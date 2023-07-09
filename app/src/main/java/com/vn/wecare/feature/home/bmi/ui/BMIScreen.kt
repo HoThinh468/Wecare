@@ -165,12 +165,12 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.weight.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-                IconButton(modifier = modifier.size(18.dp),
-                    onClick = { openUpdateWeightDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit, contentDescription = null
-                    )
-                }
+//                IconButton(modifier = modifier.size(18.dp),
+//                    onClick = { openUpdateWeightDialog = true }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Edit, contentDescription = null
+//                    )
+//                }
             }
             Text("Kilograms", style = MaterialTheme.typography.body2)
             Spacer(modifier = modifier.height(normalPadding))
@@ -179,12 +179,12 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.height.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-                IconButton(modifier = modifier.size(18.dp),
-                    onClick = { openUpdateHeightDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit, contentDescription = null
-                    )
-                }
+//                IconButton(modifier = modifier.size(18.dp),
+//                    onClick = { openUpdateHeightDialog = true }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Edit, contentDescription = null
+//                    )
+//                }
             }
             Text("Centimeters", style = MaterialTheme.typography.body2)
             Spacer(modifier = modifier.height(normalPadding))
@@ -192,8 +192,9 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
             Spacer(modifier = modifier.height(smallPadding))
             Text(
                 bmiFormatWithFloat(uiState.bmi), style = MaterialTheme.typography.h1.copy(
-                    color = if (uiState.bmi in BMI_NORMAL_RANGE) Green500 else getBadMoodColor(uiState.bmi),
-                    fontSize = 40.sp
+                    color = if (uiState.bmi in BMI_NORMAL_RANGE) Green500 else getBadMoodColor(
+                        uiState.bmi
+                    ), fontSize = 40.sp
                 )
             )
             Text(
@@ -268,18 +269,20 @@ private fun BMIOverview(modifier: Modifier, bmi: Float, progress: Float) {
                 }
             }
             BoxWithConstraints(modifier = modifier.padding(vertical = normalPadding)) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .clip(RoundedCornerShape(midRadius))
-                    .background(
-                        brush = Brush.horizontalGradient(colorStops = arrayOf(
-                            0.0f to Blue, 0.37f to Green500, 0.5f to Yellow, 1f to Red400
-                        ),
-                            startX = with(LocalDensity.current) { 100.dp.toPx() },
-                            endX = with(LocalDensity.current) { 250.dp.toPx() })
-                    )
-                    .align(Alignment.Center))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(midRadius))
+                        .background(
+                            brush = Brush.horizontalGradient(colorStops = arrayOf(
+                                0.0f to Blue, 0.37f to Green500, 0.5f to Yellow, 1f to Red400
+                            ),
+                                startX = with(LocalDensity.current) { 100.dp.toPx() },
+                                endX = with(LocalDensity.current) { 250.dp.toPx() })
+                        )
+                        .align(Alignment.Center)
+                )
                 Divider(
                     modifier = modifier
                         .padding(start = maxWidth.times(progress))

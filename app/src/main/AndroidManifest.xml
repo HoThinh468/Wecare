@@ -62,9 +62,4 @@
 
     </application>
 
-    <!-- declare Health Connect visibility -->
-    <queries>
-        <package android:name="com.google.android.apps.healthdata" />
-    </queries>
-
 </manifest>

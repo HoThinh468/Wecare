@@ -6,10 +6,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.addmeal.ui.AddMealFragment
+import com.vn.wecare.utils.getNutrientIndexFromString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -99,6 +100,106 @@ class MealRecordRemoteDataSource @Inject constructor(
             emit(Response.Error(e))
         }
     }.flowOn(ioDispatcher)
+
+    override fun getTotalCaloriesFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = flow {
+        try {
+            var totalCalories = 0
+            val result =
+                getFoodDb(dayOfMonth, month, year, mealTypeKey).get().addOnSuccessListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals from remote successfully!")
+                }.addOnFailureListener { e ->
+                    Log.d(
+                        AddMealFragment.addMealTag, "Get meals from remote fail due to ${e.message}"
+                    )
+                }.await()
+            if (result != null) {
+                for (i in result) {
+                    val record = i.toObject(MealRecordModel::class.java)
+                    totalCalories += record.calories * record.quantity
+                }
+            }
+            emit(Response.Success(totalCalories))
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }.flowOn(ioDispatcher)
+
+    override fun getTotalProteinFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = flow {
+        try {
+            var totalProtein = 0
+            val result =
+                getFoodDb(dayOfMonth, month, year, mealTypeKey).get().addOnSuccessListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals from remote successfully!")
+                }.addOnFailureListener { e ->
+                    Log.d(
+                        AddMealFragment.addMealTag, "Get meals from remote fail due to ${e.message}"
+                    )
+                }.await()
+            if (result != null) {
+                for (i in result) {
+                    val record = i.toObject(MealRecordModel::class.java)
+                    totalProtein += record.protein.getNutrientIndexFromString() * record.quantity
+                }
+            }
+            emit(Response.Success(totalProtein))
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }.flowOn(ioDispatcher)
+
+    override fun getTotalFatFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = flow {
+        try {
+            var totalFat = 0
+            val result =
+                getFoodDb(dayOfMonth, month, year, mealTypeKey).get().addOnSuccessListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals from remote successfully!")
+                }.addOnFailureListener { e ->
+                    Log.d(
+                        AddMealFragment.addMealTag, "Get meals from remote fail due to ${e.message}"
+                    )
+                }.await()
+            if (result != null) {
+                for (i in result) {
+                    val record = i.toObject(MealRecordModel::class.java)
+                    totalFat += record.fat.getNutrientIndexFromString() * record.quantity
+                }
+            }
+            emit(Response.Success(totalFat))
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
+
+    override fun getTotalCarbsFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ): Flow<Response<Int>> = flow {
+        try {
+            var totalCarbs = 0
+            val result =
+                getFoodDb(dayOfMonth, month, year, mealTypeKey).get().addOnSuccessListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals from remote successfully!")
+                }.addOnFailureListener { e ->
+                    Log.d(
+                        AddMealFragment.addMealTag, "Get meals from remote fail due to ${e.message}"
+                    )
+                }.await()
+            if (result != null) {
+                for (i in result) {
+                    val record = i.toObject(MealRecordModel::class.java)
+                    totalCarbs += record.carbs.getNutrientIndexFromString() * record.quantity
+                }
+            }
+            emit(Response.Success(totalCarbs))
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
 
     override suspend fun updateQuantity(
         dayOfMonth: Int,

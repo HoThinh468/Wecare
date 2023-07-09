@@ -8,9 +8,8 @@ import com.vn.wecare.feature.food.common.MealUiState
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
-import com.vn.wecare.feature.food.usecase.DeleteMealRecordUsecase
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
-import com.vn.wecare.feature.food.usecase.UpdateMealRecordUsecase
+import com.vn.wecare.feature.food.usecase.UpdateMealRecordQuantityUsecase
 import com.vn.wecare.utils.getMonthPrefix
 import com.vn.wecare.utils.getNutrientIndexFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +24,7 @@ import javax.inject.Inject
 class BreakfastViewModel @Inject constructor(
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
     private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
-    private val updateMealRecordUsecase: UpdateMealRecordUsecase,
-    private val deleteMealRecordUsecase: DeleteMealRecordUsecase
+    private val updateMealRecordQuantityUsecase: UpdateMealRecordQuantityUsecase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MealUiState())
@@ -70,9 +68,8 @@ class BreakfastViewModel @Inject constructor(
         _uiState.update {
             it.copy(updateMealRecordResponse = Response.Loading)
         }
-        val quantity = mealRecordModel.quantity + 1
-        updateMealRecordUsecase.updateMealRecordQuantity(
-            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id, quantity
+        updateMealRecordQuantityUsecase.plusMealRecord(
+            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel
         ).collect { res ->
             _uiState.update {
                 it.copy(updateMealRecordResponse = res)
@@ -85,23 +82,8 @@ class BreakfastViewModel @Inject constructor(
         _uiState.update {
             it.copy(updateMealRecordResponse = Response.Loading)
         }
-        val quantity = mealRecordModel.quantity - 1
-        updateMealRecordUsecase.updateMealRecordQuantity(
-            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id, quantity
-        ).collect { res ->
-            _uiState.update {
-                it.copy(updateMealRecordResponse = res)
-            }
-        }
-        getBreakfastMealList(mDayOfMonth, mMonth, mYear)
-    }
-
-    fun deleteMealRecord(mealRecordModel: MealRecordModel) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(updateMealRecordResponse = Response.Loading)
-        }
-        deleteMealRecordUsecase.deleteMealRecord(
-            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel.id
+        updateMealRecordQuantityUsecase.minusMealRecord(
+            mDayOfMonth, mMonth, mYear, MealTypeKey.BREAKFAST, mealRecordModel
         ).collect { res ->
             _uiState.update {
                 it.copy(updateMealRecordResponse = res)
@@ -145,11 +127,11 @@ class BreakfastViewModel @Inject constructor(
                 if (res is Response.Success) {
                     _uiState.update {
                         it.copy(
-                            mealRecords = res.data ?: emptyList(),
+                            mealRecords = res.data,
                             getMealsResponse = Response.Success(true)
                         )
                     }
-                    updateNutritionIndex(res.data ?: emptyList())
+                    updateNutritionIndex(res.data)
                 } else {
                     _uiState.update { it.copy(getMealsResponse = Response.Error(null)) }
                 }

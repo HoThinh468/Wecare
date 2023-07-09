@@ -20,7 +20,6 @@ fun MealRecordSection(
     modifier: Modifier,
     mealUiState: MealUiState,
     navigateToDetailScreen: (mealRecordModel: MealRecordModel) -> Unit,
-    deleteMealRecord: (mealRecord: MealRecordModel) -> Unit,
     onMinusClick: (mealRecord: MealRecordModel) -> Unit,
     onAddClick: (mealRecord: MealRecordModel) -> Unit
 ) {
@@ -56,7 +55,6 @@ fun MealRecordSection(
                                         navigateToDetailScreen(item)
                                     },
                                     isEditEnable = mealUiState.isAddMealEnable,
-                                    deleteMealRecord = deleteMealRecord,
                                     onMinusClick = onMinusClick,
                                     onAddClick = onAddClick
                                 )

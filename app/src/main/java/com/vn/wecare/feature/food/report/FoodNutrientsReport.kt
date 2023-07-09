@@ -42,7 +42,7 @@ fun FoodNutrientsReport(
         ) {
             Text(
                 modifier = modifier.fillMaxWidth(),
-                text = "Nutrients detail",
+                text = "Total Nutrients detail",
                 style = MaterialTheme.typography.h4
             )
             Spacer(modifier = modifier.height(normalPadding))
@@ -69,20 +69,46 @@ fun FoodNutrientsReport(
                 )
             }
             Spacer(modifier = modifier.height(midPadding))
-            NutrientsIndexProgress(
-                modifier = modifier, title = "Breakfast", index = uiState.breakfastCalories, unit = "cal", progress = uiState.breakfastProgress
+            Text(
+                modifier = modifier.fillMaxWidth(),
+                text = "Average calories by categories",
+                style = MaterialTheme.typography.h4
             )
             Spacer(modifier = modifier.height(normalPadding))
             NutrientsIndexProgress(
-                modifier = modifier, title = "Lunch", index = uiState.lunchCalories, unit = "cal", progress = uiState.lunchProgress
+                modifier = modifier,
+                title = "Breakfast",
+                index = uiState.breakfastCalories,
+                target = uiState.breakfastTargetCalories,
+                unit = "cal",
+                progress = uiState.breakfastProgress
             )
             Spacer(modifier = modifier.height(normalPadding))
             NutrientsIndexProgress(
-                modifier = modifier, title = "Snack", index = uiState.snackCalories, unit = "cal", progress = uiState.snackProgress
+                modifier = modifier,
+                title = "Lunch",
+                index = uiState.lunchCalories,
+                target = uiState.lunchTargetCalories,
+                unit = "cal",
+                progress = uiState.lunchProgress
             )
             Spacer(modifier = modifier.height(normalPadding))
             NutrientsIndexProgress(
-                modifier = modifier, title = "Dinner", index = uiState.dinnerCalories, unit = "cal", progress = uiState.dinnerProgress
+                modifier = modifier,
+                title = "Snack",
+                index = uiState.snackCalories,
+                target = uiState.snackTargetCalories,
+                unit = "cal",
+                progress = uiState.snackProgress
+            )
+            Spacer(modifier = modifier.height(normalPadding))
+            NutrientsIndexProgress(
+                modifier = modifier,
+                title = "Dinner",
+                index = uiState.dinnerCalories,
+                target = uiState.dinnerTargetCalories,
+                unit = "cal",
+                progress = uiState.dinnerProgress
             )
         }
     }
@@ -93,6 +119,7 @@ fun NutrientsIndexProgress(
     modifier: Modifier,
     title: String,
     index: Int,
+    target: Int,
     unit: String,
     color: Color = MaterialTheme.colors.primary,
     progress: Float
@@ -104,8 +131,8 @@ fun NutrientsIndexProgress(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "$title (${index}${unit})", style = MaterialTheme.typography.body1)
-            Text(text = "${(progress * 100).toInt()}%", style = MaterialTheme.typography.body1)
+            Text(text = "$title (${index}/$target ${unit})", style = MaterialTheme.typography.body2)
+            Text(text = "${(progress * 100).toInt()}%", style = MaterialTheme.typography.body2)
         }
         LinearProgressIndicator(
             modifier = modifier

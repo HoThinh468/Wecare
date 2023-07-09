@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.EditInfoViewModel
-import com.vn.wecare.feature.goal.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.onboarding.composable.DesiredWeightPickerBottomSheet
 import com.vn.wecare.feature.onboarding.composable.OnboardingGenderSelection
 import com.vn.wecare.feature.onboarding.composable.OnboardingGoalSelection
@@ -246,7 +246,15 @@ fun EditInfoScreen(
                             }
                         }
                     },
+                    isChooseGoalEnabled = uiState.isGoalExpired
                 )
+                if (!uiState.isGoalExpired) {
+                    Spacer(modifier = modifier.height(smallPadding))
+                    Text(
+                        text = "*Complete your current goal to edit this field",
+                        style = MaterialTheme.typography.caption
+                    )
+                }
                 Spacer(modifier = modifier.height(xxxExtraPadding))
             }
         }
@@ -261,8 +269,7 @@ private fun PersonalInformation(
     val uiState = viewModel.editInfoUiState.collectAsState().value
 
     Text("Username", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.userName,
         onValueChange = {
             viewModel.onUserNameChange(it)
@@ -291,8 +298,7 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Height", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.height,
         onValueChange = {
             viewModel.onHeightChange(it)
@@ -311,7 +317,8 @@ private fun PersonalInformation(
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
-        isError = !uiState.isHeightValid
+        isError = !uiState.isHeightValid,
+        enabled = uiState.isGoalExpired
     )
     if (!uiState.isHeightValid) {
         Spacer(modifier = modifier.height(smallPadding))
@@ -320,10 +327,16 @@ private fun PersonalInformation(
             style = MaterialTheme.typography.caption.copy(color = Red400)
         )
     }
+    if (!uiState.isGoalExpired) {
+        Spacer(modifier = modifier.height(smallPadding))
+        Text(
+            text = "*Complete your current goal to edit this field",
+            style = MaterialTheme.typography.caption
+        )
+    }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Weight", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.weight,
         onValueChange = {
             viewModel.onWeightChange(it)
@@ -340,7 +353,8 @@ private fun PersonalInformation(
             }
         },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
-        isError = !uiState.isWeightValid
+        isError = !uiState.isWeightValid,
+        enabled = uiState.isGoalExpired
     )
     if (!uiState.isWeightValid) {
         Spacer(modifier = modifier.height(smallPadding))
@@ -349,10 +363,16 @@ private fun PersonalInformation(
             style = MaterialTheme.typography.caption.copy(color = Red400)
         )
     }
+    if (!uiState.isGoalExpired) {
+        Spacer(modifier = modifier.height(smallPadding))
+        Text(
+            text = "*Complete your current goal to edit this field",
+            style = MaterialTheme.typography.caption
+        )
+    }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Age", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.age,
         onValueChange = {
             viewModel.onAgeChange(it)
