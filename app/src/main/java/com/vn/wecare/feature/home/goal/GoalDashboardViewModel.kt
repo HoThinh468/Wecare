@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard.main
+package com.vn.wecare.feature.home.goal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,7 @@ data class DashboardCaloriesUiState(
 )
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(
+class GoalDashboardViewModel @Inject constructor(
     private val getTotalInputCaloriesUsecase: GetTotalInputCaloriesUsecase
 ) : ViewModel() {
 

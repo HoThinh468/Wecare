@@ -112,7 +112,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun getUsernameErrorMessage(): Int? = if (_signUpUiState.value.isUserNameValid) null
-    else R.string.password_error_message
+    else R.string.username_error_message
 
     private fun checkPasswordValidation() {
         _signUpUiState.update { it.copy(isPasswordValid = _signUpUiState.value.password.isValidPassword()) }

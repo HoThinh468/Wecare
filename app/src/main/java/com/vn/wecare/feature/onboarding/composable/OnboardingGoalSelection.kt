@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.goal.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
 import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
@@ -34,6 +34,7 @@ fun OnboardingGoalSelection(
     onGoalSelect: (goal: EnumGoal) -> Unit,
     openDesiredWeightPickerBottomSheet: () -> Unit,
     goalSelectedId: EnumGoal,
+    isChooseGoalEnabled: Boolean = true
 ) {
     Box(
         modifier = modifier
@@ -46,7 +47,10 @@ fun OnboardingGoalSelection(
             iconRes = R.drawable.ic_muscle,
             buttonText = GAIN_MUSCLE,
             bgColor = getBgColor(goalId = EnumGoal.GAINMUSCLE, currentGoal = goalSelectedId),
-            contentColor = getContentColor(goalId = EnumGoal.GAINMUSCLE, currentGoal = goalSelectedId),
+            contentColor = getContentColor(
+                goalId = EnumGoal.GAINMUSCLE, currentGoal = goalSelectedId
+            ),
+            enabled = isChooseGoalEnabled
         ) {
             onGoalSelect(EnumGoal.GAINMUSCLE)
             openDesiredWeightPickerBottomSheet()
@@ -56,7 +60,10 @@ fun OnboardingGoalSelection(
             iconRes = R.drawable.ic_weight,
             buttonText = LOSE_WEIGHT,
             bgColor = getBgColor(goalId = EnumGoal.LOSEWEIGHT, currentGoal = goalSelectedId),
-            contentColor = getContentColor(goalId = EnumGoal.LOSEWEIGHT, currentGoal = goalSelectedId),
+            contentColor = getContentColor(
+                goalId = EnumGoal.LOSEWEIGHT, currentGoal = goalSelectedId
+            ),
+            enabled = isChooseGoalEnabled
         ) {
             onGoalSelect(EnumGoal.LOSEWEIGHT)
             openDesiredWeightPickerBottomSheet()
@@ -66,7 +73,10 @@ fun OnboardingGoalSelection(
             iconRes = R.drawable.ic_heart,
             buttonText = GET_HEALTHIER,
             bgColor = getBgColor(goalId = EnumGoal.GETHEALTHIER, currentGoal = goalSelectedId),
-            contentColor = getContentColor(goalId = EnumGoal.GETHEALTHIER, currentGoal = goalSelectedId),
+            contentColor = getContentColor(
+                goalId = EnumGoal.GETHEALTHIER, currentGoal = goalSelectedId
+            ),
+            enabled = isChooseGoalEnabled
         ) {
             onGoalSelect(EnumGoal.GETHEALTHIER)
         }
@@ -75,7 +85,10 @@ fun OnboardingGoalSelection(
             iconRes = R.drawable.ic_mood_happy,
             buttonText = IMPROVE_MOOD,
             bgColor = getBgColor(goalId = EnumGoal.IMPROVEMOOD, currentGoal = goalSelectedId),
-            contentColor = getContentColor(goalId = EnumGoal.IMPROVEMOOD, currentGoal = goalSelectedId),
+            contentColor = getContentColor(
+                goalId = EnumGoal.IMPROVEMOOD, currentGoal = goalSelectedId
+            ),
+            enabled = isChooseGoalEnabled
         ) { onGoalSelect(EnumGoal.IMPROVEMOOD) }
     }
 }
@@ -87,13 +100,17 @@ fun RoundedIconButton(
     buttonText: String,
     bgColor: Color = MaterialTheme.colors.primary,
     contentColor: Color = MaterialTheme.colors.onPrimary,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier.size(130.dp),
         shape = CircleShape,
         onClick = { onClick() },
-        colors = ButtonDefaults.buttonColors(backgroundColor = bgColor, contentColor = contentColor)
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = bgColor, contentColor = contentColor
+        ),
+        enabled = enabled
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(painter = painterResource(id = iconRes), contentDescription = null)

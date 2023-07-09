@@ -27,6 +27,7 @@ import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -40,11 +41,7 @@ fun GoalTracking(
                 .padding(normalPadding)
         ) {
             Text(
-                "Goal tracker", style = MaterialTheme.typography.h5
-            )
-            Text(
-                "Your goal is:",
-                style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
+                "Your goal is", style = MaterialTheme.typography.h5
             )
             Text(
                 "Gain muscle", style = MaterialTheme.typography.h2
@@ -55,7 +52,7 @@ fun GoalTracking(
             ) {
                 Column {
                     Text(
-                        "Day set goal:",
+                        "Day set go  al:",
                         style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
                     )
                     Text(
@@ -88,6 +85,7 @@ fun GoalTracking(
                     append(" days left")
                 }
             })
+            Spacer(modifier = modifier.height(smallPadding))
             LinearProgressIndicator(
                 modifier = modifier
                     .fillMaxWidth()

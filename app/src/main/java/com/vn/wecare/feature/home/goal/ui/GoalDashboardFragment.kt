@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard.main
+package com.vn.wecare.feature.home.goal.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -6,19 +6,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentDashboardBinding
+import com.vn.wecare.feature.home.goal.GoalDashboardViewModel
 
-class DashboardFragment : BaseBindingFragment<FragmentDashboardBinding>(
+class GoalDashboardFragment : BaseBindingFragment<FragmentDashboardBinding>(
     FragmentDashboardBinding::inflate
 ) {
 
-    private val viewModel: DashboardViewModel by activityViewModels()
+    private val viewModel: GoalDashboardViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         viewModel.initDashboardUiState()
         super.setupComposeView(
             binding.dashboardComposeView
         ) {
-            DashboardScreen(
+            GoalDashboardScreen(
                 navigateBack = {
                     findNavController().popBackStack()
                 }, viewModel = viewModel

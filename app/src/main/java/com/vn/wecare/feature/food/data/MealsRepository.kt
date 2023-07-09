@@ -49,7 +49,7 @@ class MealsRepository @Inject constructor(
         ),
     ).flow
 
-    suspend fun insertMeal(
+    suspend fun insertMealRecord(
         dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients
     ): Flow<Response<Boolean>?> =
         remoteDataSource.insert(dateTime, mealTypeKey, meal.toRecordModel())

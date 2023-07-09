@@ -58,10 +58,6 @@ fun DailyCalories(
             Text(
                 "Daily calories", style = MaterialTheme.typography.h5
             )
-            Text(
-                "Calories remained",
-                style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
-            )
             Text(text = buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(

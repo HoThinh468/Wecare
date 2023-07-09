@@ -2,7 +2,6 @@ package com.vn.wecare.feature.food.addmeal.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -10,13 +9,13 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealByNutrients
-import com.vn.wecare.feature.food.data.model.MealByNutrientsEntity
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toMealByNutrients
 import com.vn.wecare.feature.food.data.model.toRecordModel
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
+import com.vn.wecare.feature.food.usecase.InsertMealRecordUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +36,7 @@ class AddMealViewModel @Inject constructor(
     private val repository: MealsRepository,
     private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
+    private val insertMealRecordUsecase: InsertMealRecordUsecase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddMealUiState())
@@ -150,31 +150,18 @@ class AddMealViewModel @Inject constructor(
         }
     }
 
-    fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients) {
-        val isMealExist = when (mealTypeKey) {
-            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toRecordModel())
-            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toRecordModel())
-            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toRecordModel())
-            else -> currentDayDinnerRecord.contains(meal.toRecordModel())
-        }
-
-        if (isMealExist) {
-            val e = Exception("This item has been added, check your list")
-            _uiState.update { it.copy(insertMealRecordResponse = Response.Error(e)) }
-        } else {
-            viewModelScope.launch {
-                _uiState.update { it.copy(insertMealRecordResponse = Response.Loading) }
-                repository.insertMeal(dateTime, mealTypeKey, meal).collect { res ->
-                    _uiState.update {
-                        it.copy(insertMealRecordResponse = res)
-                    }
-                    if (res is Response.Success) {
-                        updateMealListByType(mealTypeKey, meal.toRecordModel())
-                    }
+    fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients) =
+        viewModelScope.launch {
+            _uiState.update { it.copy(insertMealRecordResponse = Response.Loading) }
+            insertMealRecordUsecase.insertMealRecord(dateTime, mealTypeKey, meal).collect { res ->
+                _uiState.update {
+                    it.copy(insertMealRecordResponse = res)
+                }
+                if (res is Response.Success) {
+                    updateMealListByType(mealTypeKey, meal.toRecordModel())
                 }
             }
         }
-    }
 
     private fun getMealListByType(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
@@ -184,7 +171,7 @@ class AddMealViewModel @Inject constructor(
             getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
                 dayOfMonth, month, year, mealTypeKey
             ).collect { res ->
-                if (res is Response.Success && res.data != null) {
+                if (res is Response.Success) {
                     for (item in res.data) {
                         result.add(item)
                     }

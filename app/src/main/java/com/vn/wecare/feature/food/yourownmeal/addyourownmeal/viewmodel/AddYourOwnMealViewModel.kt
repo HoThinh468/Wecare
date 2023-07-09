@@ -144,5 +144,7 @@ class AddYourOwnMealViewModel @Inject constructor(
         _addMealUiState.update { AddMealUiState() }
         mealName = ""
         fat = "0"
+        protein = "0"
+        carbs = "0"
     }
 }

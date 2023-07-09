@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard.main
+package com.vn.wecare.feature.home.goal.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import com.vn.wecare.feature.home.dashboard.main.DailyCalories
+import com.vn.wecare.feature.home.dashboard.main.GoalTracking
+import com.vn.wecare.feature.home.goal.GoalDashboardViewModel
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
@@ -18,8 +21,8 @@ import com.vn.wecare.utils.common_composable.WecareAppBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DashboardScreen(
-    modifier: Modifier = Modifier, navigateBack: () -> Unit, viewModel: DashboardViewModel
+fun GoalDashboardScreen(
+    modifier: Modifier = Modifier, navigateBack: () -> Unit, viewModel: GoalDashboardViewModel
 ) {
 
     val dashboardCaloriesUiState = viewModel.dashboardCaloriesUiState.collectAsState().value

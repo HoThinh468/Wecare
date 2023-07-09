@@ -19,6 +19,7 @@ buildscript {
     dependencies {
         classpath 'com.google.gms:google-services:4.3.13'
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3'
+        classpath 'org.owasp:dependency-check-gradle:6.5.0.1'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
@@ -32,3 +33,5 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply plugin: "org.owasp.dependencycheck"

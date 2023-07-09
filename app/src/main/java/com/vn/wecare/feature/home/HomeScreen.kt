@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
-import com.vn.wecare.feature.home.dashboard.DashboardHomeCard
+import com.vn.wecare.feature.home.goal.ui.DashboardHomeCard
 import com.vn.wecare.feature.home.step_count.ui.compose.StepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*

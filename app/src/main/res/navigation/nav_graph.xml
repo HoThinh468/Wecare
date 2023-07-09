@@ -497,7 +497,7 @@
         app:startDestination="@id/dashboardFragment">
         <fragment
             android:id="@+id/dashboardFragment"
-            android:name="com.vn.wecare.feature.home.dashboard.main.DashboardFragment"
+            android:name="com.vn.wecare.feature.goal.ui.GoalDashboardFragment"
             android:label="fragment_dashboard"
             tools:layout="@layout/fragment_dashboard" />
     </navigation>

@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard
+package com.vn.wecare.feature.home.goal.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
