@@ -3,9 +3,7 @@ package com.vn.wecare.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
-import com.vn.wecare.core.alarm.InExactAlarms
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.home.step_count.alarm.StepCountExactAlarms
 import com.vn.wecare.feature.home.step_count.getCaloriesBurnedFromStepCount
 import com.vn.wecare.feature.home.step_count.getMoveTimeFromStepCount
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
@@ -35,8 +33,6 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val stepCountInExactAlarms: InExactAlarms,
-    private val stepCountExactAlarms: StepCountExactAlarms,
     private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val getWaterRecordListUsecase: GetWaterRecordListUsecase,
@@ -51,14 +47,6 @@ class HomeViewModel @Inject constructor(
         updateBMIInformation()
         updateWaterAmountDrankInDay()
         getWaterTarget()
-    }
-
-    fun cancelInExactAlarm() {
-        stepCountInExactAlarms.clearInExactAlarm()
-    }
-
-    fun clearExactAlarm() {
-        stepCountExactAlarms.clearExactAlarm()
     }
 
     fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {

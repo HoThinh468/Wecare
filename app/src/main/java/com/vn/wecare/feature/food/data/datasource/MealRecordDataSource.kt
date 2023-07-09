@@ -23,6 +23,22 @@ interface MealRecordDataSource {
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
     ): Flow<Response<List<MealRecordModel>>>
 
+    fun getTotalCaloriesFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ) : Flow<Response<Int>>
+
+    fun getTotalProteinFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ) : Flow<Response<Int>>
+
+    fun getTotalFatFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ) : Flow<Response<Int>>
+
+    fun getTotalCarbsFromMealRecordInDayOfEachType(
+        dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
+    ) : Flow<Response<Int>>
+
     suspend fun updateQuantity(
         dayOfMonth: Int,
         month: Int,

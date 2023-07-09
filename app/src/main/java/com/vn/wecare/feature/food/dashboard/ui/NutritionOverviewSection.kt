@@ -67,15 +67,10 @@ fun NutritionOverviewSection(
             ) {
                 CircularProgressIndicator(
                     modifier = modifier.size(175.dp),
-                    progress = 1f,
-                    color = MaterialTheme.colors.secondary.copy(0.4f),
-                    strokeWidth = 10.dp,
-                )
-                CircularProgressIndicator(
-                    modifier = modifier.size(175.dp),
                     progress = progressAnimationValue,
                     color = MaterialTheme.colors.primary,
                     strokeWidth = 10.dp,
+                    backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
                     strokeCap = StrokeCap.Round
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -139,7 +134,6 @@ private fun NutritionOverviewItem(
             modifier = modifier
                 .fillMaxWidth()
                 .height(6.dp),
-            backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
             color = color,
             progress = animatedProgress,
             strokeCap = StrokeCap.Round

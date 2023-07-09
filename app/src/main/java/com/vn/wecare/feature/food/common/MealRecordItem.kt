@@ -41,7 +41,6 @@ fun MealRecordItem(
     mealRecord: MealRecordModel,
     navigateToDetailScreen: () -> Unit,
     isEditEnable: Boolean,
-    deleteMealRecord: (meal: MealRecordModel) -> Unit,
     onMinusClick: (meal: MealRecordModel) -> Unit,
     onAddClick: (meal: MealRecordModel) -> Unit
 ) {
@@ -58,7 +57,7 @@ fun MealRecordItem(
         }, confirmButton = {
             TextButton(onClick = {
                 openDeleteDialog.value = false
-                deleteMealRecord(mealRecord)
+                onMinusClick(mealRecord)
             }) {
                 Text("Delete")
             }

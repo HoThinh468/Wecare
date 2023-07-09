@@ -83,15 +83,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onSignInWithFacebookClick(idToken: String) = viewModelScope.launch {
-        _logInUiState.update { it.copy(authenticationResponse = Response.Loading) }
-        _logInUiState.update {
-            it.copy(
-                authenticationResponse = accountService.signInWithFacebook(idToken)
-            )
-        }
-    }
-
     var isPasswordShow by mutableStateOf(false)
     fun onShowPasswordClick() {
         isPasswordShow = !isPasswordShow

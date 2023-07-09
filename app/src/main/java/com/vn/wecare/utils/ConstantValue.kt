@@ -38,6 +38,7 @@ object WecareUserConstantValues {
     const val DEFAULT_CALORIES_TO_BURN_EACH_DAY = 500
     const val DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE = 600
     const val DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT = 700
+    const val DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK = 8
 
     /* Step count */
     const val STEP_GOAL_FOR_GAIN_MUSCLE = 10_000

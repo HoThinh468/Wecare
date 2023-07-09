@@ -6,10 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.WecareCaloriesObject
-import com.vn.wecare.feature.food.data.MealsRepository
-import com.vn.wecare.feature.food.data.model.MealRecordModel
-import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
+import com.vn.wecare.feature.food.usecase.GetTotalInputCaloriesUsecase
+import com.vn.wecare.feature.food.usecase.GetTotalNutrientsIndexUsecase
 import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
 import com.vn.wecare.utils.getDayFormatWithOnlyMonthPrefix
 import com.vn.wecare.utils.getDayFormatWithYear
@@ -17,7 +15,6 @@ import com.vn.wecare.utils.getDayOfWeekPrefix
 import com.vn.wecare.utils.getFirstDayOfWeekWithGivenDate
 import com.vn.wecare.utils.getLastDayOfWeekWithGivenDay
 import com.vn.wecare.utils.getListOfDayWithStartAndEndDay
-import com.vn.wecare.utils.getNutrientIndexFromString
 import com.vn.wecare.utils.getProgressInFloatWithIntInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -49,19 +46,23 @@ data class NutrientReportUiState(
     val fatAmount: Int = 0,
     val carbsAmount: Int = 0,
     val breakfastCalories: Int = 0,
+    val breakfastTargetCalories: Int = 0,
     val breakfastProgress: Float = 0f,
     val lunchCalories: Int = 0,
+    val lunchTargetCalories: Int = 0,
     val lunchProgress: Float = 0f,
     val snackCalories: Int = 0,
+    val snackTargetCalories: Int = 0,
     val snackProgress: Float = 0f,
     val dinnerCalories: Int = 0,
+    val dinnerTargetCalories: Int = 0,
     val dinnerProgress: Float = 0f
 )
 
 @HiltViewModel
 class FoodReportViewModel @Inject constructor(
-    private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
-    private val mealsRepository: MealsRepository
+    private val getTotalInputCaloriesUsecase: GetTotalInputCaloriesUsecase,
+    private val getTotalNutrientsIndexUsecase: GetTotalNutrientsIndexUsecase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FoodReportUiState())
@@ -177,45 +178,22 @@ class FoodReportViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getListMealOfDay(day: LocalDate) = combine(
-        getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.BREAKFAST
-        ), getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.LUNCH
-        ), getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.SNACK
-        ), getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
-            day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.DINNER
-        )
-    ) { breakfast, lunch, snack, dinner ->
-        val recordList = arrayListOf<MealRecordModel>()
-        if (breakfast is Response.Success && lunch is Response.Success && snack is Response.Success && dinner is Response.Success) {
-            recordList.apply {
-                addAll(breakfast.data)
-                addAll(lunch.data)
-                addAll(snack.data)
-                addAll(dinner.data)
-            }
-        }
-        recordList
-    }
-
     private fun getCaloriesOfDay(day: LocalDate): Flow<Int> = flow {
-        getListMealOfDay(day).collect { list ->
-            var calories = 0
-            for (i in list) {
-                calories += i.calories * i.quantity
-            }
-            emit(calories)
+        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDay(
+            day.dayOfMonth, day.monthValue - 1, day.year
+        ).collect {
+            if (it is Response.Success) emit(it.data) else emit(0)
         }
     }
 
     private fun getProteinOfDays(days: List<LocalDate>): Flow<Int> = flow {
         var protein = 0
         for (day in days) {
-            getListMealOfDay(day).collect {
-                for (i in it) {
-                    protein += i.quantity * i.protein.getNutrientIndexFromString()
+            getTotalNutrientsIndexUsecase.getTotalProteinOfEachDay(
+                day.dayOfMonth, day.monthValue - 1, day.year
+            ).collect {
+                if (it is Response.Success) {
+                    protein += it.data
                 }
             }
         }
@@ -225,9 +203,11 @@ class FoodReportViewModel @Inject constructor(
     private fun getFatOfDays(days: List<LocalDate>): Flow<Int> = flow {
         var fat = 0
         for (day in days) {
-            getListMealOfDay(day).collect {
-                for (i in it) {
-                    fat += i.quantity * i.fat.getNutrientIndexFromString()
+            getTotalNutrientsIndexUsecase.getTotalFatOfEachDay(
+                day.dayOfMonth, day.monthValue - 1, day.year
+            ).collect {
+                if (it is Response.Success) {
+                    fat += it.data
                 }
             }
         }
@@ -237,9 +217,11 @@ class FoodReportViewModel @Inject constructor(
     private fun getCarbsOfDays(days: List<LocalDate>): Flow<Int> = flow {
         var carbs = 0
         for (day in days) {
-            getListMealOfDay(day).collect {
-                for (i in it) {
-                    carbs += i.quantity * i.carbs.getNutrientIndexFromString()
+            getTotalNutrientsIndexUsecase.getTotalCarbsOfEachDay(
+                day.dayOfMonth, day.monthValue - 1, day.year
+            ).collect {
+                if (it is Response.Success) {
+                    carbs += it.data
                 }
             }
         }
@@ -268,23 +250,23 @@ class FoodReportViewModel @Inject constructor(
     private fun updateBreakfastNutrients() = viewModelScope.launch {
         val days = getListOfDaysInWeek()
         var breakfastCalories = 0
-        val caloriesOfBreakfast = WecareCaloriesObject.getInstance().caloriesOfBreakfast
+        val targetCaloriesOfBreakfast =
+            WecareCaloriesObject.getInstance().caloriesOfBreakfast * NUMBER_OF_DAYS_IN_WEEK
         for (day in days) {
-            mealsRepository.getMealOfEachTypeInDayWithDayId(
-                day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.BREAKFAST
+            getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForBreakfast(
+                day.dayOfMonth, day.monthValue - 1, day.year
             ).collect { res ->
                 if (res is Response.Success) {
-                    for (i in res.data) {
-                        breakfastCalories += i.calories * i.quantity
-                    }
+                    breakfastCalories += res.data
                 }
             }
         }
         _nutrientReportUiState.update {
             it.copy(
                 breakfastCalories = breakfastCalories,
-                breakfastProgress = breakfastCalories.toFloat() / caloriesOfBreakfast.times(
-                    NUMBER_OF_DAYS_IN_WEEK
+                breakfastTargetCalories = targetCaloriesOfBreakfast,
+                breakfastProgress = getProgressInFloatWithIntInput(
+                    breakfastCalories, targetCaloriesOfBreakfast
                 )
             )
         }
@@ -293,23 +275,23 @@ class FoodReportViewModel @Inject constructor(
     private fun updateLunchNutrients() = viewModelScope.launch {
         val days = getListOfDaysInWeek()
         var lunchCalories = 0
-        val caloriesOfLunch = WecareCaloriesObject.getInstance().caloriesOfLunch
+        val targetCaloriesOfLunch =
+            WecareCaloriesObject.getInstance().caloriesOfLunch * NUMBER_OF_DAYS_IN_WEEK
         for (day in days) {
-            mealsRepository.getMealOfEachTypeInDayWithDayId(
-                day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.LUNCH
+            getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForLunch(
+                day.dayOfMonth, day.monthValue - 1, day.year
             ).collect { res ->
                 if (res is Response.Success) {
-                    for (i in res.data) {
-                        lunchCalories += i.calories * i.quantity
-                    }
+                    lunchCalories += res.data
                 }
             }
         }
         _nutrientReportUiState.update {
             it.copy(
                 lunchCalories = lunchCalories,
-                lunchProgress = lunchCalories.toFloat() / caloriesOfLunch.times(
-                    NUMBER_OF_DAYS_IN_WEEK
+                lunchTargetCalories = targetCaloriesOfLunch,
+                lunchProgress = getProgressInFloatWithIntInput(
+                    lunchCalories, targetCaloriesOfLunch
                 )
             )
         }
@@ -318,22 +300,24 @@ class FoodReportViewModel @Inject constructor(
     private fun updateSnackNutrients() = viewModelScope.launch {
         val days = getListOfDaysInWeek()
         var snackCalories = 0
-        val caloriesOfSnack = WecareCaloriesObject.getInstance().caloriesOfSnack
+        val targetCaloriesOfSnack =
+            WecareCaloriesObject.getInstance().caloriesOfSnack * NUMBER_OF_DAYS_IN_WEEK
         for (day in days) {
-            mealsRepository.getMealOfEachTypeInDayWithDayId(
-                day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.SNACK
+            getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForSnack(
+                day.dayOfMonth, day.monthValue - 1, day.year
             ).collect { res ->
                 if (res is Response.Success) {
-                    for (i in res.data) {
-                        snackCalories += i.calories * i.quantity
-                    }
+                    snackCalories += res.data
                 }
             }
         }
         _nutrientReportUiState.update {
             it.copy(
                 snackCalories = snackCalories,
-                snackProgress = snackCalories.toFloat() / caloriesOfSnack.times(NUMBER_OF_DAYS_IN_WEEK)
+                snackTargetCalories = targetCaloriesOfSnack,
+                snackProgress = getProgressInFloatWithIntInput(
+                    snackCalories, targetCaloriesOfSnack
+                )
             )
         }
     }
@@ -341,22 +325,24 @@ class FoodReportViewModel @Inject constructor(
     private fun updateDinnerNutrients() = viewModelScope.launch {
         val days = getListOfDaysInWeek()
         var dinnerCalories = 0
-        val caloriesOfDinner = WecareCaloriesObject.getInstance().caloriesOfDinner
+        val targetCaloriesOfDinner =
+            WecareCaloriesObject.getInstance().caloriesOfDinner * NUMBER_OF_DAYS_IN_WEEK
         for (day in days) {
-            mealsRepository.getMealOfEachTypeInDayWithDayId(
-                day.dayOfMonth, day.monthValue - 1, day.year, MealTypeKey.DINNER
+            getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDayForDinner(
+                day.dayOfMonth, day.monthValue - 1, day.year
             ).collect { res ->
                 if (res is Response.Success) {
-                    for (i in res.data) {
-                        dinnerCalories += i.calories * i.quantity
-                    }
+                    dinnerCalories += res.data
                 }
             }
         }
         _nutrientReportUiState.update {
             it.copy(
                 dinnerCalories = dinnerCalories,
-                dinnerProgress = dinnerCalories.toFloat() / caloriesOfDinner.times(NUMBER_OF_DAYS_IN_WEEK)
+                dinnerTargetCalories = targetCaloriesOfDinner,
+                dinnerProgress = getProgressInFloatWithIntInput(
+                    dinnerCalories, targetCaloriesOfDinner
+                )
             )
         }
     }

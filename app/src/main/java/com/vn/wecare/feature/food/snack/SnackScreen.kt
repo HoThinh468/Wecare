@@ -87,7 +87,6 @@ fun SnackScreen(
                 modifier = modifier,
                 mealUiState = uiState.value,
                 navigateToDetailScreen = navigateToDetailScreen,
-                deleteMealRecord = viewModel::deleteMealRecord,
                 onMinusClick = viewModel::onMealRecordItemMinusClick,
                 onAddClick = viewModel::onMealRecordItemPlusClick
             )

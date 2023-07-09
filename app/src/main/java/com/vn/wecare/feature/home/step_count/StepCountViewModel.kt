@@ -2,8 +2,8 @@ package com.vn.wecare.feature.home.step_count
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vn.wecare.feature.goal.EnumGoal
-import com.vn.wecare.feature.goal.GoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
@@ -122,7 +122,7 @@ class StepCountViewModel @Inject constructor(
 
     private fun initializeGoalIndex() {
         viewModelScope.launch {
-            GoalSingletonObject.getInStanceFlow().collect { goals ->
+            LatestGoalSingletonObject.getInStanceFlow().collect { goals ->
                 _stepsCountUiState.update {
                     it.copy(
                         stepGoal = goals.stepsGoal,

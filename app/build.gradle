@@ -98,9 +98,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
-    // Health connect API
-    implementation "androidx.health.connect:connect-client:$health_connect_version"
-
     // room db
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
@@ -155,10 +152,6 @@ dependencies {
     // Paging
     implementation "androidx.paging:paging-runtime:3.1.1"
     implementation "androidx.paging:paging-compose:1.0.0-alpha19"
-
-    //kommunicate
-//    implementation "io.kommunicate.sdk:kommunicateui:2.7.0"
-
 
     implementation 'ai.api:libai:1.6.12'
     implementation 'io.kommunicate.sdk:kommunicateui:2.3.8'

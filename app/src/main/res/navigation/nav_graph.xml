@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_homeFragment_to_bmi_graph"
             app:destination="@id/bmi_graph" />
+        <action
+            android:id="@+id/action_homeFragment_to_dashboard_graph"
+            app:destination="@id/dashboard_graph" />
     </fragment>
 
     <!-- Nested graph for step count feature -->
@@ -344,7 +347,17 @@
             android:id="@+id/BMIFragment"
             android:name="com.vn.wecare.feature.home.bmi.ui.BMIFragment"
             android:label="fragment_b_m_i"
-            tools:layout="@layout/fragment_b_m_i" />
+            tools:layout="@layout/fragment_b_m_i" >
+            <action
+                android:id="@+id/action_BMIFragment_to_BMIHistoryFragment"
+                app:destination="@id/BMIHistoryFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/BMIHistoryFragment"
+            android:name="com.vn.wecare.feature.home.bmi.ui.BMIHistoryFragment"
+            android:label="fragment_b_m_i_history"
+            tools:layout="@layout/fragment_b_m_i_history" />
     </navigation>
 
     <!-- Nutrition graph -->
@@ -486,5 +499,16 @@
             android:name="com.vn.wecare.feature.account.view.AboutUsFragment"
             android:label="fragment_about_us"
             tools:layout="@layout/fragment_about_us" />
+    </navigation>
+
+    <!-- Dashboard graph -->
+    <navigation
+        android:id="@+id/dashboard_graph"
+        app:startDestination="@id/dashboardFragment">
+        <fragment
+            android:id="@+id/dashboardFragment"
+            android:name="com.vn.wecare.feature.goal.ui.GoalDashboardFragment"
+            android:label="fragment_dashboard"
+            tools:layout="@layout/fragment_dashboard" />
     </navigation>
 </navigation>

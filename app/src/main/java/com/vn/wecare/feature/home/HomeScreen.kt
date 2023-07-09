@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -23,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
+import com.vn.wecare.feature.home.goal.ui.DashboardHomeCard
 import com.vn.wecare.feature.home.step_count.ui.compose.StepCountHomeCard
 import com.vn.wecare.feature.home.water.WaterOverviewHomeCard
 import com.vn.wecare.ui.theme.*
@@ -35,6 +33,7 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onFootStepCountCardClick: () -> Unit,
+    onDashboardCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
     onTrainingClick: () -> Unit,
@@ -42,23 +41,18 @@ fun HomeScreen(
     onRunningIcClick: () -> Unit,
     onBicycleIcClick: () -> Unit,
     onMeditationIcClick: () -> Unit,
-    cancelInExactAlarm: () -> Unit,
-    cancelExactAlarm: () -> Unit,
     homeViewModel: HomeViewModel,
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
 
     val homeUIState = homeViewModel.homeUiState.collectAsState().value
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+    Scaffold(modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background),
         topBar = {
             HomeHeader(
                 modifier = modifier,
-                cancelInExactAlarm = cancelInExactAlarm,
-                cancelExactAlarm = cancelExactAlarm,
             )
         }) {
         Column(
@@ -67,6 +61,11 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = midPadding, vertical = smallPadding),
         ) {
+            DashboardHomeCard(
+                modifier = modifier,
+                onCardClick = { onDashboardCardClick() },
+            )
+            Spacer(modifier = modifier.height(normalPadding))
             StepCountHomeCard(
                 modifier = modifier,
                 onCardClick = onFootStepCountCardClick,
@@ -83,9 +82,7 @@ fun HomeScreen(
                 onMeditationIcClick
             )
             YourBMIHomeCard(
-                modifier = modifier,
-                onCardClick = onBMICardClick,
-                bmiIndex = homeUIState.bmiIndex
+                modifier = modifier, onCardClick = onBMICardClick, bmiIndex = homeUIState.bmiIndex
             )
             WaterOverviewHomeCard(
                 modifier = modifier,
@@ -107,8 +104,6 @@ fun HomeScreen(
 @Composable
 fun HomeHeader(
     modifier: Modifier,
-    cancelInExactAlarm: () -> Unit,
-    cancelExactAlarm: () -> Unit,
 ) {
     Row(
         modifier = modifier

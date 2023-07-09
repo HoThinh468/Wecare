@@ -47,6 +47,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                         R.id.homeFragment, R.id.action_homeFragment_to_stepCountFragment
                     )
                 },
+                onDashboardCardClick = {
+                    findNavController().safeNavigate(
+                        R.id.homeFragment, R.id.action_homeFragment_to_dashboard_graph
+                    )
+                },
                 onTrainingClick = {
                     findNavController().safeNavigate(
                         R.id.homeFragment, R.id.action_homeFragment_to_trainingFragment
@@ -66,10 +71,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 onRunningIcClick = {},
                 onBicycleIcClick = {},
                 onMeditationIcClick = {},
-                cancelInExactAlarm = {
-                    homeViewModel.cancelInExactAlarm()
-                },
-                cancelExactAlarm = { homeViewModel.clearExactAlarm() },
                 homeViewModel = homeViewModel
             )
         }

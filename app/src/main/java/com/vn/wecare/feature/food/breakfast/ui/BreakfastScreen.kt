@@ -88,7 +88,6 @@ fun BreakfastScreen(
                 modifier = modifier,
                 mealUiState = uiState.value,
                 navigateToDetailScreen = navigateToDetailScreen,
-                deleteMealRecord = breakfastViewModel::deleteMealRecord,
                 onMinusClick = breakfastViewModel::onMealRecordItemMinusClick,
                 onAddClick = breakfastViewModel::onMealRecordItemPlusClick
             )

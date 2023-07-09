@@ -1,18 +1,18 @@
 package com.vn.wecare.feature.onboarding.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.goal.EnumGoal
-import com.vn.wecare.feature.goal.SaveGoalsToFirebaseUsecase
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.feature.home.goal.usecase.DefineGoalBasedOnInputsUsecase
+import com.vn.wecare.feature.home.goal.usecase.SaveGoalsToFirebaseUsecase
+import com.vn.wecare.feature.home.goal.usecase.SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
 import com.vn.wecare.feature.onboarding.ONBOARDING_PAGE_COUNT
-import com.vn.wecare.feature.onboarding.OnboardingFragment
 import com.vn.wecare.feature.onboarding.model.BMIState
-import com.vn.wecare.feature.onboarding.usecase.DefineGoalBasedOnInputsUsecase
 import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.WecareUserConstantValues.AGE_FIELD
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_NORMAL_RANGE
@@ -58,7 +58,8 @@ class OnboardingViewModel @Inject constructor(
     private val updateWecareUserUsecase: UpdateWecareUserUsecase,
     private val accountService: AccountService,
     private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
-    private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase
+    private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase,
+    private val setupGoalWeeklyRecordsWhenCreateNewGoalUsecase: SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
 ) : ViewModel() {
 
     var currentIndex = mutableStateOf(0)
@@ -300,17 +301,22 @@ class OnboardingViewModel @Inject constructor(
         val enumGoal = _onboardingUiState.value.selectedGoal
         _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
         val goal = defineGoalBasedOnInputsUsecase.getGoalFromInputs(
-            userId = accountService.currentUserId,
             goal = enumGoal,
             height = _onboardingUiState.value.heightPicker,
             weight = _onboardingUiState.value.weightPicker,
             age = _onboardingUiState.value.agePicker,
             gender = getGenderWithId(_onboardingUiState.value.genderSelectionId),
-            weightDifference = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) 0 else _onboardingUiState.value.desiredWeightDifferencePicker,
-            timeToReachGoal = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) 0 else _onboardingUiState.value.estimatedWeeks
+            weightDifference = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _onboardingUiState.value.desiredWeightDifferencePicker,
+            timeToReachGoal = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _onboardingUiState.value.estimatedWeeks
         )
         viewModelScope.launch {
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
+                if (res is Response.Success) {
+                    setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.invoke(
+                        goal.timeToReachGoalInWeek, goal.goalId
+                    )
+                    LatestGoalSingletonObject.updateInStance(goal)
+                }
                 _onboardingUiState.update {
                     it.copy(updateInformationResult = res)
                 }

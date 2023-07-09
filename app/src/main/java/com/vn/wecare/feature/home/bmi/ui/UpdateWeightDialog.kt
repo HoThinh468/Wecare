@@ -93,7 +93,7 @@ fun UpdateWeightDialog(
                         .padding(start = smallPadding)
                         .height(40.dp),
                     onClick = {
-                        viewModel.updateUserWeight(text.text)
+                        viewModel.updateUserWeight(text.text, true)
                         onCloseClick()
                     },
                     colors = ButtonDefaults.buttonColors(

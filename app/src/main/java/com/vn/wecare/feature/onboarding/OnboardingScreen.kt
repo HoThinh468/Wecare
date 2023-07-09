@@ -11,11 +11,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.google.protobuf.Enum
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.goal.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.onboarding.composable.*
-import com.vn.wecare.feature.onboarding.model.BMIState
 import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
