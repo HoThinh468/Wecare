@@ -260,7 +260,7 @@ class OnWalkingFragment : Fragment() {
                 * Math.cos(deg2rad(theta))))
         dist = Math.acos(dist)
         dist = rad2deg(dist)
-        dist = dist * 60 * 1.1515
+        dist *= 60 * 1.1515
         return dist
     }
 

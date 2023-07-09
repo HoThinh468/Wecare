@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.ext.toIntFromString
 import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
 import com.vn.wecare.feature.home.bmi.data.BMIFAQs
 import com.vn.wecare.feature.home.bmi.data.BMIFAQsModel
 import com.vn.wecare.feature.home.bmi.ui.BMIFragment
+import com.vn.wecare.feature.home.bmi.usecase.BMIUseCase
 import com.vn.wecare.utils.WecareUserConstantValues.HEIGHT_FIELD
 import com.vn.wecare.utils.WecareUserConstantValues.MAX_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
@@ -34,7 +36,8 @@ data class BMIUiState(
 
 @HiltViewModel
 class BMIViewModel @Inject constructor(
-    private val updateWecareUserUsecase: UpdateWecareUserUsecase
+    private val updateWecareUserUsecase: UpdateWecareUserUsecase,
+    private val bmiUseCase: BMIUseCase
 ) : ViewModel() {
 
     fun getFAQs(): List<BMIFAQsModel> = BMIFAQs.instance
@@ -50,25 +53,36 @@ class BMIViewModel @Inject constructor(
         _uiState.update { it.copy(updateInformationResult = null) }
     }
 
-    fun updateUserWeight(weight: String) {
+    fun updateUserWeight(weight: String, isAddHistory: Boolean = false) {
         if (isWeightInputValid(weight)) {
-            _uiState.update { it.copy(updateInformationResult = Response.Loading) }
             val user = WecareUserSingletonObject.getInstance()
+
+            _uiState.update { it.copy(updateInformationResult = Response.Loading) }
             viewModelScope.launch {
+
+                if(isAddHistory) {
+                    bmiUseCase.addBMIHistory(
+                        weight = weight.toIntFromString(),
+                        height = null,
+                        gender = user.gender ?: true,
+                        age = user.age ?: 18
+                    )
+                }
+
                 updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-                    user.userId, WEIGHT_FIELD, weight.toInt()
+                    user.userId, WEIGHT_FIELD, weight.toIntFromString()
                 ).catch {
                     _uiState.update { it.copy(updateInformationResult = Response.Error(null)) }
                 }.collect { res ->
                     if (res is Response.Success) {
                         updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                            user.userId, WEIGHT_FIELD, weight.toInt()
+                            user.userId, WEIGHT_FIELD, weight.toIntFromString()
                         ).collect { res2 ->
                             if (res2 is Response.Success) {
                                 _uiState.update {
                                     it.copy(updateInformationResult = res2)
                                 }
-                                WecareUserSingletonObject.updateInstance(user.copy(weight = weight.toInt()))
+                                WecareUserSingletonObject.updateInstance(user.copy(weight = weight.toIntFromString()))
                             } else _uiState.update {
                                 it.copy(updateInformationResult = Response.Error(null))
                             }
@@ -83,28 +97,38 @@ class BMIViewModel @Inject constructor(
 
     private fun isWeightInputValid(weight: String): Boolean {
         if (weight.isEmpty()) return false
-        return weight.toInt() in 10..700
+        return weight.toIntFromString() in 10..700
     }
 
-    fun updateUserHeight(height: String) {
+    fun updateUserHeight(height: String, isAddHistory: Boolean = false) {
         if (isHeightInputValid(height)) {
             _uiState.update { it.copy(updateInformationResult = Response.Loading) }
             val user = WecareUserSingletonObject.getInstance()
             viewModelScope.launch {
+
+                if(isAddHistory) {
+                    bmiUseCase.addBMIHistory(
+                        weight = null,
+                        height = height.toIntFromString(),
+                        gender = user.gender ?: true,
+                        age = user.age ?: 18
+                    )
+                }
+
                 updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-                    user.userId, HEIGHT_FIELD, height.toInt()
+                    user.userId, HEIGHT_FIELD, height.toIntFromString()
                 ).catch {
                     _uiState.update { it.copy(updateInformationResult = Response.Error(null)) }
                 }.collect { res ->
                     if (res is Response.Success) {
                         updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                            user.userId, HEIGHT_FIELD, height.toInt()
+                            user.userId, HEIGHT_FIELD, height.toIntFromString()
                         ).collect { res2 ->
                             if (res2 is Response.Success) {
                                 _uiState.update {
                                     it.copy(updateInformationResult = res2)
                                 }
-                                WecareUserSingletonObject.updateInstance(user.copy(height = height.toInt()))
+                                WecareUserSingletonObject.updateInstance(user.copy(height = height.toIntFromString()))
                             } else _uiState.update {
                                 it.copy(updateInformationResult = Response.Error(null))
                             }
@@ -119,7 +143,7 @@ class BMIViewModel @Inject constructor(
 
     private fun isHeightInputValid(height: String): Boolean {
         if (height.isEmpty()) return false
-        return height.toInt() in MIN_HEIGHT..MAX_HEIGHT
+        return height.toIntFromString() in MIN_HEIGHT..MAX_HEIGHT
     }
 
     private fun updateUserInformation() = viewModelScope.launch {

@@ -61,7 +61,7 @@ class ProgramRatingsViewModel @Inject constructor(
         }
     }
 
-    fun getLikeCountResponse(
+    private fun getLikeCountResponse(
         type: ExerciseType,
         index: Int,
         indexReview: Int

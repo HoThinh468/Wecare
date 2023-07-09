@@ -77,7 +77,10 @@ import com.vn.wecare.utils.common_composable.WecareAppBar
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BMIScreen(
-    modifier: Modifier = Modifier, navigateUp: () -> Unit, viewModel: BMIViewModel
+    modifier: Modifier = Modifier,
+    navigateUp: () -> Unit,
+    viewModel: BMIViewModel,
+    onNavigateToHistory: () -> Unit = {}
 ) {
 
     val uiState = viewModel.uiState.collectAsState()
@@ -114,7 +117,7 @@ fun BMIScreen(
             onLeadingIconPress = navigateUp,
             title = "BMI",
             trailingIconRes = R.drawable.ic_timeline,
-            onTrailingIconPress = { // TODO navigate to history screen
+            onTrailingIconPress = { onNavigateToHistory()
             })
     }) {
         Column(
