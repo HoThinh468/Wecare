@@ -6,10 +6,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment
 import com.vn.wecare.feature.home.goal.data.CurrentGoalWeeklyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.utils.generateGoalWeeklyRecordIdWithGoal
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
@@ -87,10 +89,14 @@ class GoalsRepository @Inject constructor(
         try {
             val result = getGoalDocumentWithUserId().collection(
                 WECARE_GOALS_LIST_COLLECTION_PATH
-            ).orderBy("dateSetGoal", Query.Direction.DESCENDING).limit(1).get().await()
+            ).whereEqualTo("goalStatus", GoalStatus.INPROGRESS.value).limit(1).get().await()
             if (!result.isEmpty) {
-                val res = result.documents.first().toObject(Goal::class.java) ?: Goal()
-                emit(Response.Success(res))
+                val goal = result.documents.first().toObject(Goal::class.java) ?: Goal()
+                Log.d(
+                    GoalDashboardFragment.goalDashboardTag,
+                    "latest goal collect from firestore: $goal"
+                )
+                emit(Response.Success(goal))
             } else {
                 emit(Response.Error(java.lang.Exception("Fail to get goals!")))
             }

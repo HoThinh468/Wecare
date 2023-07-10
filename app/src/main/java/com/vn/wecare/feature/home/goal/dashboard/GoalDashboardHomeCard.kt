@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard.main
+package com.vn.wecare.feature.home.goal.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,48 +28,54 @@ import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun GoalTracking(
-    modifier: Modifier
+fun GoalDashboardHomeCard(
+    modifier: Modifier, onCardClick: () -> Unit
 ) {
-    Card(modifier = modifier.fillMaxWidth(), shape = Shapes.small, onClick = {}) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = smallElevation,
+        shape = Shapes.medium,
+        onClick = onCardClick
+    ) {
         Column(
             modifier = modifier
+                .heightIn()
                 .fillMaxWidth()
                 .padding(normalPadding)
         ) {
             Text(
-                "Your goal is", style = MaterialTheme.typography.h5
-            )
-            Text(
-                "Gain muscle", style = MaterialTheme.typography.h2
+                modifier = modifier.fillMaxWidth(),
+                text = "Improve mood",
+                style = MaterialTheme.typography.h5,
             )
             Spacer(modifier = modifier.height(halfMidPadding))
-            Row(
-                modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        "Day set go  al:",
-                        style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
-                    )
-                    Text(
-                        "03-07-2023", style = MaterialTheme.typography.body1
-                    )
-                }
-                Column {
-                    Text(
-                        "Day end goal:",
-                        style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
-                    )
-                    Text(
-                        "03-08-2023", style = MaterialTheme.typography.body1
-                    )
-                }
-            }
+//            Row(
+//                modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Column {
+//                    Text(
+//                        "From",
+//                        style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
+//                    )
+//                    Text(
+//                        "03-07-2023", style = MaterialTheme.typography.body1
+//                    )
+//                }
+//                Column {
+//                    Text(
+//                        "To",
+//                        style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
+//                    )
+//                    Text(
+//                        "03-08-2023", style = MaterialTheme.typography.body1
+//                    )
+//                }
+//            }
             Text(text = buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(

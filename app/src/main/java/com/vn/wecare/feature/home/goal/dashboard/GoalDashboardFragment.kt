@@ -1,12 +1,12 @@
-package com.vn.wecare.feature.home.goal.ui
+package com.vn.wecare.feature.home.goal.dashboard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.core.BaseBindingFragment
+import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.databinding.FragmentDashboardBinding
-import com.vn.wecare.feature.home.goal.GoalDashboardViewModel
 
 class GoalDashboardFragment : BaseBindingFragment<FragmentDashboardBinding>(
     FragmentDashboardBinding::inflate
@@ -15,7 +15,10 @@ class GoalDashboardFragment : BaseBindingFragment<FragmentDashboardBinding>(
     private val viewModel: GoalDashboardViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        viewModel.initDashboardUiState()
+        viewModel.checkIfInternetIsAvailable(
+            checkInternetConnection(requireContext())
+        )
+        viewModel.initUI()
         super.setupComposeView(
             binding.dashboardComposeView
         ) {
@@ -28,6 +31,6 @@ class GoalDashboardFragment : BaseBindingFragment<FragmentDashboardBinding>(
     }
 
     companion object {
-        const val dashboardTag = "Home dashboard tag"
+        const val goalDashboardTag = "Goal dashboard tag"
     }
 }

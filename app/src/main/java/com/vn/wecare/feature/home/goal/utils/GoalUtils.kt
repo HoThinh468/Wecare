@@ -58,6 +58,13 @@ fun getDayFromLongWithFormat(dateTime: Long): String {
 }
 
 @SuppressLint("SimpleDateFormat")
+fun getDayFromLongWithFormat2(dateTime: Long): String {
+    val date = Date(dateTime)
+    val df = SimpleDateFormat("dd/MM/yyyy")
+    return df.format(date)
+}
+
+@SuppressLint("SimpleDateFormat")
 fun getDayAndTimeFromLongWithFormat(dateTime: Long): String {
     val date = Date(dateTime)
     val df = SimpleDateFormat("dd-MM-yyyy HH:mm")

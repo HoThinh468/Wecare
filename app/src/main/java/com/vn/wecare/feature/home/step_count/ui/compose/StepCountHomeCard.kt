@@ -6,7 +6,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -14,7 +13,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -36,7 +34,7 @@ fun StepCountHomeCard(
         ) {
             Text(
                 modifier = modifier.fillMaxWidth(),
-                text = "Pedometers",
+                text = "Daily activity",
                 style = MaterialTheme.typography.h5,
             )
             Spacer(modifier = modifier.height(normalPadding))

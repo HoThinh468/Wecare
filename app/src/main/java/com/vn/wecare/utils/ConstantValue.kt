@@ -7,7 +7,8 @@ object WecareUserConstantValues {
     const val ONE_HUNDRED_PERCENT_VALUE = 100
     const val KCAL_TO_CAL = 10000
     const val EXPANDABLE_TIME_MILLIS = 300
-    const val DAY_TO_MILLISECONDS = 86_400_000
+    const val DAY_TO_MILLISECONDS = 86_400_000L
+    const val WEEK_TO_MILLISECONDS = 604_800_000L
 
     /* Wecare user object field */
     const val EMAIL_VERIFIED_FIELD = "emailVerified"

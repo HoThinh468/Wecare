@@ -4,9 +4,8 @@ import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.utils.WecareUserConstantValues
-import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK
-import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
+import com.vn.wecare.utils.WecareUserConstantValues.WEEK_TO_MILLISECONDS
 import javax.inject.Inject
 
 class DefineGoalBasedOnInputsUsecase @Inject constructor() {
@@ -38,6 +37,8 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
             else -> WecareUserConstantValues.MOVE_TIME_FOR_IMPROVE_MOOD
         }
         val currentDateTime = System.currentTimeMillis()
+        val requiredTime = timeToReachGoal ?: DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK
+        val endDate = currentDateTime.plus(requiredTime * WEEK_TO_MILLISECONDS)
         return Goal(
             goalId = currentDateTime.toString(),
             goalName = goal.value,
@@ -45,13 +46,10 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
             caloriesBurnedEachDayGoal = caloriesOutEachDay,
             stepsGoal = stepsGoal,
             moveTimeGoal = moveTimeGoal,
-            timeToReachGoalInWeek = timeToReachGoal ?: DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK,
+            timeToReachGoalInWeek = requiredTime,
             weightDifference = weightDifference ?: 0,
             dateSetGoal = currentDateTime,
-            dateEndGoal = currentDateTime.plus(
-                (timeToReachGoal
-                    ?: DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK) * NUMBER_OF_DAYS_IN_WEEK * DAY_TO_MILLISECONDS
-            ),
+            dateEndGoal = endDate,
         )
     }
 }

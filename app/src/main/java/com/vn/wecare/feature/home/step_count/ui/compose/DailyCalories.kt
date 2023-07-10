@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.home.dashboard.main
+package com.vn.wecare.feature.home.step_count.ui.compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,9 +55,6 @@ fun DailyCalories(
                 .fillMaxWidth()
                 .padding(normalPadding)
         ) {
-            Text(
-                "Daily calories", style = MaterialTheme.typography.h5
-            )
             Text(text = buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
