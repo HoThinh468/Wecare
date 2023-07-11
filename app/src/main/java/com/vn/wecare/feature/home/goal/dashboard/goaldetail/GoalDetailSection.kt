@@ -18,25 +18,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.vn.wecare.feature.home.goal.data.model.Goal
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
 fun GoalDetailSection(
-    modifier: Modifier, goal: Goal
+    modifier: Modifier, detailUi: GoalDetailUiState
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        GoalDescription(modifier = modifier, goal = goal)
+        GoalDescription(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
-        GoalCaloriesOverview(modifier = modifier)
+        GoalCaloriesOverview(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
-        GoalRecommendation(modifier = modifier)
+        GoalRecommendation(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
-        GoalComment(modifier = modifier)
-        Spacer(modifier = modifier.height(normalPadding))
-        GoalStatus(modifier = modifier)
+        GoalStatus(modifier = modifier, status = detailUi.status)
         Spacer(modifier = modifier.height(mediumPadding))
     }
 }

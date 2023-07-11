@@ -19,35 +19,23 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
-fun GoalDescription(modifier: Modifier, goal: Goal) {
-    val goalDescription = when (goal.goalName) {
-        EnumGoal.GAINMUSCLE.value -> {
-            "Your goal is gain ${goal.weightDifference} kg in ${goal.timeToReachGoalInWeek} week(s)"
-        }
-
-        EnumGoal.LOSEWEIGHT.value -> {
-            "Your goal is loose ${goal.weightDifference} kg in ${goal.timeToReachGoalInWeek} week(s)"
-        }
-
-        else -> {
-            "Your goal is ${goal.goalName}"
-        }
-    }
+fun GoalDescription(modifier: Modifier, detailUi: GoalDetailUiState) {
     GoalDetailHeadlineItem(
         modifier = modifier,
         icon = Icons.Default.FlagCircle,
         iconColor = MaterialTheme.colors.primary,
-        headline = "Your goal is ${goal.goalName}"
+        headline = "Your goal is ${detailUi.goalName.lowercase()}"
     )
     Spacer(modifier = modifier.height(smallPadding))
     Text(
-        text = goalDescription,
+        text = detailUi.description,
         style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450))
     )
     Spacer(modifier = modifier.height(smallPadding))
@@ -58,7 +46,7 @@ fun GoalDescription(modifier: Modifier, goal: Goal) {
                     fontWeight = FontWeight.ExtraBold, fontSize = 32.sp, fontFamily = OpenSans
                 )
             ) {
-                append("30")
+                append(detailUi.dayLeft.toString())
             }
             withStyle(
                 style = SpanStyle(
@@ -76,6 +64,6 @@ fun GoalDescription(modifier: Modifier, goal: Goal) {
             .height(6.dp),
         color = MaterialTheme.colors.primary,
         strokeCap = StrokeCap.Round,
-        progress = 0.5f
+        progress = detailUi.timeProgress
     )
 }

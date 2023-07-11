@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 fun GoalDashboardAppBar(
     modifier: Modifier,
     navigateBack: () -> Unit,
-    moveToGoalHistoryScreen: () -> Unit,
     tabRowItems: List<String>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
@@ -49,8 +48,6 @@ fun GoalDashboardAppBar(
             modifier = modifier,
             onLeadingIconPress = navigateBack,
             title = "Goal dashboard",
-            trailingIconRes = R.drawable.ic_timeline,
-            onTrailingIconPress = moveToGoalHistoryScreen
         )
         Column(
             modifier = modifier

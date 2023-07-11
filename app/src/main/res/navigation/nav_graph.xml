@@ -509,6 +509,15 @@
             android:id="@+id/dashboardFragment"
             android:name="com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment"
             android:label="fragment_dashboard"
-            tools:layout="@layout/fragment_dashboard" />
+            tools:layout="@layout/fragment_dashboard" >
+            <action
+                android:id="@+id/action_dashboardFragment_to_weeklyRecordDetailFragment2"
+                app:destination="@id/weeklyRecordDetailFragment2" />
+        </fragment>
+        <fragment
+            android:id="@+id/weeklyRecordDetailFragment2"
+            android:name="com.vn.wecare.feature.home.goal.weeklyrecords.WeeklyRecordDetailFragment"
+            android:label="fragment_weekly_record_detail"
+            tools:layout="@layout/fragment_weekly_record_detail" />
     </navigation>
 </navigation>

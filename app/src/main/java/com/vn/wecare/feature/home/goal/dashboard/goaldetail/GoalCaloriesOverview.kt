@@ -24,13 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.utils.weightFormat
 
 @Composable
-fun GoalCaloriesOverview(modifier: Modifier) {
+fun GoalCaloriesOverview(modifier: Modifier, detailUi: GoalDetailUiState) {
     GoalDetailHeadlineItem(
         modifier = modifier,
         icon = Icons.Default.LocalFireDepartment,
@@ -45,7 +47,7 @@ fun GoalCaloriesOverview(modifier: Modifier) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(text = "100 cal", style = MaterialTheme.typography.h5)
+            Text(text = "${detailUi.totalCaloriesIn} cal", style = MaterialTheme.typography.h5)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropUp,
@@ -65,7 +67,7 @@ fun GoalCaloriesOverview(modifier: Modifier) {
                 .width(1.dp)
         )
         Column {
-            Text(text = "100 cal", style = MaterialTheme.typography.h5)
+            Text(text = "${detailUi.totalCaloriesOut} cal", style = MaterialTheme.typography.h5)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
@@ -81,13 +83,26 @@ fun GoalCaloriesOverview(modifier: Modifier) {
     }
     Spacer(modifier = modifier.height(halfMidPadding))
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = "Calories difference:", style = MaterialTheme.typography.button)
-        Text(text = "50 cal", style = MaterialTheme.typography.button)
+        Text(text = "Calories should take in everyday:", style = MaterialTheme.typography.button)
+        Text(text = "${detailUi.caloriesInGoal} cal", style = MaterialTheme.typography.button)
     }
     Spacer(modifier = modifier.height(smallPadding))
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = "Weight gained assumed:", style = MaterialTheme.typography.button)
-        Text(text = "1 kg", style = MaterialTheme.typography.button)
+        Text(text = "Calories to take out everyday:", style = MaterialTheme.typography.button)
+        Text(text = "${detailUi.caloriesOutGoal} cal", style = MaterialTheme.typography.button)
+    }
+    Spacer(modifier = modifier.height(smallPadding))
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = "Calories difference:", style = MaterialTheme.typography.button)
+        Text(text = "${detailUi.caloriesDifference} cal", style = MaterialTheme.typography.button)
+    }
+    Spacer(modifier = modifier.height(smallPadding))
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = "Weight difference assumed:", style = MaterialTheme.typography.button)
+        Text(
+            text = "${detailUi.weightDifference.weightFormat()} kg",
+            style = MaterialTheme.typography.button
+        )
     }
     Spacer(modifier = modifier.height(smallPadding))
     Text(

@@ -7,12 +7,18 @@ import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 
 @Composable
 fun GoalRecordsSection(
-    modifier: Modifier, records: List<GoalWeeklyRecord>
+    modifier: Modifier,
+    records: List<GoalWeeklyRecord>,
+    onItemClick: (record: GoalWeeklyRecord) -> Unit
 ) {
     LazyColumn {
-        items(2) { i ->
-            GoalWeeklyRecordItem(modifier = modifier) {
-            }
+        items(records.size) { i ->
+            GoalWeeklyRecordItem(
+                modifier = modifier,
+                index = i + 1,
+                record = records[i],
+                onItemClick = onItemClick,
+            )
         }
     }
 }

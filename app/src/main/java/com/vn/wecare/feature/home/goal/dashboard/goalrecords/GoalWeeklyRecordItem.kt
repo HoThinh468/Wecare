@@ -31,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
+import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat2
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.mediumPadding
@@ -41,15 +43,24 @@ import com.vn.wecare.ui.theme.roundedCornerShape
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GoalWeeklyRecordItem(
-    modifier: Modifier, onItemClick: () -> Unit
+    modifier: Modifier,
+    onItemClick: (record: GoalWeeklyRecord) -> Unit,
+    index: Int,
+    record: GoalWeeklyRecord
 ) {
+
+    val isEnabled = System.currentTimeMillis() > record.startDate
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = midPadding),
         shape = roundedCornerShape,
-        onClick = onItemClick,
-        border = BorderStroke(2.dp, color = MaterialTheme.colors.primary)
+        enabled = isEnabled,
+        onClick = {
+            onItemClick(record)
+        },
+        border = if (isEnabled) BorderStroke(2.dp, color = MaterialTheme.colors.primary) else null
     ) {
         Column(
             modifier = modifier
@@ -62,9 +73,15 @@ fun GoalWeeklyRecordItem(
                     .padding(end = midPadding),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column() {
-                    Text("Week 1", style = MaterialTheme.typography.h3)
-                    Text("07/07/2023 - 07/08/2023", style = MaterialTheme.typography.body2)
+                Column {
+                    Text("Week $index", style = MaterialTheme.typography.h3)
+                    Text(
+                        "${getDayFromLongWithFormat2(record.startDate)} - ${
+                            getDayFromLongWithFormat2(
+                                record.endDate
+                            )
+                        }", style = MaterialTheme.typography.body2
+                    )
                 }
                 Box(
                     modifier = modifier
@@ -74,7 +91,7 @@ fun GoalWeeklyRecordItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "1",
+                        index.toString(),
                         style = MaterialTheme.typography.h2.copy(MaterialTheme.colors.onPrimary),
                     )
                 }
@@ -88,7 +105,7 @@ fun GoalWeeklyRecordItem(
                     .height(IntrinsicSize.Min), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text(text = "100 cal", style = MaterialTheme.typography.h5)
+                    Text(text = "${record.caloriesIn} cal", style = MaterialTheme.typography.h5)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.ArrowDropUp,
@@ -108,7 +125,7 @@ fun GoalWeeklyRecordItem(
                         .width(1.dp)
                 )
                 Column {
-                    Text(text = "100 cal", style = MaterialTheme.typography.h5)
+                    Text(text = "${record.caloriesOut} cal", style = MaterialTheme.typography.h5)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.food.WecareCaloriesObject
@@ -23,6 +24,7 @@ import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,22 +58,49 @@ class SplashViewModel @Inject constructor(
         return accountService.hasUser
     }
 
-    fun saveWecareUserToSingletonObject() = viewModelScope.launch {
+//    fun saveWecareUserToSingletonObject() = viewModelScope.launch {
+//        _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
+//        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
+//            .collect { res ->
+//                Log.d(SplashFragment.splashFlowTag, "Get user from local db result: $res")
+//                if (res is Response.Success && res.data != null) {
+//                    WecareUserSingletonObject.updateInstance(res.data)
+//                    WecareCaloriesObject.updateUserCaloriesAmount()
+//                    checkIfAdditionalInformationMissing()
+//                    updateGoalSingletonObject()
+//                    checkIfUserInformationIsUpdated()
+//                    _splashUiState.update { it.copy(saveUserRes = Response.Success(true)) }
+//                } else {
+//                    _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
+//                }
+//            }
+//    }
+
+    fun saveNecessaryInformationToSingletonObject() = viewModelScope.launch {
         _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
-        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
-            .collect { res ->
-                Log.d(SplashFragment.splashFlowTag, "Get user from local db result: $res")
-                if (res is Response.Success && res.data != null) {
-                    WecareUserSingletonObject.updateInstance(res.data)
-                    WecareCaloriesObject.updateUserCaloriesAmount()
-                    checkIfAdditionalInformationMissing()
-                    checkIfUserInformationIsUpdated()
-                    updateGoalSingletonObject()
-                    _splashUiState.update { it.copy(saveUserRes = Response.Success(true)) }
-                } else {
-                    _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
+        combine(
+            getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId),
+            getGoalFromFirebaseUsecase.getCurrentGoalFromFirebase()
+        ) { user, goal ->
+            if (user is Response.Success && user.data != null) {
+                val res = user.data
+                WecareUserSingletonObject.updateInstance(res)
+                WecareCaloriesObject.updateUserCaloriesAmount()
+                if (res.gender == null || res.age == null || res.height == null || res.weight == null || res.goal == null) {
+                    shouldMoveToOnboarding = true
                 }
             }
+            if (goal is Response.Success) {
+                LatestGoalSingletonObject.updateInStance(goal.data)
+                updateCurrentGoalWeeklyRecord(goal.data.goalId)
+            }
+            val result =
+                WecareUserSingletonObject.getInstance() != WecareUser() && LatestGoalSingletonObject.getInStance() != Goal()
+            _splashUiState.update { it.copy(saveUserRes = Response.Success(result)) }
+            result
+        }.collect {
+            shouldMoveToHomeScreen = it
+        }
     }
 
     private fun checkIfAdditionalInformationMissing() {
