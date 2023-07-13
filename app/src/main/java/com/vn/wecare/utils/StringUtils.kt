@@ -125,6 +125,11 @@ fun bmiFormatWithFloat(input: Float): String {
     return dec.format(input)
 }
 
+fun Float.weightFormat(): String {
+    val dec = DecimalFormat("##.##")
+    return dec.format(this)
+}
+
 fun String.isLetters(): Boolean {
     return this.matches("^[a-z A-Z]*$".toRegex())
 }

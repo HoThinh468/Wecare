@@ -1,21 +1,16 @@
 package com.vn.wecare.feature.exercises.done
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentDone2Binding
-import com.vn.wecare.databinding.FragmentDoneBinding
-import com.vn.wecare.databinding.FragmentExerciseListBinding
 import com.vn.wecare.feature.exercises.ExercisesViewModel
-import com.vn.wecare.feature.exercises.exercise_list.ExerciseListScreen
 import com.vn.wecare.ui.theme.WecareTheme
 import dagger.hilt.android.AndroidEntryPoint
 

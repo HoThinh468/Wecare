@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.goal
+package com.vn.wecare.feature.home.goal.data
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
@@ -6,8 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.authentication.service.AccountService
-import com.vn.wecare.feature.home.goal.data.CurrentGoalWeeklyRecordSingletonObject
-import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
@@ -87,10 +86,15 @@ class GoalsRepository @Inject constructor(
         try {
             val result = getGoalDocumentWithUserId().collection(
                 WECARE_GOALS_LIST_COLLECTION_PATH
-            ).orderBy("dateSetGoal", Query.Direction.DESCENDING).limit(1).get().await()
+            ).whereLessThan("dateSetGoal", System.currentTimeMillis())
+                .orderBy("dateSetGoal", Query.Direction.DESCENDING).limit(1).get().await()
             if (!result.isEmpty) {
-                val res = result.documents.first().toObject(Goal::class.java) ?: Goal()
-                emit(Response.Success(res))
+                val goal = result.documents.first().toObject(Goal::class.java) ?: Goal()
+                Log.d(
+                    GoalDashboardFragment.goalDashboardTag,
+                    "latest goal collect from firestore: $goal"
+                )
+                emit(Response.Success(goal))
             } else {
                 emit(Response.Error(java.lang.Exception("Fail to get goals!")))
             }
@@ -210,6 +214,48 @@ class GoalsRepository @Inject constructor(
             } else {
                 emit(Response.Error(java.lang.Exception("No daily record available")))
             }
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
+
+    fun getAllGoalDailyRecordsInAWeek(
+        goalId: String, weekId: String
+    ): Flow<Response<List<GoalDailyRecord>>> = flow {
+        try {
+            val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
+                .document(goalId).collection(WECARE_GOALS_WEEKLY_RECORDS_COLLECTION_PATH)
+                .document(weekId).collection(WECARE_GOALS_DAILY_RECORDS_COLLECTION_PATH).get()
+                .await()
+            if (!res.isEmpty) {
+                val records = res.documents.map {
+                    it.toObject(GoalDailyRecord::class.java) ?: GoalDailyRecord()
+                }
+                records.toMutableList().removeIf { it == GoalDailyRecord() }
+                emit(Response.Success(records))
+            } else {
+                emit(Response.Error(java.lang.Exception("No daily record available")))
+            }
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
+
+    fun updateGoalStatus(goalId: String, status: String): Flow<Response<Boolean>> = flow {
+        try {
+            val result = getGoalDocumentWithUserId().collection(
+                WECARE_GOALS_LIST_COLLECTION_PATH
+            ).document(goalId).update("goalStatus", status).addOnSuccessListener {
+                Log.d(
+                    OnboardingFragment.onboardingTag,
+                    "Update goal with id $goalId to status $status successfully!"
+                )
+            }.addOnFailureListener { e ->
+                Log.d(
+                    OnboardingFragment.onboardingTag, "Error writing document", e
+                )
+            }.isSuccessful
+            emit(Response.Success(result))
         } catch (e: Exception) {
             emit(Response.Error(e))
         }

@@ -11,10 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,9 +22,8 @@ import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
-import kotlinx.coroutines.launch
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
-@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -37,31 +34,12 @@ fun StepCountScreen(
 ) {
     val stepsCountUiState = stepCountViewModel.stepsCountUiState.collectAsState()
 
-    val bottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
-    )
-
-    val showModalBottomSheet = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    Scaffold(modifier = modifier,
+    Scaffold(
+        modifier = modifier,
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
             WecareAppBar(
-                modifier = modifier,
-                trailingIconRes = R.drawable.ic_edit_calendar,
-                title = stepsCountUiState.value.selectedDay,
-                onLeadingIconPress = navigateUp,
-                onTrailingIconPress = {
-                    datePicker(
-                        context = context,
-                        updateDate = stepCountViewModel::onDaySelected,
-                    ).show()
-                }
+                modifier = modifier, title = "Daily activity", onLeadingIconPress = navigateUp
             )
         }) {
         Column(
@@ -74,17 +52,17 @@ fun StepCountScreen(
                 Spacer(modifier = modifier.height(halfMidPadding))
                 Overview(modifier = modifier, viewModel = stepCountViewModel)
                 Spacer(modifier = modifier.height(halfMidPadding))
-                SetYourGoal(modifier = modifier) {
-                    showModalBottomSheet.value = !showModalBottomSheet.value
-                    scope.launch { bottomSheetState.show() }
-                }
-                Spacer(modifier = modifier.height(halfMidPadding))
-                DetailStatistic(
-                    modifier = modifier, hoursList = stepsCountUiState.value.hoursList
-                )
-                Spacer(modifier = modifier.height(halfMidPadding))
                 HealthTip(modifier = modifier)
                 Spacer(modifier = modifier.height(normalPadding))
+                DailyCalories(
+                    modifier = modifier,
+                    remainedCalories = 100,
+                    caloriesIn = 200,
+                    caloriesInProgress = 0.2f,
+                    caloriesOut = 100,
+                    caloriesOutProgress = 0.5f
+                )
+                Spacer(modifier = modifier.height(xxxExtraPadding))
             } else {
                 PageNotFound()
             }
@@ -114,26 +92,23 @@ fun Overview(
                 modifier = modifier.padding(bottom = normalPadding)
             ) {
                 CircularProgressAnimated(
-                    size = 180.dp, currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.currentSteps.toFloat(),
-                        stepsCountUiState.stepGoal.toFloat()
+                    size = 180.dp, currentValue = getProgressInFloatWithIntInput(
+                        stepsCountUiState.currentSteps, stepsCountUiState.stepGoal
                     ), indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 140.dp,
                     color = colorResource(id = R.color.Red400),
-                    currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.caloConsumed.toFloat(),
-                        stepsCountUiState.caloriesBurnedGoal.toFloat()
+                    currentValue = getProgressInFloatWithIntInput(
+                        stepsCountUiState.caloConsumed, stepsCountUiState.caloriesBurnedGoal
                     ),
                     indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 100.dp,
                     color = colorResource(id = R.color.Blue400),
-                    currentValue = viewModel.getProgressWithIndexAndGoal(
-                        stepsCountUiState.moveMin.toFloat(),
-                        stepsCountUiState.moveTimeGoal.toFloat()
+                    currentValue = getProgressInFloatWithIntInput(
+                        stepsCountUiState.moveMin, stepsCountUiState.moveTimeGoal
                     ),
                     indicatorThickness = 20.dp
                 )

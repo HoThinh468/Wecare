@@ -7,7 +7,6 @@ import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toRecordModel
-import com.vn.wecare.feature.home.goal.usecase.InsertGoalDailyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -93,7 +92,7 @@ class InsertMealRecordUsecase @Inject constructor(
             getMealsWithDayIdUsecase.getMealOfEachTypeInDayWithDayId(
                 dayOfMonth, month, year, mealTypeKey
             ).collect { res ->
-                if (res is Response.Success && res.data != null) {
+                if (res is Response.Success && res.data.isNotEmpty()) {
                     for (item in res.data) {
                         result.add(item)
                     }

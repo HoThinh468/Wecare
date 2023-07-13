@@ -79,6 +79,7 @@
     <!-- Account content -->
     <string name="change_password">Change your password</string>
     <string name="edit_information">Edit your information</string>
+    <string name="goal_history">Goal history</string>
     <string name="about_us">About us</string>
     <string name="logout">Logout</string>
 

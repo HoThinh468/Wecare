@@ -1,13 +1,9 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.main
 
 import android.annotation.SuppressLint
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -21,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.AccountUiState
 import com.vn.wecare.feature.account.viewmodel.AccountViewModel
+import com.vn.wecare.ui.theme.cutCornerShape
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
@@ -39,7 +37,8 @@ fun AccountScreen(
     moveToSignInScreen: () -> Unit,
     viewModel: AccountViewModel,
     onEditInfoClick: () -> Unit,
-    onAboutUsClick: () -> Unit
+    onAboutUsClick: () -> Unit,
+    onViewGoalClick: () -> Unit
 ) {
 
     val uiState = viewModel.accountUiState.collectAsState()
@@ -77,9 +76,7 @@ fun AccountScreen(
             AccountHeader(modifier = modifier,
                 uiState = uiState,
                 sendVerifiedEmail = viewModel::sendVerificationEmail,
-                pickImageUri = {
-                    viewModel.pickImageUriFromPhone(it)
-                })
+            )
         },
     ) {
         Column(
@@ -93,7 +90,8 @@ fun AccountScreen(
                 onSignOutClick = { viewModel.onSignOutClick() },
                 onChangePasswordClick = viewModel::onChangePasswordClick,
                 onAboutUsClick = onAboutUsClick,
-                onEditInfoClick = onEditInfoClick
+                onEditInfoClick = onEditInfoClick,
+                onViewGoalClick = onViewGoalClick
             )
         }
     }
@@ -104,15 +102,7 @@ fun AccountHeader(
     modifier: Modifier,
     uiState: State<AccountUiState>,
     sendVerifiedEmail: () -> Unit,
-    pickImageUri: (uri: Uri?) -> Unit
 ) {
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(),
-            onResult = {
-                pickImageUri(it)
-            })
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -135,15 +125,17 @@ fun AccountHeader(
             )
         }
         Box(
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.TopCenter,
             modifier = modifier
-                .background(MaterialTheme.colors.primary, shape = CircleShape)
-                .size(80.dp)
+                .background(MaterialTheme.colors.primary, shape = cutCornerShape)
+                .height(100.dp)
+                .width(120.dp)
                 .padding(vertical = halfMidPadding)
         ) {
             Text(
+                modifier = modifier.padding(top = smallPadding),
                 text = uiState.value.userNameLogo,
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.h1.copy(fontSize = 40.sp),
                 color = MaterialTheme.colors.onPrimary
             )
         }
@@ -176,6 +168,7 @@ fun AccountBody(
     onSignOutClick: () -> Unit,
     onChangePasswordClick: () -> Unit,
     onEditInfoClick: () -> Unit,
+    onViewGoalClick: () -> Unit,
     onAboutUsClick: () -> Unit
 ) {
     Column(
@@ -202,6 +195,17 @@ fun AccountBody(
             elevation = 0.dp,
             colorIconRes = R.color.Pink,
             onClick = onEditInfoClick
+        )
+        Spacer(modifier = modifier.height(halfMidPadding))
+        CardListTile(
+            modifier = modifier,
+            leadingIconRes = R.drawable.ic_stars,
+            trailingIconRes = R.drawable.ic_arrow_forward,
+            titleRes = R.string.goal_history,
+            subTitle = "View all your goals and their status",
+            elevation = 0.dp,
+            colorIconRes = R.color.Yellow100,
+            onClick = onViewGoalClick
         )
         Spacer(modifier = modifier.height(halfMidPadding))
         CardListTile(

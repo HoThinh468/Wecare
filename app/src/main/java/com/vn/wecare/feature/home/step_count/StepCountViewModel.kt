@@ -34,6 +34,14 @@ data class StepsCountUiState(
     val moveTimeGoal: Int = 0
 )
 
+//data class DashboardCaloriesUiState(
+//    val remainedCalories: Int = 0,
+//    val caloriesIn: Int = 0,
+//    val caloriesInProgress: Float = 0f,
+//    val caloriesOut: Int = 0,
+//    val caloriesOutProgress: Float = 0f,
+//)
+
 @HiltViewModel
 class StepCountViewModel @Inject constructor(
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
@@ -45,17 +53,46 @@ class StepCountViewModel @Inject constructor(
     private val _stepsCountUiState = MutableStateFlow(StepsCountUiState())
     val stepsCountUiState: StateFlow<StepsCountUiState> get() = _stepsCountUiState
 
+//    private val currentDate = LocalDate.now()
+//
+//    private val _dashboardCaloriesUiState = MutableStateFlow(DashboardCaloriesUiState())
+//    val dashboardCaloriesUiState = _dashboardCaloriesUiState.asStateFlow()
+//
+//    fun initDashboardUiState() {
+//        initCaloriesOverviewUi()
+//    }
+//
+//    private fun initCaloriesOverviewUi() {
+//        val caloriesObj = WecareCaloriesObject.getInstance()
+//        updateCaloriesIn(caloriesObj.caloriesInEachDay)
+//    }
+//
+//    private fun updateCaloriesIn(caloriesInGoal: Int) = viewModelScope.launch {
+//        getTotalInputCaloriesUsecase.getTotalInputCaloriesOfEachDay(
+//            currentDate.dayOfMonth, currentDate.monthValue - 1, currentDate.year
+//        ).collect { res ->
+//            if (res is Response.Success) {
+//                _dashboardCaloriesUiState.update {
+//                    it.copy(
+//                        caloriesIn = res.data, caloriesInProgress = getProgressInFloatWithIntInput(
+//                            res.data, caloriesInGoal
+//                        )
+//                    )
+//                }
+//            } else {
+//                _dashboardCaloriesUiState.update {
+//                    it.copy(caloriesIn = 0, caloriesInProgress = 0f)
+//                }
+//            }
+//        }
+//    }
+
     init {
         updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
     }
 
     fun initUIState() {
-        val currentDate = LocalDate.now()
         updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
-        updateDateTitle(currentDate.dayOfMonth, currentDate.monthValue, currentDate.year)
-        updateStepsPerDayWithHours(
-            currentDate.year, currentDate.monthValue, currentDate.dayOfMonth
-        )
         initializeGoalIndex()
     }
 
@@ -131,16 +168,6 @@ class StepCountViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    fun getProgressWithIndexAndGoal(index: Float, goal: Float): Float {
-        return if (index >= goal) {
-            100f
-        } else {
-            if (goal != 0f) {
-                (index / goal) * 100
-            } else 0f
         }
     }
 

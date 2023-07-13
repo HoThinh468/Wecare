@@ -20,33 +20,3 @@ fun checkInternetConnection(context: Context): Boolean {
         else -> false
     }
 }
-
-//class NetWorkStatusTracker(context: Context) {
-//    private val connectivityManager =
-//        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//
-//    val networkStatus = callbackFlow<NetworkStatus> {
-//        val networkStatusCallback = object : ConnectivityManager.NetworkCallback() {
-//            override fun onUnavailable() {
-//                trySend(NetworkStatus.NOT_REACHABLE)
-//            }
-//
-//            override fun onAvailable(network: Network) {
-//                trySend(NetworkStatus.REACHABLE_VIA_WI_FI)
-//            }
-//
-//            override fun onLost(network: Network) {
-//                offer(NetworkStatus.Unavailable)
-//            }
-//        }
-//
-//        val request = NetworkRequest.Builder()
-//            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-//            .build()
-//        connectivityManager.registerNetworkCallback(request, networkStatusCallback)
-//
-//        awaitClose {
-//            connectivityManager.unregisterNetworkCallback(networkStatusCallback)
-//        }
-//    }
-//}

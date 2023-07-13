@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.account.viewmodel
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +12,7 @@ import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.ClearSharedPreferencesUsecase
 import com.vn.wecare.feature.account.usecase.DeleteWecareUserUsecase
 import com.vn.wecare.feature.account.usecase.GetWecareUserWithIdUsecase
-import com.vn.wecare.feature.account.view.AccountFragment.Companion.AccountFlowTAG
+import com.vn.wecare.feature.account.view.main.AccountFragment.Companion.AccountFlowTAG
 import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.water.tracker.usecase.DeleteAllLocalWaterRecordUsecase
 import com.vn.wecare.utils.isValidPassword
@@ -30,7 +29,6 @@ data class AccountUiState(
     val signOutResponse: Response<Boolean>? = null,
     val isEmailVerified: Boolean = false,
     val userNameLogo: String = "",
-    val avatarUri: Uri? = null,
     val isReAuthenticateDialogShow: Boolean = false
 )
 
@@ -72,7 +70,6 @@ class AccountViewModel @Inject constructor(
                             email = res.data.email,
                             isEmailVerified = res.data.emailVerified,
                             userNameLogo = res.data.userName[0].uppercase(),
-                            avatarUri = accountService.userAvatar
                         )
                     }
                 }
@@ -133,19 +130,6 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun pickImageUriFromPhone(uri: Uri?) {
-        if (_accountUiState.value.avatarUri == null) {
-            _accountUiState.update {
-                it.copy(avatarUri = uri)
-            }
-        }
-        if (uri != null) {
-            viewModelScope.launch {
-                accountService.updateAvatar(uri)
-            }
-        }
-    }
-
     fun onShowPasswordClick() {
         _changePasswordUiState.update {
             it.copy(isPasswordShow = !it.isPasswordShow)
@@ -201,7 +185,6 @@ class AccountViewModel @Inject constructor(
                 username = "",
                 email = "",
                 isEmailVerified = false,
-                avatarUri = null
             )
         }
     }
