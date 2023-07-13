@@ -21,7 +21,7 @@ class SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase @Inject constructor(
         CurrentGoalWeeklyRecordSingletonObject.updateInstance(weeklyRecords.first())
         try {
             for (record in weeklyRecords) {
-                goalsRepository.insertGoalWeeklyRecord(record, "hsdj").collect()
+                goalsRepository.insertGoalWeeklyRecord(record, latestGoalId).collect()
             }
         } catch (e: Exception) {
             Log.d(OnboardingFragment.onboardingTag, "Setup goal fail due to ${e.message}")

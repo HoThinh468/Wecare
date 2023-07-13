@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.account.view.editinfo
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
@@ -21,7 +22,9 @@ class EditInformationFragment : BaseBindingFragment<FragmentEditInformationBindi
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        val goal: Goal = arguments?.getParcelable(GOAL_PARCElABLE_KEY) ?: LatestGoalSingletonObject.getInStance()
+        val goal: Goal =
+            arguments?.getParcelable(GOAL_PARCElABLE_KEY) ?: LatestGoalSingletonObject.getInStance()
+        Log.d(editTag, LatestGoalSingletonObject.getInStance().toString())
         viewModel.initEditInfoScreenUiState(goal)
         super.setupComposeView(
             binding.editInfoComposeView
@@ -35,5 +38,9 @@ class EditInformationFragment : BaseBindingFragment<FragmentEditInformationBindi
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.resetUiState()
+    }
+
+    companion object {
+        const val editTag = "Edit info flow"
     }
 }

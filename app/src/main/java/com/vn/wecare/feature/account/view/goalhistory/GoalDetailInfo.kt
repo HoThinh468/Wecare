@@ -143,7 +143,7 @@ fun GoalDetailInfo(
             RecommendationIndexItem(
                 modifier = modifier,
                 color = Red400,
-                index = "${uiState.caloriesRecommendation} cal",
+                index = "${goal.caloriesBurnedGoalForStepCount} cal",
                 description = "Calories burnt",
                 iconRes = R.drawable.ic_fire_calo
             )

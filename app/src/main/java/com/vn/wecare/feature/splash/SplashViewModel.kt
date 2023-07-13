@@ -46,7 +46,7 @@ class SplashViewModel @Inject constructor(
     private val getGoalWeeklyRecordUsecase: GetGoalWeeklyRecordUsecase,
     private val getGoalDailyRecordUsecase: GetGoalDailyRecordUsecase,
     private val getTotalCaloriesIndexOfAGoalUsecase: GetTotalCaloriesIndexOfAGoalUsecase,
-    private val updateGoalStatusUsecase: UpdateGoalStatusUsecase
+    private val updateGoalStatusUsecase: UpdateGoalStatusUsecase,
 ) : ViewModel() {
 
     private val _splashUiState = MutableStateFlow(SplashUiState())
