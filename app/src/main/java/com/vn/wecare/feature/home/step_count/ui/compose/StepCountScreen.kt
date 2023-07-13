@@ -18,8 +18,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
+import com.vn.wecare.feature.home.step_count.getMoveTimeFromSteps
+import com.vn.wecare.feature.home.step_count.getStepsFromCaloriesBurned
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
 import com.vn.wecare.utils.getProgressInFloatWithIntInput
@@ -54,15 +57,6 @@ fun StepCountScreen(
                 Spacer(modifier = modifier.height(halfMidPadding))
                 HealthTip(modifier = modifier)
                 Spacer(modifier = modifier.height(normalPadding))
-                DailyCalories(
-                    modifier = modifier,
-                    remainedCalories = 100,
-                    caloriesIn = 200,
-                    caloriesInProgress = 0.2f,
-                    caloriesOut = 100,
-                    caloriesOutProgress = 0.5f
-                )
-                Spacer(modifier = modifier.height(xxxExtraPadding))
             } else {
                 PageNotFound()
             }
@@ -76,6 +70,10 @@ fun Overview(
 ) {
 
     val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
+    val goal = LatestGoalSingletonObject.getInStance()
+    val targetCalo = goal.caloriesBurnedGoalForStepCount
+    val targetSteps = targetCalo.getStepsFromCaloriesBurned()
+    val targetMoveTime = targetSteps.getMoveTimeFromSteps()
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -93,14 +91,14 @@ fun Overview(
             ) {
                 CircularProgressAnimated(
                     size = 180.dp, currentValue = getProgressInFloatWithIntInput(
-                        stepsCountUiState.currentSteps, stepsCountUiState.stepGoal
+                        stepsCountUiState.currentSteps, targetSteps
                     ), indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 140.dp,
                     color = colorResource(id = R.color.Red400),
                     currentValue = getProgressInFloatWithIntInput(
-                        stepsCountUiState.caloConsumed, stepsCountUiState.caloriesBurnedGoal
+                        stepsCountUiState.caloConsumed, targetCalo
                     ),
                     indicatorThickness = 20.dp
                 )
@@ -108,7 +106,7 @@ fun Overview(
                     size = 100.dp,
                     color = colorResource(id = R.color.Blue400),
                     currentValue = getProgressInFloatWithIntInput(
-                        stepsCountUiState.moveMin, stepsCountUiState.moveTimeGoal
+                        stepsCountUiState.moveMin, targetMoveTime
                     ),
                     indicatorThickness = 20.dp
                 )

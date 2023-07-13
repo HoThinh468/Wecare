@@ -9,6 +9,8 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.core.model.HistoryItem
 import com.vn.wecare.feature.exercises.usecase.Usecases
+import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
+import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
 import com.vn.wecare.utils.getFirstWeekdayTimestamp
 import com.vn.wecare.utils.getLastWeekdayTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,11 +21,13 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ExerciseHistoryViewModel @Inject constructor(
-    private val usecases: Usecases
+    private val usecases: Usecases,
+    private val dashboardUseCase: DashboardUseCase
 ) : ViewModel() {
 
     init {
         loadListHistory()
+        dashboardUseCase.getCaloPerDay()
     }
 
     private val oneWeekInMillis = 604800000L
@@ -71,6 +75,8 @@ class ExerciseHistoryViewModel @Inject constructor(
 
     fun addNewHistory(type: ExerciseType, kcal: Float, duration: Int) = viewModelScope.launch {
         usecases.addNewExerciseHistory(type, kcal, duration)
+
+        dashboardUseCase.updateCaloPerDay(CaloPerDay(caloOutExercise = kcal.toInt()))
     }
 
     private fun filterListHistory() {

@@ -2,9 +2,12 @@ package com.vn.wecare.feature.home.step_count
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.ext.toDD_MM_yyyy
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.step_count.data.entity.toModel
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
@@ -97,14 +100,19 @@ class StepCountViewModel @Inject constructor(
     }
 
     fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
-        getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
-            _stepsCountUiState.update {
-                it.copy(
-                    currentSteps = steps.toInt(),
-                    caloConsumed = steps.getCaloriesBurnedFromStepCount(),
-                    moveMin = steps.getMoveTimeFromStepCount(),
-                    hasData = true
-                )
+        getStepsPerDayUsecase.getStepsInPreviousDay().collect { response ->
+            if (response is Response.Success) {
+                val stepsInPreviousDay = response.data
+                val steps = stepsFromSensor.toInt() - stepsInPreviousDay.steps
+                val caloriesBurned = steps.getCaloriesBurnedFromStepCount()
+                val moveTime = steps.getMoveTimeFromStepCount()
+                _stepsCountUiState.update {
+                    it.copy(
+                        currentSteps = steps,
+                        caloConsumed = caloriesBurned,
+                        moveMin = moveTime
+                    )
+                }
             }
         }
     }
@@ -134,26 +142,26 @@ class StepCountViewModel @Inject constructor(
         if (getCurrentDayId() == getDayId(dayOfMonth, month, year)) {
             updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
         } else {
-            viewModelScope.launch {
-                getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
-                    .collect { stepsPerDay ->
-                        if (stepsPerDay != null) {
-                            _stepsCountUiState.update { ui ->
-                                ui.copy(
-                                    currentSteps = stepsPerDay.steps,
-                                    caloConsumed = stepsPerDay.toModel().calories,
-                                    moveMin = stepsPerDay.toModel().moveTime,
-                                    hasData = true
-                                )
-                            }
-                            updateStepsPerDayWithHours(year, month, dayOfMonth)
-                        } else {
-                            _stepsCountUiState.update {
-                                it.copy(hasData = false)
-                            }
-                        }
-                    }
-            }
+//            viewModelScope.launch {
+//                getStepsPerDayUsecase.getStepsPerDayWithDayId(getDayId(dayOfMonth, month, year))
+//                    .collect { stepsPerDay ->
+//                        if (stepsPerDay != null) {
+//                            _stepsCountUiState.update { ui ->
+//                                ui.copy(
+//                                    currentSteps = stepsPerDay.steps,
+//                                    caloConsumed = stepsPerDay.toModel().calories,
+//                                    moveMin = stepsPerDay.toModel().moveTime,
+//                                    hasData = true
+//                                )
+//                            }
+//                            updateStepsPerDayWithHours(year, month, dayOfMonth)
+//                        } else {
+//                            _stepsCountUiState.update {
+//                                it.copy(hasData = false)
+//                            }
+//                        }
+//                    }
+//            }
         }
     }
 

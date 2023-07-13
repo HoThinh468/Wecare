@@ -42,24 +42,24 @@ class StepCountInExactAlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, p1: Intent?) {
         Log.d(StepCountFragment.stepCountTag, "In exact alarm trigger!")
 
-        CoroutineScope(ioDispatcher).launch {
-            combine(
-                getStepsPerDayUsecase.getCurrentDaySteps(
-                    getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor()
-                ),
-                getStepsPerHourUsecase.getTotalStepsInDayWithDayId(dayId = getCurrentDayId()),
-                getStepsPerHourUsecase.getStepsPerHourWithHourId(getCurrentHourId())
-            ) { currentDaySteps, totalStepsInCurrentDay, stepPerHour ->
-                if (stepPerHour == null) currentDaySteps - totalStepsInCurrentDay else -1f
-            }.collect {
-                if (it != -1f) {
-                    Log.d(StepCountFragment.stepCountTag, "Steps count in current hour: $it")
-                    saveStepsPerHourUsecase.insertStepsPerHourToLocalDb(it)
-                    if (checkInternetConnection(context)) {
-                        saveStepsPerHourUsecase.insertStepsPerHourToRemoteDb(it)
-                    }
-                }
-            }
-        }
+//        CoroutineScope(ioDispatcher).launch {
+//            combine(
+//                getStepsPerDayUsecase.getCurrentDaySteps(
+//                    getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor()
+//                ),
+//                getStepsPerHourUsecase.getTotalStepsInDayWithDayId(dayId = getCurrentDayId()),
+//                getStepsPerHourUsecase.getStepsPerHourWithHourId(getCurrentHourId())
+//            ) { currentDaySteps, totalStepsInCurrentDay, stepPerHour ->
+//                if (stepPerHour == null) currentDaySteps - totalStepsInCurrentDay else -1f
+//            }.collect {
+//                if (it != -1f) {
+//                    Log.d(StepCountFragment.stepCountTag, "Steps count in current hour: $it")
+//                    saveStepsPerHourUsecase.insertStepsPerHourToLocalDb(it)
+//                    if (checkInternetConnection(context)) {
+//                        saveStepsPerHourUsecase.insertStepsPerHourToRemoteDb(it)
+//                    }
+//                }
+//            }
+//        }
     }
 }

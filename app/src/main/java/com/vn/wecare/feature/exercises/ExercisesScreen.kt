@@ -63,6 +63,7 @@ import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.WeCareTypography
 import com.vn.wecare.ui.theme.Yellow
+import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -109,12 +110,12 @@ fun ExercisesScreen(
             Row(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(midPadding),
-                verticalAlignment = Alignment.Top,
+                    .padding(halfMidPadding),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Let's workout,\n${auth.currentUser?.displayName}",
+                    text = "Let's workout",
                     style = WeCareTypography.h2,
                     color = Color.Black
                 )
@@ -143,13 +144,6 @@ fun ExercisesScreen(
                     image2 = R.drawable.img_1,
                     onStart = { onNavigateToFullBody() }
                 )
-                Spacer(modifier = modifier.height(mediumPadding))
-                WorkoutType(
-                    textColor = Green500, text = "Endurance",
-                    image1 = R.drawable.ellipse_2,
-                    image2 = R.drawable.img_1,
-                    onStart = { onNavigateToEndurance() }
-                )
                 Spacer(modifier = modifier.height(midPadding))
                 WorkoutType(
                     textColor = Red400, text = "Strength",
@@ -170,6 +164,13 @@ fun ExercisesScreen(
                     image1 = R.drawable.star_1,
                     image2 = R.drawable.img_4,
                     onStart = { onNavigateToFlexibility() }
+                )
+                Spacer(modifier = modifier.height(mediumPadding))
+                WorkoutType(
+                    textColor = Green500, text = "Endurance",
+                    image1 = R.drawable.ellipse_2,
+                    image2 = R.drawable.img_1,
+                    onStart = { onNavigateToEndurance() }
                 )
                 Spacer(modifier = modifier.height(80.dp))
             }

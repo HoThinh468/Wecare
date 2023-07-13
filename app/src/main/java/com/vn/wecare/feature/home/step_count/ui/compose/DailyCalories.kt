@@ -1,15 +1,20 @@
 package com.vn.wecare.feature.home.step_count.ui.compose
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -18,64 +23,64 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.ui.theme.OpenSans
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.tinyPadding
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
+
+@Preview
+@Composable
+fun test() {
+    DailyCalories(
+        caloriesIn = 200,
+        caloriesInProgress = 0.2f,
+        caloriesOut = 100,
+        caloriesOutProgress = 0.5f
+    )
+}
 
 @Composable
 fun DailyCalories(
-    modifier: Modifier,
-    remainedCalories: Int,
+    remainingCalo: Int = 0,
+    modifier: Modifier = Modifier,
     caloriesIn: Int,
     caloriesInProgress: Float,
     caloriesOut: Int,
     caloriesOutProgress: Float,
+    caloriesOutTarget: Float = 0f,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         shape = Shapes.small,
+        elevation = 12.dp
     ) {
-        Column(
+        Row(
             modifier = modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(normalPadding)
         ) {
-            Text(text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.ExtraBold, fontSize = 32.sp, fontFamily = OpenSans
-                    )
-                ) {
-                    append(remainedCalories.toString())
-                }
-                withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.Normal, fontSize = 16.sp, fontFamily = OpenSans
-                    )
-                ) {
-                    append(" cal")
-                }
-            })
-            Spacer(modifier = modifier.height(halfMidPadding))
-            Divider()
-            Spacer(modifier = modifier.height(halfMidPadding))
-            Row(
-                modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = modifier
+                    .weight(2.5f)
+                    .padding(start = halfMidPadding)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 CaloriesCategoryItem(
                     modifier = modifier,
@@ -83,7 +88,8 @@ fun DailyCalories(
                     category = "Calories in",
                     icon = Icons.Default.ArrowDropUp,
                     color = MaterialTheme.colors.primary,
-                    progress = caloriesInProgress
+                    progress = caloriesInProgress,
+                    isCaloOut = false
                 )
                 CaloriesCategoryItem(
                     modifier = modifier,
@@ -94,35 +100,100 @@ fun DailyCalories(
                     progress = caloriesOutProgress
                 )
             }
+            Column(
+                modifier = modifier
+                    .weight(3f)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                val progressAnimationValue by animateFloatAsState(
+                    targetValue = getProgressInFloatWithIntInput(
+                        caloriesOut, caloriesOutTarget.toInt()
+                    ), animationSpec = tween(1000)
+                )
+
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = modifier.size(125.dp),
+                        progress = progressAnimationValue,
+                        color = MaterialTheme.colors.primary,
+                        strokeWidth = 10.dp,
+                        backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
+                        strokeCap = StrokeCap.Round
+                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = remainingCalo.toString(), style = MaterialTheme.typography.h3
+                        )
+                        Text(
+                            text = "kcal left",
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 fun CaloriesCategoryItem(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     calories: Int,
     category: String,
     icon: ImageVector,
     color: Color,
-    progress: Float
+    progress: Float,
+    isCaloOut: Boolean = true
 ) {
-    Column {
-        Text(text = "$calories cal", style = MaterialTheme.typography.body1)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = icon, contentDescription = null, tint = color)
-            Text(
-                text = category,
-                style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
-            )
-        }
-        LinearProgressIndicator(
-            modifier = modifier
-                .width(88.dp)
-                .height(4.dp),
+    Row(
+        modifier = modifier.padding(vertical = tinyPadding),
+    ) {
+        VerticalLinearProgressIndicator(
             color = color,
-            strokeCap = StrokeCap.Round,
-            progress = progress
+            value = progress,
         )
+        Column(
+            modifier = modifier.padding(start = tinyPadding),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                if (isCaloOut)
+                    Icon(
+                        modifier = modifier
+                            .size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_fire),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                else
+                    Icon(
+                        modifier = modifier.size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_rice),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                Text(
+                    textAlign = TextAlign.Center,
+                    modifier = modifier.padding(horizontal = smallPadding),
+                    text = "$calories cal",
+                    style = MaterialTheme.typography.body1
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = icon, contentDescription = null, tint = color)
+                Text(
+                    text = category,
+                    style = MaterialTheme.typography.caption.copy(color = colorResource(id = R.color.Black450))
+                )
+            }
+
+        }
     }
 }

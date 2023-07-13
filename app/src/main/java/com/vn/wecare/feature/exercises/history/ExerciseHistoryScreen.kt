@@ -62,6 +62,7 @@ import com.vn.wecare.ui.theme.Grey500
 import com.vn.wecare.ui.theme.WeCareTypography
 import com.vn.wecare.ui.theme.extraLargePadding
 import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
@@ -129,7 +130,7 @@ fun ExerciseHistoryScreen(
             }
             Box(modifier = modifier.weight(1f)) {
                 Column(
-                    modifier = modifier,
+                    modifier = modifier.padding(end = halfMidPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     var listHistory =
