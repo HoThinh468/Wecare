@@ -150,7 +150,7 @@ class GoalDashboardViewModel @Inject constructor(
                     timeProgress = getTimeProgress(goal.dateEndGoal, goal.dateSetGoal),
                     caloriesInGoal = goal.caloriesInEachDayGoal,
                     caloriesOutGoal = goal.caloriesBurnedEachDayGoal,
-                    caloriesRecommend = getCaloriesRecommended(goal.goalName),
+                    caloriesRecommend = goal.caloriesBurnedGoalForStepCount,
                     stepRecommend = goal.stepsGoal,
                     activeTimeRecommend = goal.moveTimeGoal,
                     status = goal.goalStatus,
@@ -214,14 +214,6 @@ class GoalDashboardViewModel @Inject constructor(
                     _recordUi.update { it.copy(getRecordsResponse = Response.Error(Exception("Fail to get records data"))) }
                 }
             }
-    }
-
-    private fun getCaloriesRecommended(goal: String): Int {
-        return when (goal) {
-            EnumGoal.GAINMUSCLE.value -> DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE
-            EnumGoal.LOSEWEIGHT.value -> DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT
-            else -> DEFAULT_CALORIES_TO_BURN_EACH_DAY
-        }
     }
 
     fun resetGetResponseData() {

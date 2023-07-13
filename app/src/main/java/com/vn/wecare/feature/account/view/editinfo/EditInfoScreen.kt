@@ -79,8 +79,7 @@ fun EditInfoScreen(
     val uiState = viewModel.editInfoUiState.collectAsState().value
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
     val context = LocalContext.current
@@ -129,10 +128,13 @@ fun EditInfoScreen(
 
             is Response.Success -> {
                 Toast.makeText(context, "Update successfully!", Toast.LENGTH_SHORT).show()
+                viewModel.resetUpdateRes()
+                navigateBack()
             }
 
             is Response.Error -> {
                 Toast.makeText(context, "Update fail!", Toast.LENGTH_SHORT).show()
+                viewModel.resetUpdateRes()
             }
 
             else -> { /* Do nothing */
@@ -275,8 +277,7 @@ private fun PersonalInformation(
     val uiState = viewModel.editInfoUiState.collectAsState().value
 
     Text("Username", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.userName,
         onValueChange = {
             viewModel.onUserNameChange(it)
@@ -305,8 +306,7 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Height", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.height,
         onValueChange = {
             viewModel.onHeightChange(it)
@@ -344,8 +344,7 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Weight", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.weight,
         onValueChange = {
             viewModel.onWeightChange(it)
@@ -381,8 +380,7 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Age", style = MaterialTheme.typography.body1)
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(modifier = modifier.fillMaxWidth(),
         value = viewModel.age,
         onValueChange = {
             viewModel.onAgeChange(it)

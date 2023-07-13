@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.GoalHistoryViewModel
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
@@ -118,7 +119,6 @@ fun GoalHistoryScreen(
                     modifier = modifier,
                     onLeadingIconPress = navigateBack,
                     title = "Goal history",
-                    trailingIconRes = R.drawable.ic_tune
                 )
             },
         ) {
@@ -217,10 +217,19 @@ fun GoalHistoryItem(modifier: Modifier, goal: Goal, onItemClick: (goal: Goal) ->
             }
             Image(
                 modifier = modifier.size(120.dp), painter = painterResource(
-                    id = R.drawable.img_illu_healthier
+                    id = getImgResBasedOnGoal(goal.goalName)
                 ), contentDescription = null
             )
         }
+    }
+}
+
+private fun getImgResBasedOnGoal(name: String): Int {
+    return when (name) {
+        EnumGoal.GETHEALTHIER.value -> R.drawable.img_illu_healthier
+        EnumGoal.LOSEWEIGHT.value -> R.drawable.img_illu_loose_weight
+        EnumGoal.GAINMUSCLE.value -> R.drawable.img_illu_muscle
+        else -> R.drawable.img_illu_improve_mood
     }
 }
 

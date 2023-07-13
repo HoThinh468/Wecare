@@ -10,6 +10,7 @@ import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.UserRepository
 import com.vn.wecare.feature.account.data.model.WecareUser
+import com.vn.wecare.feature.account.view.editinfo.EditInformationFragment
 import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.home.bmi.usecase.BMIUseCase
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
@@ -74,14 +75,15 @@ class EditInfoViewModel @Inject constructor(
 
     fun initEditInfoScreenUiState(goal: Goal) = viewModelScope.launch {
         checkIfGoalIsExpired()
+        onPickDesiredWeightDifferenceScroll(goal.weightDifference)
+        updateCurrentGoalWhenInit(goal.goalName)
+        updateGoalDescription()
         WecareUserSingletonObject.getInstanceFlow().collect {
             onUserNameChange(it.userName)
             onHeightChange(it.height.toString())
             onWeightChange(it.weight.toString())
             onAgeChange(it.age.toString())
             updateCurrentGenderWhenInit(it.gender ?: true)
-            updateCurrentGoalWhenInit(goal.goalName)
-            onPickDesiredWeightDifferenceScroll(goal.weightDifference)
         }
     }
 
@@ -150,6 +152,9 @@ class EditInfoViewModel @Inject constructor(
             goal = _editInfoUiState.value.currentChosenGoal.value,
             gender = getGenderFromId(_editInfoUiState.value.currentChosenGender)
         )
+        Log.d(EditInformationFragment.editTag, "Old user is $oldUser")
+        Log.d(EditInformationFragment.editTag, "New user is $newUser")
+        Log.d(EditInformationFragment.editTag, "Is different ${oldUser != newUser}")
         _editInfoUiState.update { it.copy(isNewInfoDifferent = newUser != oldUser) }
         return if (_editInfoUiState.value.isNewInfoDifferent) newUser else null
     }
@@ -163,9 +168,8 @@ class EditInfoViewModel @Inject constructor(
             checkIfAgeValid()
             if (_editInfoUiState.value.isUserNameValid && _editInfoUiState.value.isHeightValid && _editInfoUiState.value.isWeightValid && _editInfoUiState.value.isAgeValid) {
                 checkIfGoalIsAppropriate()
-                if (!_onboardingDialogUiState.value.shouldShowRecommendationDialog && !_onboardingDialogUiState.value.shouldShowWarningDialog) {
-                    saveNewUserInfoAndNewGoal()
-                }
+                if (_onboardingDialogUiState.value.shouldShowRecommendationDialog && _onboardingDialogUiState.value.shouldShowWarningDialog) return
+                saveNewUserInfoAndNewGoal()
             }
         } else {
             showToast()
@@ -173,15 +177,13 @@ class EditInfoViewModel @Inject constructor(
     }
 
     fun saveNewUserInfoAndNewGoal() {
-        Log.d("d_timeReachGoal", _editInfoUiState.value.estimatedWeeks.toString())
-        Log.d("d_weightDiffer", _editInfoUiState.value.desiredWeightDifferencePicker.toString())
         val newUser = checkIfNewInfoIsDifferent() ?: return
+        Log.d(EditInformationFragment.editTag, "New user $newUser")
         val enumGoal = _editInfoUiState.value.currentChosenGoal
         _editInfoUiState.update { it.copy(updateInfoResult = Response.Loading) }
         viewModelScope.launch {
             userRepository.insertUserToFirebase(newUser)
             userRepository.insertUserToLocaldb(newUser)
-            WecareUserSingletonObject.updateInstance(newUser)
             val goal = defineGoalBasedOnInputsUsecase.getGoalFromInputs(
                 goal = enumGoal,
                 height = height.toIntSafely(),
@@ -191,17 +193,13 @@ class EditInfoViewModel @Inject constructor(
                 weightDifference = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _editInfoUiState.value.desiredWeightDifferencePicker,
                 timeToReachGoal = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _editInfoUiState.value.estimatedWeeks
             )
-            Log.d("d_timeReachGoal", _editInfoUiState.value.estimatedWeeks.toString())
-            Log.d("d_weightDiffer", _editInfoUiState.value.desiredWeightDifferencePicker.toString())
-            setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
-                numberOfWeek = goal.timeToReachGoalInWeek, latestGoalId = goal.goalId
-            )
+            WecareUserSingletonObject.updateInstance(newUser)
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
                     setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
                         goal.timeToReachGoalInWeek, goal.goalId
                     )
-                    bmiUsecase.addBMIHistory.invoke(
+                    bmiUsecase.addBMIHistory(
                         newUser.age ?: MIN_AGE,
                         newUser.gender ?: true,
                         newUser.height,
@@ -232,7 +230,7 @@ class EditInfoViewModel @Inject constructor(
     }
 
     private fun getGenderFromId(id: Int): Boolean {
-        return (id == 1)
+        return id == 0
     }
 
     private fun checkIfUserNameValid() {
@@ -346,5 +344,9 @@ class EditInfoViewModel @Inject constructor(
         _onboardingDialogUiState.update {
             it.copy(shouldShowRecommendationDialog = false)
         }
+    }
+
+    fun resetUpdateRes() {
+        _editInfoUiState.update { it.copy(updateInfoResult = null) }
     }
 }
