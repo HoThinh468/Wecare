@@ -1,11 +1,18 @@
 package com.vn.wecare.feature.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.core.ext.toDD_MM_yyyy
+import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
 import com.vn.wecare.feature.home.step_count.getCaloriesBurnedFromStepCount
 import com.vn.wecare.feature.home.step_count.getMoveTimeFromStepCount
+import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
+import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
 import com.vn.wecare.feature.home.step_count.usecase.GetCurrentStepsFromSensorUsecase
 import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
 import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
@@ -14,6 +21,7 @@ import com.vn.wecare.feature.home.water.tracker.usecase.WaterRecordUsecase
 import com.vn.wecare.utils.getDayId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,27 +44,72 @@ class HomeViewModel @Inject constructor(
     private val getStepsPerDayUsecase: GetStepsPerDayUsecase,
     private val getCurrentStepsFromSensorUsecase: GetCurrentStepsFromSensorUsecase,
     private val getWaterRecordListUsecase: GetWaterRecordListUsecase,
-    private val waterRecordUsecase: WaterRecordUsecase
+    private val waterRecordUsecase: WaterRecordUsecase,
+    private val dashboardUseCase: DashboardUseCase
 ) : ViewModel() {
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState = _homeUiState.asStateFlow()
 
+    var updateStepsResponse by mutableStateOf<Response<Boolean>>(Response.Loading)
+
+    init {
+        dashboardUseCase.getCaloPerDay()
+    }
     fun initHomeUIState() {
         updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
         updateBMIInformation()
         updateWaterAmountDrankInDay()
         getWaterTarget()
+        getCaloPerDay()
+    }
+
+    var getCaloPerDayResponse by mutableStateOf<Response<CaloPerDay>>(Response.Loading)
+    private val _caloPerDay = MutableStateFlow(CaloPerDay())
+    val caloPerDay: StateFlow<CaloPerDay>
+        get() = _caloPerDay
+
+    private fun getCaloPerDay() = viewModelScope.launch {
+        dashboardUseCase.getCaloPerDay().collect { response ->
+            getCaloPerDayResponse = response
+            if (response is Response.Success) {
+                _caloPerDay.emit(response.data)
+            }
+        }
     }
 
     fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
-        getStepsPerDayUsecase.getCurrentDaySteps(stepsFromSensor).collect { steps ->
-            _homeUiState.update {
-                it.copy(
-                    stepCount = steps.toInt(),
-                    caloriesBurnt = steps.getCaloriesBurnedFromStepCount(),
-                    timeConsumed = steps.getMoveTimeFromStepCount(),
+        getStepsPerDayUsecase.getStepsInPreviousDay().collect { response ->
+            if (response is Response.Success) {
+                val stepsInPreviousDay = response.data
+                val steps = stepsFromSensor.toInt() - stepsInPreviousDay.steps
+                val caloriesBurned = steps.getCaloriesBurnedFromStepCount()
+                val moveTime = steps.getMoveTimeFromStepCount()
+
+                getStepsPerDayUsecase.updateStepsPerDay(
+                    StepsPerDay(
+                        dayId = System.currentTimeMillis().toDD_MM_yyyy(),
+                        steps = steps,
+                        calories = caloriesBurned,
+                        moveTime = moveTime
+                    )
+                ).collect { response ->
+                    updateStepsResponse = response
+                }
+
+                dashboardUseCase.updateCaloPerDay(
+                    CaloPerDay(
+                        caloOutWaking = caloriesBurned
+                    )
                 )
+
+                _homeUiState.update {
+                    it.copy(
+                        stepCount = steps,
+                        caloriesBurnt = caloriesBurned,
+                        timeConsumed = moveTime
+                    )
+                }
             }
         }
     }

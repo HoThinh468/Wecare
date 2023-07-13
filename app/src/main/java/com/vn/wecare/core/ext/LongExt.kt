@@ -9,3 +9,9 @@ fun Long.toDateAndTime(): String {
     val date = Date(this)
     return dateFormat.format(date)
 }
+
+fun Long.toDD_MM_yyyy(): String {
+    val dateFormat = SimpleDateFormat("dd_MM_yyyy", Locale.getDefault())
+    val date = Date(this)
+    return dateFormat.format(date)
+}

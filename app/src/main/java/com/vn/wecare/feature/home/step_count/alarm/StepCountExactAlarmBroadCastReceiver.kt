@@ -54,12 +54,12 @@ class StepCountExactAlarmBroadCastReceiver : BroadcastReceiver() {
         val currentSensorSteps = getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor()
         CoroutineScope(ioDispatcher).launch {
             // Get current day steps and save it to db
-            getStepsPerDayUsecase.getCurrentDaySteps(currentSensorSteps).collect {
-                saveStepsPerDayUsecase.saveStepsPerDayToDb(it)
-                if (checkInternetConnection(context)) {
-                    saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
-                }
-            }
+//            getStepsPerDayUsecase.getCurrentDaySteps(currentSensorSteps).collect {
+//                saveStepsPerDayUsecase.saveStepsPerDayToDb(it)
+//                if (checkInternetConnection(context)) {
+//                    saveStepsPerDayToFirestoreUsecase.saveStepsPerDayToFirestore(it)
+//                }
+//            }
         }
         // Update total steps from sensor
         updatePreviousTotalSensorStepsUsecase.updatePreviousTotalSensorStepCount(
