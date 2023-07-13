@@ -5,10 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.ext.toDD_MM_yyyy
-import com.vn.wecare.feature.home.step_count.data.model.StepsPerDay
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
