@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 data class WeekRecordDetailUiState(
+    val getRecordsResponse: Response<Boolean>? = null,
     val startDay: String = "",
     val endDay: String = "",
     val totalRecords: Int = 0,
@@ -54,6 +56,7 @@ class WeeklyRecordViewModel @Inject constructor(
     }
 
     private fun getAllDayRecordsInTheWeek(weekId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(getRecordsResponse = Response.Loading) }
         getGoalDailyRecordUsecase.getAllDailyRecordOfAWeek(
             LatestGoalSingletonObject.getInStance().goalId, weekId
         ).collect { res ->
@@ -67,6 +70,9 @@ class WeeklyRecordViewModel @Inject constructor(
                         )
                     )
                 }
+                _uiState.update { it.copy(getRecordsResponse = Response.Success(true)) }
+            } else {
+                _uiState.update { it.copy(getRecordsResponse = Response.Error(Exception("Fail to load daily records!"))) }
             }
         }
     }

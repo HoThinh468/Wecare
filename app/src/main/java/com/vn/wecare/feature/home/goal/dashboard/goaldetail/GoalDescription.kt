@@ -1,8 +1,11 @@
 package com.vn.wecare.feature.home.goal.dashboard.goaldetail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -10,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlagCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
@@ -19,10 +23,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
+import com.vn.wecare.feature.account.view.goalhistory.getColorBasedOnStatus
 import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
-import com.vn.wecare.feature.home.goal.data.model.EnumGoal
-import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.ui.theme.OpenSans
+import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
@@ -38,6 +42,18 @@ fun GoalDescription(modifier: Modifier, detailUi: GoalDetailUiState) {
         text = detailUi.description,
         style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450))
     )
+    Spacer(modifier = modifier.height(smallPadding))
+    Box(
+        modifier = modifier
+            .clip(Shapes.medium)
+            .background(getColorBasedOnStatus(status = detailUi.status))
+    ) {
+        Text(
+            modifier = modifier.padding(vertical = 6.dp, horizontal = smallPadding),
+            text = detailUi.status,
+            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onPrimary)
+        )
+    }
     Spacer(modifier = modifier.height(smallPadding))
     Text(
         text = buildAnnotatedString {

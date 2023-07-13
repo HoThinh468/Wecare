@@ -7,9 +7,11 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.usecase.GetGoalWeeklyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
+import com.vn.wecare.feature.home.goal.usecase.UpdateGoalStatusUsecase
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
 import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY
@@ -45,7 +47,11 @@ data class GoalDetailUiState(
     val caloriesRecommend: Int = 0,
     val stepRecommend: Int = 0,
     val activeTimeRecommend: Int = 0,
-    val status: String = ""
+    val status: String = "",
+)
+
+data class UpdateGoalStatusUiState(
+    val isCancelGoalEnabled: Boolean = false, val updateResponse: Response<Boolean>? = null
 )
 
 data class RecordUiState(
@@ -56,7 +62,8 @@ data class RecordUiState(
 @HiltViewModel
 class GoalDashboardViewModel @Inject constructor(
     private val getGoalsFromFirebaseUsecase: GetGoalsFromFirebaseUsecase,
-    private val getGoalWeeklyRecordUsecase: GetGoalWeeklyRecordUsecase
+    private val getGoalWeeklyRecordUsecase: GetGoalWeeklyRecordUsecase,
+    private val updateGoalStatusUsecase: UpdateGoalStatusUsecase
 ) : ViewModel() {
 
     private val _isInternetAvailable = MutableStateFlow(true)
@@ -74,14 +81,28 @@ class GoalDashboardViewModel @Inject constructor(
     private val _recordUi = MutableStateFlow(RecordUiState())
     val recordUi = _recordUi.asStateFlow()
 
-    private val _goal = MutableStateFlow(Goal())
+    private val _updateGoalUi = MutableStateFlow(UpdateGoalStatusUiState())
+    val updateGoalUi = _updateGoalUi.asStateFlow()
 
+    private val _goal = MutableStateFlow(Goal())
 
     fun initUI() {
         updateLatestGoal()
         initRecordUi()
         initGoalDashboardAppbarUi()
         initDetailUi()
+    }
+
+    fun updateGoalStatusToCanceled() = viewModelScope.launch {
+        _updateGoalUi.update { it.copy(updateResponse = Response.Loading) }
+        updateGoalStatusUsecase.update(_goal.value.goalId, GoalStatus.CANCELED).collect { res ->
+            _updateGoalUi.update { it.copy(updateResponse = res) }
+            if (res is Response.Success) {
+                _updateGoalUi.update { it.copy(isCancelGoalEnabled = false) }
+                _detailUi.update { it.copy(status = GoalStatus.CANCELED.value) }
+                LatestGoalSingletonObject.updateInStance(_goal.value.copy(goalStatus = GoalStatus.CANCELED.value))
+            }
+        }
     }
 
     private fun updateLatestGoal() = viewModelScope.launch {
@@ -132,8 +153,11 @@ class GoalDashboardViewModel @Inject constructor(
                     caloriesRecommend = getCaloriesRecommended(goal.goalName),
                     stepRecommend = goal.stepsGoal,
                     activeTimeRecommend = goal.moveTimeGoal,
-                    status = goal.goalStatus.lowercase()
+                    status = goal.goalStatus,
                 )
+            }
+            _updateGoalUi.update {
+                it.copy(isCancelGoalEnabled = goal.goalStatus == GoalStatus.INPROGRESS.value)
             }
         }
     }

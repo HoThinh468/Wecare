@@ -15,15 +15,20 @@ import com.vn.wecare.feature.food.WecareCaloriesObject
 import com.vn.wecare.feature.home.goal.data.CurrentGoalDailyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.CurrentGoalWeeklyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.usecase.GetGoalDailyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.GetGoalWeeklyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
+import com.vn.wecare.feature.home.goal.usecase.GetTotalCaloriesIndexOfAGoalUsecase
+import com.vn.wecare.feature.home.goal.usecase.UpdateGoalStatusUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,7 +44,9 @@ class SplashViewModel @Inject constructor(
     private val accountService: AccountService,
     private val getGoalFromFirebaseUsecase: GetGoalsFromFirebaseUsecase,
     private val getGoalWeeklyRecordUsecase: GetGoalWeeklyRecordUsecase,
-    private val getGoalDailyRecordUsecase: GetGoalDailyRecordUsecase
+    private val getGoalDailyRecordUsecase: GetGoalDailyRecordUsecase,
+    private val getTotalCaloriesIndexOfAGoalUsecase: GetTotalCaloriesIndexOfAGoalUsecase,
+    private val updateGoalStatusUsecase: UpdateGoalStatusUsecase
 ) : ViewModel() {
 
     private val _splashUiState = MutableStateFlow(SplashUiState())
@@ -58,24 +65,6 @@ class SplashViewModel @Inject constructor(
         return accountService.hasUser
     }
 
-//    fun saveWecareUserToSingletonObject() = viewModelScope.launch {
-//        _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
-//        getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
-//            .collect { res ->
-//                Log.d(SplashFragment.splashFlowTag, "Get user from local db result: $res")
-//                if (res is Response.Success && res.data != null) {
-//                    WecareUserSingletonObject.updateInstance(res.data)
-//                    WecareCaloriesObject.updateUserCaloriesAmount()
-//                    checkIfAdditionalInformationMissing()
-//                    updateGoalSingletonObject()
-//                    checkIfUserInformationIsUpdated()
-//                    _splashUiState.update { it.copy(saveUserRes = Response.Success(true)) }
-//                } else {
-//                    _splashUiState.update { it.copy(saveUserRes = Response.Error(null)) }
-//                }
-//            }
-//    }
-
     fun saveNecessaryInformationToSingletonObject() = viewModelScope.launch {
         _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
         combine(
@@ -93,6 +82,9 @@ class SplashViewModel @Inject constructor(
             if (goal is Response.Success) {
                 LatestGoalSingletonObject.updateInStance(goal.data)
                 updateCurrentGoalWeeklyRecord(goal.data.goalId)
+                if (goal.data.goalStatus == GoalStatus.INPROGRESS.value && System.currentTimeMillis() > goal.data.dateEndGoal) {
+                    updateCurrentGoalStatus(goal.data)
+                }
             }
             val result =
                 WecareUserSingletonObject.getInstance() != WecareUser() && LatestGoalSingletonObject.getInStance() != Goal()
@@ -100,30 +92,6 @@ class SplashViewModel @Inject constructor(
             result
         }.collect {
             shouldMoveToHomeScreen = it
-        }
-    }
-
-    private fun checkIfAdditionalInformationMissing() {
-        val res = WecareUserSingletonObject.getInstance()
-        if (res.gender == null || res.age == null || res.height == null || res.weight == null || res.goal == null) {
-            shouldMoveToOnboarding = true
-        }
-    }
-
-    private fun checkIfUserInformationIsUpdated() {
-        val it = WecareUserSingletonObject.getInstance()
-        if (it.userId.isNotEmpty()) {
-            shouldMoveToHomeScreen = true
-        }
-    }
-
-    private fun updateGoalSingletonObject() = viewModelScope.launch {
-        getGoalFromFirebaseUsecase.getCurrentGoalFromFirebase().collect {
-            if (it is Response.Success) {
-                LatestGoalSingletonObject.updateInStance(it.data)
-                updateCurrentGoalWeeklyRecord(it.data.goalId)
-                Log.d(SplashFragment.splashFlowTag, "Latest goal is ${it.data}")
-            } else LatestGoalSingletonObject.updateInStance(Goal())
         }
     }
 
@@ -150,4 +118,19 @@ class SplashViewModel @Inject constructor(
                 )
             }
         }
+
+    private suspend fun updateCurrentGoalStatus(goal: Goal) {
+        if (goal.goalName == EnumGoal.IMPROVEMOOD.value || goal.goalName == EnumGoal.GETHEALTHIER.value) {
+            updateGoalStatusUsecase.update(goal.goalId, GoalStatus.DONE).collect()
+        } else {
+            combine(
+                getTotalCaloriesIndexOfAGoalUsecase.getTotalCaloriesInIndex(goal.goalId),
+                getTotalCaloriesIndexOfAGoalUsecase.getTotalCaloriesOutIndex(goal.goalId)
+            ) { caloriesIn, caloriesOut ->
+                updateGoalStatusUsecase.autoUpdateForGainMuscleAndLooseWeight(
+                    goal, caloriesIn, caloriesOut
+                )
+            }.collect()
+        }
+    }
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.account.view.main.AccountFragment">
+    tools:context=".feature.account.view.goalhistory.GoalHistoryFragment">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id = "@+id/account_compose_view"
+        android:id="@+id/goal_history_compose_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+</FrameLayout>

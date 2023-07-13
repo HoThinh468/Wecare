@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -22,19 +23,22 @@ import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.ui.theme.xxxExtraPadding
 
 @Composable
 fun GoalDetailSection(
     modifier: Modifier, detailUi: GoalDetailUiState
 ) {
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = modifier
+            .padding(bottom = xxxExtraPadding)
+            .verticalScroll(rememberScrollState())
+    ) {
         GoalDescription(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
         GoalCaloriesOverview(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
         GoalRecommendation(modifier = modifier, detailUi = detailUi)
-        Spacer(modifier = modifier.height(normalPadding))
-        GoalStatus(modifier = modifier, status = detailUi.status)
         Spacer(modifier = modifier.height(mediumPadding))
     }
 }

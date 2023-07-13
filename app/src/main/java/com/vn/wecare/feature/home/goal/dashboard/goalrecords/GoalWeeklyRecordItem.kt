@@ -60,7 +60,10 @@ fun GoalWeeklyRecordItem(
         onClick = {
             onItemClick(record)
         },
-        border = if (isEnabled) BorderStroke(2.dp, color = MaterialTheme.colors.primary) else null
+        border = BorderStroke(
+            2.dp,
+            color = if (isEnabled) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+        )
     ) {
         Column(
             modifier = modifier

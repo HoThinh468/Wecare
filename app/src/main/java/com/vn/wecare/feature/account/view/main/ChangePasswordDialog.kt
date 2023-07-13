@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.main
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -25,54 +25,42 @@ import com.vn.wecare.utils.common_composable.CustomTextField
 import com.vn.wecare.utils.common_composable.LoadingDialog
 
 @Composable
-fun ReAuthenticateDialog(
+fun ChangePasswordDialog(
     modifier: Modifier,
-    onDismissDialog: () -> Unit,
+    onCloseDialogClick: () -> Unit,
     viewModel: AccountViewModel
 ) {
 
     val uiState = viewModel.changePasswordUiState.collectAsState()
 
-    uiState.value.reAuthenticateResult.let {
+    uiState.value.changePasswordResult.let {
         when (it) {
             is Response.Loading -> {
                 LoadingDialog(loading = it == Response.Loading) {}
             }
             is Response.Success -> {
-                viewModel.handleReAuthenticateSuccessful()
+                Toast.makeText(
+                    LocalContext.current,
+                    "Change password successfully!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.clearReAuthenticateInfo()
+                onCloseDialogClick()
             }
             is Response.Error -> {
                 Toast.makeText(
                     LocalContext.current,
-                    "Wrong password, please try again!",
+                    "Cannot process this action, please try again later",
                     Toast.LENGTH_SHORT
                 ).show()
-                viewModel.clearReAuthenticateResult()
+                viewModel.clearChangePasswordResult()
             }
             else -> {/*do nothing*/
             }
         }
     }
 
-    uiState.value.isChangePasswordDialogShow.let {
-        if (it) {
-            ChangePasswordDialog(
-                modifier = modifier,
-                onCloseDialogClick = {
-                    viewModel.apply {
-                        onDismissChangePasswordDialog()
-                        onDismissReAuthenticateDialog()
-                    }
-                },
-                viewModel = viewModel
-            )
-        }
-    }
-
-    Dialog(onDismissRequest = {
-        onDismissDialog()
-        viewModel.clearReAuthenticateInfo()
-    }) {
+    Dialog(onDismissRequest = {/* Do nothing */ }) {
         Surface(
             modifier = modifier
                 .wrapContentHeight(unbounded = true)
@@ -85,7 +73,7 @@ fun ReAuthenticateDialog(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Please enter your password to continue the process",
+                    text = "Enter your new password",
                     style = MaterialTheme.typography.body1
                 )
                 CustomTextField(
@@ -111,12 +99,12 @@ fun ReAuthenticateDialog(
                 Button(
                     modifier = modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(mediumRadius),
-                    onClick = viewModel::onSubmitReAuthenticationPassword
+                    onClick = viewModel::onSubmitChangePasswordClick
                 ) {
-                    Text(text = "SUBMIT")
+                    Text(text = "CHANGE MY PASSWORD")
                 }
                 TextButton(onClick = {
-                    onDismissDialog()
+                    onCloseDialogClick()
                     viewModel.clearReAuthenticateInfo()
                 }) {
                     Text(text = "CLOSE", style = MaterialTheme.typography.button)

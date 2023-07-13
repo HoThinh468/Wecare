@@ -11,7 +11,7 @@ import com.vn.wecare.feature.food.data.model.toEntity
 import retrofit2.HttpException
 import java.io.IOException
 
-const val NUMBER_OF_MEALS_EACH_LOAD = 90
+const val NUMBER_OF_MEALS_EACH_LOAD = 1
 
 @OptIn(ExperimentalPagingApi::class)
 class MealByNutrientsRemoteMediator(

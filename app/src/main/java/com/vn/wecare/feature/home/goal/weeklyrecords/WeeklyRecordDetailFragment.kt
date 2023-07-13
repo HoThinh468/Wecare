@@ -26,8 +26,4 @@ class WeeklyRecordDetailFragment : BaseBindingFragment<FragmentWeeklyRecordDetai
             }, viewModel = viewModel)
         }
     }
-
-    companion object {
-        const val goalWeeklyTag = "Goal dashboard tag"
-    }
 }

@@ -1,13 +1,11 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.main
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
-import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.databinding.FragmentAccountBinding
 import com.vn.wecare.feature.account.viewmodel.AccountViewModel
 import com.vn.wecare.utils.safeNavigate
@@ -18,7 +16,7 @@ class AccountFragment :
     private val accountViewModel: AccountViewModel by activityViewModels()
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
-        Log.d(AccountFlowTAG, "User singleton: ${WecareUserSingletonObject.getInstance()}")
+        accountViewModel.updateAccountScreen()
         super.setupComposeView(
             binding.accountComposeView
         ) {
@@ -41,10 +39,14 @@ class AccountFragment :
                         R.id.accountFragment, R.id.action_accountFragment_to_aboutUsFragment
                     )
                 },
+                onViewGoalClick = {
+                    findNavController().safeNavigate(
+                        R.id.accountFragment, R.id.action_accountFragment_to_goalHistoryFragment
+                    )
+                },
                 viewModel = accountViewModel,
             )
         }
-        accountViewModel.updateAccountScreen()
     }
 
     companion object {

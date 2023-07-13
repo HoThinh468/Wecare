@@ -37,11 +37,6 @@ fun GoalRecommendation(
         headline = "Our recommendations"
     )
     Spacer(modifier = modifier.height(smallPadding))
-    Text(
-        text = "These indexes are best practices to keep you on track. You should achieve these indexes everyday",
-        style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450))
-    )
-    Spacer(modifier = modifier.height(smallPadding))
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         RecommendationIndexItem(
             modifier = modifier,
@@ -68,7 +63,7 @@ fun GoalRecommendation(
 }
 
 @Composable
-private fun RecommendationIndexItem(
+fun RecommendationIndexItem(
     modifier: Modifier, color: Color, index: String, description: String, @DrawableRes iconRes: Int
 ) {
     Column(

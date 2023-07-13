@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.aboutus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView

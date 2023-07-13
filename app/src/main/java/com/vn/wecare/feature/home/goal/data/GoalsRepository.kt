@@ -9,7 +9,6 @@ import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
-import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.utils.generateGoalWeeklyRecordIdWithGoal
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat

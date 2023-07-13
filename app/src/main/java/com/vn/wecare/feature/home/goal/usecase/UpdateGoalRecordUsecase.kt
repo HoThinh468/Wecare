@@ -1,9 +1,11 @@
 package com.vn.wecare.feature.home.goal.usecase
 
-import com.vn.wecare.feature.home.goal.data.GoalsRepository
 import com.vn.wecare.feature.home.goal.data.CurrentGoalDailyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.CurrentGoalWeeklyRecordSingletonObject
+import com.vn.wecare.feature.home.goal.data.GoalsRepository
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -15,6 +17,7 @@ class UpdateGoalRecordUsecase @Inject constructor(
     private val repository: GoalsRepository
 ) {
     suspend fun updateCaloriesInForCurrentDayRecord(caloriesIn: Int) {
+        if (LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value) return
         val currentDailyRecord = CurrentGoalDailyRecordSingletonObject.getInstance()
         if (currentDailyRecord == GoalDailyRecord()) {
             val record = GoalDailyRecord(
@@ -36,6 +39,7 @@ class UpdateGoalRecordUsecase @Inject constructor(
     }
 
     suspend fun updateCaloriesInForCurrentWeekRecord(caloriesIn: Int) {
+        if (LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value) return
         val currentWeeklyRecord = CurrentGoalWeeklyRecordSingletonObject.getInstance()
         val currentWeeklyCaloriesIn = currentWeeklyRecord.caloriesIn + caloriesIn
 

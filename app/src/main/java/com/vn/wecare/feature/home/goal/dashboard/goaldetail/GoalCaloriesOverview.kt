@@ -66,7 +66,7 @@ fun GoalCaloriesOverview(modifier: Modifier, detailUi: GoalDetailUiState) {
                 .padding(horizontal = midPadding)
                 .width(1.dp)
         )
-        Column {
+        Column(horizontalAlignment = Alignment.End) {
             Text(text = "${detailUi.totalCaloriesOut} cal", style = MaterialTheme.typography.h5)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(

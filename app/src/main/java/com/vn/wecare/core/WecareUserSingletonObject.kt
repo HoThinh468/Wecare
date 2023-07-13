@@ -15,20 +15,7 @@ object WecareUserSingletonObject {
     }
 
     fun updateInstance(user: WecareUser?) {
-        if (user == null) {
-            instance.value = WecareUser(
-                userId = "",
-                userName = "",
-                email = "",
-                emailVerified = false,
-                gender = null,
-                age = null,
-                height = null,
-                weight = null,
-                goal = null
-            )
-        } else {
-            instance.value = user
-        }
+        if (user == null) return
+        instance.value = user
     }
 }

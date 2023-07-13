@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.editinfo
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -80,6 +80,7 @@ fun EditInfoScreen(
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
 
     val context = LocalContext.current
@@ -248,6 +249,11 @@ fun EditInfoScreen(
                     },
                     isChooseGoalEnabled = uiState.isGoalExpired
                 )
+                Spacer(modifier = modifier.height(smallPadding))
+                Text(
+                    text = uiState.goalDescription,
+                    style = MaterialTheme.typography.button.copy(MaterialTheme.colors.primary)
+                )
                 if (!uiState.isGoalExpired) {
                     Spacer(modifier = modifier.height(smallPadding))
                     Text(
@@ -269,7 +275,8 @@ private fun PersonalInformation(
     val uiState = viewModel.editInfoUiState.collectAsState().value
 
     Text("Username", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = viewModel.userName,
         onValueChange = {
             viewModel.onUserNameChange(it)
@@ -298,7 +305,8 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Height", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = viewModel.height,
         onValueChange = {
             viewModel.onHeightChange(it)
@@ -336,7 +344,8 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Weight", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = viewModel.weight,
         onValueChange = {
             viewModel.onWeightChange(it)
@@ -372,7 +381,8 @@ private fun PersonalInformation(
     }
     Spacer(modifier = modifier.height(normalPadding))
     Text("Age", style = MaterialTheme.typography.body1)
-    OutlinedTextField(modifier = modifier.fillMaxWidth(),
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = viewModel.age,
         onValueChange = {
             viewModel.onAgeChange(it)
