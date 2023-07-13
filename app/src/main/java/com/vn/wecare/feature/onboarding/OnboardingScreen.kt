@@ -59,7 +59,7 @@ fun OnboardingScreen(
     val sheetState =
         if (onboardingUiState.value.selectedGoal == EnumGoal.GAINMUSCLE || onboardingUiState.value.selectedGoal == EnumGoal.LOSEWEIGHT) {
             rememberModalBottomSheetState(
-                initialValue = ModalBottomSheetValue.HalfExpanded, skipHalfExpanded = true
+                initialValue = ModalBottomSheetValue.Expanded, skipHalfExpanded = true
             )
         } else rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true

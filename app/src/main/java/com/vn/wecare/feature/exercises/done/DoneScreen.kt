@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
@@ -49,8 +52,18 @@ fun DoneScreen(
 ) {
     var rating by remember { mutableStateOf(0) }
 
+//    if (isLoading.collectAsState().value) {
+//        Box(
+//            modifier = modifier.fillMaxSize(),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            CircularProgressIndicator()
+//        }
+//    } else {
     Column(
-        modifier = modifier.fillMaxSize().background(Color.White),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val imageLoader = ImageLoader.Builder(LocalContext.current)
@@ -169,7 +182,7 @@ fun DoneScreen(
                             exercisesViewModel.endTime.value
                         ),
                         (exercisesViewModel.endTime.value -
-                        exercisesViewModel.startTime.value).toInt() / 1000
+                                exercisesViewModel.startTime.value).toInt() / 1000
                     )
                     onDone()
                 },
@@ -181,6 +194,7 @@ fun DoneScreen(
                     .height(40.dp)
             )
         }
+//        }
     }
 }
 

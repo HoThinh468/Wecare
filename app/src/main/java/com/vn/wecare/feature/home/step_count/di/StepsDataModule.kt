@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.step_count.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.core.di.IoDispatcher
@@ -7,6 +8,8 @@ import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.step_count.data.datasource.local.LocalStepPerHourDatasource
 import com.vn.wecare.feature.home.step_count.data.datasource.remote.FirebaseStepsPerHourDataSource
 import com.vn.wecare.feature.home.step_count.data.repository.StepsPerHoursRepository
+import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
+import com.vn.wecare.feature.home.step_count.usecase.GetStepsPerDayUsecase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +49,28 @@ class StepsDataSourceModule {
     ): FirebaseStepsPerHourDataSource {
         return FirebaseStepsPerHourDataSource(
             db, accountService
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetStepsPerDayUsecase(
+        firebaseFirestore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth
+    ): GetStepsPerDayUsecase {
+        return GetStepsPerDayUsecase(
+            firebaseFirestore, firebaseAuth
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideDashboardUseCase(
+        firebaseFirestore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth
+    ): DashboardUseCase {
+        return DashboardUseCase(
+            firebaseFirestore, firebaseAuth
         )
     }
 }

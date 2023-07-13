@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
+import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
 import com.vn.wecare.feature.training.dashboard.history.model.TrainingHistory
 import com.vn.wecare.feature.training.dashboard.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,8 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnWalkingViewModel @Inject constructor(
-    private val useCases: UseCases
+    private val useCases: UseCases,
+    private val dashboardUseCase: DashboardUseCase
 ) : ViewModel() {
+
+    init {
+        dashboardUseCase.getCaloPerDay()
+    }
     var addTrainingHistoryResponse by mutableStateOf<Response<Boolean>>(Response.Loading)
         private set
 
@@ -31,6 +38,7 @@ class OnWalkingViewModel @Inject constructor(
     fun addTrainingHistory(history: TrainingHistory) = viewModelScope.launch {
         addTrainingHistoryResponse = Response.Loading
         useCases.addTrainingHistory(history)
+        dashboardUseCase.updateCaloPerDay(CaloPerDay(caloOutTraining = history.kcal.toInt()))
     }
 
     fun addTrainedDate() = viewModelScope.launch {
