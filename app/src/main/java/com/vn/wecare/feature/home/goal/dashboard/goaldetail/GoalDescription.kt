@@ -1,8 +1,11 @@
 package com.vn.wecare.feature.home.goal.dashboard.goaldetail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -10,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlagCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
@@ -19,37 +23,37 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.feature.home.goal.data.model.EnumGoal
-import com.vn.wecare.feature.home.goal.data.model.Goal
+import com.vn.wecare.feature.account.view.goalhistory.getColorBasedOnStatus
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.OpenSans
+import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
-fun GoalDescription(modifier: Modifier, goal: Goal) {
-    val goalDescription = when (goal.goalName) {
-        EnumGoal.GAINMUSCLE.value -> {
-            "Your goal is gain ${goal.weightDifference} kg in ${goal.timeToReachGoalInWeek} week(s)"
-        }
-
-        EnumGoal.LOSEWEIGHT.value -> {
-            "Your goal is loose ${goal.weightDifference} kg in ${goal.timeToReachGoalInWeek} week(s)"
-        }
-
-        else -> {
-            "Your goal is ${goal.goalName}"
-        }
-    }
+fun GoalDescription(modifier: Modifier, detailUi: GoalDetailUiState) {
     GoalDetailHeadlineItem(
         modifier = modifier,
         icon = Icons.Default.FlagCircle,
         iconColor = MaterialTheme.colors.primary,
-        headline = "Your goal is ${goal.goalName}"
+        headline = "Your goal is ${detailUi.goalName.lowercase()}"
     )
     Spacer(modifier = modifier.height(smallPadding))
     Text(
-        text = goalDescription,
+        text = detailUi.description,
         style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450))
     )
+    Spacer(modifier = modifier.height(smallPadding))
+    Box(
+        modifier = modifier
+            .clip(Shapes.medium)
+            .background(getColorBasedOnStatus(status = detailUi.status))
+    ) {
+        Text(
+            modifier = modifier.padding(vertical = 6.dp, horizontal = smallPadding),
+            text = detailUi.status,
+            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onPrimary)
+        )
+    }
     Spacer(modifier = modifier.height(smallPadding))
     Text(
         text = buildAnnotatedString {
@@ -58,7 +62,7 @@ fun GoalDescription(modifier: Modifier, goal: Goal) {
                     fontWeight = FontWeight.ExtraBold, fontSize = 32.sp, fontFamily = OpenSans
                 )
             ) {
-                append("30")
+                append(detailUi.dayLeft.toString())
             }
             withStyle(
                 style = SpanStyle(
@@ -76,6 +80,6 @@ fun GoalDescription(modifier: Modifier, goal: Goal) {
             .height(6.dp),
         color = MaterialTheme.colors.primary,
         strokeCap = StrokeCap.Round,
-        progress = 0.5f
+        progress = detailUi.timeProgress
     )
 }

@@ -1,4 +1,4 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.editinfo
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -79,7 +79,7 @@ fun EditInfoScreen(
     val uiState = viewModel.editInfoUiState.collectAsState().value
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
     val context = LocalContext.current
@@ -128,10 +128,13 @@ fun EditInfoScreen(
 
             is Response.Success -> {
                 Toast.makeText(context, "Update successfully!", Toast.LENGTH_SHORT).show()
+                viewModel.resetUpdateRes()
+                navigateBack()
             }
 
             is Response.Error -> {
                 Toast.makeText(context, "Update fail!", Toast.LENGTH_SHORT).show()
+                viewModel.resetUpdateRes()
             }
 
             else -> { /* Do nothing */
@@ -247,6 +250,11 @@ fun EditInfoScreen(
                         }
                     },
                     isChooseGoalEnabled = uiState.isGoalExpired
+                )
+                Spacer(modifier = modifier.height(smallPadding))
+                Text(
+                    text = uiState.goalDescription,
+                    style = MaterialTheme.typography.button.copy(MaterialTheme.colors.primary)
                 )
                 if (!uiState.isGoalExpired) {
                     Spacer(modifier = modifier.height(smallPadding))

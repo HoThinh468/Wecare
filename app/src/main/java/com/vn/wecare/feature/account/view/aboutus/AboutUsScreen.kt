@@ -1,14 +1,11 @@
-package com.vn.wecare.feature.account.view
+package com.vn.wecare.feature.account.view.aboutus
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import com.vn.wecare.R
 import com.vn.wecare.utils.common_composable.WecareAppBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

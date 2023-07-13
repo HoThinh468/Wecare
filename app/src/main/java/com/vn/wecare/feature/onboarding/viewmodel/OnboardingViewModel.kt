@@ -312,7 +312,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
-                    setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.invoke(
+                    setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
                         goal.timeToReachGoalInWeek, goal.goalId
                     )
                     LatestGoalSingletonObject.updateInStance(goal)

@@ -7,13 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.vn.wecare.R
 import com.vn.wecare.databinding.FragmentExercisesBinding
-import com.vn.wecare.databinding.FragmentTrainingBinding
-import com.vn.wecare.feature.exercises.exercise_list.ExerciseListViewModel
 import com.vn.wecare.ui.theme.WecareTheme
 import dagger.hilt.android.AndroidEntryPoint
 

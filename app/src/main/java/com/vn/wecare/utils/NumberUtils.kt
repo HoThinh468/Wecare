@@ -5,3 +5,9 @@ fun getProgressInFloatWithIntInput(currentIndex: Int, targetIndex: Int): Float {
         0f
     } else currentIndex.toFloat() / targetIndex.toFloat()
 }
+
+fun getProgressInFloatWithFloatInput(currentIndex: Float, targetIndex: Float): Float {
+    return if (targetIndex == 0f) {
+        0f
+    } else currentIndex / targetIndex
+}

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Yellow
@@ -27,7 +28,7 @@ import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
 fun GoalRecommendation(
-    modifier: Modifier
+    modifier: Modifier, detailUi: GoalDetailUiState
 ) {
     GoalDetailHeadlineItem(
         modifier = modifier,
@@ -36,30 +37,25 @@ fun GoalRecommendation(
         headline = "Our recommendations"
     )
     Spacer(modifier = modifier.height(smallPadding))
-    Text(
-        text = "These indexes are best practices to keep you on track. You should achieve these indexes everyday",
-        style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450))
-    )
-    Spacer(modifier = modifier.height(smallPadding))
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         RecommendationIndexItem(
             modifier = modifier,
             color = Red400,
-            index = "500 cal",
+            index = "${detailUi.caloriesRecommend} cal",
             description = "Calories burnt",
             iconRes = R.drawable.ic_fire_calo
         )
         RecommendationIndexItem(
             modifier = modifier,
             color = MaterialTheme.colors.primary,
-            index = "8000 steps",
+            index = "${detailUi.stepRecommend} steps",
             description = "Steps count",
             iconRes = R.drawable.ic_step
         )
         RecommendationIndexItem(
             modifier = modifier,
             color = Blue,
-            index = "90 min",
+            index = "${detailUi.activeTimeRecommend} min",
             description = "Active time",
             iconRes = R.drawable.ic_time_clock
         )
@@ -67,7 +63,7 @@ fun GoalRecommendation(
 }
 
 @Composable
-private fun RecommendationIndexItem(
+fun RecommendationIndexItem(
     modifier: Modifier, color: Color, index: String, description: String, @DrawableRes iconRes: Int
 ) {
     Column(

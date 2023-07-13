@@ -479,7 +479,7 @@
         app:startDestination="@id/accountFragment">
         <fragment
             android:id="@+id/accountFragment"
-            android:name="com.vn.wecare.feature.account.view.AccountFragment"
+            android:name="com.vn.wecare.feature.account.view.main.AccountFragment"
             android:label="fragment_account"
             tools:layout="@layout/fragment_account">
             <action
@@ -488,17 +488,29 @@
             <action
                 android:id="@+id/action_accountFragment_to_aboutUsFragment"
                 app:destination="@id/aboutUsFragment" />
+            <action
+                android:id="@+id/action_accountFragment_to_goalHistoryFragment"
+                app:destination="@id/goalHistoryFragment" />
         </fragment>
         <fragment
             android:id="@+id/editInformationFragment"
-            android:name="com.vn.wecare.feature.account.view.EditInformationFragment"
+            android:name="com.vn.wecare.feature.account.view.editinfo.EditInformationFragment"
             android:label="fragment_edit_information"
             tools:layout="@layout/fragment_edit_information" />
         <fragment
             android:id="@+id/aboutUsFragment"
-            android:name="com.vn.wecare.feature.account.view.AboutUsFragment"
+            android:name="com.vn.wecare.feature.account.view.aboutus.AboutUsFragment"
             android:label="fragment_about_us"
             tools:layout="@layout/fragment_about_us" />
+        <fragment
+            android:id="@+id/goalHistoryFragment"
+            android:name="com.vn.wecare.feature.account.view.goalhistory.GoalHistoryFragment"
+            android:label="fragment_goal_history"
+            tools:layout="@layout/fragment_goal_history" >
+            <action
+                android:id="@+id/action_goalHistoryFragment_to_editInformationFragment"
+                app:destination="@id/editInformationFragment" />
+        </fragment>
     </navigation>
 
     <!-- Dashboard graph -->
@@ -509,6 +521,15 @@
             android:id="@+id/dashboardFragment"
             android:name="com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment"
             android:label="fragment_dashboard"
-            tools:layout="@layout/fragment_dashboard" />
+            tools:layout="@layout/fragment_dashboard" >
+            <action
+                android:id="@+id/action_dashboardFragment_to_weeklyRecordDetailFragment2"
+                app:destination="@id/weeklyRecordDetailFragment2" />
+        </fragment>
+        <fragment
+            android:id="@+id/weeklyRecordDetailFragment2"
+            android:name="com.vn.wecare.feature.home.goal.weeklyrecords.WeeklyRecordDetailFragment"
+            android:label="fragment_weekly_record_detail"
+            tools:layout="@layout/fragment_weekly_record_detail" />
     </navigation>
 </navigation>

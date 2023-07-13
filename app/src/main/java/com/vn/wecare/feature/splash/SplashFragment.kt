@@ -15,7 +15,8 @@ class SplashFragment : BaseBindingFragment<FragmentSplashBinding>(FragmentSplash
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         if (splashViewModel.hasUser()) {
-            splashViewModel.saveWecareUserToSingletonObject()
+//            splashViewModel.saveWecareUserToSingletonObject()
+            splashViewModel.saveNecessaryInformationToSingletonObject()
         } else {
             findNavController().safeNavigate(
                 R.id.splashFragment, R.id.action_splashFragment_to_authentication_nested_graph
