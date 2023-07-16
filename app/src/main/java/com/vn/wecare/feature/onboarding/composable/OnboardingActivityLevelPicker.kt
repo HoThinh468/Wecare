@@ -12,8 +12,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.midPadding
@@ -21,11 +22,10 @@ import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
-fun OnboardingGoalSelection(
+fun OnboardingActivityLevelPicker(
     modifier: Modifier,
-    onGoalClick: (goal: EnumGoal) -> Unit,
-    chosenGoal: EnumGoal,
-    recommendedGoal: EnumGoal
+    onActivityLevelClick: (level: ActivityLevel) -> Unit,
+    chosenLevel: ActivityLevel
 ) {
     Column(
         modifier = modifier
@@ -36,42 +36,67 @@ fun OnboardingGoalSelection(
     ) {
         Text(
             modifier = modifier.padding(vertical = smallPadding),
-            text = "Choose your goal",
+            text = "How active you are?",
             style = MaterialTheme.typography.h2,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = modifier.padding(horizontal = mediumPadding),
-            text = "Have a clear goal will help you achieve it easier",
+            text = "We need to know your activity level",
             style = MaterialTheme.typography.body2,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = modifier.height(mediumPadding))
         OnboardingItemPicker(
             modifier = modifier,
-            onClick = { onGoalClick(EnumGoal.GAINWEIGHT) },
-            title = EnumGoal.GAINWEIGHT.value,
-            subtitle = if (recommendedGoal == EnumGoal.GAINWEIGHT) "(Recommended)" else null,
-            borderColor = getBorderColor(chosenItem = chosenGoal, currentItem = EnumGoal.GAINWEIGHT)
-        )
-        Spacer(modifier = modifier.height(normalPadding))
-        OnboardingItemPicker(
-            modifier = modifier,
-            onClick = { onGoalClick(EnumGoal.MAINTAINWEIGHT) },
-            title = EnumGoal.MAINTAINWEIGHT.value,
-            subtitle = if (recommendedGoal == EnumGoal.MAINTAINWEIGHT) "(Recommended)" else null,
+            onClick = {
+                onActivityLevelClick(ActivityLevel.SEDENTARY)
+            },
+            title = ActivityLevel.SEDENTARY.value,
+            subtitle = ActivityLevel.SEDENTARY.description,
             borderColor = getBorderColor(
-                chosenItem = chosenGoal, currentItem = EnumGoal.MAINTAINWEIGHT
+                chosenItem = chosenLevel, currentItem = ActivityLevel.SEDENTARY
             )
         )
         Spacer(modifier = modifier.height(normalPadding))
         OnboardingItemPicker(
             modifier = modifier,
-            onClick = { onGoalClick(EnumGoal.LOSEWEIGHT) },
-            title = EnumGoal.LOSEWEIGHT.value,
-            subtitle = if (recommendedGoal == EnumGoal.LOSEWEIGHT) "(Recommended)" else null,
-            borderColor = getBorderColor(chosenItem = chosenGoal, currentItem = EnumGoal.LOSEWEIGHT)
+            onClick = {
+                onActivityLevelClick(ActivityLevel.LIGHTLYACTIVE)
+            },
+            title = ActivityLevel.LIGHTLYACTIVE.value,
+            subtitle = ActivityLevel.LIGHTLYACTIVE.description,
+            borderColor = getBorderColor(
+                chosenItem = chosenLevel, currentItem = ActivityLevel.LIGHTLYACTIVE
+            )
+        )
+        Spacer(modifier = modifier.height(normalPadding))
+        OnboardingItemPicker(
+            modifier = modifier,
+            onClick = { onActivityLevelClick(ActivityLevel.MODERATELYACTIVE) },
+            title = ActivityLevel.MODERATELYACTIVE.value,
+            subtitle = ActivityLevel.MODERATELYACTIVE.description,
+            borderColor = getBorderColor(
+                chosenItem = chosenLevel, currentItem = ActivityLevel.MODERATELYACTIVE
+            )
+        )
+        Spacer(modifier = modifier.height(normalPadding))
+        OnboardingItemPicker(
+            modifier = modifier,
+            onClick = { onActivityLevelClick(ActivityLevel.ACTIVE) },
+            title = ActivityLevel.ACTIVE.value,
+            subtitle = ActivityLevel.ACTIVE.description,
+            borderColor = getBorderColor(
+                chosenItem = chosenLevel, currentItem = ActivityLevel.ACTIVE
+            )
         )
         Spacer(modifier = modifier.height(halfMidPadding))
     }
 }
+
+@Composable
+fun getBorderColor(chosenItem: Any, currentItem: Any): Color {
+    return if (chosenItem == currentItem) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+}
+
+

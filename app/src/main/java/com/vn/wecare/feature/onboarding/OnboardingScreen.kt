@@ -12,13 +12,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.onboarding.composable.*
 import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
 
-const val ONBOARDING_PAGE_COUNT = 5
+const val ONBOARDING_PAGE_COUNT = 7
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -36,13 +35,8 @@ fun OnboardingScreen(
         when (it) {
             is Response.Loading -> LoadingDialog(loading = it == Response.Loading) {}
             is Response.Success -> {
-                viewModel.moveToNextOnboardingPage(
-                    moveToSplashScreen
-                ) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(viewModel.currentIndex.value)
-                    }
-                }
+                moveToSplashScreen()
+                viewModel.clearOnboardingResult()
             }
 
             is Response.Error -> {
@@ -56,14 +50,9 @@ fun OnboardingScreen(
         }
     }
 
-    val sheetState =
-        if (onboardingUiState.value.selectedGoal == EnumGoal.GAINMUSCLE || onboardingUiState.value.selectedGoal == EnumGoal.LOSEWEIGHT) {
-            rememberModalBottomSheetState(
-                initialValue = ModalBottomSheetValue.Expanded, skipHalfExpanded = true
-            )
-        } else rememberModalBottomSheetState(
-            initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-        )
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
+    )
 
     ModalBottomSheetLayout(sheetContent = {
         DesiredWeightPickerBottomSheet(
@@ -73,9 +62,7 @@ fun OnboardingScreen(
             onDesiredWeightDifferencePickScrolled = {
                 viewModel.onPickDesiredWeightDifferenceScroll(it)
             },
-            estimatedTime = onboardingUiState.value.estimatedWeeks,
             desiredWeightDifference = onboardingUiState.value.desiredWeightDifferencePicker,
-            goal = onboardingUiState.value.selectedGoal
         )
     }, sheetState = sheetState) {
         Scaffold(bottomBar = {
@@ -84,6 +71,9 @@ fun OnboardingScreen(
                 index = viewModel.currentIndex.value,
                 onContinueClick = {
                     viewModel.onNextClick()
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(viewModel.currentIndex.value)
+                    }
                 },
                 onPreviousClick = {
                     viewModel.onPreviousClick()

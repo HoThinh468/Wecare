@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
@@ -32,49 +33,30 @@ fun DesiredWeightPickerBottomSheet(
     closeBottomSheet: () -> Unit,
     onDesiredWeightDifferencePickScrolled: (weight: Int) -> Unit,
     desiredWeightDifference: Int,
-    goal: EnumGoal,
-    estimatedTime: Int,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BaseOnboardingContent(
-            modifier = modifier,
-            titleRes = if (goal == EnumGoal.GAINMUSCLE) R.string.Gain_weight_title else R.string.Lose_weight_title,
-            subtitleRes = R.string.desired_weight_picker_subtitle
-        ) {
-            OnboardingWeightPicker(modifier = modifier,
-                weightPicked = desiredWeightDifference,
-                onPickWeightScrolled = {
-                    onDesiredWeightDifferencePickScrolled(it)
-                },
-                customContent = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Text(text = "$desiredWeightDifference", style = MaterialTheme.typography.h1)
-                            Text(text = "kg", style = MaterialTheme.typography.body2)
-                        }
-                        Spacer(modifier = modifier.height(smallPadding))
-                        Row(
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Text(
-                                text = "Time estimated: $estimatedTime ",
-                                style = MaterialTheme.typography.h5
-                            )
-                            Text(
-                                text = if (estimatedTime == 1) "week" else "weeks",
-                                style = MaterialTheme.typography.body2
-                            )
-                        }
+        Spacer(modifier = modifier.height(mediumPadding))
+        OnboardingWeightPicker(modifier = modifier,
+            weightPicked = desiredWeightDifference,
+            onPickWeightScrolled = {
+                onDesiredWeightDifferencePickScrolled(it)
+            },
+            customContent = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Text(text = "$desiredWeightDifference", style = MaterialTheme.typography.h1)
+                        Text(text = "kg", style = MaterialTheme.typography.body2)
                     }
-                },
-                minWeight = MIN_DIFFERENCE_WEIGHT,
-                maxWeight = MAX_DIFFERENCE_WEIGHT
-            )
-        }
+                }
+            },
+            minWeight = MIN_DIFFERENCE_WEIGHT,
+            maxWeight = MAX_DIFFERENCE_WEIGHT
+        )
+        Spacer(modifier = modifier.height(mediumPadding))
         Row(
             modifier = modifier
                 .fillMaxWidth()

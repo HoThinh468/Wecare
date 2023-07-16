@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.account.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,5 +14,6 @@ data class WecareUser(
     var age: Int? = null,
     var height: Int? = null,
     var weight: Int? = null,
-    var goal: String? = null
+    var goal: String? = null,
+    @ColumnInfo(defaultValue = "") var activityLevel: String = "",
 )

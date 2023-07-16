@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.data.model.WecareUser
 import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
@@ -85,10 +86,19 @@ class SignUpViewModel @Inject constructor(
         _signUpUiState.update { it.copy(snackbarMessageRes = messageRes) }
     }
 
+    private fun getUserFromInputData(): WecareUser = WecareUser(
+        userId = accountService.currentUserId,
+        email = _signUpUiState.value.email,
+        userName = _signUpUiState.value.userName,
+        emailVerified = accountService.isUserEmailVerified
+    )
+
     fun handleSignUpSuccess(moveToOnboardingScreen: () -> Unit) = viewModelScope.launch {
         moveToOnboardingScreen()
-        saveUserInformationToFirestoreDb()
-        saveUserInformationToLocalDb()
+        val user = getUserFromInputData()
+        saveUserInformationToFirestoreDb(user)
+        saveUserInformationToLocalDb(user)
+        WecareUserSingletonObject.updateInstance(user)
         clearSignUpInformation()
     }
 
@@ -121,23 +131,12 @@ class SignUpViewModel @Inject constructor(
     fun getPasswordErrorMessage(): Int? = if (_signUpUiState.value.isPasswordValid) null
     else R.string.password_error_message
 
-    private suspend fun saveUserInformationToFirestoreDb() {
-        saveUserToDbUsecase.saveUserToFirestoreDb(
-            accountService.currentUserId,
-            _signUpUiState.value.email,
-            _signUpUiState.value.userName,
-            accountService.isUserEmailVerified
-        )
+    private suspend fun saveUserInformationToFirestoreDb(newUser: WecareUser) {
+        saveUserToDbUsecase.saveUserToFirestoreDb(newUser)
     }
 
-    private suspend fun saveUserInformationToLocalDb() {
-        val user = WecareUser(
-            userId = accountService.currentUserId,
-            email = _signUpUiState.value.email,
-            userName = _signUpUiState.value.userName,
-            emailVerified = accountService.isUserEmailVerified
-        )
-        saveUserToDbUsecase.saveUserToLocalDb(user)
+    private suspend fun saveUserInformationToLocalDb(newUser: WecareUser) {
+        saveUserToDbUsecase.saveUserToLocalDb(newUser)
     }
 
     private fun clearSignUpInformation() {

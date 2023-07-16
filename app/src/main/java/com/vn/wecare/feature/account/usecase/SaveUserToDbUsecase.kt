@@ -12,11 +12,8 @@ class SaveUserToDbUsecase @Inject constructor(
     }
 
     suspend fun saveUserToFirestoreDb(
-        userId: String, email: String, userName: String, isEmailVerified: Boolean
+        newUser: WecareUser
     ) {
-        val newUser = WecareUser(
-            userId, userName, email, isEmailVerified
-        )
         userRepository.insertUserToFirebase(newUser)
     }
 }

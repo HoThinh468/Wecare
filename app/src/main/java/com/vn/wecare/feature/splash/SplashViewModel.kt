@@ -61,14 +61,12 @@ class SplashViewModel @Inject constructor(
         _splashUiState.update { it.copy(saveUserRes = null) }
     }
 
-    fun hasUser(): Boolean {
-        return accountService.hasUser
-    }
+    fun hasUser() = accountService.hasUser
 
     fun saveNecessaryInformationToSingletonObject() = viewModelScope.launch {
         _splashUiState.update { it.copy(saveUserRes = Response.Loading) }
         combine(
-            getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId),
+            getWecareUserWithIdUsecase.getUserFromFirebaseWithId(accountService.currentUserId),
             getGoalFromFirebaseUsecase.getCurrentGoalFromFirebase()
         ) { user, goal ->
             if (user is Response.Success && user.data != null) {
@@ -85,7 +83,7 @@ class SplashViewModel @Inject constructor(
                 if (goal.data.goalStatus == GoalStatus.INPROGRESS.value && System.currentTimeMillis() > goal.data.dateEndGoal) {
                     updateCurrentGoalStatus(goal.data)
                 }
-            }
+            } else shouldMoveToOnboarding = true
             val result =
                 WecareUserSingletonObject.getInstance() != WecareUser() && LatestGoalSingletonObject.getInStance() != Goal()
             _splashUiState.update { it.copy(saveUserRes = Response.Success(result)) }

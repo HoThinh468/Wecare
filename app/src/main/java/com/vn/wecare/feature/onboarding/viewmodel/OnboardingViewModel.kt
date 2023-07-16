@@ -3,45 +3,45 @@ package com.vn.wecare.feature.onboarding.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.usecase.UpdateWecareUserUsecase
-import com.vn.wecare.feature.authentication.service.AccountService
+import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
+import com.vn.wecare.feature.home.bmi.util.getBMIWithHeightAndWeight
+import com.vn.wecare.feature.home.bmi.util.getWeightWithBMIAndHeight
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.usecase.DefineGoalBasedOnInputsUsecase
 import com.vn.wecare.feature.home.goal.usecase.SaveGoalsToFirebaseUsecase
 import com.vn.wecare.feature.home.goal.usecase.SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
-import com.vn.wecare.feature.onboarding.ONBOARDING_PAGE_COUNT
 import com.vn.wecare.feature.onboarding.model.BMIState
-import com.vn.wecare.utils.WecareUserConstantValues
-import com.vn.wecare.utils.WecareUserConstantValues.AGE_FIELD
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_FAT_RANGE
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_NORMAL_RANGE
-import com.vn.wecare.utils.WecareUserConstantValues.GENDER_FIELD
-import com.vn.wecare.utils.WecareUserConstantValues.GOAL_FIELD
-import com.vn.wecare.utils.WecareUserConstantValues.HEIGHT_FIELD
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_OVERWEIGHT_RANGE
+import com.vn.wecare.utils.WecareUserConstantValues.BMI_UNDERWEIGHT_RANGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
-import com.vn.wecare.utils.WecareUserConstantValues.WEIGHT_FIELD
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.pow
 
 data class OnboardingUiState(
     val genderSelectionId: Int = 0,
     val agePicker: Int = MIN_AGE,
     val heightPicker: Int = MIN_HEIGHT,
     val weightPicker: Int = MIN_WEIGHT,
-    val desiredWeightDifferencePicker: Int = 0,
-    val estimatedWeeks: Int = 0,
-    val selectedGoal: EnumGoal = EnumGoal.GETHEALTHIER,
+    val desiredWeightDifferencePicker: Int = 1,
+    val warningMessage: String? = null,
+    val selectedGoal: EnumGoal = EnumGoal.LOSEWEIGHT,
+    val recommendedGoal: EnumGoal = EnumGoal.MAINTAINWEIGHT,
+    val selectedWeeklyGoalWeight: Float = 0f,
+    val recommendedWeeklyGoal: Float = 0f,
+    val selectedActivityLevel: ActivityLevel = ActivityLevel.SEDENTARY,
     val updateInformationResult: Response<Boolean>? = null,
-    val bmiState: BMIState = BMIState.UNDERWEIGHT
 )
 
 data class OnboardingDialogUiState(
@@ -55,55 +55,42 @@ data class OnboardingDialogUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val updateWecareUserUsecase: UpdateWecareUserUsecase,
-    private val accountService: AccountService,
     private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
     private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase,
-    private val setupGoalWeeklyRecordsWhenCreateNewGoalUsecase: SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
+    private val setupGoalWeeklyRecordsWhenCreateNewGoalUsecase: SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase,
+    private val saveUserToDbUsecase: SaveUserToDbUsecase
 ) : ViewModel() {
 
     var currentIndex = mutableStateOf(0)
 
     fun onNextClick() {
         when (currentIndex.value) {
-            0 -> updateUserGender()
-            1 -> updateUserAge()
-            2 -> updateUserHeight()
-            3 -> {
-                updateUserWeight()
-                updateBMI()
+            4 -> {
+                updateBMIState()
                 updateRecommendedGoal()
+                currentIndex.value++
             }
 
-            else -> {
-                updateShouldShowWarningDialog(
-                    _onboardingUiState.value.selectedGoal, _onboardingUiState.value.bmiState
-                )
-                updateShouldShowRecommendationDialog(
-                    _onboardingUiState.value.selectedGoal, _onboardingUiState.value.bmiState
-                )
-                if (!_onboardingDialogUiState.value.shouldShowRecommendationDialog && !_onboardingDialogUiState.value.shouldShowWarningDialog) {
-                    updateUserGoal()
+            5 -> {
+                updateShouldShowWarningDialog()
+                if (_onboardingDialogUiState.value.shouldShowWarningDialog) return
+                if (_onboardingUiState.value.selectedGoal == EnumGoal.MAINTAINWEIGHT) {
+                    saveUserInfoToDb()
+                    saveGoalToFirestore()
+                } else {
+                    updateRecommendedWeeklyGoal()
+                    currentIndex.value++
                 }
             }
-        }
-    }
 
-    fun onWishToProcessAfterChoosingGoalClick() {
-        updateUserGoal()
-    }
+            6 -> {
+                if (_onboardingUiState.value.warningMessage == null) {
+                    saveUserInfoToDb()
+                    saveGoalToFirestore()
+                }
+            }
 
-    fun moveToNextOnboardingPage(
-        moveToHomeScreen: () -> Unit, moveToPageAtIndex: () -> Unit
-    ) {
-        if (currentIndex.value < ONBOARDING_PAGE_COUNT - 1) {
-            _onboardingUiState.update { it.copy(updateInformationResult = null) }
-            currentIndex.value++
-            moveToPageAtIndex()
-        } else {
-            moveToHomeScreen()
-            clearOnboardingResult()
-            currentIndex.value = 0
+            else -> currentIndex.value++
         }
     }
 
@@ -118,6 +105,8 @@ class OnboardingViewModel @Inject constructor(
 
     private val _onboardingDialogUiState = MutableStateFlow(OnboardingDialogUiState())
     val onboardingDialogUiState = _onboardingDialogUiState.asStateFlow()
+
+    private val _bmiState = MutableStateFlow(BMIState.UNDERWEIGHT)
 
     fun onGenderSelect(id: Int) {
         _onboardingUiState.update {
@@ -145,8 +134,9 @@ class OnboardingViewModel @Inject constructor(
 
     fun onPickDesiredWeightDifferenceScroll(difference: Int) {
         _onboardingUiState.update {
-            it.copy(desiredWeightDifferencePicker = difference, estimatedWeeks = difference)
+            it.copy(desiredWeightDifferencePicker = difference)
         }
+        updateWarningMessage()
     }
 
     fun onGoalSelect(goal: EnumGoal) {
@@ -155,255 +145,152 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun clearOnboardingResult() {
+    fun onWeeklyGoalSelect(goal: Float) {
         _onboardingUiState.update {
-            it.copy(
-                genderSelectionId = 0,
-                weightPicker = 0,
-                heightPicker = 0,
-                desiredWeightDifferencePicker = 0,
-                updateInformationResult = null,
-                selectedGoal = EnumGoal.GAINMUSCLE
-            )
+            it.copy(selectedWeeklyGoalWeight = goal)
         }
     }
 
-    private fun updateUserGender() = viewModelScope.launch {
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-            accountService.currentUserId,
-            GENDER_FIELD,
-            getGenderWithId(_onboardingUiState.value.genderSelectionId)
-        ).catch {
-            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }.collect { res ->
-            if (res is Response.Success) {
-                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                    accountService.currentUserId,
-                    GENDER_FIELD,
-                    getGenderWithId(_onboardingUiState.value.genderSelectionId)
-                ).collect { res2 ->
-                    if (res2 is Response.Success) {
-                        _onboardingUiState.update {
-                            it.copy(updateInformationResult = res2)
-                        }
-                    } else _onboardingUiState.update {
-                        it.copy(updateInformationResult = Response.Error(null))
-                    }
-                }
-            } else _onboardingUiState.update {
-                it.copy(updateInformationResult = Response.Error(null))
+    fun onActivityLevelPicked(level: ActivityLevel) {
+        _onboardingUiState.update { it.copy(selectedActivityLevel = level) }
+    }
+
+    private fun saveUserInfoToDb() {
+        _onboardingUiState.value.apply {
+            val user = WecareUserSingletonObject.getInstance()
+            val newUpdatedUser = user.copy(
+                gender = this.genderSelectionId == 0,
+                age = this.agePicker,
+                height = this.heightPicker,
+                weight = this.weightPicker,
+                activityLevel = this.selectedActivityLevel.value
+            )
+            viewModelScope.launch {
+                saveUserToDbUsecase.saveUserToFirestoreDb(newUpdatedUser)
+                saveUserToDbUsecase.saveUserToLocalDb(newUpdatedUser)
             }
         }
     }
 
-    private fun updateUserAge() = viewModelScope.launch {
+    private fun saveGoalToFirestore() {
         _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-            accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
-        ).catch {
-            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }.collect { res ->
-            if (res is Response.Success) {
-                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                    accountService.currentUserId, AGE_FIELD, _onboardingUiState.value.agePicker
-                ).collect { res2 ->
-                    if (res2 is Response.Success) {
-                        _onboardingUiState.update {
-                            it.copy(updateInformationResult = res2)
-                        }
-                    } else _onboardingUiState.update {
-                        it.copy(updateInformationResult = Response.Error(null))
-                    }
-                }
-            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }
-    }
-
-    private fun updateUserHeight() = viewModelScope.launch {
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-            accountService.currentUserId, HEIGHT_FIELD, _onboardingUiState.value.heightPicker
-        ).catch {
-            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }.collect { res ->
-            if (res is Response.Success) {
-                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                    accountService.currentUserId,
-                    HEIGHT_FIELD,
-                    _onboardingUiState.value.heightPicker
-                ).collect { res2 ->
-                    if (res2 is Response.Success) {
-                        _onboardingUiState.update {
-                            it.copy(updateInformationResult = res2)
-                        }
-                    } else _onboardingUiState.update {
-                        it.copy(updateInformationResult = Response.Error(null))
-                    }
-                }
-            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }
-    }
-
-    private fun updateUserWeight() = viewModelScope.launch {
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-            accountService.currentUserId, WEIGHT_FIELD, _onboardingUiState.value.weightPicker
-        ).catch {
-            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }.collect { res ->
-            if (res is Response.Success) {
-                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                    accountService.currentUserId,
-                    WEIGHT_FIELD,
-                    _onboardingUiState.value.weightPicker
-                ).collect { res2 ->
-                    if (res2 is Response.Success) {
-                        _onboardingUiState.update {
-                            it.copy(updateInformationResult = res2)
-                        }
-                    } else _onboardingUiState.update {
-                        it.copy(updateInformationResult = Response.Error(null))
-                    }
-                }
-            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }
-    }
-
-    private fun updateUserGoal() = viewModelScope.launch {
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
-        updateWecareUserUsecase.updateWecareUserRoomDbWithId(
-            accountService.currentUserId, GOAL_FIELD, _onboardingUiState.value.selectedGoal.value
-        ).catch {
-            _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }.collect { res ->
-            if (res is Response.Success) {
-                updateWecareUserUsecase.updateWecareUserFirestoreDbWithId(
-                    accountService.currentUserId,
-                    GOAL_FIELD,
-                    _onboardingUiState.value.selectedGoal.value
-                ).collect { res2 ->
-                    if (res2 is Response.Success) {
-                        saveGoalToFirebase()
-                    } else _onboardingUiState.update {
-                        it.copy(updateInformationResult = Response.Error(null))
-                    }
-                }
-            } else _onboardingUiState.update { it.copy(updateInformationResult = Response.Error(null)) }
-        }
-    }
-
-    private fun getGenderWithId(id: Int): Boolean {
-        return id == 0
-    }
-
-    private fun saveGoalToFirebase() {
         val enumGoal = _onboardingUiState.value.selectedGoal
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
+        val timeToReachGoal =
+            (_onboardingUiState.value.desiredWeightDifferencePicker / _onboardingUiState.value.selectedWeeklyGoalWeight).toInt()
         val goal = defineGoalBasedOnInputsUsecase.getGoalFromInputs(
             goal = enumGoal,
             height = _onboardingUiState.value.heightPicker,
             weight = _onboardingUiState.value.weightPicker,
             age = _onboardingUiState.value.agePicker,
-            gender = getGenderWithId(_onboardingUiState.value.genderSelectionId),
-            weightDifference = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _onboardingUiState.value.desiredWeightDifferencePicker,
-            timeToReachGoal = if (enumGoal == EnumGoal.IMPROVEMOOD || enumGoal == EnumGoal.GETHEALTHIER) null else _onboardingUiState.value.estimatedWeeks
+            gender = _onboardingUiState.value.genderSelectionId == 0,
+            weightDifference = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else _onboardingUiState.value.desiredWeightDifferencePicker,
+            timeToReachGoal = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else timeToReachGoal,
+            weeklyGoalWeight = _onboardingUiState.value.selectedWeeklyGoalWeight
         )
+
         viewModelScope.launch {
+            _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
                     setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
-                        goal.timeToReachGoalInWeek, goal.goalId
+                        timeToReachGoal, goal.goalId
                     )
                     LatestGoalSingletonObject.updateInStance(goal)
                 }
-                _onboardingUiState.update {
-                    it.copy(updateInformationResult = res)
-                }
+                _onboardingUiState.update { it.copy(updateInformationResult = res) }
             }
         }
     }
 
-    private fun updateBMI() {
-        val bmi =
-            (_onboardingUiState.value.weightPicker.toFloat() / (_onboardingUiState.value.heightPicker.toFloat() / 100).pow(
-                2
-            ))
+    fun clearOnboardingResult() {
+        _onboardingUiState.update { OnboardingUiState() }
+        currentIndex.value = 0
+    }
+
+    private fun updateBMIState() {
+        val bmi = getBMIWithHeightAndWeight(
+            _onboardingUiState.value.heightPicker.toFloat() / 100,
+            _onboardingUiState.value.weightPicker.toFloat()
+        )
         val bmiState = when (bmi) {
-            in WecareUserConstantValues.BMI_UNDERWEIGHT_RANGE -> BMIState.UNDERWEIGHT
+            in BMI_UNDERWEIGHT_RANGE -> BMIState.UNDERWEIGHT
             in BMI_NORMAL_RANGE -> BMIState.NORMAL
-            in WecareUserConstantValues.BMI_OVERWEIGHT_RANGE -> BMIState.OVERWEIGHT
-            in WecareUserConstantValues.BMI_FAT_RANGE -> BMIState.FAT
+            in BMI_OVERWEIGHT_RANGE -> BMIState.OVERWEIGHT
+            in BMI_FAT_RANGE -> BMIState.FAT
             else -> BMIState.OBESITY
         }
-        _onboardingUiState.update { it.copy(bmiState = bmiState) }
+        _bmiState.update { bmiState }
     }
 
     private fun updateRecommendedGoal() {
-        if (_onboardingUiState.value.bmiState == BMIState.UNDERWEIGHT || _onboardingUiState.value.bmiState == BMIState.NORMAL) {
-            _onboardingUiState.update { it.copy(selectedGoal = EnumGoal.GAINMUSCLE) }
-        } else {
-            _onboardingUiState.update { it.copy(selectedGoal = EnumGoal.LOSEWEIGHT) }
+        val goal = when (_bmiState.value) {
+            BMIState.UNDERWEIGHT -> EnumGoal.GAINWEIGHT
+            BMIState.NORMAL -> EnumGoal.MAINTAINWEIGHT
+            else -> EnumGoal.LOSEWEIGHT
         }
+        _onboardingUiState.update { it.copy(selectedGoal = goal, recommendedGoal = goal) }
     }
 
-    private fun updateShouldShowWarningDialog(goal: EnumGoal, bmiState: BMIState) {
+    private fun updateShouldShowWarningDialog() {
+        val goal = _onboardingUiState.value.selectedGoal
+        val bmiState = _bmiState.value
+
         val shouldShowDialogAboutOverWeight =
-            (goal == EnumGoal.GAINMUSCLE) && (bmiState == BMIState.FAT || bmiState == BMIState.OBESITY)
+            (goal == EnumGoal.GAINWEIGHT || goal == EnumGoal.MAINTAINWEIGHT) && (bmiState == BMIState.OVERWEIGHT || bmiState == BMIState.FAT || bmiState == BMIState.OBESITY)
         if (shouldShowDialogAboutOverWeight) {
             _onboardingDialogUiState.update {
                 it.copy(
                     shouldShowWarningDialog = true,
-                    warningDialogMessage = "You seem to be overweight, you should lose weight before gaining muscle"
+                    warningDialogMessage = "According to your input information, you are overweight. Our experts recommend that you should lose your weight!"
                 )
             }
         }
 
         val shouldShowDialogAboutUnderWeight =
-            (goal == EnumGoal.LOSEWEIGHT) && (bmiState == BMIState.UNDERWEIGHT || bmiState == BMIState.NORMAL)
+            (goal == EnumGoal.LOSEWEIGHT) && (bmiState == BMIState.UNDERWEIGHT)
         if (shouldShowDialogAboutUnderWeight) {
             _onboardingDialogUiState.update {
                 it.copy(
                     shouldShowWarningDialog = true,
-                    warningDialogMessage = "You shouldn't try to lose more weight. You should pick the gain muscle to do more"
+                    warningDialogMessage = "According to your input information, you are underweight. It would be dangerous if you try to lose more weight!"
                 )
             }
         }
     }
 
-    private fun updateShouldShowRecommendationDialog(goal: EnumGoal, bmiState: BMIState) {
-        val shouldShowGainWeightRecommendation =
-            (goal == EnumGoal.GETHEALTHIER || goal == EnumGoal.IMPROVEMOOD) && (bmiState == BMIState.UNDERWEIGHT || bmiState == BMIState.NORMAL)
-        if (shouldShowGainWeightRecommendation) {
-            _onboardingDialogUiState.update {
-                it.copy(
-                    shouldShowRecommendationDialog = true,
-                    recommendationDialogMessage = "Let us help you. You can do more by set your goal to Gain muscle!"
-                )
-            }
+    private fun updateRecommendedWeeklyGoal() {
+        val goal = when (_onboardingUiState.value.selectedActivityLevel) {
+            ActivityLevel.SEDENTARY -> 0.25f
+            ActivityLevel.ACTIVE -> 1f
+            else -> 0.5f
         }
+        _onboardingUiState.update { it.copy(recommendedWeeklyGoal = goal) }
+    }
 
-        val shouldShowLoseWeightRecommendation =
-            (goal == EnumGoal.GETHEALTHIER || goal == EnumGoal.IMPROVEMOOD) && (bmiState == BMIState.OVERWEIGHT || bmiState == BMIState.FAT || bmiState == BMIState.OBESITY)
-        if (shouldShowLoseWeightRecommendation) {
-            _onboardingDialogUiState.update {
-                it.copy(
-                    shouldShowRecommendationDialog = true,
-                    recommendationDialogMessage = "You seem to a little bit overweight. You can do more by set your goal to Lose weight!"
-                )
-            }
-        }
+    private fun updateWarningMessage() {
+        val height = _onboardingUiState.value.heightPicker.toFloat() / 100
+        val weight = _onboardingUiState.value.weightPicker.toFloat()
+
+        val limitWeight = if (_onboardingUiState.value.selectedGoal == EnumGoal.GAINWEIGHT) {
+            getWeightWithBMIAndHeight(24.9f, height)
+        } else getWeightWithBMIAndHeight(18.6f, height)
+
+        val newWeight = if (_onboardingUiState.value.selectedGoal == EnumGoal.GAINWEIGHT) {
+            weight + _onboardingUiState.value.desiredWeightDifferencePicker
+        } else weight - _onboardingUiState.value.desiredWeightDifferencePicker
+
+        val warningMsg = if (newWeight > limitWeight) {
+            "Based on your input information, your new weight will be $newWeight kg, and you will be overweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
+        } else if (newWeight < limitWeight) {
+            "Based on your input information, your new weight will be $newWeight kg, and you will be underweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
+        } else null
+
+        _onboardingUiState.update { it.copy(warningMessage = warningMsg) }
     }
 
     fun dismissWarningDialog() {
         _onboardingDialogUiState.update {
             it.copy(shouldShowWarningDialog = false)
-        }
-    }
-
-    fun dismissRecommendationDialog() {
-        _onboardingDialogUiState.update {
-            it.copy(shouldShowRecommendationDialog = false)
         }
     }
 }

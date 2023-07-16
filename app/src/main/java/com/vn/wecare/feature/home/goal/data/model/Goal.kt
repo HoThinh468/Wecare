@@ -5,9 +5,11 @@ import android.os.Parcelable
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_TIME_TO_REACH_GOAL_IN_WEEK
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_WEIGHT_DIFFERENCE_IN_KG
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
+import com.vn.wecare.utils.WecareUserConstantValues.GAIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
 import com.vn.wecare.utils.WecareUserConstantValues.IMPROVE_MOOD
 import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MAINTAIN_WEIGHT
 
 data class Goal(
     val goalId: String = "",
@@ -21,7 +23,8 @@ data class Goal(
     val timeToReachGoalInWeek: Int = DEFAULT_TIME_TO_REACH_GOAL_IN_WEEK,
     val dateSetGoal: Long = 0L,
     val dateEndGoal: Long = 0L,
-    val goalStatus: String = GoalStatus.INPROGRESS.value
+    val goalStatus: String = GoalStatus.INPROGRESS.value,
+    val weeklyGoalWeight: Float = 0f,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -35,7 +38,8 @@ data class Goal(
         parcel.readInt(),
         parcel.readLong(),
         parcel.readLong(),
-        parcel.readString() ?: ""
+        parcel.readString() ?: "",
+        parcel.readFloat()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -43,6 +47,7 @@ data class Goal(
         parcel.writeString(goalName)
         parcel.writeInt(caloriesInEachDayGoal)
         parcel.writeInt(caloriesBurnedEachDayGoal)
+        parcel.writeInt(caloriesBurnedGoalForStepCount)
         parcel.writeInt(stepsGoal)
         parcel.writeInt(moveTimeGoal)
         parcel.writeInt(weightDifference)
@@ -50,6 +55,7 @@ data class Goal(
         parcel.writeLong(dateSetGoal)
         parcel.writeLong(dateEndGoal)
         parcel.writeString(goalStatus)
+        parcel.writeFloat(weeklyGoalWeight)
     }
 
     override fun describeContents(): Int {
@@ -65,10 +71,22 @@ data class Goal(
             return arrayOfNulls(size)
         }
     }
+
 }
 
 enum class EnumGoal(val value: String) {
     GAINMUSCLE(GAIN_MUSCLE), LOSEWEIGHT(LOSE_WEIGHT), GETHEALTHIER(GET_HEALTHIER), IMPROVEMOOD(
         IMPROVE_MOOD
-    )
+    ),
+    NULL("NULL"), GAINWEIGHT(GAIN_WEIGHT), MAINTAINWEIGHT(MAINTAIN_WEIGHT);
+
+    companion object {
+        fun getEnumGoalFromValue(value: String): EnumGoal {
+            return when (value) {
+                GAIN_WEIGHT -> GAINWEIGHT
+                MAINTAIN_WEIGHT -> MAINTAINWEIGHT
+                else -> LOSEWEIGHT
+            }
+        }
+    }
 }

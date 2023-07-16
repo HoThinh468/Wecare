@@ -15,7 +15,8 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
         age: Int,
         gender: Boolean,
         weightDifference: Int?,
-        timeToReachGoal: Int?
+        timeToReachGoal: Int?,
+        weeklyGoalWeight: Float,
     ): Goal {
         val basicCalories = WecareCaloriesObject.getBasicCaloriesAmount(
             weight, height, gender, age
@@ -44,6 +45,7 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
             weightDifference = weightDifference ?: 0,
             dateSetGoal = currentDateTime,
             dateEndGoal = endDate,
+            weeklyGoalWeight = weeklyGoalWeight,
         )
     }
 }

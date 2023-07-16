@@ -20,10 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.exercises.widget.ProgressIndicator
 import com.vn.wecare.feature.home.bmi.ui.YourBMIHomeCard
 import com.vn.wecare.feature.home.goal.dashboard.GoalDashboardHomeCard
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
@@ -57,26 +55,23 @@ fun HomeScreen(
     when (homeViewModel.updateStepsResponse) {
         is Response.Success -> {
             Toast.makeText(
-                LocalContext.current,
-                "Update steps successfully",
-                Toast.LENGTH_SHORT
+                LocalContext.current, "Update steps successfully", Toast.LENGTH_SHORT
             ).show()
         }
 
         is Response.Error -> {
             Toast.makeText(
-                LocalContext.current,
-                "Update steps failed",
-                Toast.LENGTH_SHORT
+                LocalContext.current, "Update steps failed", Toast.LENGTH_SHORT
             ).show()
         }
 
         else -> {}
     }
 
-    Scaffold(modifier = modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background),
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
         topBar = {
             HomeHeader(
                 modifier = modifier,
@@ -103,13 +98,12 @@ fun HomeScreen(
                         caloriesOutProgress = (caloOut / goal.caloriesBurnedEachDayGoal) + 0.01f,
                         caloriesOutTarget = goal.caloriesBurnedEachDayGoal.toFloat(),
 
-                    )
+                        )
                 }
 
                 is Response.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator()
                     }
