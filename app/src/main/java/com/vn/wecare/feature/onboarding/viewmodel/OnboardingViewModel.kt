@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.onboarding.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.usecase.DefineGoalBasedOnInputsUsecase
 import com.vn.wecare.feature.home.goal.usecase.SaveGoalsToFirebaseUsecase
 import com.vn.wecare.feature.home.goal.usecase.SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
+import com.vn.wecare.feature.onboarding.OnboardingFragment
 import com.vn.wecare.feature.onboarding.model.BMIState
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_FAT_RANGE
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_NORMAL_RANGE
@@ -22,6 +24,7 @@ import com.vn.wecare.utils.WecareUserConstantValues.BMI_UNDERWEIGHT_RANGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,22 +74,22 @@ class OnboardingViewModel @Inject constructor(
                 currentIndex.value++
             }
 
-            5 -> {
+            6 -> {
                 updateShouldShowWarningDialog()
                 if (_onboardingDialogUiState.value.shouldShowWarningDialog) return
                 if (_onboardingUiState.value.selectedGoal == EnumGoal.MAINTAINWEIGHT) {
-                    saveUserInfoToDb()
-                    saveGoalToFirestore()
+//                    saveUserInfoToDb()
+//                    saveGoalToFirestore()
                 } else {
                     updateRecommendedWeeklyGoal()
                     currentIndex.value++
                 }
             }
 
-            6 -> {
+            7 -> {
                 if (_onboardingUiState.value.warningMessage == null) {
-                    saveUserInfoToDb()
-                    saveGoalToFirestore()
+//                    saveUserInfoToDb()
+//                    saveGoalToFirestore()
                 }
             }
 
@@ -107,6 +110,7 @@ class OnboardingViewModel @Inject constructor(
     val onboardingDialogUiState = _onboardingDialogUiState.asStateFlow()
 
     private val _bmiState = MutableStateFlow(BMIState.UNDERWEIGHT)
+    val bmiState = _bmiState.asStateFlow()
 
     fun onGenderSelect(id: Int) {
         _onboardingUiState.update {
@@ -163,7 +167,8 @@ class OnboardingViewModel @Inject constructor(
                 age = this.agePicker,
                 height = this.heightPicker,
                 weight = this.weightPicker,
-                activityLevel = this.selectedActivityLevel.value
+                activityLevel = this.selectedActivityLevel.value,
+                goal = _onboardingUiState.value.selectedGoal.value
             )
             viewModelScope.launch {
                 saveUserToDbUsecase.saveUserToFirestoreDb(newUpdatedUser)
@@ -173,7 +178,6 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun saveGoalToFirestore() {
-        _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
         val enumGoal = _onboardingUiState.value.selectedGoal
         val timeToReachGoal =
             (_onboardingUiState.value.desiredWeightDifferencePicker / _onboardingUiState.value.selectedWeeklyGoalWeight).toInt()
@@ -185,15 +189,21 @@ class OnboardingViewModel @Inject constructor(
             gender = _onboardingUiState.value.genderSelectionId == 0,
             weightDifference = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else _onboardingUiState.value.desiredWeightDifferencePicker,
             timeToReachGoal = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else timeToReachGoal,
-            weeklyGoalWeight = _onboardingUiState.value.selectedWeeklyGoalWeight
+            weeklyGoalWeight = _onboardingUiState.value.selectedWeeklyGoalWeight,
+            activityLevel = _onboardingUiState.value.selectedActivityLevel
         )
+
+        Log.d(OnboardingFragment.onboardingTag, "Goal is: $goal")
 
         viewModelScope.launch {
             _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
                     setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
-                        timeToReachGoal, goal.goalId
+                        timeToReachGoal,
+                        goal.goalId,
+                        _onboardingUiState.value.selectedWeeklyGoalWeight,
+                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
                     )
                     LatestGoalSingletonObject.updateInStance(goal)
                 }
@@ -268,24 +278,28 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun updateWarningMessage() {
-        val height = _onboardingUiState.value.heightPicker.toFloat() / 100
-        val weight = _onboardingUiState.value.weightPicker.toFloat()
+        _onboardingUiState.value.apply {
+            if (this.selectedGoal != EnumGoal.MAINTAINWEIGHT) return@apply
 
-        val limitWeight = if (_onboardingUiState.value.selectedGoal == EnumGoal.GAINWEIGHT) {
-            getWeightWithBMIAndHeight(24.9f, height)
-        } else getWeightWithBMIAndHeight(18.6f, height)
+            val height = this.heightPicker.toFloat() / 100
+            val weight = this.weightPicker.toFloat()
 
-        val newWeight = if (_onboardingUiState.value.selectedGoal == EnumGoal.GAINWEIGHT) {
-            weight + _onboardingUiState.value.desiredWeightDifferencePicker
-        } else weight - _onboardingUiState.value.desiredWeightDifferencePicker
+            val limitWeight = if (this.selectedGoal == EnumGoal.GAINWEIGHT) {
+                getWeightWithBMIAndHeight(24.9f, height)
+            } else getWeightWithBMIAndHeight(18.6f, height)
 
-        val warningMsg = if (newWeight > limitWeight) {
-            "Based on your input information, your new weight will be $newWeight kg, and you will be overweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
-        } else if (newWeight < limitWeight) {
-            "Based on your input information, your new weight will be $newWeight kg, and you will be underweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
-        } else null
+            val newWeight = if (this.selectedGoal == EnumGoal.GAINWEIGHT) {
+                weight + this.desiredWeightDifferencePicker
+            } else weight - this.desiredWeightDifferencePicker
 
-        _onboardingUiState.update { it.copy(warningMessage = warningMsg) }
+            val warningMsg = if (newWeight > limitWeight) {
+                "Based on your input information, your new weight will be $newWeight kg, and you will be overweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
+            } else if (newWeight < limitWeight) {
+                "Based on your input information, your new weight will be $newWeight kg, and you will be underweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
+            } else null
+
+            _onboardingUiState.update { it.copy(warningMessage = warningMsg) }
+        }
     }
 
     fun dismissWarningDialog() {

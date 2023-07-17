@@ -1,13 +1,16 @@
 package com.vn.wecare.feature.food
 
 import com.vn.wecare.core.WecareUserSingletonObject
-import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
-import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
-import com.vn.wecare.utils.WecareUserConstantValues.IMPROVE_MOOD
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
+import com.vn.wecare.utils.WecareUserConstantValues.GAIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.MAINTAIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
+import com.vn.wecare.utils.WecareUserConstantValues.ONE_KG_TO_CALORIES
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,21 +32,31 @@ object WecareCaloriesObject {
     fun getInstanceFlow() = instance.asStateFlow()
 
     fun updateUserCaloriesAmount() {
-        WecareUserSingletonObject.getInstance().let { user ->
-            val basicCalories = getBasicCaloriesAmount(
-                user.weight ?: MIN_WEIGHT,
-                user.height ?: MIN_HEIGHT,
-                user.gender ?: true,
-                user.age ?: MIN_AGE
-            )
-            val caloriesOut = getCaloriesOutAmount(basicCalories, user.goal ?: IMPROVE_MOOD)
-            val caloriesIn = getCaloriesIn(caloriesOut, user.goal ?: IMPROVE_MOOD)
-            updateCaloriesOutAmountOfDay(caloriesOut)
-            updateCaloriesInAmountOfDay(caloriesIn)
-        }
+        val user = WecareUserSingletonObject.getInstance()
+        val bmr = getBMR(
+            user.weight ?: MIN_WEIGHT,
+            user.height ?: MIN_HEIGHT,
+            user.gender ?: true,
+            user.age ?: MIN_AGE
+        )
+        val tdee = getTotalDailyEnergyExpenditure(
+            bmr, ActivityLevel.getActivityLevelFromValue(user.activityLevel)
+        )
+
+        val weeklyGoalWeight = LatestGoalSingletonObject.getInStance().weeklyGoalWeight
+        val caloriesIn = getDailyCaloriesIn(tdee, user.goal ?: MAINTAIN_WEIGHT, weeklyGoalWeight)
+        val caloriesOut = getDailyCaloriesOutBasedOnActivity(
+            tdee,
+            user.goal ?: MAINTAIN_WEIGHT,
+            ActivityLevel.getActivityLevelFromValue(user.activityLevel),
+            weeklyGoalWeight
+        )
+
+        updateCaloriesInAmountOfDay(caloriesIn)
+        updateCaloriesOutAmountOfDay(caloriesOut)
     }
 
-    fun getBasicCaloriesAmount(
+    fun getBMR(
         weight: Int, height: Int, gender: Boolean, age: Int
     ): Int {
         return if (gender) {
@@ -53,37 +66,29 @@ object WecareCaloriesObject {
         }
     }
 
-    fun getCaloriesOutAmount(
-        basicCalories: Int, goal: String
+    fun getTotalDailyEnergyExpenditure(
+        bmr: Int, activityLevel: ActivityLevel,
     ): Int {
-        return when (goal) {
-            GAIN_MUSCLE -> {
-                (basicCalories * 1.725).toInt()
-            }
+        return (bmr * activityLevel.caloriesIndex).toInt()
+    }
 
-            LOSE_WEIGHT, GET_HEALTHIER -> {
-                (basicCalories * 1.55).toInt()
-            }
-
-            else -> {
-                (basicCalories * 1.375).toInt()
-            }
+    fun getDailyCaloriesIn(tdee: Int, goal: String, weeklyGoalWeight: Float): Int {
+        return if (goal == GAIN_WEIGHT) {
+            tdee + getDailyExcessCaloriesBasedOnWeeklyGoalWeight(weeklyGoalWeight)
+        } else {
+            tdee
         }
     }
 
-    fun getCaloriesIn(caloriesOut: Int, goal: String): Int {
-        return when (goal) {
-            GAIN_MUSCLE -> {
-                caloriesOut + 1100
-            }
-
-            LOSE_WEIGHT -> {
-                caloriesOut - 1100
-            }
-
-            else -> {
-                caloriesOut
-            }
+    fun getDailyCaloriesOutBasedOnActivity(
+        tdee: Int, goal: String, activityLevel: ActivityLevel, weeklyGoalWeight: Float
+    ): Int {
+        val bmr = tdee / activityLevel.caloriesIndex
+        val physicalActivityAmount = (tdee - bmr).toInt()
+        return if (goal == LOSE_WEIGHT) {
+            physicalActivityAmount + getDailyExcessCaloriesBasedOnWeeklyGoalWeight(weeklyGoalWeight)
+        } else {
+            physicalActivityAmount
         }
     }
 
@@ -100,16 +105,19 @@ object WecareCaloriesObject {
     }
 
 
-
     private fun updateCaloriesOutAmountOfDay(caloriesOut: Int) {
         instance.update { it.copy(caloriesOutEachDay = caloriesOut) }
     }
 
-    private fun getCaloriesForBreakfast(caloriesIn: Int) = caloriesIn.times(0.2).toInt()
+    private fun getCaloriesForBreakfast(caloriesIn: Int) = caloriesIn.times(0.3).toInt()
 
     private fun getCaloriesForLunch(caloriesIn: Int) = caloriesIn.times(0.35).toInt()
 
-    private fun getCaloriesForDinner(caloriesIn: Int) = caloriesIn.times(0.35).toInt()
+    private fun getCaloriesForDinner(caloriesIn: Int) = caloriesIn.times(0.25).toInt()
 
     private fun getCaloriesForSnack(caloriesIn: Int) = caloriesIn.times(0.1).toInt()
+
+    private fun getDailyExcessCaloriesBasedOnWeeklyGoalWeight(weeklyGoalWeight: Float): Int {
+        return ((weeklyGoalWeight * ONE_KG_TO_CALORIES) / NUMBER_OF_DAYS_IN_WEEK).toInt()
+    }
 }

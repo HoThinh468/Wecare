@@ -94,14 +94,17 @@ fun NutritionDashboardScreen(
                 currentFat = nutritionDashboardViewmodel.totalFat,
                 currentCarbs = nutritionDashboardViewmodel.totalCarbs
             )
-            Spacer(modifier = modifier.height(normalPadding))
+            Spacer(modifier = modifier.height(midPadding))
+            JustForYouSection(modifier = modifier) {
+                moveToAddYourOwnMealsListScreen()
+            }
+            Spacer(modifier = modifier.height(midPadding))
             AddMealsSection(
                 modifier = modifier,
                 moveToBreakfastScreen = moveToBreakfastScreen,
                 moveToLunchScreen = moveToLunchScreen,
                 moveToSnackScreen = moveToSnackScreen,
                 moveToDinnerScreen = moveToDinnerScreen,
-                moveToAddYourOwnMealsScreen = moveToAddYourOwnMealsListScreen,
                 moveToAddMealScreen = moveToAddMealScreen,
                 uiState = uiState.value
             )

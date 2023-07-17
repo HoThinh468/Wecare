@@ -7,10 +7,27 @@ data class GoalWeeklyRecord(
     val startDate: Long = 0,
     val endDate: Long = 0,
     val caloriesIn: Int = 0,
-    val caloriesOut: Int = 0
+    val caloriesOut: Int = 0,
+    val proteinAmount: Int = 0,
+    val fatAmount: Int = 0,
+    val carbsAmount: Int = 0,
+    val weeklyGoalWeight: Float = 0f,
+    val weeklyCaloriesGoal: Int = 0,
+    val status: String = GoalStatus.NOTSTARTED.value,
+    val numberOfDayRecord: Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readLong(), parcel.readLong(), parcel.readInt(), parcel.readInt()
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readFloat(),
+        parcel.readInt(),
+        parcel.readString() ?: "",
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -18,6 +35,13 @@ data class GoalWeeklyRecord(
         parcel.writeLong(endDate)
         parcel.writeInt(caloriesIn)
         parcel.writeInt(caloriesOut)
+        parcel.writeInt(proteinAmount)
+        parcel.writeInt(fatAmount)
+        parcel.writeInt(carbsAmount)
+        parcel.writeFloat(weeklyGoalWeight)
+        parcel.writeInt(weeklyCaloriesGoal)
+        parcel.writeString(status)
+        parcel.writeInt(numberOfDayRecord)
     }
 
     override fun describeContents(): Int {
@@ -32,6 +56,8 @@ data class GoalWeeklyRecord(
         override fun newArray(size: Int): Array<GoalWeeklyRecord?> {
             return arrayOfNulls(size)
         }
-    }
 
+        const val numberOfDayRecordField = "numberOfDayRecord"
+        const val statusField = "status"
+    }
 }

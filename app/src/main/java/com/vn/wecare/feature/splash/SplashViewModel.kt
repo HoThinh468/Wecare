@@ -98,6 +98,11 @@ class SplashViewModel @Inject constructor(
             if (it is Response.Success) {
                 CurrentGoalWeeklyRecordSingletonObject.updateInstance(it.data)
                 updateCurrentGoalDailyRecord(goalId, it.data)
+                if (it.data.status == GoalStatus.NOTSTARTED.value) {
+                    updateGoalStatusUsecase.updateGoalStatusForWeeklyGoal(
+                        GoalWeeklyRecord.statusField, GoalStatus.INPROGRESS
+                    )
+                }
                 Log.d(SplashFragment.splashFlowTag, "Latest weekly record is ${it.data}")
             } else CurrentGoalWeeklyRecordSingletonObject.updateInstance(
                 GoalWeeklyRecord()

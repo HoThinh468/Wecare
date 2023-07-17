@@ -36,7 +36,7 @@ import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.EditInfoViewModel
 import com.vn.wecare.feature.onboarding.composable.DesiredWeightPickerBottomSheet
-import com.vn.wecare.feature.onboarding.composable.dialog.OnboardingRecommendationDialog
+import com.vn.wecare.feature.onboarding.composable.dialog.OnboardingBMIRecommendationDialog
 import com.vn.wecare.feature.onboarding.composable.dialog.OnboardingWarningDialog
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -132,19 +132,16 @@ fun EditInfoScreen(
         )
     }
 
-    if (dialogUiState.shouldShowRecommendationDialog) {
-        OnboardingRecommendationDialog(modifier = modifier,
-            onDismissDialog = { viewModel.dismissRecommendationDialog() },
-            title = dialogUiState.recommendationDialogTitle,
-            message = dialogUiState.recommendationDialogMessage,
-            onWishToProcessClick = { viewModel.saveNewUserInfoAndNewGoal() })
-    }
+//    if (dialogUiState.shouldShowRecommendationDialog) {
+//        OnboardingBMIRecommendationDialog(modifier = modifier,
+//            onDismissDialog = { viewModel.dismissRecommendationDialog() },
+//            title = dialogUiState.recommendationDialogTitle,
+//            message = dialogUiState.recommendationDialogMessage,
+//            onWishToProcessClick = { viewModel.saveNewUserInfoAndNewGoal() })
+//    }
 
     ModalBottomSheetLayout(sheetContent = {
         DesiredWeightPickerBottomSheet(
-            closeBottomSheet = {
-                coroutineScope.launch { sheetState.hide() }
-            },
             onDesiredWeightDifferencePickScrolled = viewModel::onPickDesiredWeightDifferenceScroll,
             desiredWeightDifference = editGoalUiState.desiredWeightDifferencePicker,
         )

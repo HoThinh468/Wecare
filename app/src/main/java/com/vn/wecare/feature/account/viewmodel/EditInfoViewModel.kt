@@ -29,6 +29,7 @@ import com.vn.wecare.utils.WecareUserConstantValues.MAX_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_AGE
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_HEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MIN_WEIGHT
+import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
 import com.vn.wecare.utils.isValidUsername
 import com.vn.wecare.utils.toIntSafely
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -200,13 +201,17 @@ class EditInfoViewModel @Inject constructor(
                 gender = getGenderFromId(_editGeneralInfoUiState.value.currentChosenGender),
                 weightDifference = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else _editGoalInfoUiState.value.desiredWeightDifferencePicker,
                 timeToReachGoal = if (enumGoal == EnumGoal.MAINTAINWEIGHT) null else timeToReachGoal,
-                weeklyGoalWeight = _editGoalInfoUiState.value.weeklyGoalWeight
+                weeklyGoalWeight = _editGoalInfoUiState.value.weeklyGoalWeight,
+                activityLevel = _editGoalInfoUiState.value.currentChosenActivityLevel
             )
             WecareUserSingletonObject.updateInstance(newUser)
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
                     setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
-                        goal.timeToReachGoalInWeek, goal.goalId
+                        goal.timeToReachGoalInWeek,
+                        goal.goalId,
+                        goal.weeklyGoalWeight,
+                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
                     )
                     bmiUsecase.addBMIHistory(
                         newUser.age ?: MIN_AGE,

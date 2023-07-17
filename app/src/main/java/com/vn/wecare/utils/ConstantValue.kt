@@ -46,10 +46,11 @@ object WecareUserConstantValues {
     const val DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE = 600
     const val DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT = 700
     const val DEFAULT_TIME_FOR_EACH_GOAL_IN_WEEK = 4
+    const val ONE_KG_TO_CALORIES = 7700f
 
     /* BMI constants */
-    val BMI_UNDERWEIGHT_RANGE = 0.0..18.5
-    val BMI_NORMAL_RANGE = 18.6..24.9
+    val BMI_UNDERWEIGHT_RANGE = 0.0..18.4
+    val BMI_NORMAL_RANGE = 18.5..24.9
     val BMI_OVERWEIGHT_RANGE = 25.0..29.9
     val BMI_FAT_RANGE = 30.0..35.0
     val BMI_OBESITY_RANGE = 35.1..60.0

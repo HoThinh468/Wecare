@@ -17,7 +17,7 @@ import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
 import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
 
-const val ONBOARDING_PAGE_COUNT = 7
+const val ONBOARDING_PAGE_COUNT = 9
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -56,9 +56,6 @@ fun OnboardingScreen(
 
     ModalBottomSheetLayout(sheetContent = {
         DesiredWeightPickerBottomSheet(
-            closeBottomSheet = {
-                coroutineScope.launch { sheetState.hide() }
-            },
             onDesiredWeightDifferencePickScrolled = {
                 viewModel.onPickDesiredWeightDifferenceScroll(it)
             },

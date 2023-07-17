@@ -22,9 +22,9 @@ import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.Yellow
-import com.vn.wecare.ui.theme.mediumElevation
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
@@ -33,8 +33,8 @@ fun FoodNutrientsReport(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = mediumElevation,
-        shape = Shapes.large,
+        elevation = smallElevation,
+        shape = Shapes.small,
     ) {
         Column(
             modifier = modifier.padding(midPadding),
