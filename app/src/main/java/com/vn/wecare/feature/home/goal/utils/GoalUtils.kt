@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
-import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
-import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
+import com.vn.wecare.utils.WecareUserConstantValues.GAIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.NUMBER_OF_DAYS_IN_WEEK
 import java.text.SimpleDateFormat
@@ -27,14 +26,17 @@ private fun getListOfFirstDayOfWeeksFromCurrentTime(
 }
 
 fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
-    currentTime: Long, numberOfWeek: Int
+    currentTime: Long, numberOfWeek: Int, weeklyGoalWeight: Float, weeklyGoalCalories: Int
 ): List<GoalWeeklyRecord> {
     val firstDays = getListOfFirstDayOfWeeksFromCurrentTime(currentTime, numberOfWeek)
     val result = arrayListOf<GoalWeeklyRecord>()
     repeat(firstDays.size) {
         val day = firstDays[it]
         val record = GoalWeeklyRecord(
-            startDate = day, endDate = day.plus(6 * DAY_TO_MILLISECONDS)
+            startDate = day,
+            endDate = day.plus(6 * DAY_TO_MILLISECONDS),
+            weeklyGoalWeight = weeklyGoalWeight,
+            weeklyCaloriesGoal = weeklyGoalCalories
         )
         result.add(record)
     }
@@ -43,10 +45,9 @@ fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
 
 fun getGoalEnumWithName(name: String): EnumGoal {
     return when (name) {
-        GAIN_MUSCLE -> EnumGoal.GAINMUSCLE
+        GAIN_WEIGHT -> EnumGoal.GAINWEIGHT
         LOSE_WEIGHT -> EnumGoal.LOSEWEIGHT
-        GET_HEALTHIER -> EnumGoal.GETHEALTHIER
-        else -> EnumGoal.IMPROVEMOOD
+        else -> EnumGoal.MAINTAINWEIGHT
     }
 }
 

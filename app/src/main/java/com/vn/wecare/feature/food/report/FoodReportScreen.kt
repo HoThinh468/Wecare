@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.vn.wecare.core.checkInternetConnection
 import com.vn.wecare.feature.home.water.report.NoNetWorkConnectionUI
 import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.ui.theme.normalPadding
+import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
 import com.vn.wecare.utils.common_composable.WecareAppBar
 
@@ -40,11 +42,12 @@ fun FoodReportScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(midPadding)
+                .padding(horizontal = normalPadding)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (checkInternetConnection(LocalContext.current)) {
+                Spacer(modifier = modifier.height(smallPadding))
                 FoodBarChartReport(
                     modifier = modifier, onNavigateUp = { navigateBack() }, viewModel = viewModel
                 )

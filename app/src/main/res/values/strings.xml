@@ -126,4 +126,17 @@
     <string name="blank_text_id"> </string>
     <string name="message_floating_button">message floating button</string>
 
+    <!-- BMI recommendation -->
+    <string name="bmi_definition">Body mass index (BMI) is a measure of body fat based on height and weight. BMI is a useful tool for assessing weight status in adults, but it is not without its limitations. It is important to note that BMI is just one measure of health</string>
+    <string name="underweight_description">Based on your input data, you seem to be underweight. Being underweight can be a health risk. People with a BMI below 18.5 are considered underweight. This means that they have a lower than normal amount of body fat. </string>
+    <string name="normal_description">Congratulation! Based on your input data, we believe that you have a normal amount of body fat. Keep going ^^</string>
+    <string name="overweight_description">Based on your input data, you seem to be overweight. Being overweight can be a health risk. People with a BMI higher than 25 are considered overweight and if it is higher than 30, they are considered Obese. </string>
+
+    <string name="underweight_health_problems">There are a number of health problems that can be associated with being underweight, including: malnutrition, osteoporosis, immunity, delayed wound healing, heart problems… </string>
+    <string name="normal_bmi_benefits">There are many benefits to having a normal BMI. Here are some of them: reduced risk of chronic diseases, improved physical as well as mental health, increased lifespan…</string>
+    <string name="overweight_health_problems">Overweight and obesity are major risk factors for many chronic diseases, including: heart disease, high blood pressure, high cholesterol, sleep apnea, cancer, mental health problems… </string>
+
+    <string name="tips_for_underweight">Here are some tips for gaining weight in a healthy way:\n- Eat regular meals and snacks throughout the day.\n- Choose nutrient-rich foods, such as fruits, vegetables, whole grains, and lean protein.\n- Avoid sugary drinks and processed foods.\n- Talk to your doctor about taking a multivitamin.</string>
+    <string name="tips_for_normal">Here are some tips for maintaining a normal BMI:\n- Eat a healthy diet: This means eating plenty of fruits, vegetables, and whole grains. It also means limiting processed foods, sugary drinks, and unhealthy fats.\n- Exercise regularly: Aim for at least 30 minutes of moderate-intensity exercise most days of the week.\n- Get enough sleep: Most adults need 7,8 hours of sleep per night.\n</string>
+    <string name="tips_for_overweight">Here are some specific tips for eating a healthy diet and exercising regularly:\n- Eat plenty of fruits, vegetables, and whole grains. These foods are low in calories and high in nutrients, which can help you feel full and satisfied.\n- Limit processed foods, sugary drinks, and unhealthy fats. These foods are high in calories and low in nutrients, which can contribute to weight gain.\n- Exercise regularly. Aim for at least 30 minutes of moderate intensity exercise most days of the week.\n- Find activities you enjoy. If you do not enjoy exercising, you are less likely to stick with it. Find activities that you enjoy and that challenge you.\n- Make it a lifestyle change. Do not think of weight loss as a temporary diet. Make healthy changes to your lifestyle that you can stick with for the long term.</string>
 </resources>

@@ -14,9 +14,6 @@ import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalStatusUsecase
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
 import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE
-import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT
 import com.vn.wecare.utils.getProgressInFloatWithIntInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

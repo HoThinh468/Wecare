@@ -120,8 +120,8 @@ class GoalsRepository @Inject constructor(
         }
     }
 
-    fun updateCaloriesAmountForGoalWeeklyRecord(
-        field: String, value: Int
+    fun updateInfoForGoalWeeklyRecord(
+        field: String, value: Any
     ): Flow<Response<Boolean>> = flow {
         try {
             val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)

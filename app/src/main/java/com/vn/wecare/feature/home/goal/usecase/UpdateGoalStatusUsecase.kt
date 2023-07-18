@@ -43,4 +43,7 @@ class UpdateGoalStatusUsecase @Inject constructor(
 
         return repo.updateGoalStatus(goal.goalId, newStatus.value)
     }
+
+    fun updateGoalStatusForWeeklyGoal(field: String, status: GoalStatus) =
+        repo.updateInfoForGoalWeeklyRecord(field, status.value)
 }

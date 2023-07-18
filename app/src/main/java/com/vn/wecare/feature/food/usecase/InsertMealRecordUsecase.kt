@@ -10,6 +10,7 @@ import com.vn.wecare.feature.food.data.model.toRecordModel
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase
 import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
 import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
+import com.vn.wecare.utils.getNutrientIndexFromString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,9 @@ class InsertMealRecordUsecase @Inject constructor(
     private val currentDaySnackRecord = mutableListOf<MealRecordModel>()
     private val currentDayDinnerRecord = mutableListOf<MealRecordModel>()
 
-    init { dashboardUseCase.getCaloPerDay() }
+    init {
+        dashboardUseCase.getCaloPerDay()
+    }
 
     fun getMealsOfAllTypeList() {
         val calendar = Calendar.getInstance()
@@ -83,8 +86,18 @@ class InsertMealRecordUsecase @Inject constructor(
                 updateMealListByType(mealTypeKey, meal.toRecordModel())
             }
             updateGoalRecordUsecase.apply {
-                updateCaloriesInForCurrentDayRecord(meal.calories)
-                updateCaloriesInForCurrentWeekRecord(meal.calories)
+                updateCaloriesInForCurrentDayRecord(
+                    meal.calories,
+                    meal.protein.getNutrientIndexFromString(),
+                    meal.fat.getNutrientIndexFromString(),
+                    meal.carbs.getNutrientIndexFromString()
+                )
+                updateCaloriesInForCurrentWeekRecord(
+                    meal.calories,
+                    meal.protein.getNutrientIndexFromString(),
+                    meal.fat.getNutrientIndexFromString(),
+                    meal.carbs.getNutrientIndexFromString()
+                )
             }
             dashboardUseCase.updateCaloPerDay(
                 CaloPerDay(

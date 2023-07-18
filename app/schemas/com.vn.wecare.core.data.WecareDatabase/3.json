@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "b0d9d470bcd1d1b116efedb3a95d97ae",
+    "identityHash": "b9a4f06a1b7c48fe101bdabd7b95999b",
     "entities": [
       {
         "tableName": "steps_per_day",
@@ -94,7 +94,7 @@
       },
       {
         "tableName": "wecare_user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `userName` TEXT NOT NULL, `email` TEXT NOT NULL, `emailVerified` INTEGER NOT NULL, `gender` INTEGER, `age` INTEGER, `height` INTEGER, `weight` INTEGER, `goal` TEXT, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `userName` TEXT NOT NULL, `email` TEXT NOT NULL, `emailVerified` INTEGER NOT NULL, `gender` INTEGER, `age` INTEGER, `height` INTEGER, `weight` INTEGER, `goal` TEXT, `activityLevel` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`userId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -149,6 +149,13 @@
             "columnName": "goal",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "activityLevel",
+            "columnName": "activityLevel",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -277,7 +284,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b0d9d470bcd1d1b116efedb3a95d97ae')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9a4f06a1b7c48fe101bdabd7b95999b')"
     ]
   }
 }
