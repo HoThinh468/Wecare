@@ -78,18 +78,20 @@ class OnboardingViewModel @Inject constructor(
                 updateShouldShowWarningDialog()
                 if (_onboardingDialogUiState.value.shouldShowWarningDialog) return
                 if (_onboardingUiState.value.selectedGoal == EnumGoal.MAINTAINWEIGHT) {
-//                    saveUserInfoToDb()
-//                    saveGoalToFirestore()
+                    saveUserInfoToDb()
+                    saveGoalToFirestore()
+//                    currentIndex.value++
                 } else {
                     updateRecommendedWeeklyGoal()
                     currentIndex.value++
                 }
             }
 
-            7 -> {
+            8 -> {
                 if (_onboardingUiState.value.warningMessage == null) {
-//                    saveUserInfoToDb()
-//                    saveGoalToFirestore()
+                    saveUserInfoToDb()
+                    saveGoalToFirestore()
+                    currentIndex.value++
                 }
             }
 
@@ -288,15 +290,21 @@ class OnboardingViewModel @Inject constructor(
                 getWeightWithBMIAndHeight(24.9f, height)
             } else getWeightWithBMIAndHeight(18.6f, height)
 
+            Log.d(OnboardingFragment.onboardingTag, "Limit weight $limitWeight")
+
             val newWeight = if (this.selectedGoal == EnumGoal.GAINWEIGHT) {
                 weight + this.desiredWeightDifferencePicker
             } else weight - this.desiredWeightDifferencePicker
+
+            Log.d(OnboardingFragment.onboardingTag, "New weight $newWeight")
 
             val warningMsg = if (newWeight > limitWeight) {
                 "Based on your input information, your new weight will be $newWeight kg, and you will be overweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
             } else if (newWeight < limitWeight) {
                 "Based on your input information, your new weight will be $newWeight kg, and you will be underweight. The max weight you should pick is ${(newWeight - limitWeight).toInt()} kg"
             } else null
+
+            Log.d(OnboardingFragment.onboardingTag, "msg $warningMsg")
 
             _onboardingUiState.update { it.copy(warningMessage = warningMsg) }
         }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 
@@ -33,6 +34,7 @@ fun OnboardingWeeklyGoalPicker(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = modifier.height(mediumPadding))
         Text(
             text = "What is your weekly goal?",
             style = MaterialTheme.typography.body1,

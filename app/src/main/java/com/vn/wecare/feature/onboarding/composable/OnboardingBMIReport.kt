@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
@@ -35,7 +37,7 @@ fun OnboardingBMIReport(
 ) {
 
     val openDetailDialog = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     if (openDetailDialog.value) {
@@ -85,5 +87,11 @@ fun OnboardingBMIReport(
             style = MaterialTheme.typography.h3.copy(MaterialTheme.colors.primary),
             textAlign = TextAlign.Center
         )
+        TextButton(onClick = { openDetailDialog.value = true }) {
+            Text(
+                text = "MORE",
+                style = MaterialTheme.typography.button.copy(MaterialTheme.colors.secondary)
+            )
+        }
     }
 }
