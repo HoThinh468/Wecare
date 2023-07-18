@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardUiState
 import com.vn.wecare.ui.theme.Shapes
+import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
@@ -39,14 +40,11 @@ fun AddMealsSection(
     moveToLunchScreen: () -> Unit,
     moveToSnackScreen: () -> Unit,
     moveToDinnerScreen: () -> Unit,
-    moveToAddYourOwnMealsScreen: () -> Unit,
     moveToAddMealScreen: (index: Int) -> Unit,
     uiState: NutritionDashboardUiState
 ) {
-    AddYourOwnMealSection(modifier = modifier) {
-        moveToAddYourOwnMealsScreen()
-    }
-    Spacer(modifier = modifier.height(normalPadding))
+    Text(text = "Daily diary", style = MaterialTheme.typography.h4)
+    Spacer(modifier = modifier.height(halfMidPadding))
     AddYourMealItem(modifier = modifier,
         mealName = "Breakfast",
         currentCal = uiState.breakfastCurrentCalories,

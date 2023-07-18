@@ -97,7 +97,7 @@ fun OnboardingBottomNav(
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.onPrimary)
                 ) {
                     Text(
-                        text = if (index == 4) "Finish" else "Continue",
+                        text = if (index == ONBOARDING_PAGE_COUNT - 1) "Finish" else "Continue",
                         style = MaterialTheme.typography.button,
                         color = MaterialTheme.colors.onSurface
                     )

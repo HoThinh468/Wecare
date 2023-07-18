@@ -8,6 +8,9 @@ import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.data.model.toRecordModel
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase
+import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
+import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
+import com.vn.wecare.utils.getNutrientIndexFromString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -20,12 +23,17 @@ class InsertMealRecordUsecase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
     private val repository: MealsRepository,
-    private val updateGoalRecordUsecase: UpdateGoalRecordUsecase
+    private val updateGoalRecordUsecase: UpdateGoalRecordUsecase,
+    private val dashboardUseCase: DashboardUseCase
 ) {
     private val currentDayBreakfastRecord = mutableListOf<MealRecordModel>()
     private val currentDayLunchRecord = mutableListOf<MealRecordModel>()
     private val currentDaySnackRecord = mutableListOf<MealRecordModel>()
     private val currentDayDinnerRecord = mutableListOf<MealRecordModel>()
+
+    init {
+        dashboardUseCase.getCaloPerDay()
+    }
 
     fun getMealsOfAllTypeList() {
         val calendar = Calendar.getInstance()
@@ -77,10 +85,25 @@ class InsertMealRecordUsecase @Inject constructor(
             if (res is Response.Success) {
                 updateMealListByType(mealTypeKey, meal.toRecordModel())
             }
-        }
-        updateGoalRecordUsecase.apply {
-            updateCaloriesInForCurrentDayRecord(meal.calories)
-            updateCaloriesInForCurrentWeekRecord(meal.calories)
+            updateGoalRecordUsecase.apply {
+                updateCaloriesInForCurrentDayRecord(
+                    meal.calories,
+                    meal.protein.getNutrientIndexFromString(),
+                    meal.fat.getNutrientIndexFromString(),
+                    meal.carbs.getNutrientIndexFromString()
+                )
+                updateCaloriesInForCurrentWeekRecord(
+                    meal.calories,
+                    meal.protein.getNutrientIndexFromString(),
+                    meal.fat.getNutrientIndexFromString(),
+                    meal.carbs.getNutrientIndexFromString()
+                )
+            }
+            dashboardUseCase.updateCaloPerDay(
+                CaloPerDay(
+                    caloInt = meal.calories
+                )
+            )
         }
     }
 

@@ -29,17 +29,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.mealdetail.NutrientIndexItem
-import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
-import com.vn.wecare.ui.theme.Yellow
 import com.vn.wecare.ui.theme.halfMidPadding
-import com.vn.wecare.ui.theme.mediumElevation
 import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.utils.common_composable.BarChartItem
 import com.vn.wecare.utils.common_composable.LoadingDialog
-import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
 @Composable
 fun FoodBarChartReport(
@@ -76,8 +72,8 @@ fun FoodBarChartReport(
         modifier = modifier
             .fillMaxWidth()
             .height(400.dp),
-        elevation = mediumElevation,
-        shape = Shapes.large,
+        elevation = smallElevation,
+        shape = Shapes.small,
     ) {
         Column(
             modifier = modifier.padding(midPadding),

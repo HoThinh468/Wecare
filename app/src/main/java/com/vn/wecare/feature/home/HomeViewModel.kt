@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.home
 
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,13 +21,13 @@ import com.vn.wecare.feature.home.water.tracker.usecase.WaterRecordUsecase
 import com.vn.wecare.utils.getDayId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.math.pow
-import kotlinx.coroutines.flow.StateFlow
 
 data class HomeUiState(
     val stepCount: Int = 0,

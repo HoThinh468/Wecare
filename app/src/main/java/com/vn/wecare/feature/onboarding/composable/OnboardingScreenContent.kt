@@ -19,8 +19,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.feature.home.bmi.util.getBMIWithHeightAndWeight
 import com.vn.wecare.feature.onboarding.ONBOARDING_PAGE_COUNT
-import com.vn.wecare.feature.onboarding.composable.dialog.OnboardingRecommendationDialog
 import com.vn.wecare.feature.onboarding.composable.dialog.OnboardingWarningDialog
 import com.vn.wecare.feature.onboarding.viewmodel.OnboardingViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,14 +46,6 @@ fun OnboardingScreenContent(
             title = dialogUiState.warningDialogTitle,
             message = dialogUiState.warningDialogMessage
         )
-    }
-
-    if (dialogUiState.shouldShowRecommendationDialog) {
-        OnboardingRecommendationDialog(modifier = modifier,
-            onDismissDialog = { viewModel.dismissRecommendationDialog() },
-            title = dialogUiState.recommendationDialogTitle,
-            message = dialogUiState.recommendationDialogMessage,
-            onWishToProcessClick = { viewModel.onWishToProcessAfterChoosingGoalClick() })
     }
 
     Column(
@@ -125,27 +117,60 @@ fun OnboardingScreenContent(
                     }
                 }
 
-                else -> {
-                    BaseOnboardingContent(
+                4 -> {
+                    OnboardingActivityLevelPicker(modifier = modifier,
+                        chosenLevel = uiState.selectedActivityLevel,
+                        onActivityLevelClick = { activityLevel ->
+                            viewModel.onActivityLevelPicked(activityLevel)
+                        })
+                }
+
+                5 -> {
+                    OnboardingBMIReport(
                         modifier = modifier,
-                        titleRes = R.string.goal_selection_title,
-                        subtitleRes = R.string.goal_selection_subtitle
-                    ) {
-                        OnboardingGoalSelection(
-                            modifier = modifier,
-                            onGoalSelect = viewModel::onGoalSelect,
-                            goalSelectedId = uiState.selectedGoal,
-                            openDesiredWeightPickerBottomSheet = {
-                                coroutineScope.launch {
-                                    if (sheetState.isVisible) {
-                                        sheetState.hide()
-                                    } else {
-                                        sheetState.show()
-                                    }
-                                }
-                            },
-                        )
-                    }
+                        gender = uiState.genderSelectionId == 0,
+                        bmi = getBMIWithHeightAndWeight(
+                            uiState.heightPicker.toFloat() / 100, uiState.weightPicker.toFloat()
+                        ),
+                        recommendedGoal = uiState.recommendedGoal,
+                        bmiState = viewModel.bmiState.collectAsState().value
+                    )
+                }
+
+                6 -> {
+                    OnboardingGoalSelection(
+                        modifier = modifier,
+                        chosenGoal = uiState.selectedGoal,
+                        onGoalClick = viewModel::onGoalSelect,
+                        recommendedGoal = uiState.recommendedGoal
+                    )
+                }
+
+                7 -> {
+                    OnboardingWeightToLosePicker(
+                        modifier = modifier,
+                        chosenGoal = uiState.selectedGoal,
+                        desiredWeightDifference = uiState.desiredWeightDifferencePicker,
+                        openPickWeightBottomSheet = {
+                            coroutineScope.launch {
+                                sheetState.show()
+                            }
+                        },
+                        warningMessage = uiState.warningMessage,
+                        gender = uiState.genderSelectionId == 0,
+                        height = uiState.heightPicker,
+                    )
+                }
+
+                else -> {
+                    OnboardingWeeklyGoalPicker(
+                        modifier = modifier,
+                        activityLevel = uiState.selectedActivityLevel,
+                        chosenGoal = uiState.selectedGoal,
+                        onWeeklyGoalSelected = viewModel::onWeeklyGoalSelect,
+                        chosenWeeklyGoal = uiState.selectedWeeklyGoalWeight,
+                        recommendedWeeklyGoal = uiState.recommendedWeeklyGoal
+                    )
                 }
             }
         }

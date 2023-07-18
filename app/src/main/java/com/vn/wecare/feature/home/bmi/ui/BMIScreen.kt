@@ -163,12 +163,6 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.weight.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-//                IconButton(modifier = modifier.size(18.dp),
-//                    onClick = { openUpdateWeightDialog = true }) {
-//                    Icon(
-//                        imageVector = Icons.Default.Edit, contentDescription = null
-//                    )
-//                }
             }
             Text("Kilograms", style = MaterialTheme.typography.body2)
             Spacer(modifier = modifier.height(normalPadding))
@@ -177,12 +171,6 @@ private fun UserInformation(modifier: Modifier, uiState: BMIUiState, viewModel: 
                     uiState.height.toString(),
                     style = MaterialTheme.typography.h1.copy(fontSize = 40.sp)
                 )
-//                IconButton(modifier = modifier.size(18.dp),
-//                    onClick = { openUpdateHeightDialog = true }) {
-//                    Icon(
-//                        imageVector = Icons.Default.Edit, contentDescription = null
-//                    )
-//                }
             }
             Text("Centimeters", style = MaterialTheme.typography.body2)
             Spacer(modifier = modifier.height(normalPadding))
@@ -307,7 +295,7 @@ private fun BMIOverview(modifier: Modifier, bmi: Float, progress: Float) {
 }
 
 @Composable
-private fun BMIItemIndex(modifier: Modifier, color: Color, text: String) {
+fun BMIItemIndex(modifier: Modifier, color: Color, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier

@@ -17,11 +17,10 @@ import com.vn.wecare.utils.WecareUserConstantValues
 import com.vn.wecare.utils.isValidEmail
 import com.vn.wecare.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -149,9 +148,8 @@ class LoginViewModel @Inject constructor(
 
     private fun updateResponseIfSaveDataSuccess() = viewModelScope.launch {
         getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
-            .stateIn(viewModelScope)
-            .collect { res ->
-                Log.d(LogInFragment.logInTag, "User result at login screen: $res")
+            .stateIn(viewModelScope).collect { res ->
+                delay(2000)
                 if (res is Response.Success && res.data?.userId != null) {
                     _logInUiState.update {
                         it.copy(saveDataResponse = Response.Success(true))
