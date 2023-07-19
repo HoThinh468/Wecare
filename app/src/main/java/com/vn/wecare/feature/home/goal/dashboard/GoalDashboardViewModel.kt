@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.goal.dashboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.R
@@ -27,7 +28,7 @@ data class GoalDashboardAppbarUiState(
     val goalName: String = "",
     val startDate: String = "",
     val endDate: String = "",
-    val imgSrc: Int = R.drawable.img_illu_healthier,
+    val imgSrc: Int = R.drawable.img_illu_maintain_weight,
 )
 
 data class GoalDetailUiState(
@@ -35,16 +36,15 @@ data class GoalDetailUiState(
     val description: String = "",
     val dayLeft: Int = 0,
     val timeProgress: Float = 0f,
-    val totalCaloriesIn: Int = 0,
-    val totalCaloriesOut: Int = 0,
     val caloriesInGoal: Int = 0,
     val caloriesOutGoal: Int = 0,
-    val caloriesDifference: Int = 0,
-    val weightDifference: Float = 0f,
     val caloriesRecommend: Int = 0,
     val stepRecommend: Int = 0,
     val activeTimeRecommend: Int = 0,
     val status: String = "",
+    val weightToLose: Int = 0,
+    val timeToReachGoal: Int = 0,
+    val weeklyGoalWeight: Float = 0f
 )
 
 data class UpdateGoalStatusUiState(
@@ -98,6 +98,7 @@ class GoalDashboardViewModel @Inject constructor(
                 _updateGoalUi.update { it.copy(isCancelGoalEnabled = false) }
                 _detailUi.update { it.copy(status = GoalStatus.CANCELED.value) }
                 LatestGoalSingletonObject.updateInStance(_goal.value.copy(goalStatus = GoalStatus.CANCELED.value))
+                updateGoalStatusUsecase.updateWeeklyGoalStatusWhenGoalIsCanceled(_goal.value.goalId)
             }
         }
     }
@@ -120,7 +121,7 @@ class GoalDashboardViewModel @Inject constructor(
                     goalName = goal.goalName,
                     startDate = getDayFromLongWithFormat(goal.dateSetGoal),
                     endDate = getDayFromLongWithFormat(goal.dateEndGoal),
-                    imgSrc = getIllustrationImgSrcBasedOnGoal(goal.goalName)
+                    imgSrc = EnumGoal.getEnumGoalFromValue(goal.goalName).imgRes
                 )
             }
         }
@@ -128,9 +129,9 @@ class GoalDashboardViewModel @Inject constructor(
 
     private fun getIllustrationImgSrcBasedOnGoal(goal: String): Int {
         return when (goal) {
-            EnumGoal.GAINMUSCLE.value -> R.drawable.img_illu_muscle
+            EnumGoal.GAINMUSCLE.value -> R.drawable.img_illu_gain_weight
             EnumGoal.LOSEWEIGHT.value -> R.drawable.img_illu_loose_weight
-            EnumGoal.GETHEALTHIER.value -> R.drawable.img_illu_healthier
+            EnumGoal.GETHEALTHIER.value -> R.drawable.img_illu_maintain_weight
             else -> R.drawable.img_illu_improve_mood
         }
     }
@@ -151,6 +152,9 @@ class GoalDashboardViewModel @Inject constructor(
                     stepRecommend = goal.stepsGoal,
                     activeTimeRecommend = goal.moveTimeGoal,
                     status = goal.goalStatus,
+                    weightToLose = goal.weightDifference,
+                    timeToReachGoal = goal.timeToReachGoalInWeek,
+                    weeklyGoalWeight = goal.weeklyGoalWeight
                 )
             }
             _updateGoalUi.update {
@@ -161,7 +165,7 @@ class GoalDashboardViewModel @Inject constructor(
 
     private fun getGoalDescription(name: String, weightDiffer: Int, time: Int): String {
         return when (name) {
-            EnumGoal.GAINMUSCLE.value -> "You want to gain $weightDiffer kg in $time week(s)"
+            EnumGoal.GAINWEIGHT.value -> "You want to gain $weightDiffer kg in $time week(s)"
             EnumGoal.LOSEWEIGHT.value -> "You want to loose $weightDiffer kg in $time week(s)"
             else -> "$name in $time week(s)"
         }
@@ -177,36 +181,19 @@ class GoalDashboardViewModel @Inject constructor(
         return getProgressInFloatWithIntInput(dayPassed, totalDay)
     }
 
-    private fun updateCaloriesInfo(res: List<GoalWeeklyRecord>) {
-        var totalCaloriesIn = 0
-        var totalCaloriesOut = 0
-        for (i in res) {
-            totalCaloriesIn += i.caloriesIn
-            totalCaloriesOut += i.caloriesOut
-        }
-        val caloriesDifference = abs(totalCaloriesIn - totalCaloriesOut)
-        val weightDifference = (caloriesDifference.toFloat() / 7700f)
-        _detailUi.update {
-            it.copy(
-                totalCaloriesIn = totalCaloriesIn,
-                totalCaloriesOut = totalCaloriesOut,
-                caloriesDifference = caloriesDifference,
-                weightDifference = weightDifference
-            )
-        }
-    }
-
     private fun initRecordUi() = viewModelScope.launch {
         _recordUi.update { it.copy(getRecordsResponse = Response.Loading) }
-        getGoalWeeklyRecordUsecase.getAllRecord(LatestGoalSingletonObject.getInStance().goalId)
+        getGoalWeeklyRecordUsecase.getAll(LatestGoalSingletonObject.getInStance().goalId)
             .collect { res ->
+                Log.d(
+                    GoalDashboardFragment.goalDashboardTag, "Get all weekly records response $res"
+                )
                 if (res is Response.Success) {
                     _recordUi.update {
                         it.copy(
                             records = res.data, getRecordsResponse = Response.Success(true)
                         )
                     }
-                    updateCaloriesInfo(res.data)
                 } else {
                     _recordUi.update { it.copy(getRecordsResponse = Response.Error(Exception("Fail to get records data"))) }
                 }

@@ -1,7 +1,6 @@
 package com.vn.wecare.feature.account.view.goalhistory
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +25,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.account.viewmodel.GoalDetailUiState
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
+import com.vn.wecare.feature.home.goal.dashboard.goaldetail.GoalDetailSection
 import com.vn.wecare.feature.home.goal.dashboard.goalrecords.GoalRecordsSection
 import com.vn.wecare.feature.home.goal.data.model.Goal
+import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -49,34 +47,13 @@ fun GoalDetailModalBottomSheet(
     closeBottomSheet: () -> Unit,
     resetGoal: (goal: Goal) -> Unit,
     uiState: GoalDetailUiState,
-    resetGetRecordResponse: () -> Unit
+    recordList: List<GoalWeeklyRecord>,
+    isResetEnabled: Boolean
 ) {
 
     val tabRowItems = listOf("Detail", "Records")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
-
-    uiState.getRecordsResponse.let {
-        when (it) {
-            is Response.Loading -> {
-                LoadingDialog(loading = it == Response.Loading) {}
-            }
-
-            is Response.Success -> {
-                Toast.makeText(LocalContext.current, "Load data successfully!", Toast.LENGTH_SHORT)
-                    .show()
-                resetGetRecordResponse()
-            }
-
-            is Response.Error -> {
-                Toast.makeText(LocalContext.current, it.e?.message, Toast.LENGTH_SHORT).show()
-                resetGetRecordResponse()
-            }
-
-            else -> { /* do nothing */
-            }
-        }
-    }
 
     val openAttentionDialog = remember { mutableStateOf(false) }
 
@@ -134,7 +111,7 @@ fun GoalDetailModalBottomSheet(
                     .weight(1f)
                     .padding(start = smallPadding)
                     .height(40.dp),
-                enabled = uiState.isResetGoalEnable,
+                enabled = isResetEnabled,
                 onClick = {
                     openAttentionDialog.value = true
                 },
@@ -152,9 +129,11 @@ fun GoalDetailModalBottomSheet(
             userScrollEnabled = false
         ) {
             if (it == 0) {
-                GoalDetailInfo(modifier = modifier, goal = goal, uiState = uiState)
+                GoalDetailSection(
+                    modifier = modifier, detailUi = uiState
+                )
             } else {
-                GoalRecordsSection(modifier = modifier, records = uiState.records, onItemClick = {})
+                GoalRecordsSection(modifier = modifier, records = recordList, onItemClick = {})
             }
         }
     }

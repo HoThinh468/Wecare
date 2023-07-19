@@ -2,18 +2,19 @@ package com.vn.wecare.feature.home.goal.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.DrawableRes
+import com.vn.wecare.R
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_TIME_TO_REACH_GOAL_IN_WEEK
 import com.vn.wecare.utils.WecareUserConstantValues.DEFAULT_WEIGHT_DIFFERENCE_IN_KG
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_MUSCLE
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.GET_HEALTHIER
-import com.vn.wecare.utils.WecareUserConstantValues.IMPROVE_MOOD
 import com.vn.wecare.utils.WecareUserConstantValues.LOSE_WEIGHT
 import com.vn.wecare.utils.WecareUserConstantValues.MAINTAIN_WEIGHT
 
 data class Goal(
     val goalId: String = "",
-    val goalName: String = EnumGoal.IMPROVEMOOD.value,
+    val goalName: String = EnumGoal.MAINTAINWEIGHT.value,
     val caloriesInEachDayGoal: Int = 0,
     val caloriesBurnedEachDayGoal: Int = 0,
     val caloriesBurnedGoalForStepCount: Int = 0,
@@ -74,11 +75,18 @@ data class Goal(
 
 }
 
-enum class EnumGoal(val value: String) {
-    GAINMUSCLE(GAIN_MUSCLE), LOSEWEIGHT(LOSE_WEIGHT), GETHEALTHIER(GET_HEALTHIER), IMPROVEMOOD(
-        IMPROVE_MOOD
+enum class EnumGoal(val value: String, @DrawableRes val imgRes: Int) {
+    GAINMUSCLE(GAIN_MUSCLE, R.drawable.img_illu_gain_weight), LOSEWEIGHT(
+        LOSE_WEIGHT, R.drawable.img_illu_loose_weight
     ),
-    NULL("NULL"), GAINWEIGHT(GAIN_WEIGHT), MAINTAINWEIGHT(MAINTAIN_WEIGHT);
+    GETHEALTHIER(GET_HEALTHIER, R.drawable.img_illu_gain_weight), NULL(
+        "NULL",
+        R.drawable.img_illu_gain_weight
+    ),
+    GAINWEIGHT(
+        GAIN_WEIGHT, R.drawable.img_illu_gain_weight
+    ),
+    MAINTAINWEIGHT(MAINTAIN_WEIGHT, R.drawable.img_illu_maintain_weight);
 
     companion object {
         fun getEnumGoalFromValue(value: String): EnumGoal {

@@ -148,7 +148,7 @@ private fun getMaleImgSrc(height: Int): MaleModelInfo? {
 private fun getFemaleImgSrc(height: Int): FemaleModelInfo? {
     return when (height) {
         in 150..160 -> FemaleModelInfo.ARIANAGRANDE
-        in 161..170 -> FemaleModelInfo.EMMAWATSON
+        in 161..170 -> FemaleModelInfo.SCARLETJOHANSSON
         in 171..180 -> FemaleModelInfo.TAYLORSWIFT
         else -> null
     }

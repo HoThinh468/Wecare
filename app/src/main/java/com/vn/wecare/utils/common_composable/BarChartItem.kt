@@ -5,7 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,9 +35,7 @@ import com.vn.wecare.ui.theme.smallPadding
 @Preview
 fun test() {
     BarChartItem(
-        progress = 0.5f,
-        index = 1,
-        itemTitle = "Mon"
+        progress = 0.5f, index = 1, itemTitle = "Mon"
     )
 }
 
@@ -47,8 +49,15 @@ fun BarChartItem(
     index: Int = 0,
     itemTitle: String? = null,
     titleColor: Color = MaterialTheme.colors.onBackground,
+    indexColor: Color = MaterialTheme.colors.onBackground,
+    secondBarIndexColor: Color = MaterialTheme.colors.onBackground,
     @DrawableRes bottomIconRes: Int = R.drawable.ic_done,
-    colorIcon: Color = MaterialTheme.colors.onPrimary
+    colorIcon: Color = MaterialTheme.colors.onPrimary,
+    isOneColumn: Boolean = true,
+    indexForSecondBar: Int = 0,
+    secondBarColor: Color = MaterialTheme.colors.primary,
+    secondBarProgress: Float = 0f,
+    secondBarColorCompleteColor: Color = MaterialTheme.colors.primary
 ) {
     Column(
         modifier = modifier.fillMaxHeight(),
@@ -65,27 +74,60 @@ fun BarChartItem(
                 if (index != 0) {
                     Text(
                         text = index.toString(),
-                        style = MaterialTheme.typography.caption.copy(color = titleColor),
+                        style = MaterialTheme.typography.caption.copy(color = indexColor),
                         textAlign = TextAlign.Center
                     )
                 }
-                Box(
-                    modifier = modifier
-                        .fillMaxHeight(progress)
-                        .width(width)
-                        .padding(vertical = smallPadding)
-                        .clip(RoundedCornerShape(mediumRadius))
-                        .background(if (progress >= 1f) completeBarColor else barColor)
+                if (indexForSecondBar != 0) {
+                    Text(
+                        text = indexForSecondBar.toString(),
+                        style = MaterialTheme.typography.caption.copy(color = secondBarIndexColor),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    if (progress >= 1f) {
-                        Icon(
+                    Box(
+                        modifier = modifier
+                            .fillMaxHeight(progress)
+                            .width(width)
+                            .padding(vertical = smallPadding)
+                            .clip(RoundedCornerShape(mediumRadius))
+                            .background(if (progress >= 1f) completeBarColor else barColor)
+                    ) {
+                        if (progress >= 1f) {
+                            Icon(
+                                modifier = modifier
+                                    .size(20.dp)
+                                    .align(Alignment.BottomCenter),
+                                painter = painterResource(id = bottomIconRes),
+                                contentDescription = null,
+                                tint = colorIcon
+                            )
+                        }
+                    }
+                    if (!isOneColumn) {
+                        Spacer(modifier = modifier.width(2.dp))
+                        Box(
                             modifier = modifier
-                                .size(20.dp)
-                                .align(Alignment.BottomCenter),
-                            painter = painterResource(id = bottomIconRes),
-                            contentDescription = null,
-                            tint = colorIcon
-                        )
+                                .fillMaxHeight(secondBarProgress)
+                                .width(width)
+                                .padding(vertical = smallPadding)
+                                .clip(RoundedCornerShape(mediumRadius))
+                                .background(if (secondBarProgress >= 1f) secondBarColorCompleteColor else secondBarColor)
+                        ) {
+                            if (secondBarProgress >= 1f) {
+                                Icon(
+                                    modifier = modifier
+                                        .size(20.dp)
+                                        .align(Alignment.BottomCenter),
+                                    painter = painterResource(id = bottomIconRes),
+                                    contentDescription = null,
+                                    tint = colorIcon
+                                )
+                            }
+                        }
                     }
                 }
             }

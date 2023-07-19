@@ -43,7 +43,11 @@ fun GoalDashboardAppBar(
     coroutineScope: CoroutineScope,
     dashboardUI: GoalDashboardAppbarUiState
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.background)
+    ) {
         WecareAppBar(
             modifier = modifier,
             onLeadingIconPress = navigateBack,

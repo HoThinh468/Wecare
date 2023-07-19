@@ -84,26 +84,26 @@ class InsertMealRecordUsecase @Inject constructor(
             emit(res ?: Response.Error(null))
             if (res is Response.Success) {
                 updateMealListByType(mealTypeKey, meal.toRecordModel())
+                updateGoalRecordUsecase.apply {
+                    updateCaloriesInForCurrentDayRecord(
+                        meal.calories,
+                        meal.protein.getNutrientIndexFromString(),
+                        meal.fat.getNutrientIndexFromString(),
+                        meal.carbs.getNutrientIndexFromString()
+                    )
+                    updateCaloriesInForCurrentWeekRecord(
+                        meal.calories,
+                        meal.protein.getNutrientIndexFromString(),
+                        meal.fat.getNutrientIndexFromString(),
+                        meal.carbs.getNutrientIndexFromString()
+                    )
+                }
+                dashboardUseCase.updateCaloPerDay(
+                    CaloPerDay(
+                        caloInt = meal.calories
+                    )
+                )
             }
-            updateGoalRecordUsecase.apply {
-                updateCaloriesInForCurrentDayRecord(
-                    meal.calories,
-                    meal.protein.getNutrientIndexFromString(),
-                    meal.fat.getNutrientIndexFromString(),
-                    meal.carbs.getNutrientIndexFromString()
-                )
-                updateCaloriesInForCurrentWeekRecord(
-                    meal.calories,
-                    meal.protein.getNutrientIndexFromString(),
-                    meal.fat.getNutrientIndexFromString(),
-                    meal.carbs.getNutrientIndexFromString()
-                )
-            }
-            dashboardUseCase.updateCaloPerDay(
-                CaloPerDay(
-                    caloInt = meal.calories
-                )
-            )
         }
     }
 

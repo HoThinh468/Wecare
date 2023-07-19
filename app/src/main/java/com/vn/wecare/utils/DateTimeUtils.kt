@@ -1,8 +1,11 @@
 package com.vn.wecare.utils
 
+import com.google.type.DateTime
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
 
 fun getFirstDayOfWeekWithGivenDate(date: LocalDate): LocalDate {
     var firstDayOfWeek = date
@@ -83,4 +86,19 @@ fun getListOfDayWithStartAndEndDay(startDay: LocalDate, endDay: LocalDate): List
         days.add(startDay.plusDays(i))
     }
     return days
+}
+
+fun getDayOfWeekInStringWithLong(input: Long): String {
+    val dateTime = Date(input)
+    val cal = Calendar.getInstance()
+    cal.time = dateTime
+    return when (cal.get(Calendar.DAY_OF_WEEK)) {
+        1 -> "Sun"
+        2 -> "Mon"
+        3 -> "Tue"
+        4 -> "Wed"
+        5 -> "Thu"
+        6 -> "Fri"
+        else -> "Sat"
+    }
 }

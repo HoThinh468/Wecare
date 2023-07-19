@@ -14,7 +14,7 @@ import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.usecase.DefineGoalBasedOnInputsUsecase
 import com.vn.wecare.feature.home.goal.usecase.SaveGoalsToFirebaseUsecase
-import com.vn.wecare.feature.home.goal.usecase.SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
+import com.vn.wecare.feature.home.goal.usecase.SetupGoalRecordsWhenCreateNewGoalUsecase
 import com.vn.wecare.feature.onboarding.OnboardingFragment
 import com.vn.wecare.feature.onboarding.model.BMIState
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_FAT_RANGE
@@ -60,7 +60,7 @@ data class OnboardingDialogUiState(
 class OnboardingViewModel @Inject constructor(
     private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
     private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase,
-    private val setupGoalWeeklyRecordsWhenCreateNewGoalUsecase: SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase,
+    private val setupGoalRecordsWhenCreateNewGoalUsecase: SetupGoalRecordsWhenCreateNewGoalUsecase,
     private val saveUserToDbUsecase: SaveUserToDbUsecase
 ) : ViewModel() {
 
@@ -201,11 +201,12 @@ class OnboardingViewModel @Inject constructor(
             _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
-                    setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
+                    setupGoalRecordsWhenCreateNewGoalUsecase.setup(
                         timeToReachGoal,
                         goal.goalId,
                         _onboardingUiState.value.selectedWeeklyGoalWeight,
-                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
+                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
+                        goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
                     )
                     LatestGoalSingletonObject.updateInStance(goal)
                 }

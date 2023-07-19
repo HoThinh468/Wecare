@@ -13,6 +13,7 @@ data class GoalWeeklyRecord(
     val carbsAmount: Int = 0,
     val weeklyGoalWeight: Float = 0f,
     val weeklyCaloriesGoal: Int = 0,
+    val weeklyCaloriesOutGoal: Int = 0,
     val status: String = GoalStatus.NOTSTARTED.value,
     val numberOfDayRecord: Int = 0
 ) : Parcelable {
@@ -26,9 +27,11 @@ data class GoalWeeklyRecord(
         parcel.readInt(),
         parcel.readFloat(),
         parcel.readInt(),
+        parcel.readInt(),
         parcel.readString() ?: "",
         parcel.readInt()
-    )
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(startDate)
@@ -40,6 +43,7 @@ data class GoalWeeklyRecord(
         parcel.writeInt(carbsAmount)
         parcel.writeFloat(weeklyGoalWeight)
         parcel.writeInt(weeklyCaloriesGoal)
+        parcel.writeInt(weeklyCaloriesOutGoal)
         parcel.writeString(status)
         parcel.writeInt(numberOfDayRecord)
     }

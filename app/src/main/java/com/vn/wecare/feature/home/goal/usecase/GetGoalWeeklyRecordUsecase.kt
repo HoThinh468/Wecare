@@ -13,5 +13,5 @@ class GetGoalWeeklyRecordUsecase @Inject constructor(
         return goalsRepository.getCurrentWeeklyRecord(goalId)
     }
 
-    fun getAllRecord(goalId: String) = goalsRepository.getAllWeeklyRecordsOfAGoal(goalId)
+    fun getAll(goalId: String) = goalsRepository.getAllWeeklyRecordsOfAGoal(goalId)
 }

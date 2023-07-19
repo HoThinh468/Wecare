@@ -2,6 +2,7 @@ package com.vn.wecare.feature.home.goal.utils
 
 import android.annotation.SuppressLint
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.utils.WecareUserConstantValues.DAY_TO_MILLISECONDS
 import com.vn.wecare.utils.WecareUserConstantValues.GAIN_WEIGHT
@@ -26,7 +27,11 @@ private fun getListOfFirstDayOfWeeksFromCurrentTime(
 }
 
 fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
-    currentTime: Long, numberOfWeek: Int, weeklyGoalWeight: Float, weeklyGoalCalories: Int
+    currentTime: Long,
+    numberOfWeek: Int,
+    weeklyGoalWeight: Float,
+    weeklyGoalCalories: Int,
+    weeklyGoalCaloriesOut: Int
 ): List<GoalWeeklyRecord> {
     val firstDays = getListOfFirstDayOfWeeksFromCurrentTime(currentTime, numberOfWeek)
     val result = arrayListOf<GoalWeeklyRecord>()
@@ -36,7 +41,9 @@ fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
             startDate = day,
             endDate = day.plus(6 * DAY_TO_MILLISECONDS),
             weeklyGoalWeight = weeklyGoalWeight,
-            weeklyCaloriesGoal = weeklyGoalCalories
+            weeklyCaloriesGoal = weeklyGoalCalories,
+            weeklyCaloriesOutGoal = weeklyGoalCaloriesOut,
+            status = if (it == 0) GoalStatus.INPROGRESS.value else GoalStatus.NOTSTARTED.value
         )
         result.add(record)
     }
