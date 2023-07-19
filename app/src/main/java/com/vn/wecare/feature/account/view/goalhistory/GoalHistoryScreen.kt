@@ -1,7 +1,6 @@
 package com.vn.wecare.feature.account.view.goalhistory
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,27 +31,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
-import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.GoalHistoryViewModel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
-import com.vn.wecare.ui.theme.Blue
-import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
-import com.vn.wecare.ui.theme.YellowStar
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
-import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.launch
 
@@ -67,32 +59,14 @@ fun GoalHistoryScreen(
 ) {
 
     val goals = viewModel.goals.collectAsState().value
-    val filterUi = viewModel.filterUi.collectAsState().value
+    val recordList = viewModel.goalWeeklyRecord.collectAsState().value
+    val isResetEnabled = viewModel.isResetEnabled.collectAsState().value
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
     )
-    val uiState = viewModel.detailUiState.collectAsState().value
+    val uiState = viewModel.detailUi.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
-
-    filterUi.getDataResponse.let {
-        when (it) {
-            is Response.Loading -> {
-                LoadingDialog(loading = it == Response.Loading) {}
-            }
-
-            is Response.Success -> {
-                Toast.makeText(LocalContext.current, "Load data successfully!", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            is Response.Error -> {
-                Toast.makeText(LocalContext.current, it.e?.message, Toast.LENGTH_SHORT).show()
-            }
-
-            else -> { /* do nothing */
-            }
-        }
-    }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -106,7 +80,8 @@ fun GoalHistoryScreen(
                     }
                 },
                 uiState = uiState,
-                resetGetRecordResponse = viewModel::resetGetRecordResponse
+                recordList = recordList,
+                isResetEnabled = isResetEnabled
             )
         },
         sheetState = sheetState,
@@ -166,7 +141,7 @@ fun GoalHistoryItem(modifier: Modifier, goal: Goal, onItemClick: (goal: Goal) ->
                 Box(
                     modifier = modifier
                         .clip(Shapes.medium)
-                        .background(getColorBasedOnStatus(status = goal.goalStatus))
+                        .background(GoalStatus.getGoalStatusFromValue(goal.goalStatus).color)
                 ) {
                     Text(
                         modifier = modifier.padding(vertical = 6.dp, horizontal = smallPadding),
@@ -217,28 +192,9 @@ fun GoalHistoryItem(modifier: Modifier, goal: Goal, onItemClick: (goal: Goal) ->
             }
             Image(
                 modifier = modifier.size(120.dp), painter = painterResource(
-                    id = getImgResBasedOnGoal(goal.goalName)
+                    id = EnumGoal.getEnumGoalFromValue(goal.goalName).imgRes
                 ), contentDescription = null
             )
         }
-    }
-}
-
-private fun getImgResBasedOnGoal(name: String): Int {
-    return when (name) {
-        EnumGoal.GETHEALTHIER.value -> R.drawable.img_illu_healthier
-        EnumGoal.LOSEWEIGHT.value -> R.drawable.img_illu_loose_weight
-        EnumGoal.GAINMUSCLE.value -> R.drawable.img_illu_muscle
-        else -> R.drawable.img_illu_improve_mood
-    }
-}
-
-@Composable
-fun getColorBasedOnStatus(status: String): Color {
-    return when (status) {
-        GoalStatus.INPROGRESS.value -> Blue
-        GoalStatus.SUCCESS.value -> YellowStar
-        GoalStatus.CANCELED.value -> Red400
-        else -> MaterialTheme.colors.primary
     }
 }

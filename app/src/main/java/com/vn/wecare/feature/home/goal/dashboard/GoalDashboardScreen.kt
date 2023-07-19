@@ -39,6 +39,8 @@ import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.goal.dashboard.goaldetail.GoalDetailSection
 import com.vn.wecare.feature.home.goal.dashboard.goalrecords.GoalRecordsSection
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
+import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
@@ -55,7 +57,7 @@ fun GoalDashboardScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     viewModel: GoalDashboardViewModel,
-    navigateWeeklyRecordScreen: (record: GoalWeeklyRecord) -> Unit
+    navigateWeeklyRecordScreen: (record: GoalWeeklyRecord) -> Unit,
 ) {
 
     val tabRowItems = listOf("Detail", "Records")
@@ -119,7 +121,7 @@ fun GoalDashboardScreen(
     }
 
     Scaffold(modifier = modifier.fillMaxSize(),
-        backgroundColor = MaterialTheme.colors.background,
+        backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
             GoalDashboardAppBar(
                 modifier = modifier,

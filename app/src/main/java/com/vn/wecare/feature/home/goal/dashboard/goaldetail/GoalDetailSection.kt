@@ -34,11 +34,9 @@ fun GoalDetailSection(
             .padding(bottom = xxxExtraPadding)
             .verticalScroll(rememberScrollState())
     ) {
-        GoalDescription(modifier = modifier, detailUi = detailUi)
+        GoalOverview(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(normalPadding))
-        GoalCaloriesOverview(modifier = modifier, detailUi = detailUi)
-        Spacer(modifier = modifier.height(normalPadding))
-        GoalRecommendation(modifier = modifier, detailUi = detailUi)
+        GoalMetric(modifier = modifier, detailUi = detailUi)
         Spacer(modifier = modifier.height(mediumPadding))
     }
 }
@@ -55,6 +53,6 @@ fun GoalDetailHeadlineItem(
             tint = iconColor
         )
         Spacer(modifier = modifier.width(smallPadding))
-        Text(text = headline, style = MaterialTheme.typography.body1)
+        Text(text = headline, style = MaterialTheme.typography.h5)
     }
 }

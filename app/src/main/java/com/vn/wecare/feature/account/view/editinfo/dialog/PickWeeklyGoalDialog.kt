@@ -42,7 +42,7 @@ fun PickWeeklyGoalDialog(
                 Spacer(modifier = modifier.height(normalPadding))
                 OnboardingItemPicker(
                     modifier = modifier,
-                    onClick = { onWeeklyGoalSelected(0.5f) },
+                    onClick = { onWeeklyGoalSelected(0.25f) },
                     title = if (chosenGoal == EnumGoal.GAINWEIGHT) "Gain 0.25 kg per week" else "Lose 0.25 kg per week",
                     borderColor = if (chosenWeeklyGoal == 0.25f) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
                 )

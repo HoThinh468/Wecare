@@ -9,6 +9,7 @@ import com.vn.wecare.feature.authentication.service.AccountService
 import com.vn.wecare.feature.home.goal.dashboard.GoalDashboardFragment
 import com.vn.wecare.feature.home.goal.data.model.Goal
 import com.vn.wecare.feature.home.goal.data.model.GoalDailyRecord
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.utils.generateGoalWeeklyRecordIdWithGoal
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
@@ -65,10 +66,26 @@ class GoalsRepository @Inject constructor(
         }
     }
 
-    fun getGoals(): Flow<Response<List<Goal>>> = flow {
+//    fun getGoals(): Flow<Response<List<Goal>>> = flow {
+//        try {
+//            val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
+//                .orderBy("dateSetGoal", Query.Direction.DESCENDING).get().await()
+//            if (!res.isEmpty) {
+//                val listOfGoal = res.documents.map { it.toObject(Goal::class.java) ?: Goal() }
+//                listOfGoal.toMutableList().removeIf { it == Goal() }
+//                emit(Response.Success(listOfGoal))
+//            } else {
+//                emit(Response.Success(emptyList()))
+//            }
+//        } catch (e: Exception) {
+//            Log.d(StepCountFragment.stepCountTag, "Error cannot get goals!")
+//        }
+//    }
+
+    fun getDoneGoals(): Flow<Response<List<Goal>>> = flow {
         try {
             val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
-                .orderBy("dateSetGoal", Query.Direction.DESCENDING).get().await()
+                .whereNotEqualTo("goalStatus", GoalStatus.INPROGRESS.value).get().await()
             if (!res.isEmpty) {
                 val listOfGoal = res.documents.map { it.toObject(Goal::class.java) ?: Goal() }
                 listOfGoal.toMutableList().removeIf { it == Goal() }
@@ -120,7 +137,45 @@ class GoalsRepository @Inject constructor(
         }
     }
 
+    fun getOldWeeklyRecord(goalId: String): Flow<Response<List<GoalWeeklyRecord>>> = flow {
+        try {
+            val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
+                .document(goalId).collection(WECARE_GOALS_WEEKLY_RECORDS_COLLECTION_PATH)
+                .whereLessThan("endDate", System.currentTimeMillis()).get().await()
+            if (!res.isEmpty) {
+                val listOfWeeklyGoal = res.documents.map {
+                    it.toObject(GoalWeeklyRecord::class.java) ?: GoalWeeklyRecord()
+                }
+                listOfWeeklyGoal.toMutableList().removeIf { it == GoalWeeklyRecord() }
+                emit(Response.Success(listOfWeeklyGoal))
+            } else {
+                emit(Response.Error(java.lang.Exception("Fail to get old weekly records")))
+            }
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
+
     fun updateInfoForGoalWeeklyRecord(
+        field: String, value: Any, record: GoalWeeklyRecord
+    ): Flow<Response<Boolean>> = flow {
+        try {
+            val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
+                .document(LatestGoalSingletonObject.getInStance().goalId)
+                .collection(WECARE_GOALS_WEEKLY_RECORDS_COLLECTION_PATH).document(
+                    generateGoalWeeklyRecordIdWithGoal(record)
+                ).update(field, value).addOnSuccessListener {
+                    Log.d("Goal track", "Update weekly record $field to $value successfully!")
+                }.addOnFailureListener {
+                    Log.d("Goal track", "Update weekly record record fail due to ${it.message}!")
+                }.isSuccessful
+            emit(Response.Success(res))
+        } catch (e: Exception) {
+            emit(Response.Error(e))
+        }
+    }
+
+    fun updateInfoForCurrentGoalWeeklyRecord(
         field: String, value: Any
     ): Flow<Response<Boolean>> = flow {
         try {
