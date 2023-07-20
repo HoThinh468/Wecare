@@ -4,7 +4,7 @@ class StepsUtil {
     companion object {
 
         fun getStrideByUserHeight(height: Int): Float {
-            return (height.toFloat() / 100 * 0.414f)
+            return (height.toFloat() / 100f * 0.414f)
         }
 
         fun getDistanceBySteps(steps: Int, stride: Float): Float {

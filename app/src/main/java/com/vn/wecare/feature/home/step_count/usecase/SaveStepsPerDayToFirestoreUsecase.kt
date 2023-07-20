@@ -15,15 +15,15 @@ class SaveStepsPerDayToFirestoreUsecase @Inject constructor(
     private val accountService: AccountService
 ) {
     suspend fun saveStepsPerDayToFirestore(steps: Float) {
-        val stepsPerDay = StepsPerDay(
-            getCurrentDayId(),
-            accountService.currentUserId,
-            steps.toInt(),
-            steps.getCaloriesBurnedFromStepCount(),
-            steps.getMoveTimeFromStepCount()
-        )
-        coroutineScope {
-            launch { stepsPerDayRepository.insertStepsPerDayToFirestore(stepsPerDay) }
-        }
+//        val stepsPerDay = StepsPerDay(
+//            getCurrentDayId(),
+//            accountService.currentUserId,
+//            steps.toInt(),
+//            steps.getCaloriesBurnedFromStepCount(),
+//            steps.getMoveTimeFromStepCount()
+//        )
+//        coroutineScope {
+//            launch { stepsPerDayRepository.insertStepsPerDayToFirestore(stepsPerDay) }
+//        }
     }
 }

@@ -19,6 +19,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+const val oneWeekInMillis = 604800000L
+const val oneDayInMillis = 86400000L
+
 @HiltViewModel
 class ExerciseHistoryViewModel @Inject constructor(
     private val usecases: Usecases,
@@ -30,7 +33,6 @@ class ExerciseHistoryViewModel @Inject constructor(
         dashboardUseCase.getCaloPerDay()
     }
 
-    private val oneWeekInMillis = 604800000L
 
     private var _historyViewTime = MutableStateFlow(System.currentTimeMillis())
     val historyViewTime: StateFlow<Long>
@@ -44,6 +46,10 @@ class ExerciseHistoryViewModel @Inject constructor(
     private val _listHistoryDisplay = MutableStateFlow<List<HistoryItem>?>(null)
     val listHistoryDisplay: StateFlow<List<HistoryItem>?>
         get() = _listHistoryDisplay
+
+    private val _listChartDisplay = MutableStateFlow<List<Float>>(listOf(0f))
+    val listChartDisplay: StateFlow<List<Float>>
+        get() = _listChartDisplay
 
     private val _isNextBtnEnable = MutableStateFlow<Boolean>(false)
     val isNextBtnEnable: StateFlow<Boolean>
@@ -82,17 +88,28 @@ class ExerciseHistoryViewModel @Inject constructor(
     private fun filterListHistory() {
         val list = _listHistory.value ?: return
         val listDisplay = mutableListOf<HistoryItem>()
+        val listChart = mutableListOf(0f, 0f, 0f, 0f, 0f, 0f, 0f)
         for (i in list) {
             if (i.time >= getFirstWeekdayTimestamp(_historyViewTime.value)
                 && i.time < getFirstWeekdayTimestamp(_historyViewTime.value) + oneWeekInMillis
-            )
+            ) {
                 listDisplay.add(i)
+                for (j in 0..6) {
+                    if (i.time >= getFirstWeekdayTimestamp(_historyViewTime.value) + j * oneDayInMillis
+                        && i.time < getFirstWeekdayTimestamp(_historyViewTime.value) + (j + 1) * oneDayInMillis
+                    ) {
+                        listChart[j] = listChart[j] + i.kcal
+                    }
+                }
+            }
         }
+        _listChartDisplay.value = listChart
         _listHistoryDisplay.value = listDisplay
     }
 
     private fun checkIsNextBtnEnable() {
-        _isNextBtnEnable.value = _historyViewTime.value + oneWeekInMillis < getLastWeekdayTimestamp(System.currentTimeMillis())
+        _isNextBtnEnable.value =
+            _historyViewTime.value + oneWeekInMillis < getLastWeekdayTimestamp(System.currentTimeMillis())
     }
 
 }

@@ -18,7 +18,7 @@ class GetStepsPerDayUsecase(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) {
-    fun getStepsInPreviousDay() : Flow<Response<StepsPerDay>> = flow {
+    fun getStepsInPreviousDay(currentSteps: StepsPerDay) : Flow<Response<StepsPerDay>> = flow {
         emit(
             try {
                 val stepsPerDay = firestore
@@ -30,11 +30,42 @@ class GetStepsPerDayUsecase(
                     .await()
                     .toObject(StepsPerDay::class.java)
 
+                if(stepsPerDay == null) {
+                    firestore
+                        .collection("stepCount")
+                        .document("stepsPerDay")
+                        .collection(firebaseAuth.currentUser?.uid.toString())
+                        .document(System.currentTimeMillis().minus(86400000L).toDD_MM_yyyy())
+                        .set(currentSteps)
+                        .await()
+                }
+
                 Log.e("getStepsInPreviousDay:", " Success $stepsPerDay")
 
                 Response.Success(stepsPerDay ?: StepsPerDay())
             } catch (e:Exception) {
                 Log.e("getStepsInPreviousDay:", " Fail ${e.message}")
+                Response.Error(e)
+            }
+        )
+    }
+
+    fun getListStepsHistory() : Flow<Response<List<StepsPerDay>>> = flow {
+        emit(
+            try {
+                val listSteps = firestore
+                    .collection("stepCount")
+                    .document("stepsPerDay")
+                    .collection(firebaseAuth.currentUser?.uid.toString())
+                    .get()
+                    .await()
+                    .toObjects(StepsPerDay::class.java)
+
+                Log.e("getListStepsHistory:", " Success $listSteps")
+
+                Response.Success(listSteps)
+            } catch (e:Exception) {
+                Log.e("getListStepsHistory:", " Fail ${e.message}")
                 Response.Error(e)
             }
         )

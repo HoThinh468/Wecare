@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     @SuppressLint("CommitPrefEdits")
     override fun onSensorChanged(p0: SensorEvent?) {
         if (p0 == null) return
+
         stepCountViewModel.updateCurrentSteps(p0.values[0])
         homeViewModel.updateCurrentSteps(p0.values[0])
         val sharePref = getSharedPreferences(STEP_COUNT_SHARED_PREF, Context.MODE_PRIVATE)
