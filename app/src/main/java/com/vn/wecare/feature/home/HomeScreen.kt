@@ -3,6 +3,7 @@ package com.vn.wecare.feature.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -54,15 +55,11 @@ fun HomeScreen(
 
     when (homeViewModel.updateStepsResponse) {
         is Response.Success -> {
-            Toast.makeText(
-                LocalContext.current, "Update steps successfully", Toast.LENGTH_SHORT
-            ).show()
+            Log.e("Update steps count: ", "Success")
         }
 
         is Response.Error -> {
-            Toast.makeText(
-                LocalContext.current, "Update steps failed", Toast.LENGTH_SHORT
-            ).show()
+            Log.e("Update steps count: ", "Failed")
         }
 
         else -> {}
@@ -91,7 +88,9 @@ fun HomeScreen(
 
                     println("caloInfo: $caloInfo")
                     DailyCalories(
-                        remainingCalo = goal.caloriesBurnedEachDayGoal - caloOut,
+                        remainingCalo = (goal.caloriesBurnedEachDayGoal - caloOut).let {
+                            if (it < 0) 0 else it
+                        },
                         caloriesIn = caloInfo.caloInt,
                         caloriesInProgress = (caloInfo.caloInt / goal.caloriesInEachDayGoal) + 0.01f,
                         caloriesOut = caloOut,

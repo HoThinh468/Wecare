@@ -63,7 +63,7 @@ class DashboardUseCase(
             val caloOutExercise = previousCalo?.caloOutExercise?.plus(newCalo.caloOutExercise)
                 ?: newCalo.caloOutExercise
             val caloOutWaking = if (newCalo.caloOutWaking == 0) {
-                previousCalo?.caloOutWaking ?: 0
+                previousCalo.caloOutWaking
             } else {
                 newCalo.caloOutWaking
             }

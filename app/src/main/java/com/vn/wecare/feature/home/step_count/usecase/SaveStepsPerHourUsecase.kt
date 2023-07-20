@@ -13,27 +13,27 @@ import javax.inject.Inject
 class SaveStepsPerHourUsecase @Inject constructor(
     private val stepsPerHoursRepository: StepsPerHoursRepository
 ) {
-    suspend fun insertStepsPerHourToLocalDb(steps: Float) {
-        val stepsPerHour = StepsPerHour(
-            getCurrentHourId(),
-            getCurrentDayId(),
-            steps.toInt(),
-            steps.getCaloriesBurnedFromStepCount(),
-            steps.getMoveTimeFromStepCount()
-        )
-        stepsPerHoursRepository.insert(stepsPerHour)
-        Log.d(StepCountFragment.stepCountTag, "Insert steps per hour to local db")
-    }
+//    suspend fun insertStepsPerHourToLocalDb(steps: Float) {
+//        val stepsPerHour = StepsPerHour(
+//            getCurrentHourId(),
+//            getCurrentDayId(),
+//            steps.toInt(),
+//            steps.getCaloriesBurnedFromStepCount(),
+//            steps.getMoveTimeFromStepCount()
+//        )
+//        stepsPerHoursRepository.insert(stepsPerHour)
+//        Log.d(StepCountFragment.stepCountTag, "Insert steps per hour to local db")
+//    }
 
-    suspend fun insertStepsPerHourToRemoteDb(steps: Float) {
-        val stepsPerHour = StepsPerHour(
-            getCurrentHourId(),
-            getCurrentDayId(),
-            steps.toInt(),
-            steps.getCaloriesBurnedFromStepCount(),
-            steps.getMoveTimeFromStepCount()
-        )
-        stepsPerHoursRepository.insertStepsPerHourToFirebase(stepsPerHour)
-        Log.d(StepCountFragment.stepCountTag, "Insert steps per hour to remote db")
-    }
+//    suspend fun insertStepsPerHourToRemoteDb(steps: Float) {
+//        val stepsPerHour = StepsPerHour(
+//            getCurrentHourId(),
+//            getCurrentDayId(),
+//            steps.toInt(),
+//            steps.getCaloriesBurnedFromStepCount(),
+//            steps.getMoveTimeFromStepCount()
+//        )
+//        stepsPerHoursRepository.insertStepsPerHourToFirebase(stepsPerHour)
+//        Log.d(StepCountFragment.stepCountTag, "Insert steps per hour to remote db")
+//    }
 }

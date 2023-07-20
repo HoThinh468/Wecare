@@ -79,12 +79,20 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
-        getStepsPerDayUsecase.getStepsInPreviousDay().collect { response ->
+        val info = WecareUserSingletonObject.getInstance()
+        getStepsPerDayUsecase.getStepsInPreviousDay(
+            StepsPerDay(
+                dayId = System.currentTimeMillis().minus(86400000L).toDD_MM_yyyy(),
+                steps = stepsFromSensor.toInt(),
+                calories = stepsFromSensor.toInt().getCaloriesBurnedFromStepCount(info.height ?: 1, info.weight ?: 1),
+                moveTime = stepsFromSensor.toInt().getMoveTimeFromStepCount(info.height ?: 1)
+            )
+        ).collect { response ->
             if (response is Response.Success) {
                 val stepsInPreviousDay = response.data
                 val steps = stepsFromSensor.toInt() - stepsInPreviousDay.steps
-                val caloriesBurned = steps.getCaloriesBurnedFromStepCount()
-                val moveTime = steps.getMoveTimeFromStepCount()
+                val caloriesBurned = steps.getCaloriesBurnedFromStepCount(info.height ?: 1, info.weight ?: 1)
+                val moveTime = steps.getMoveTimeFromStepCount(info.height ?: 1)
 
                 getStepsPerDayUsecase.updateStepsPerDay(
                     StepsPerDay(

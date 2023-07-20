@@ -12,14 +12,14 @@ class SaveStepsPerDayUsecase @Inject constructor(
     private val stepsPerDayRepository: StepsPerDayRepository,
     private val accountService: AccountService
 ) {
-    suspend fun saveStepsPerDayToDb(steps: Float) {
-        val stepsPerDay = StepsPerDay(
-            getCurrentDayId(),
-            accountService.currentUserId,
-            steps.toInt(),
-            steps.getCaloriesBurnedFromStepCount(),
-            steps.getMoveTimeFromStepCount()
-        )
-        stepsPerDayRepository.insertStepsPerDay(stepsPerDay)
-    }
+//    suspend fun saveStepsPerDayToDb(steps: Float) {
+//        val stepsPerDay = StepsPerDay(
+//            getCurrentDayId(),
+//            accountService.currentUserId,
+//            steps.toInt(),
+//            steps.getCaloriesBurnedFromStepCount(),
+//            steps.getMoveTimeFromStepCount()
+//        )
+//        stepsPerDayRepository.insertStepsPerDay(stepsPerDay)
+//    }
 }
