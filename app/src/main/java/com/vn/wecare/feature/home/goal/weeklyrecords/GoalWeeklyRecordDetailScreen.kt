@@ -77,7 +77,16 @@ fun GoalWeeklyRecordDetailScreen(
                 progress = uiState.progress,
                 goalStatus = GoalStatus.getGoalStatusFromValue(record.status),
                 dateSetGoal = record.startDate,
-                dateEndGoal = record.endDate
+                dateEndGoal = record.endDate,
+                weeklyGoalWeight = record.weeklyGoalWeight,
+                bmr = record.bmr
+            )
+            Spacer(modifier = modifier.height(normalPadding))
+            WeeklyGoalSummary(
+                modifier = modifier,
+                totalCaloriesIn = record.caloriesIn,
+                totalCaloriesOutWithBMR = uiState.totalCaloriesOutWithBmr,
+                goalName = record.goalName
             )
             Spacer(modifier = modifier.height(normalPadding))
             WeeklyGoalBarChartReportSection(

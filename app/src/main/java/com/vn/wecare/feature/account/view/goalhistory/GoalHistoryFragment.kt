@@ -36,6 +36,11 @@ class GoalHistoryFragment :
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.resetGetGoalsResponse()
+    }
+
     companion object {
         const val GoalHistoryTag = "Goal history flow"
     }

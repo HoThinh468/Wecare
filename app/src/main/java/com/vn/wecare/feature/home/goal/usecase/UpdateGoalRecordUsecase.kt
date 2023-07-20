@@ -1,5 +1,6 @@
 package com.vn.wecare.feature.home.goal.usecase
 
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.goal.data.CurrentGoalDailyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.CurrentGoalWeeklyRecordSingletonObject
 import com.vn.wecare.feature.home.goal.data.GoalsRepository
@@ -52,7 +53,6 @@ class UpdateGoalRecordUsecase @Inject constructor(
         val currentProtein = currentWeeklyRecord.proteinAmount + protein
         val currentFat = currentWeeklyRecord.fatAmount + fat
         val currentCarbs = currentWeeklyRecord.carbsAmount + carbs
-
         val newRecord = currentWeeklyRecord.copy(
             caloriesIn = currentWeeklyCaloriesIn,
             proteinAmount = currentProtein,
@@ -80,10 +80,29 @@ class UpdateGoalRecordUsecase @Inject constructor(
         val currentCalories = currentDailyRecord.caloriesOut + caloriesOut
         repository.updateCaloriesAmountForGoalDailyRecord(
             field = CALORIES_OUT_FIELD, recordDay = currentDailyRecord.day, value = currentCalories
-        ).collect()
-        CurrentGoalDailyRecordSingletonObject.updateInstance(
-            currentDailyRecord.copy(caloriesOut = currentCalories)
-        )
+        ).collect {
+            if (it is Response.Success) {
+                CurrentGoalDailyRecordSingletonObject.updateInstance(
+                    currentDailyRecord.copy(caloriesOut = currentCalories)
+                )
+            }
+        }
     }
 
+    suspend fun updateCaloriesOutForCurrentWeekRecord(calories: Int) {
+        if (LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value) return
+        val currentWeeklyRecord = CurrentGoalWeeklyRecordSingletonObject.getInstance()
+
+        val currentWeeklyCaloriesOut = currentWeeklyRecord.caloriesOut + calories
+
+        repository.updateInfoForGoalWeeklyRecord(
+            CALORIES_OUT_FIELD, currentWeeklyCaloriesOut, currentWeeklyRecord
+        ).collect {
+            if (it is Response.Success) {
+                CurrentGoalWeeklyRecordSingletonObject.updateInstance(
+                    currentWeeklyRecord.copy(caloriesOut = currentWeeklyCaloriesOut)
+                )
+            }
+        }
+    }
 }
