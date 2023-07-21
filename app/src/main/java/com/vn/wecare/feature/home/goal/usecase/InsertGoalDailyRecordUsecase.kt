@@ -30,7 +30,12 @@ class InsertGoalDailyRecordUsecase @Inject constructor(
             this.updateInfoForCurrentGoalWeeklyRecord(
                 field = GoalWeeklyRecord.numberOfDayRecordField,
                 value = CurrentGoalWeeklyRecordSingletonObject.getInstance().numberOfDayRecord + 1
-            )
+            ).collect()
+            if (CurrentGoalWeeklyRecordSingletonObject.getInstance().status == GoalStatus.NOTSTARTED.value) {
+                this.updateInfoForCurrentGoalWeeklyRecord(
+                    field = GoalWeeklyRecord.statusField, value = GoalStatus.INPROGRESS.value
+                ).collect()
+            }
         }
         CurrentGoalDailyRecordSingletonObject.updateInstance(record)
     }
@@ -54,12 +59,11 @@ class InsertGoalDailyRecordUsecase @Inject constructor(
             this.updateInfoForCurrentGoalWeeklyRecord(
                 field = GoalWeeklyRecord.numberOfDayRecordField,
                 value = CurrentGoalWeeklyRecordSingletonObject.getInstance().numberOfDayRecord + 1
-            )
+            ).collect()
             if (CurrentGoalWeeklyRecordSingletonObject.getInstance().status == GoalStatus.NOTSTARTED.value) {
                 this.updateInfoForCurrentGoalWeeklyRecord(
-                    field = GoalWeeklyRecord.numberOfDayRecordField,
-                    value = CurrentGoalWeeklyRecordSingletonObject.getInstance().numberOfDayRecord + 1
-                )
+                    field = GoalWeeklyRecord.statusField, value = GoalStatus.INPROGRESS.value
+                ).collect()
             }
         }
         CurrentGoalDailyRecordSingletonObject.updateInstance(record)

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.vn.wecare.R
 import com.vn.wecare.core.BaseBindingFragment
 import com.vn.wecare.databinding.FragmentAddMealBinding
@@ -24,19 +23,12 @@ class AddMealFragment : BaseBindingFragment<FragmentAddMealBinding>(
         super.setupComposeView(
             binding.addMealComposeView
         ) {
-            val meals = listOf(
-                addMealViewModel.breakFastMealList.collectAsLazyPagingItems(),
-                addMealViewModel.getLunchMealsByNutrients().collectAsLazyPagingItems(),
-                addMealViewModel.getSnackMealsByNutrients().collectAsLazyPagingItems(),
-                addMealViewModel.getDinnerMealsByNutrients().collectAsLazyPagingItems()
-            )
             AddMealScreen(
                 navigateUp = {
                     findNavController().popBackStack()
                 },
-                addMealViewModel = addMealViewModel,
+                viewModel = addMealViewModel,
                 index = index ?: 0,
-                meals = meals,
                 moveToSearchMealScreen = {
                     findNavController().safeNavigate(
                         R.id.addMealFragment,

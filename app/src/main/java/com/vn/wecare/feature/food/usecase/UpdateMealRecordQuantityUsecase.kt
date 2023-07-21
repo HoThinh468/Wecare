@@ -1,7 +1,7 @@
 package com.vn.wecare.feature.food.usecase
 
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.data.MealsRepository
+import com.vn.wecare.feature.food.data.repository.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase

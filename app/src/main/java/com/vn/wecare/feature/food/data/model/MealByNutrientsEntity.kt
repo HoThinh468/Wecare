@@ -14,16 +14,3 @@ data class MealByNutrientsEntity(
     val fat: String,
     val carbs: String
 )
-
-fun MealByNutrientsEntity.toMealByNutrients(): MealByNutrients {
-    return MealByNutrients(
-        id = this.id,
-        title = this.title,
-        imgUrl = this.imgUrl,
-        imageType = this.imageType,
-        calories = this.calories,
-        protein = this.protein,
-        fat = this.fat,
-        carbs = this.carbs
-    )
-}

@@ -28,7 +28,8 @@ data class WeekRecordDetailUiState(
     val averageCaloriesOutEachDay: Int = 0,
     val totalCaloriesIn: Int = 0,
     val totalCaloriesOut: Int = 0,
-    val completedDays: Int = 0
+    val totalCaloriesOutWithBmr: Int = 0,
+    val completedDays: Int = 0,
 )
 
 @HiltViewModel
@@ -51,6 +52,11 @@ class WeeklyRecordViewModel @Inject constructor(
             val dayRecord = GoalDailyRecord(dayInLong = dayInLong)
             baseList.add(dayRecord)
         }
+        updateTotalCaloriesOutWithBMR(
+            bmr = record.bmr,
+            startDay = record.startDate,
+            caloriesOutOnlyActivity = record.caloriesOut
+        )
         return baseList
     }
 
@@ -114,5 +120,14 @@ class WeeklyRecordViewModel @Inject constructor(
             if (i.caloriesIn >= i.goalDailyCalories) completedDays++
         }
         _uiState.update { it.copy(completedDays = completedDays) }
+    }
+
+    private fun updateTotalCaloriesOutWithBMR(
+        bmr: Int, startDay: Long, caloriesOutOnlyActivity: Int
+    ) {
+        val dayPass = (System.currentTimeMillis() - startDay) / DAY_TO_MILLISECONDS
+        _uiState.update {
+            it.copy(totalCaloriesOutWithBmr = (bmr * dayPass.toInt()) + caloriesOutOnlyActivity)
+        }
     }
 }

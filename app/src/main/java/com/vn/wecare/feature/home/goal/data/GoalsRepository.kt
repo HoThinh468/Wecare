@@ -66,23 +66,7 @@ class GoalsRepository @Inject constructor(
         }
     }
 
-//    fun getGoals(): Flow<Response<List<Goal>>> = flow {
-//        try {
-//            val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
-//                .orderBy("dateSetGoal", Query.Direction.DESCENDING).get().await()
-//            if (!res.isEmpty) {
-//                val listOfGoal = res.documents.map { it.toObject(Goal::class.java) ?: Goal() }
-//                listOfGoal.toMutableList().removeIf { it == Goal() }
-//                emit(Response.Success(listOfGoal))
-//            } else {
-//                emit(Response.Success(emptyList()))
-//            }
-//        } catch (e: Exception) {
-//            Log.d(StepCountFragment.stepCountTag, "Error cannot get goals!")
-//        }
-//    }
-
-    fun getDoneGoals(): Flow<Response<List<Goal>>> = flow {
+    fun getOldGoals(): Flow<Response<List<Goal>>> = flow {
         try {
             val res = getGoalDocumentWithUserId().collection(WECARE_GOALS_LIST_COLLECTION_PATH)
                 .whereNotEqualTo("goalStatus", GoalStatus.INPROGRESS.value).get().await()

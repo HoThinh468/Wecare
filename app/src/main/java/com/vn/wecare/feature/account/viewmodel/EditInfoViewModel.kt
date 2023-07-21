@@ -235,7 +235,9 @@ class EditInfoViewModel @Inject constructor(
                     goal.goalId,
                     goal.weeklyGoalWeight,
                     goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
-                    goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
+                    goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
+                    goal.bmr,
+                    goal.goalName
                 )
                 LatestGoalSingletonObject.updateInStance(goal)
             }

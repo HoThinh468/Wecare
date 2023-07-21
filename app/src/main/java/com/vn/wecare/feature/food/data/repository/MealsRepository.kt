@@ -1,21 +1,16 @@
-package com.vn.wecare.feature.food.data
+package com.vn.wecare.feature.food.data.repository
 
 import android.net.Uri
 import android.util.Log
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.core.data.WecareDatabase
 import com.vn.wecare.feature.food.data.datasource.MealRecordDataSource
 import com.vn.wecare.feature.food.data.datasource.YourOwnMealRemoteDataSource
 import com.vn.wecare.feature.food.data.di.RemoteMealsRecordDataSource
 import com.vn.wecare.feature.food.data.model.Meal
-import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealNameSearchResult
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toRecordModel
+import com.vn.wecare.feature.food.data.service.MealsApiService
 import com.vn.wecare.feature.food.search.ui.SearchFoodFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -26,33 +21,11 @@ class MealsRepository @Inject constructor(
     private val mealsApiService: MealsApiService,
     @RemoteMealsRecordDataSource private val remoteDataSource: MealRecordDataSource,
     private val yourOwnMealRemoteDataSource: YourOwnMealRemoteDataSource,
-    private val wecareDatabase: WecareDatabase
 ) {
-    @OptIn(ExperimentalPagingApi::class)
-    fun getMealsByNutrientsWithPagingSource(
-        maxCalories: Int, minCalories: Int, maxProtein: Int, maxFat: Int, maxCarbs: Int
-    ) = Pager(
-        config = PagingConfig(
-            pageSize = NUMBER_OF_MEALS_EACH_LOAD, initialLoadSize = NUMBER_OF_MEALS_EACH_LOAD
-        ),
-        pagingSourceFactory = {
-            wecareDatabase.mealByNutrientsDao().pagingSource()
-        },
-        remoteMediator = MealByNutrientsRemoteMediator(
-            wecareDatabase,
-            mealsApiService,
-            maxCalories,
-            minCalories,
-            maxProtein,
-            maxFat,
-            maxCarbs,
-        ),
-    ).flow
-
     suspend fun insertMealRecord(
-        dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients
+        dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealRecordModel
     ): Flow<Response<Boolean>?> =
-        remoteDataSource.insert(dateTime, mealTypeKey, meal.toRecordModel())
+        remoteDataSource.insert(dateTime, mealTypeKey, meal)
 
     suspend fun getMealOfEachTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey
@@ -102,7 +75,9 @@ class MealsRepository @Inject constructor(
         try {
             emit(
                 Response.Success(
-                    mealsApiService.getMealsByName(name, 50, 50, 1000, 10, 100, 10, 100, 10, 100)
+                    mealsApiService.getMealsByName(
+                        name, 20, 50, 1000, 10, 100, 10, 100, 10, 100
+                    )
                 )
             )
         } catch (e: Exception) {

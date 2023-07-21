@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 data class AccountUiState(
@@ -91,8 +92,17 @@ class AccountViewModel @Inject constructor(
     fun onSignOutClick() = viewModelScope.launch {
         Log.d(AccountFlowTAG, "Signing out user with id: ${accountService.currentUserId}")
         _accountUiState.update { it.copy(signOutResponse = Response.Loading) }
-        _accountUiState.update { it.copy(signOutResponse = accountService.signOut()) }
-        WecareUserSingletonObject.updateInstance(null)
+        try {
+            val signOutRes = accountService.signOut()
+            if (signOutRes is Response.Success) {
+                _accountUiState.update { it.copy(signOutResponse = accountService.signOut()) }
+                WecareUserSingletonObject.updateInstance(null)
+            } else {
+                _accountUiState.update { it.copy(signOutResponse = Response.Error(Exception("Fail to log out!"))) }
+            }
+        } catch (e: Exception) {
+            _accountUiState.update { it.copy(signOutResponse = Response.Error(e)) }
+        }
     }
 
     fun sendVerificationEmail() = viewModelScope.launch {

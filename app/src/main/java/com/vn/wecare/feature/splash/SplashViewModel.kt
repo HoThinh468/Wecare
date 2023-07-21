@@ -79,6 +79,7 @@ class SplashViewModel @Inject constructor(
             }
             if (goal is Response.Success) {
                 LatestGoalSingletonObject.updateInStance(goal.data)
+                Log.d(SplashFragment.splashFlowTag, "Latest goal is ${goal.data}")
                 updateCurrentGoalWeeklyRecord(goal.data.goalId)
                 if (goal.data.goalStatus == GoalStatus.INPROGRESS.value && System.currentTimeMillis() > goal.data.dateEndGoal) {
                     updateCurrentGoalStatus(goal.data)

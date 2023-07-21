@@ -67,36 +67,40 @@ fun GoalOverview(modifier: Modifier, detailUi: GoalDetailUiState) {
                     style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onPrimary)
                 )
             }
-            Spacer(modifier = modifier.height(smallPadding))
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 32.sp,
-                            fontFamily = OpenSans
-                        )
-                    ) {
-                        append(detailUi.dayLeft.toString())
-                    }
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.Normal, fontSize = 16.sp, fontFamily = OpenSans
-                        )
-                    ) {
-                        append(" days left")
-                    }
-                },
-            )
-            Spacer(modifier = modifier.height(smallPadding))
-            LinearProgressIndicator(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(6.dp),
-                color = MaterialTheme.colors.primary,
-                strokeCap = StrokeCap.Round,
-                progress = detailUi.timeProgress
-            )
+            if (detailUi.status == GoalStatus.INPROGRESS.value) {
+                Spacer(modifier = modifier.height(smallPadding))
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 32.sp,
+                                fontFamily = OpenSans
+                            )
+                        ) {
+                            append(detailUi.dayLeft.toString())
+                        }
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                                fontFamily = OpenSans
+                            )
+                        ) {
+                            append(" days left")
+                        }
+                    },
+                )
+                Spacer(modifier = modifier.height(smallPadding))
+                LinearProgressIndicator(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .height(6.dp),
+                    color = MaterialTheme.colors.primary,
+                    strokeCap = StrokeCap.Round,
+                    progress = detailUi.timeProgress
+                )
+            }
         }
     }
 }

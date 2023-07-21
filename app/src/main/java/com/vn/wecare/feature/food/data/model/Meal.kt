@@ -48,16 +48,14 @@ data class Meal(
             return arrayOfNulls(size)
         }
     }
-
 }
 
-fun Meal.toMealByNutrients(): MealByNutrients = MealByNutrients(
+fun Meal.toMealRecipe(): MealRecipe = MealRecipe(
     id = this.id,
     title = this.name,
     imgUrl = this.imgUrl,
     calories = this.calories,
     protein = "${this.protein}g",
     fat = "${this.fat}g",
-    carbs = "${this.carbs}g",
-    imageType = "jpg"
+    carbs = "${this.carbs}g"
 )
