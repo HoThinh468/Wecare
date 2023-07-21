@@ -1,26 +1,21 @@
 package com.vn.wecare.feature.food.addmeal.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.WecareCaloriesObject
-import com.vn.wecare.feature.food.data.MealsRepository
-import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealRecipe
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toMealByNutrients
-import com.vn.wecare.feature.food.data.model.toRecordModel
-import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase
+import com.vn.wecare.feature.food.data.model.toMealRecordModel
+import com.vn.wecare.feature.food.data.repository.MealsRecipeRepository
 import com.vn.wecare.feature.food.usecase.GetMealsWithDayIdUsecase
 import com.vn.wecare.feature.food.usecase.InsertMealRecordUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -28,13 +23,14 @@ import javax.inject.Inject
 
 data class AddMealUiState(
     val insertMealRecordResponse: Response<Boolean>? = null,
-    val currentChosenMeal: MealByNutrients? = null
+    val currentChosenMeal: MealRecipe? = null
 )
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    private val repository: MealsRepository,
-    private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
+//    private val repository: MealsRepository,
+    private val mealsRecipeRepository: MealsRecipeRepository,
+//    private val calculateNutrientsIndexUsecase: CalculateNutrientsIndexUsecase,
     private val getMealsWithDayIdUsecase: GetMealsWithDayIdUsecase,
     private val insertMealRecordUsecase: InsertMealRecordUsecase
 ) : ViewModel() {
@@ -42,20 +38,30 @@ class AddMealViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddMealUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val caloriesForBreakfast = WecareCaloriesObject.getInstance().caloriesOfBreakfast
-    private val caloriesForLunch = WecareCaloriesObject.getInstance().caloriesOfLunch
-    private val caloriesForSnack = WecareCaloriesObject.getInstance().caloriesOfSnack
-    private val caloriesForDinner = WecareCaloriesObject.getInstance().caloriesOfDinner
+    private val _breakfastMeals = MutableStateFlow(emptyList<MealRecipe>())
+    val breakfastMeals = _breakfastMeals.asStateFlow()
+
+    private val _lunchMeals = MutableStateFlow(emptyList<MealRecipe>())
+    val lunchMeals = _lunchMeals.asStateFlow()
+
+    private val _snackMeals = MutableStateFlow(emptyList<MealRecipe>())
+    val snackMeals = _snackMeals.asStateFlow()
+
+    private val _dinnerMeals = MutableStateFlow(emptyList<MealRecipe>())
+    val dinnerMeals = _dinnerMeals.asStateFlow()
+
+    var getMealsResponse by mutableStateOf<Response<Boolean>?>(null)
 
     private var currentDayBreakfastRecord = mutableListOf<MealRecordModel>()
     private var currentDayLunchRecord = mutableListOf<MealRecordModel>()
     private var currentDaySnackRecord = mutableListOf<MealRecordModel>()
     private var currentDayDinnerRecord = mutableListOf<MealRecordModel>()
 
-    var breakFastMealList: Flow<PagingData<MealByNutrients>>
-
     init {
-        breakFastMealList = getBreakfastMealsByNutrients()
+        getRecommendedMealsForBreakfast()
+        getRecommendedMealsForLunch()
+        getRecommendedMealsForSnack()
+        getRecommendedMealsForDinner()
     }
 
     fun getMealsOfAllTypeList() {
@@ -88,69 +94,65 @@ class AddMealViewModel @Inject constructor(
         currentDayDinnerRecord.clear()
     }
 
-    private fun getBreakfastMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrientsWithPagingSource(
-            caloriesForBreakfast,
-            getMinCalories(caloriesForBreakfast),
-            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForBreakfast),
-            calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForBreakfast),
-            calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForBreakfast),
-        ).map { pagingData ->
-            pagingData.map {
-                it.toMealByNutrients()
+    private fun getRecommendedMealsForBreakfast() = viewModelScope.launch {
+        getMealsResponse = Response.Loading
+        mealsRecipeRepository.getMealsRecipeWithMealTypeKey(MealTypeKey.BREAKFAST).collect { res ->
+            getMealsResponse = if (res is Response.Success) {
+                _breakfastMeals.update { res.data }
+                Response.Success(true)
+            } else {
+                _breakfastMeals.update { emptyList() }
+                Response.Error(null)
             }
-        }.cachedIn(viewModelScope)
+        }
     }
 
-    fun getLunchMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrientsWithPagingSource(
-            caloriesForLunch,
-            getMinCalories(caloriesForLunch),
-            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForLunch),
-            calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForLunch),
-            calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForLunch),
-        ).map { pagingData ->
-            pagingData.map {
-                it.toMealByNutrients()
+    private fun getRecommendedMealsForLunch() = viewModelScope.launch {
+        getMealsResponse = Response.Loading
+        mealsRecipeRepository.getMealsRecipeWithMealTypeKey(MealTypeKey.LUNCH).collect { res ->
+            getMealsResponse = if (res is Response.Success) {
+                _lunchMeals.update { res.data }
+                Response.Success(true)
+            } else {
+                _lunchMeals.update { emptyList() }
+                Response.Error(null)
             }
-        }.cachedIn(viewModelScope)
+        }
     }
 
-    fun getSnackMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrientsWithPagingSource(
-            caloriesForSnack,
-            getMinCalories(caloriesForSnack),
-            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForSnack),
-            calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForSnack),
-            calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForSnack),
-        ).map { pagingData ->
-            pagingData.map {
-                it.toMealByNutrients()
+    private fun getRecommendedMealsForSnack() = viewModelScope.launch {
+        getMealsResponse = Response.Loading
+        mealsRecipeRepository.getMealsRecipeWithMealTypeKey(MealTypeKey.SNACK).collect { res ->
+            getMealsResponse = if (res is Response.Success) {
+                _snackMeals.update { res.data }
+                Response.Success(true)
+            } else {
+                _snackMeals.update { emptyList() }
+                Response.Error(null)
             }
-        }.cachedIn(viewModelScope)
+        }
     }
 
-    fun getDinnerMealsByNutrients(): Flow<PagingData<MealByNutrients>> {
-        return repository.getMealsByNutrientsWithPagingSource(
-            caloriesForDinner,
-            getMinCalories(caloriesForDinner),
-            calculateNutrientsIndexUsecase.getProteinIndexInGram(caloriesForDinner),
-            calculateNutrientsIndexUsecase.getFatIndexInGram(caloriesForDinner),
-            calculateNutrientsIndexUsecase.getCarbIndexInGram(caloriesForDinner),
-        ).map { pagingData ->
-            pagingData.map {
-                it.toMealByNutrients()
+    private fun getRecommendedMealsForDinner() = viewModelScope.launch {
+        getMealsResponse = Response.Loading
+        mealsRecipeRepository.getMealsRecipeWithMealTypeKey(MealTypeKey.DINNER).collect { res ->
+            getMealsResponse = if (res is Response.Success) {
+                _dinnerMeals.update { res.data }
+                Response.Success(true)
+            } else {
+                _dinnerMeals.update { emptyList() }
+                Response.Error(null)
             }
-        }.cachedIn(viewModelScope)
+        }
     }
 
-    fun updateCurrentChosenMeal(meal: MealByNutrients) {
+    fun updateCurrentChosenMeal(meal: MealRecipe) {
         _uiState.update {
             it.copy(currentChosenMeal = meal)
         }
     }
 
-    fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients) =
+    fun insertMealRecord(dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealRecipe) =
         viewModelScope.launch {
             _uiState.update { it.copy(insertMealRecordResponse = Response.Loading) }
             insertMealRecordUsecase.insertMealRecord(dateTime, mealTypeKey, meal).collect { res ->
@@ -158,7 +160,7 @@ class AddMealViewModel @Inject constructor(
                     it.copy(insertMealRecordResponse = res)
                 }
                 if (res is Response.Success) {
-                    updateMealListByType(mealTypeKey, meal.toRecordModel())
+                    updateMealListByType(mealTypeKey, meal.toMealRecordModel())
                 }
             }
         }
@@ -193,6 +195,4 @@ class AddMealViewModel @Inject constructor(
             else -> currentDayDinnerRecord.add(mealRecordModel)
         }
     }
-
-    private fun getMinCalories(maxCalories: Int): Int = maxCalories / 3
 }

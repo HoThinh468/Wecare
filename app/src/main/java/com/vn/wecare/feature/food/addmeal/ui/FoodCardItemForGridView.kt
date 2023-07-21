@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.vn.wecare.R
-import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealRecipe
 import com.vn.wecare.ui.theme.Red400
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
@@ -41,7 +41,7 @@ import com.vn.wecare.ui.theme.smallPadding
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FoodCardItemForGridView(
-    modifier: Modifier, meal: MealByNutrients, onCardClick: () -> Unit, onAddMealClick: () -> Unit
+    modifier: Modifier, meal: MealRecipe, onCardClick: () -> Unit, onAddMealClick: () -> Unit
 ) {
     Card(
         modifier = modifier

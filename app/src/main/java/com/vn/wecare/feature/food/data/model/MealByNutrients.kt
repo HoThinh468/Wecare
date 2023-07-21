@@ -13,18 +13,6 @@ data class MealByNutrients(
     @Json(name = "carbs") val carbs: String
 )
 
-fun MealByNutrients.toRecordModel(): MealRecordModel {
-    return MealRecordModel(
-        id = this.id,
-        title = this.title,
-        imgUrl = this.imgUrl,
-        calories = this.calories,
-        protein = this.protein,
-        fat = this.fat,
-        carbs = this.carbs
-    )
-}
-
 fun MealByNutrients.toEntity(): MealByNutrientsEntity {
     return MealByNutrientsEntity(
         id = this.id,

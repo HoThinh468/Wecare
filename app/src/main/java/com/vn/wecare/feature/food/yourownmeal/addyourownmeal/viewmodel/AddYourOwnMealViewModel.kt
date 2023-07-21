@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.data.MealsRepository
+import com.vn.wecare.feature.food.data.repository.MealsRepository
 import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.feature.food.usecase.CalculateNutrientsIndexUsecase

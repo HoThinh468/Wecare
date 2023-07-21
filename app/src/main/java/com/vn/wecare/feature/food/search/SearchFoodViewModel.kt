@@ -3,11 +3,10 @@ package com.vn.wecare.feature.food.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.addmeal.ui.DEFAULT_MEAL_BY_NUTRIENT
-import com.vn.wecare.feature.food.data.MealsRepository
 import com.vn.wecare.feature.food.data.model.MealByName
-import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealRecipe
 import com.vn.wecare.feature.food.data.model.MealTypeKey
+import com.vn.wecare.feature.food.data.repository.MealsRepository
 import com.vn.wecare.feature.food.usecase.InsertMealRecordUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 data class SearchMealUiSate(
     val loadDataResult: Response<Boolean>? = null,
-    val currentChosenMeal: MealByNutrients = DEFAULT_MEAL_BY_NUTRIENT,
+    val currentChosenMeal: MealRecipe = MealRecipe(),
     val addMealRecordResult: Response<Boolean>? = null,
     val currentChosenMealType: MealTypeKey = MealTypeKey.BREAKFAST
 )
@@ -58,7 +57,7 @@ class SearchFoodViewModel @Inject constructor(
         _searchMealUiState.update { it.copy(addMealRecordResult = null) }
     }
 
-    fun insertMealRecord(mealTypeKey: MealTypeKey, meal: MealByNutrients) = viewModelScope.launch {
+    fun insertMealRecord(mealTypeKey: MealTypeKey, meal: MealRecipe) = viewModelScope.launch {
         _searchMealUiState.update { it.copy(addMealRecordResult = Response.Loading) }
         insertMealRecordUsecase.insertMealRecord(Calendar.getInstance(), mealTypeKey, meal)
             .collect { res ->
@@ -86,7 +85,7 @@ class SearchFoodViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentChosenMeal(meal: MealByNutrients) {
+    fun updateCurrentChosenMeal(meal: MealRecipe) {
         _searchMealUiState.update { it.copy(currentChosenMeal = meal) }
     }
 

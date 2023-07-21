@@ -6,10 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
-import com.vn.wecare.feature.food.data.MealsRepository
+import com.vn.wecare.feature.food.data.repository.MealsRepository
 import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealTypeKey
+import com.vn.wecare.feature.food.data.model.toMealRecipe
 import com.vn.wecare.feature.food.usecase.InsertMealRecordUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,9 +64,9 @@ class YourOwnMealViewModel @Inject constructor(
         insertMealRecordUsecase.resetMealListOfAllType()
     }
 
-    fun insertMealRecord(mealTypeKey: MealTypeKey, meal: MealByNutrients) = viewModelScope.launch {
+    fun insertMealRecord(mealTypeKey: MealTypeKey, meal: Meal) = viewModelScope.launch {
         _uiState.update { it.copy(addMealRecordResponse = Response.Loading) }
-        insertMealRecordUsecase.insertMealRecord(Calendar.getInstance(), mealTypeKey, meal)
+        insertMealRecordUsecase.insertMealRecord(Calendar.getInstance(), mealTypeKey, meal.toMealRecipe())
             .collect { res ->
                 _uiState.update { it.copy(addMealRecordResponse = res) }
             }
