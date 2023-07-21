@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.food.mealdetail
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,22 +23,31 @@ import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BreakfastDining
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.vn.wecare.R
+import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.food.addmeal.ui.mealdetail.MealDetailInformationBottomSheet
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.ui.theme.Blue
@@ -49,8 +59,11 @@ import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxExtraPadding
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MealDetailScreen(
@@ -58,26 +71,73 @@ fun MealDetailScreen(
     navigateUp: () -> Unit,
     mealType: MealTypeKey,
     record: MealRecordModel,
+    viewModel: MealDetailViewModel
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        backgroundColor = MaterialTheme.colors.background,
-        topBar = {
-            WecareAppBar(
-                modifier = modifier, title = "", onLeadingIconPress = navigateUp
-            )
-        },
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = midPadding)
-                .verticalScroll(rememberScrollState())
+
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val uiState = viewModel.uiState.collectAsState().value
+
+    uiState.getMealResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                coroutineScope.launch {
+                    sheetState.show()
+                }
+                viewModel.resetGetMealResponse()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(
+                    LocalContext.current, "Error! Cannot show meal detail!", Toast.LENGTH_SHORT
+                ).show()
+                viewModel.resetGetMealResponse()
+            }
+
+            else -> { /* do nothing */
+            }
+        }
+    }
+
+    ModalBottomSheetLayout(sheetContent = {
+        MealDetailInformationBottomSheet(mealRecipe = uiState.mealRecipe, onCloseBottomSheet = {
+            coroutineScope.launch { sheetState.hide() }
+        }, onAddMealClick = {}, showAddMealButton = false)
+    }, sheetState = sheetState) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            backgroundColor = MaterialTheme.colors.background,
+            topBar = {
+                WecareAppBar(
+                    modifier = modifier,
+                    title = "",
+                    onLeadingIconPress = navigateUp,
+                    trailingIconRes = R.drawable.ic_info,
+                    onTrailingIconPress = {
+                        viewModel.getMealRecipeWithId(record.id)
+                    },
+                )
+            },
         ) {
-            MealOverview(modifier = modifier, mealType = mealType, record = record)
-            Spacer(modifier = modifier.height(xxExtraPadding))
-            NutrientsIndexInformation(modifier = modifier, record = record)
-            Spacer(modifier = modifier.height(xxExtraPadding))
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = midPadding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                MealOverview(modifier = modifier, mealType = mealType, record = record)
+                Spacer(modifier = modifier.height(xxExtraPadding))
+                NutrientsIndexInformation(modifier = modifier, record = record)
+                Spacer(modifier = modifier.height(xxExtraPadding))
+            }
         }
     }
 }
