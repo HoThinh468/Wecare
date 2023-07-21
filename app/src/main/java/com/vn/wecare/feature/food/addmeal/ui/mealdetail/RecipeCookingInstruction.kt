@@ -23,10 +23,10 @@ import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.normalPadding
 
 @Composable
-fun RecipeInstruction(
+fun RecipeCookingInstruction(
     modifier: Modifier, instructions: List<Instruction>
 ) {
-    Text(text = "Recipe instruction", style = MaterialTheme.typography.h4)
+    Text(text = "Cooking instruction", style = MaterialTheme.typography.h4)
     Spacer(modifier = modifier.height(normalPadding))
     if (instructions.isNotEmpty()) {
         for (step in instructions[0].steps) {

@@ -17,4 +17,7 @@ class MealsRecipeRepository @Inject constructor(
 
     fun getMealsRecipeWithMealTypeKey(mealTypeKey: MealTypeKey) =
         mealRecipeDataSource.getMealRecipeWithMealTypeKey(mealTypeKey)
+
+    fun getMealsRecipeWithMealId(mealId: Long) =
+        mealRecipeDataSource.getMealRecipeWithRecipeId(mealId)
 }

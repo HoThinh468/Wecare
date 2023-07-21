@@ -30,6 +30,29 @@ class MealRecipeDataSource @Inject constructor(
         }
     }
 
+    fun getMealRecipeWithRecipeId(recipeId: Long): Flow<Response<MealRecipe>> = flow {
+        try {
+            val result = db.collection(MEAL_COLLECTION_PATH).document(recipeId.toString()).get()
+                .addOnSuccessListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals successfully!")
+                }.addOnFailureListener {
+                    Log.d(AddMealFragment.addMealTag, "Get meals fail due to ${it.message}!")
+                }.await()
+            val recipe = result.toObject(MealRecipe::class.java)
+            if (recipe == null) {
+                emit(Response.Error(java.lang.Exception("No reciper exist with id $recipeId")))
+                return@flow
+            }
+            emit(Response.Success(recipe))
+        } catch (e: Exception) {
+            Log.d(
+                AddMealFragment.addMealTag,
+                "Error! Cannot get meal recipe with id due to ${e.message}!"
+            )
+            emit(Response.Error(e))
+        }
+    }
+
     fun getMealRecipeWithMealTypeKey(mealTypeKey: MealTypeKey): Flow<Response<List<MealRecipe>>> =
         flow {
             try {

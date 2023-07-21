@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,7 @@ import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.Yellow
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
 import kotlin.math.abs
@@ -47,10 +49,12 @@ fun MealDetailInformationBottomSheet(
     modifier: Modifier = Modifier,
     mealRecipe: MealRecipe,
     onCloseBottomSheet: () -> Unit,
-    onAddMealClick: () -> Unit
+    onAddMealClick: () -> Unit,
+    showAddMealButton: Boolean = true
 ) {
 
     Scaffold(modifier = modifier.fillMaxSize(), bottomBar = {
+
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -60,25 +64,24 @@ fun MealDetailInformationBottomSheet(
             OutlinedButton(
                 modifier = modifier
                     .weight(1f)
-                    .padding(end = smallPadding)
                     .height(40.dp),
                 onClick = { onCloseBottomSheet() },
                 shape = RoundedCornerShape(mediumRadius)
             ) {
                 Text(text = stringResource(id = R.string.close_dialog_title))
             }
-            Button(
-                modifier = modifier
-                    .weight(1f)
-                    .padding(start = smallPadding)
-                    .height(40.dp),
-                onClick = {
-                    onCloseBottomSheet()
-                    onAddMealClick()
-                },
-                shape = RoundedCornerShape(mediumRadius)
-            ) {
-                Text(text = "Add")
+            if (showAddMealButton) {
+                Spacer(modifier = modifier.width(normalPadding))
+                Button(
+                    modifier = modifier
+                        .weight(1f)
+                        .height(40.dp), onClick = {
+                        onCloseBottomSheet()
+                        onAddMealClick()
+                    }, shape = RoundedCornerShape(mediumRadius)
+                ) {
+                    Text(text = "Add")
+                }
             }
         }
     }, topBar = {
@@ -144,7 +147,7 @@ fun MealDetailInformationBottomSheet(
                 )
             }
             Spacer(modifier.height(midPadding))
-            RecipeInstruction(modifier = modifier, instructions = mealRecipe.instructions)
+            RecipeCookingInstruction(modifier = modifier, instructions = mealRecipe.instructions)
         }
     }
 }
