@@ -31,7 +31,9 @@ fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
     numberOfWeek: Int,
     weeklyGoalWeight: Float,
     weeklyGoalCalories: Int,
-    weeklyGoalCaloriesOut: Int
+    weeklyGoalCaloriesOut: Int,
+    bmr: Int,
+    goalName: String
 ): List<GoalWeeklyRecord> {
     val firstDays = getListOfFirstDayOfWeeksFromCurrentTime(currentTime, numberOfWeek)
     val result = arrayListOf<GoalWeeklyRecord>()
@@ -43,7 +45,9 @@ fun getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
             weeklyGoalWeight = weeklyGoalWeight,
             weeklyCaloriesGoal = weeklyGoalCalories,
             weeklyCaloriesOutGoal = weeklyGoalCaloriesOut,
-            status = if (it == 0) GoalStatus.INPROGRESS.value else GoalStatus.NOTSTARTED.value
+            status = if (it == 0) GoalStatus.INPROGRESS.value else GoalStatus.NOTSTARTED.value,
+            bmr = bmr,
+            goalName = goalName
         )
         result.add(record)
     }

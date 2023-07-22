@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetGoalsFromFirebaseUsecase @Inject constructor(private val goalsRepository: GoalsRepository) {
 
     fun getDoneGoals(): Flow<Response<List<Goal>>> {
-        return goalsRepository.getDoneGoals()
+        return goalsRepository.getOldGoals()
     }
 
     fun getCurrentGoalFromFirebase(): Flow<Response<Goal>> {

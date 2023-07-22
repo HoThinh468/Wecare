@@ -1,6 +1,7 @@
 package com.vn.wecare.feature.account.view.goalhistory
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +32,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.viewmodel.GoalHistoryViewModel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
@@ -45,6 +48,8 @@ import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallElevation
 import com.vn.wecare.ui.theme.smallPadding
+import com.vn.wecare.utils.common_composable.DynamicErrorDialog
+import com.vn.wecare.utils.common_composable.LoadingDialog
 import com.vn.wecare.utils.common_composable.WecareAppBar
 import kotlinx.coroutines.launch
 
@@ -67,6 +72,27 @@ fun GoalHistoryScreen(
     )
     val uiState = viewModel.detailUi.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
+
+    viewModel.goalHistoryUiState.collectAsState().value.getDataResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Load goals successfully!", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(LocalContext.current, it.e?.message, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            else -> { /* do nothing */
+            }
+        }
+    }
 
     ModalBottomSheetLayout(
         sheetContent = {

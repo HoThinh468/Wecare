@@ -20,14 +20,18 @@ class SetupGoalRecordsWhenCreateNewGoalUsecase @Inject constructor(
         latestGoalId: String,
         weeklyGoalWeight: Float,
         weeklyGoalCalories: Int,
-        weeklyGoalCaloriesOut: Int
+        weeklyGoalCaloriesOut: Int,
+        bmr: Int,
+        goalName: String
     ) {
         val weeklyRecords = getListOfWeeklyRecordsWithCurrentTimeAndNumberOfWeek(
             System.currentTimeMillis(),
             numberOfWeek,
             weeklyGoalWeight,
             weeklyGoalCalories,
-            weeklyGoalCaloriesOut
+            weeklyGoalCaloriesOut,
+            bmr,
+            goalName
         )
         if (weeklyRecords.isEmpty()) return
         CurrentGoalWeeklyRecordSingletonObject.updateInstance(weeklyRecords.first())

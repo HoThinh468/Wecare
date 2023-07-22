@@ -52,7 +52,6 @@ import com.vn.wecare.feature.food.common.FoodErrorMessage
 import com.vn.wecare.feature.food.common.NoInternetMessage
 import com.vn.wecare.feature.food.data.model.Meal
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toMealByNutrients
 import com.vn.wecare.feature.food.mealdetail.NutrientSubInfoItem
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Red400
@@ -180,8 +179,7 @@ fun YourOwnMealListScreen(
                                             onAddBtnClick = {
                                                 viewModel.insertMealRecord(
                                                     uiState.currentCategory
-                                                        ?: MealTypeKey.BREAKFAST,
-                                                    item.toMealByNutrients()
+                                                        ?: MealTypeKey.BREAKFAST, item
                                                 )
                                             },
                                             meal = item,

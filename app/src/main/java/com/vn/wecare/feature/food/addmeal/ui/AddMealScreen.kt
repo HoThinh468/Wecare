@@ -32,11 +32,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import com.vn.wecare.R
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.food.addmeal.ui.mealdetail.MealDetailInformationBottomSheet
 import com.vn.wecare.feature.food.addmeal.viewmodel.AddMealViewModel
-import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealRecipe
 import com.vn.wecare.feature.food.data.model.MealTypeKey
 import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.utils.common_composable.DynamicErrorDialog
@@ -44,20 +44,15 @@ import com.vn.wecare.utils.common_composable.LoadingDialog
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-val DEFAULT_MEAL_BY_NUTRIENT = MealByNutrients(
-    0, "This is a title", "img", "png", 100, "12g", "13g", "20g"
-)
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AddMealScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    addMealViewModel: AddMealViewModel,
+    viewModel: AddMealViewModel,
     index: Int,
     moveToSearchMealScreen: () -> Unit,
-    meals: List<LazyPagingItems<MealByNutrients>>
 ) {
     val pagerState = rememberPagerState()
 
@@ -66,7 +61,12 @@ fun AddMealScreen(
 
     val openErrorDialog = remember { mutableStateOf(true) }
 
-    val uiState = addMealViewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
+
+    val breakfastMeals = viewModel.breakfastMeals.collectAsState().value
+    val lunchMeals = viewModel.lunchMeals.collectAsState().value
+    val snackMeals = viewModel.snackMeals.collectAsState().value
+    val dinnerMeals = viewModel.dinnerMeals.collectAsState().value
 
     uiState.value.insertMealRecordResponse.let {
         when (it) {
@@ -92,26 +92,47 @@ fun AddMealScreen(
         }
     }
 
+    viewModel.getMealsResponse.let {
+        when (it) {
+            is Response.Loading -> {
+                LoadingDialog(loading = it == Response.Loading) {}
+            }
+
+            is Response.Success -> {
+                Toast.makeText(LocalContext.current, "Load meals successfully!", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            is Response.Error -> {
+                Toast.makeText(
+                    LocalContext.current, it.e?.message ?: DEFAULT_ERROR_MESSAGE, Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            else -> { /* do nothing */
+            }
+        }
+    }
+
     LaunchedEffect(key1 = Unit, block = {
         coroutineScope.launch { pagerState.animateScrollToPage(index) }
     })
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
     val focusManager = LocalFocusManager.current
 
     ModalBottomSheetLayout(sheetContent = {
-        MealDetailInformationBottomSheet(mealByNutrients = uiState.value.currentChosenMeal
-            ?: DEFAULT_MEAL_BY_NUTRIENT,
-            onCloseBottomSheet = {
-                coroutineScope.launch { sheetState.hide() }
-            },
-            onAddMealClick = {
-                addMealViewModel.insertMealRecord(
+        val mealRecipe = uiState.value.currentChosenMeal ?: MealRecipe()
+        MealDetailInformationBottomSheet(mealRecipe = mealRecipe, onCloseBottomSheet = {
+            coroutineScope.launch { sheetState.hide() }
+        }, onAddMealClick = {
+            if (mealRecipe.id != 0L) {
+                viewModel.insertMealRecord(
                     dateTime = Calendar.getInstance(),
-                    meal = uiState.value.currentChosenMeal ?: DEFAULT_MEAL_BY_NUTRIENT,
+                    meal = mealRecipe,
                     mealTypeKey = when (pagerState.currentPage) {
                         0 -> MealTypeKey.BREAKFAST
                         1 -> MealTypeKey.LUNCH
@@ -119,7 +140,8 @@ fun AddMealScreen(
                         else -> MealTypeKey.DINNER
                     }
                 )
-            })
+            }
+        })
     }, sheetState = sheetState) {
         Scaffold(topBar = {
             AddMealAppBar(
@@ -147,12 +169,12 @@ fun AddMealScreen(
                 ) {
                     MealsGridView(modifier = modifier,
                         mealList = when (pagerState.currentPage) {
-                            0 -> meals[0]
-                            1 -> meals[1]
-                            2 -> meals[2]
-                            else -> meals[3]
+                            0 -> breakfastMeals
+                            1 -> lunchMeals
+                            2 -> snackMeals
+                            else -> dinnerMeals
                         },
-                        addMealViewModel = addMealViewModel,
+                        addMealViewModel = viewModel,
                         mealTypeKey = when (pagerState.currentPage) {
                             0 -> MealTypeKey.BREAKFAST
                             1 -> MealTypeKey.LUNCH

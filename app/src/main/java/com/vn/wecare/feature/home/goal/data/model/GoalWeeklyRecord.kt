@@ -15,7 +15,9 @@ data class GoalWeeklyRecord(
     val weeklyCaloriesGoal: Int = 0,
     val weeklyCaloriesOutGoal: Int = 0,
     val status: String = GoalStatus.NOTSTARTED.value,
-    val numberOfDayRecord: Int = 0
+    val numberOfDayRecord: Int = 0,
+    val bmr: Int = 0,
+    val goalName: String = "",
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -29,7 +31,9 @@ data class GoalWeeklyRecord(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readString() ?: "",
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readString() ?: ""
     ) {
     }
 
@@ -46,6 +50,8 @@ data class GoalWeeklyRecord(
         parcel.writeInt(weeklyCaloriesOutGoal)
         parcel.writeString(status)
         parcel.writeInt(numberOfDayRecord)
+        parcel.writeInt(bmr)
+        parcel.writeString(goalName)
     }
 
     override fun describeContents(): Int {

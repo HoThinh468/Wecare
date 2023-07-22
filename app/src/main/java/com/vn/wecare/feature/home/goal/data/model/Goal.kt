@@ -26,6 +26,9 @@ data class Goal(
     val dateEndGoal: Long = 0L,
     val goalStatus: String = GoalStatus.INPROGRESS.value,
     val weeklyGoalWeight: Float = 0f,
+    val oldWeight: Int = 0,
+    val newWeightAssumed: Int = 0,
+    val bmr: Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -40,8 +43,12 @@ data class Goal(
         parcel.readLong(),
         parcel.readLong(),
         parcel.readString() ?: "",
-        parcel.readFloat()
-    )
+        parcel.readFloat(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt()
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(goalId)
@@ -57,6 +64,9 @@ data class Goal(
         parcel.writeLong(dateEndGoal)
         parcel.writeString(goalStatus)
         parcel.writeFloat(weeklyGoalWeight)
+        parcel.writeInt(oldWeight)
+        parcel.writeInt(newWeightAssumed)
+        parcel.writeInt(bmr)
     }
 
     override fun describeContents(): Int {
@@ -72,7 +82,6 @@ data class Goal(
             return arrayOfNulls(size)
         }
     }
-
 }
 
 enum class EnumGoal(val value: String, @DrawableRes val imgRes: Int) {

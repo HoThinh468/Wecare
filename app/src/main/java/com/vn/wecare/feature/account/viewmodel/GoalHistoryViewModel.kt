@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.usecase.GetGoalWeeklyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
@@ -16,11 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 import kotlin.math.abs
 
-data class GoalFilterUiState(
-    val getDataResponse: Response<Boolean>? = null, val time: Long = 0
+data class GoalHistoryUiState(
+    val getDataResponse: Response<Boolean>? = null
 )
 
 @HiltViewModel
@@ -44,6 +47,8 @@ class GoalHistoryViewModel @Inject constructor(
     private val _isResetEnabled = MutableStateFlow(false)
     val isResetEnabled = _isResetEnabled.asStateFlow()
 
+    private val _goalHistoryUiState = MutableStateFlow(GoalHistoryUiState())
+    val goalHistoryUiState = _goalHistoryUiState.asStateFlow()
 
     fun initGoalHistoryUi() {
         getGoalsFromFirebase()
@@ -96,9 +101,13 @@ class GoalHistoryViewModel @Inject constructor(
     }
 
     private fun getGoalsFromFirebase() = viewModelScope.launch {
+        _goalHistoryUiState.update { it.copy(getDataResponse = Response.Loading) }
         getGoalsFromFirebaseUsecase.getDoneGoals().collect { res ->
             if (res is Response.Success) {
                 _goals.update { res.data }
+                _goalHistoryUiState.update { it.copy(getDataResponse = Response.Success(true)) }
+            } else {
+                _goalHistoryUiState.update { it.copy(getDataResponse = Response.Error(Exception("Cannot get goal history"))) }
             }
         }
     }
@@ -111,7 +120,13 @@ class GoalHistoryViewModel @Inject constructor(
         }
     }
 
-    private fun checkIfResetIsEnabled() {
+    fun resetGetGoalsResponse() {
+        _goalHistoryUiState.update { GoalHistoryUiState() }
+    }
 
+    private fun checkIfResetIsEnabled() {
+        _isResetEnabled.update {
+            LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value
+        }
     }
 }

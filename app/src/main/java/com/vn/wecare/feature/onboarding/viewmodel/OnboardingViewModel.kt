@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
+import com.vn.wecare.feature.home.bmi.usecase.BMIUseCase
 import com.vn.wecare.feature.home.bmi.util.getBMIWithHeightAndWeight
 import com.vn.wecare.feature.home.bmi.util.getWeightWithBMIAndHeight
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
@@ -61,7 +62,8 @@ class OnboardingViewModel @Inject constructor(
     private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
     private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase,
     private val setupGoalRecordsWhenCreateNewGoalUsecase: SetupGoalRecordsWhenCreateNewGoalUsecase,
-    private val saveUserToDbUsecase: SaveUserToDbUsecase
+    private val saveUserToDbUsecase: SaveUserToDbUsecase,
+    private val bmiUsecase: BMIUseCase
 ) : ViewModel() {
 
     var currentIndex = mutableStateOf(0)
@@ -80,7 +82,6 @@ class OnboardingViewModel @Inject constructor(
                 if (_onboardingUiState.value.selectedGoal == EnumGoal.MAINTAINWEIGHT) {
                     saveUserInfoToDb()
                     saveGoalToFirestore()
-//                    currentIndex.value++
                 } else {
                     updateRecommendedWeeklyGoal()
                     currentIndex.value++
@@ -175,6 +176,12 @@ class OnboardingViewModel @Inject constructor(
             viewModelScope.launch {
                 saveUserToDbUsecase.saveUserToFirestoreDb(newUpdatedUser)
                 saveUserToDbUsecase.saveUserToLocalDb(newUpdatedUser)
+                bmiUsecase.addBMIHistory(
+                    newUpdatedUser.age ?: MIN_AGE,
+                    newUpdatedUser.gender ?: true,
+                    newUpdatedUser.height,
+                    newUpdatedUser.weight
+                )
             }
         }
     }
@@ -206,7 +213,9 @@ class OnboardingViewModel @Inject constructor(
                         goal.goalId,
                         _onboardingUiState.value.selectedWeeklyGoalWeight,
                         goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
-                        goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
+                        goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
+                        goal.bmr,
+                        goal.goalName
                     )
                     LatestGoalSingletonObject.updateInStance(goal)
                 }

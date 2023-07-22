@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import com.vn.wecare.R
 import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.ui.theme.Blue
@@ -120,13 +121,15 @@ fun GoalMetric(
                     description = "Calories",
                     icon = Icons.Default.LocalFireDepartment
                 )
-                GoalMetricIndexItem(
-                    modifier = modifier,
-                    color = MaterialTheme.colors.primary,
-                    index = "${detailUi.stepRecommend}",
-                    description = "Steps",
-                    icon = Icons.Default.DoNotStep
-                )
+                Column(modifier = modifier.widthIn()) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_step),
+                        tint = MaterialTheme.colors.primary,
+                        contentDescription = null
+                    )
+                    Text(text = "Steps", style = MaterialTheme.typography.body2)
+                    Text(text = "${detailUi.stepRecommend}", style = MaterialTheme.typography.h4)
+                }
                 GoalMetricIndexItem(
                     modifier = modifier,
                     color = Blue,

@@ -172,7 +172,10 @@ class GoalDashboardViewModel @Inject constructor(
     }
 
     private fun getDayLeft(endDay: Long): Int {
-        return (abs(endDay - System.currentTimeMillis()) / DAY_TO_MILLISECONDS).toInt()
+        val now = System.currentTimeMillis()
+        return if (endDay > now) {
+            (abs(endDay - System.currentTimeMillis()) / DAY_TO_MILLISECONDS).toInt()
+        } else 0
     }
 
     private fun getTimeProgress(endDay: Long, startDay: Long): Float {

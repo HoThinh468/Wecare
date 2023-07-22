@@ -49,7 +49,7 @@ fun GoalWeeklyRecordItem(
             .fillMaxWidth()
             .padding(bottom = midPadding),
         shape = roundedCornerShape,
-        enabled = record.status != GoalStatus.NOTSTARTED.value,
+        enabled = (record.status != GoalStatus.NOTSTARTED.value) && (record.status != GoalStatus.CANCELED.value),
         onClick = {
             onItemClick(record)
         },

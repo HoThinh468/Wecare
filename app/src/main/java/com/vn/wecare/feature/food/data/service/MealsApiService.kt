@@ -1,6 +1,5 @@
-package com.vn.wecare.feature.food.data
+package com.vn.wecare.feature.food.data.service
 
-import com.vn.wecare.feature.food.data.model.MealByNutrients
 import com.vn.wecare.feature.food.data.model.MealNameSearchResult
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -10,21 +9,6 @@ private const val XRapidAPIKey = "a311ebaed1msh5036b9492cff379p198cebjsn40fe0844
 private const val XRapidAPIHost = "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
 
 interface MealsApiService {
-    @Headers(
-        "X-RapidAPI-Key: $XRapidAPIKey", "X-RapidAPI-Host: $XRapidAPIHost"
-    )
-    @GET("recipes/findByNutrients")
-    suspend fun getMealsByNutrients(
-        @Query("maxCalories") maxCalories: Int,
-        @Query("minCalories") minCalories: Int,
-        @Query("maxProtein") maxProtein: Int,
-        @Query("maxProtein") maxFat: Int,
-        @Query("maxProtein") maxCarbs: Int,
-        @Query("number") number: Int,
-        @Query("offset") offset: Int,
-        @Query("random") random: Boolean
-    ): List<MealByNutrients>
-
     @Headers(
         "X-RapidAPI-Key: $XRapidAPIKey", "X-RapidAPI-Host: $XRapidAPIHost"
     )
@@ -40,5 +24,7 @@ interface MealsApiService {
         @Query("maxCarbs") maxCarbs: Int,
         @Query("minFat") minFat: Int,
         @Query("maxFat") maxFat: Int,
+        @Query("instructionsRequired") instructionsRequired: Boolean = true,
+        @Query("addRecipeInformation") addRecipeInformation: Boolean = true
     ): MealNameSearchResult
 }
