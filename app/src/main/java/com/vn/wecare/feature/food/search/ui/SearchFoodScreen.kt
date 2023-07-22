@@ -38,8 +38,8 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.addmeal.ui.DEFAULT_ERROR_MESSAGE
 import com.vn.wecare.feature.food.addmeal.ui.FoodCardItemForGridView
 import com.vn.wecare.feature.food.addmeal.ui.LoadingDataErrorUI
-import com.vn.wecare.feature.food.addmeal.ui.MealDetailInformationBottomSheet
-import com.vn.wecare.feature.food.data.model.toMealByNutrients
+import com.vn.wecare.feature.food.addmeal.ui.mealdetail.MealDetailInformationBottomSheet
+import com.vn.wecare.feature.food.data.model.toMealRecipe
 import com.vn.wecare.feature.food.search.SearchFoodViewModel
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -68,7 +68,7 @@ fun SearchFoodScreen(
     val openChooseMealTypeKeyDialog = remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
+        initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
     val searchResults = viewModel.searchResults.collectAsState().value
@@ -111,7 +111,7 @@ fun SearchFoodScreen(
 
     ModalBottomSheetLayout(sheetContent = {
         MealDetailInformationBottomSheet(
-            mealByNutrients = uiState.value.currentChosenMeal,
+            mealRecipe = uiState.value.currentChosenMeal,
             onCloseBottomSheet = {
                 coroutineScope.launch { sheetState.hide() }
             },
@@ -148,7 +148,7 @@ fun SearchFoodScreen(
                             horizontalArrangement = Arrangement.spacedBy(normalPadding)
                         ) {
                             items(searchResults.size) { index ->
-                                val item = searchResults[index].toMealByNutrients()
+                                val item = searchResults[index].toMealRecipe()
                                 FoodCardItemForGridView(
                                     modifier = modifier,
                                     meal = item,

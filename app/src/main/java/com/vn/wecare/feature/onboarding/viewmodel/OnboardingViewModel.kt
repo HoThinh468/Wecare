@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.account.usecase.SaveUserToDbUsecase
+import com.vn.wecare.feature.home.bmi.usecase.BMIUseCase
 import com.vn.wecare.feature.home.bmi.util.getBMIWithHeightAndWeight
 import com.vn.wecare.feature.home.bmi.util.getWeightWithBMIAndHeight
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
@@ -14,7 +15,7 @@ import com.vn.wecare.feature.home.goal.data.model.ActivityLevel
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.usecase.DefineGoalBasedOnInputsUsecase
 import com.vn.wecare.feature.home.goal.usecase.SaveGoalsToFirebaseUsecase
-import com.vn.wecare.feature.home.goal.usecase.SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase
+import com.vn.wecare.feature.home.goal.usecase.SetupGoalRecordsWhenCreateNewGoalUsecase
 import com.vn.wecare.feature.onboarding.OnboardingFragment
 import com.vn.wecare.feature.onboarding.model.BMIState
 import com.vn.wecare.utils.WecareUserConstantValues.BMI_FAT_RANGE
@@ -60,8 +61,9 @@ data class OnboardingDialogUiState(
 class OnboardingViewModel @Inject constructor(
     private val defineGoalBasedOnInputsUsecase: DefineGoalBasedOnInputsUsecase,
     private val saveGoalsToFirebaseUsecase: SaveGoalsToFirebaseUsecase,
-    private val setupGoalWeeklyRecordsWhenCreateNewGoalUsecase: SetupGoalWeeklyRecordsWhenCreateNewGoalUsecase,
-    private val saveUserToDbUsecase: SaveUserToDbUsecase
+    private val setupGoalRecordsWhenCreateNewGoalUsecase: SetupGoalRecordsWhenCreateNewGoalUsecase,
+    private val saveUserToDbUsecase: SaveUserToDbUsecase,
+    private val bmiUsecase: BMIUseCase
 ) : ViewModel() {
 
     var currentIndex = mutableStateOf(0)
@@ -80,7 +82,6 @@ class OnboardingViewModel @Inject constructor(
                 if (_onboardingUiState.value.selectedGoal == EnumGoal.MAINTAINWEIGHT) {
                     saveUserInfoToDb()
                     saveGoalToFirestore()
-//                    currentIndex.value++
                 } else {
                     updateRecommendedWeeklyGoal()
                     currentIndex.value++
@@ -175,6 +176,12 @@ class OnboardingViewModel @Inject constructor(
             viewModelScope.launch {
                 saveUserToDbUsecase.saveUserToFirestoreDb(newUpdatedUser)
                 saveUserToDbUsecase.saveUserToLocalDb(newUpdatedUser)
+                bmiUsecase.addBMIHistory(
+                    newUpdatedUser.age ?: MIN_AGE,
+                    newUpdatedUser.gender ?: true,
+                    newUpdatedUser.height,
+                    newUpdatedUser.weight
+                )
             }
         }
     }
@@ -201,11 +208,14 @@ class OnboardingViewModel @Inject constructor(
             _onboardingUiState.update { it.copy(updateInformationResult = Response.Loading) }
             saveGoalsToFirebaseUsecase.saveGoalsToFirebase(goal).collect { res ->
                 if (res is Response.Success) {
-                    setupGoalWeeklyRecordsWhenCreateNewGoalUsecase.setup(
+                    setupGoalRecordsWhenCreateNewGoalUsecase.setup(
                         timeToReachGoal,
                         goal.goalId,
                         _onboardingUiState.value.selectedWeeklyGoalWeight,
-                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK
+                        goal.caloriesInEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
+                        goal.caloriesBurnedEachDayGoal * NUMBER_OF_DAYS_IN_WEEK,
+                        goal.bmr,
+                        goal.goalName
                     )
                     LatestGoalSingletonObject.updateInStance(goal)
                 }

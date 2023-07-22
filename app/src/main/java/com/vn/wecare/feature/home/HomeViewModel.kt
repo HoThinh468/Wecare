@@ -55,18 +55,18 @@ class HomeViewModel @Inject constructor(
 
     init {
         dashboardUseCase.getCaloPerDay()
+        getCaloPerDay()
     }
     fun initHomeUIState() {
-        updateCurrentSteps(getCurrentStepsFromSensorUsecase.getCurrentStepsFromSensor())
         updateBMIInformation()
         updateWaterAmountDrankInDay()
         getWaterTarget()
         getCaloPerDay()
     }
 
-    var getCaloPerDayResponse by mutableStateOf<Response<CaloPerDay>>(Response.Loading)
-    private val _caloPerDay = MutableStateFlow(CaloPerDay())
-    val caloPerDay: StateFlow<CaloPerDay>
+    var getCaloPerDayResponse by mutableStateOf<Response<CaloPerDay?>>(Response.Loading)
+    private val _caloPerDay = MutableStateFlow<CaloPerDay?>(CaloPerDay())
+    val caloPerDay: StateFlow<CaloPerDay?>
         get() = _caloPerDay
 
     private fun getCaloPerDay() = viewModelScope.launch {
@@ -74,42 +74,6 @@ class HomeViewModel @Inject constructor(
             getCaloPerDayResponse = response
             if (response is Response.Success) {
                 _caloPerDay.emit(response.data)
-            }
-        }
-    }
-
-    fun updateCurrentSteps(stepsFromSensor: Float) = viewModelScope.launch {
-        getStepsPerDayUsecase.getStepsInPreviousDay().collect { response ->
-            if (response is Response.Success) {
-                val stepsInPreviousDay = response.data
-                val steps = stepsFromSensor.toInt() - stepsInPreviousDay.steps
-                val caloriesBurned = steps.getCaloriesBurnedFromStepCount()
-                val moveTime = steps.getMoveTimeFromStepCount()
-
-                getStepsPerDayUsecase.updateStepsPerDay(
-                    StepsPerDay(
-                        dayId = System.currentTimeMillis().toDD_MM_yyyy(),
-                        steps = steps,
-                        calories = caloriesBurned,
-                        moveTime = moveTime
-                    )
-                ).collect { response ->
-                    updateStepsResponse = response
-                }
-
-                dashboardUseCase.updateCaloPerDay(
-                    CaloPerDay(
-                        caloOutWaking = caloriesBurned
-                    )
-                )
-
-                _homeUiState.update {
-                    it.copy(
-                        stepCount = steps,
-                        caloriesBurnt = caloriesBurned,
-                        timeConsumed = moveTime
-                    )
-                }
             }
         }
     }

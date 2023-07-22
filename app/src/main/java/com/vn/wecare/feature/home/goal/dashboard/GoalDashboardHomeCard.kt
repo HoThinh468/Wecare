@@ -26,11 +26,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
-import com.vn.wecare.feature.account.view.goalhistory.getColorBasedOnStatus
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
+import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.utils.getDayFromLongWithFormat
 import com.vn.wecare.ui.theme.Shapes
 import com.vn.wecare.ui.theme.halfMidPadding
@@ -66,7 +65,7 @@ fun GoalDashboardHomeCard(
                 Box(
                     modifier = modifier
                         .clip(Shapes.medium)
-                        .background(getColorBasedOnStatus(status = goal.goalStatus))
+                        .background(GoalStatus.getGoalStatusFromValue(goal.goalStatus).color)
                 ) {
                     Text(
                         modifier = modifier.padding(vertical = 6.dp, horizontal = smallPadding),
@@ -117,18 +116,9 @@ fun GoalDashboardHomeCard(
             }
             Image(
                 modifier = modifier.size(100.dp),
-                painter = painterResource(id = getDrawableRes()),
+                painter = painterResource(id = EnumGoal.getEnumGoalFromValue(goal.goalName).imgRes),
                 contentDescription = null
             )
         }
-    }
-}
-
-private fun getDrawableRes(): Int {
-    return when (LatestGoalSingletonObject.getInStance().goalName) {
-        EnumGoal.GAINMUSCLE.value -> R.drawable.img_illu_muscle
-        EnumGoal.LOSEWEIGHT.value -> R.drawable.img_illu_loose_weight
-        EnumGoal.GETHEALTHIER.value -> R.drawable.img_illu_healthier
-        else -> R.drawable.img_illu_improve_mood
     }
 }

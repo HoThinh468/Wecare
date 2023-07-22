@@ -2,6 +2,7 @@ package com.vn.wecare.feature.home.step_count.ui.compose
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
@@ -18,10 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.data.model.StepsPerHour
-import com.vn.wecare.feature.home.step_count.getMoveTimeFromSteps
+import com.vn.wecare.feature.home.step_count.getMoveTimeFromStepCount
 import com.vn.wecare.feature.home.step_count.getStepsFromCaloriesBurned
 import com.vn.wecare.ui.theme.*
 import com.vn.wecare.utils.common_composable.*
@@ -57,6 +59,7 @@ fun StepCountScreen(
                 Spacer(modifier = modifier.height(halfMidPadding))
                 HealthTip(modifier = modifier)
                 Spacer(modifier = modifier.height(normalPadding))
+                StepsCountReport(viewModel = stepCountViewModel)
             } else {
                 PageNotFound()
             }
@@ -71,9 +74,14 @@ fun Overview(
 
     val stepsCountUiState = viewModel.stepsCountUiState.collectAsState().value
     val goal = LatestGoalSingletonObject.getInStance()
+    val info = WecareUserSingletonObject.getInstance()
     val targetCalo = goal.caloriesBurnedGoalForStepCount
-    val targetSteps = targetCalo.getStepsFromCaloriesBurned()
-    val targetMoveTime = targetSteps.getMoveTimeFromSteps()
+    val targetSteps = targetCalo.getStepsFromCaloriesBurned(info.height ?: 1, info.weight ?: 1)
+    val targetMoveTime = targetSteps.getMoveTimeFromStepCount(info.height ?: 1)
+
+    Log.e("trung log", "targetCalo: $targetCalo")
+    Log.e("trung log", "targetSteps: $targetSteps")
+    Log.e("trung log", "targetMoveTime: $targetMoveTime")
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -125,7 +133,7 @@ fun Overview(
                     titleRes = R.string.calo_amount_title,
                     iconColorRes = R.color.Red400,
                     index = stepsCountUiState.caloConsumed,
-                    goal = stepsCountUiState.caloriesBurnedGoal,
+                    goal = targetCalo,
                     unitRes = R.string.calo_unit,
                     modifier = modifier
                 )
@@ -134,7 +142,7 @@ fun Overview(
                     titleRes = R.string.footstep_title,
                     iconColorRes = R.color.Green500,
                     index = stepsCountUiState.currentSteps,
-                    goal = stepsCountUiState.stepGoal,
+                    goal = targetSteps,
                     unitRes = null,
                     modifier = modifier
                 )
@@ -143,7 +151,7 @@ fun Overview(
                     titleRes = R.string.move_min_title,
                     iconColorRes = R.color.Blue400,
                     index = stepsCountUiState.moveMin,
-                    goal = stepsCountUiState.moveTimeGoal,
+                    goal = targetMoveTime,
                     unitRes = R.string.move_time_unit,
                     modifier = modifier
                 )

@@ -17,7 +17,7 @@ class WeeklyRecordDetailFragment : BaseBindingFragment<FragmentWeeklyRecordDetai
 
     override fun setupComposeView(composeView: ComposeView?, content: @Composable (() -> Unit)?) {
         val record: GoalWeeklyRecord = arguments?.getParcelable(WEEKLY_RECORD) ?: GoalWeeklyRecord()
-//        viewModel.initUiState(record)
+        viewModel.initUiState(record)
         super.setupComposeView(
             binding.weeklyRecordDetailComposeView
         ) {

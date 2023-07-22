@@ -41,13 +41,27 @@ class BMIServicesImpl @Inject constructor(
                             time = System.currentTimeMillis()
                         )
                     )
-                    docRef.update("listHistory", updatedArray)
-                        .addOnSuccessListener {
-                            println("Array updated successfully!")
-                        }
-                        .addOnFailureListener { exception ->
-                            println("Error updating array: $exception")
-                        }
+                    if (existingArray == null) {
+                        val data = hashMapOf(
+                            "listHistory" to updatedArray
+                        )
+
+                        docRef.set(data)
+                            .addOnSuccessListener {
+                                println("Array updated successfully!")
+                            }
+                            .addOnFailureListener { exception ->
+                                println("Error updating array: $exception")
+                            }
+                    } else {
+                        docRef.update("listHistory", updatedArray)
+                            .addOnSuccessListener {
+                                println("Array updated successfully!")
+                            }
+                            .addOnFailureListener { exception ->
+                                println("Error updating array: $exception")
+                            }
+                    }
                 }
         } catch (e: Exception) {
             Log.e("BMIServices", "addBMIHistory: ${e.message} ")
@@ -111,7 +125,7 @@ class BMIServicesImpl @Inject constructor(
                         }
                         .addOnFailureListener { exception ->
                             println("Error updating array: $exception")
-                        }.await()
+                        }
 
                     Response.Success(true)
                 } catch (e: Exception) {

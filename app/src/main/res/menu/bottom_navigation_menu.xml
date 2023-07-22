@@ -10,7 +10,7 @@
         android:icon="@drawable/ic_food_bank"
         android:title="@string/nutrition"/>
     <item
-        android:id="@+id/exercises_graph"
+        android:id="@+id/exerciseDashboardFragment"
         android:icon="@drawable/ic_fitness_center"
         android:title="@string/exercises"/>
     <item

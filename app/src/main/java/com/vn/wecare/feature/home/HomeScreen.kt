@@ -3,6 +3,7 @@ package com.vn.wecare.feature.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -37,15 +38,9 @@ import com.vn.wecare.utils.common_composable.RequestPermission
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onFootStepCountCardClick: () -> Unit,
     onDashboardCardClick: () -> Unit,
     onWaterCardClick: () -> Unit,
     onBMICardClick: () -> Unit,
-    onTrainingClick: () -> Unit,
-    onWalkingIcClick: () -> Unit,
-    onRunningIcClick: () -> Unit,
-    onBicycleIcClick: () -> Unit,
-    onMeditationIcClick: () -> Unit,
     homeViewModel: HomeViewModel,
 ) {
     RequestPermission(permission = Manifest.permission.ACTIVITY_RECOGNITION)
@@ -54,15 +49,11 @@ fun HomeScreen(
 
     when (homeViewModel.updateStepsResponse) {
         is Response.Success -> {
-            Toast.makeText(
-                LocalContext.current, "Update steps successfully", Toast.LENGTH_SHORT
-            ).show()
+            Log.e("Update steps count: ", "Success")
         }
 
         is Response.Error -> {
-            Toast.makeText(
-                LocalContext.current, "Update steps failed", Toast.LENGTH_SHORT
-            ).show()
+            Log.e("Update steps count: ", "Failed")
         }
 
         else -> {}
@@ -87,15 +78,19 @@ fun HomeScreen(
                 is Response.Success -> {
                     val caloInfo = homeViewModel.caloPerDay.collectAsState().value
                     val goal = LatestGoalSingletonObject.getInStance()
-                    val caloOut = caloInfo.caloOut
+                    val caloOut = caloInfo?.caloOut ?: 0
 
                     println("caloInfo: $caloInfo")
                     DailyCalories(
-                        remainingCalo = goal.caloriesBurnedEachDayGoal - caloOut,
-                        caloriesIn = caloInfo.caloInt,
-                        caloriesInProgress = (caloInfo.caloInt / goal.caloriesInEachDayGoal) + 0.01f,
+                        remainingCalo = (goal.caloriesBurnedEachDayGoal - caloOut).let {
+                            if (it < 0) 0 else it
+                        },
+                        caloriesIn = caloInfo?.caloInt ?: 0,
+                        caloriesInProgress = caloInfo?.caloInt?.let {
+                            (it.toFloat() / goal.caloriesInEachDayGoal.toFloat()) + 0.01f
+                        } ?: 0.01f,
                         caloriesOut = caloOut,
-                        caloriesOutProgress = (caloOut / goal.caloriesBurnedEachDayGoal) + 0.01f,
+                        caloriesOutProgress = (caloOut.toFloat() / goal.caloriesBurnedEachDayGoal.toFloat()) + 0.01f,
                         caloriesOutTarget = goal.caloriesBurnedEachDayGoal.toFloat(),
 
                         )
@@ -113,25 +108,9 @@ fun HomeScreen(
 
             }
             Spacer(modifier = modifier.height(normalPadding))
-            StepCountHomeCard(
-                modifier = modifier,
-                onCardClick = onFootStepCountCardClick,
-                calories = homeUIState.caloriesBurnt,
-                steps = homeUIState.stepCount,
-                time = homeUIState.timeConsumed
-            )
-            Spacer(modifier = modifier.height(normalPadding))
             GoalDashboardHomeCard(
                 modifier = modifier,
                 onCardClick = { onDashboardCardClick() },
-            )
-            TrainingNow(
-                modifier = modifier,
-                onTrainingClick,
-                onWalkingIcClick,
-                onRunningIcClick,
-                onBicycleIcClick,
-                onMeditationIcClick
             )
             YourBMIHomeCard(
                 modifier = modifier, onCardClick = onBMICardClick, bmiIndex = homeUIState.bmiIndex
@@ -178,7 +157,7 @@ fun HomeHeader(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrainingNow(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onTrainingClick: () -> Unit,
     onWalkingIcClick: () -> Unit,
     onRunningIcClick: () -> Unit,
@@ -187,8 +166,7 @@ fun TrainingNow(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(top = normalPadding),
+            .fillMaxWidth(),
         elevation = smallElevation,
         shape = Shapes.medium,
         onClick = onTrainingClick
@@ -196,7 +174,7 @@ fun TrainingNow(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(midPadding),
+                .padding(halfMidPadding),
         ) {
             Text(
                 modifier = modifier.padding(bottom = normalPadding),

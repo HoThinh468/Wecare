@@ -26,7 +26,7 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
         )
         val tdee = WecareCaloriesObject.getTotalDailyEnergyExpenditure(bmr, activityLevel)
         val caloriesOutEachDay = WecareCaloriesObject.getDailyCaloriesOutBasedOnActivity(
-            tdee, goal.value, activityLevel, weeklyGoalWeight
+            tdee, activityLevel
         )
         val caloriesInEachDay = WecareCaloriesObject.getDailyCaloriesIn(
             tdee, goal.value, weeklyGoalWeight
@@ -51,6 +51,8 @@ class DefineGoalBasedOnInputsUsecase @Inject constructor() {
             dateSetGoal = currentDateTime,
             dateEndGoal = endDate,
             weeklyGoalWeight = weeklyGoalWeight,
+            oldWeight = weight,
+            bmr = bmr
         )
     }
 }

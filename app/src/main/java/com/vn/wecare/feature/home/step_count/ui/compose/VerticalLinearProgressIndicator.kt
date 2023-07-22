@@ -36,7 +36,15 @@ fun VerticalLinearProgressIndicator(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            if(value < 1f) {
+            if (value == 0f) {
+                Box(
+                    modifier = modifier
+                        .weight(0.01f)
+                        .background(color)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            } else if (value < 1f) {
                 Spacer(modifier = modifier.weight(1f - value))
                 Box(
                     modifier = modifier

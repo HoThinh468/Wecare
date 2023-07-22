@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetGoalsFromFirebaseUsecase @Inject constructor(private val goalsRepository: GoalsRepository) {
-    fun getGoalsFromFirebase(): Flow<Response<List<Goal>>> {
-        return goalsRepository.getGoals()
+
+    fun getDoneGoals(): Flow<Response<List<Goal>>> {
+        return goalsRepository.getOldGoals()
     }
 
     fun getCurrentGoalFromFirebase(): Flow<Response<Goal>> {

@@ -28,7 +28,7 @@ fun CircularProgressAnimated(
     animationDuration: Int = 1000
 ) {
     val progressAnimationValue by animateFloatAsState(
-        targetValue = currentValue,
+        targetValue = currentValue * 100,
         animationSpec = tween(animationDuration)
     )
 

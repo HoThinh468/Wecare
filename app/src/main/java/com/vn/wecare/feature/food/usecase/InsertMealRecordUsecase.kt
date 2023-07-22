@@ -2,11 +2,11 @@ package com.vn.wecare.feature.food.usecase
 
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
-import com.vn.wecare.feature.food.data.MealsRepository
-import com.vn.wecare.feature.food.data.model.MealByNutrients
+import com.vn.wecare.feature.food.data.model.MealRecipe
 import com.vn.wecare.feature.food.data.model.MealRecordModel
 import com.vn.wecare.feature.food.data.model.MealTypeKey
-import com.vn.wecare.feature.food.data.model.toRecordModel
+import com.vn.wecare.feature.food.data.model.toMealRecordModel
+import com.vn.wecare.feature.food.data.repository.MealsRepository
 import com.vn.wecare.feature.home.goal.usecase.UpdateGoalRecordUsecase
 import com.vn.wecare.feature.home.step_count.usecase.CaloPerDay
 import com.vn.wecare.feature.home.step_count.usecase.DashboardUseCase
@@ -66,13 +66,14 @@ class InsertMealRecordUsecase @Inject constructor(
     }
 
     fun insertMealRecord(
-        dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealByNutrients
+        dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealRecipe
     ): Flow<Response<Boolean>> = flow {
+        val recordModel = meal.toMealRecordModel()
         val isMealExist = when (mealTypeKey) {
-            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(meal.toRecordModel())
-            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(meal.toRecordModel())
-            MealTypeKey.SNACK -> currentDaySnackRecord.contains(meal.toRecordModel())
-            else -> currentDayDinnerRecord.contains(meal.toRecordModel())
+            MealTypeKey.BREAKFAST -> currentDayBreakfastRecord.contains(recordModel)
+            MealTypeKey.LUNCH -> currentDayLunchRecord.contains(recordModel)
+            MealTypeKey.SNACK -> currentDaySnackRecord.contains(recordModel)
+            else -> currentDayDinnerRecord.contains(recordModel)
         }
 
         if (isMealExist) {
@@ -80,30 +81,30 @@ class InsertMealRecordUsecase @Inject constructor(
             emit(Response.Error(e))
             return@flow
         }
-        repository.insertMealRecord(dateTime, mealTypeKey, meal).collect { res ->
+        repository.insertMealRecord(dateTime, mealTypeKey, recordModel).collect { res ->
             emit(res ?: Response.Error(null))
             if (res is Response.Success) {
-                updateMealListByType(mealTypeKey, meal.toRecordModel())
+                updateMealListByType(mealTypeKey, recordModel)
+                updateGoalRecordUsecase.apply {
+                    updateCaloriesInForCurrentDayRecord(
+                        meal.calories,
+                        meal.protein.getNutrientIndexFromString(),
+                        meal.fat.getNutrientIndexFromString(),
+                        meal.carbs.getNutrientIndexFromString()
+                    )
+                    updateCaloriesInForCurrentWeekRecord(
+                        meal.calories,
+                        meal.protein.getNutrientIndexFromString(),
+                        meal.fat.getNutrientIndexFromString(),
+                        meal.carbs.getNutrientIndexFromString()
+                    )
+                }
+                dashboardUseCase.updateCaloPerDay(
+                    CaloPerDay(
+                        caloInt = meal.calories
+                    )
+                )
             }
-            updateGoalRecordUsecase.apply {
-                updateCaloriesInForCurrentDayRecord(
-                    meal.calories,
-                    meal.protein.getNutrientIndexFromString(),
-                    meal.fat.getNutrientIndexFromString(),
-                    meal.carbs.getNutrientIndexFromString()
-                )
-                updateCaloriesInForCurrentWeekRecord(
-                    meal.calories,
-                    meal.protein.getNutrientIndexFromString(),
-                    meal.fat.getNutrientIndexFromString(),
-                    meal.carbs.getNutrientIndexFromString()
-                )
-            }
-            dashboardUseCase.updateCaloPerDay(
-                CaloPerDay(
-                    caloInt = meal.calories
-                )
-            )
         }
     }
 

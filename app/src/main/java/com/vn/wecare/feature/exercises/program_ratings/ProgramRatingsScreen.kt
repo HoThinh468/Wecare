@@ -117,7 +117,7 @@ fun ProgramRatingsScreen(
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = modifier.padding(start = smallPadding, end = halfMidPadding)
+                        modifier = modifier.padding( end = halfMidPadding)
                     ) {
                         Text(
                             modifier = modifier.padding(bottom = tinyPadding),

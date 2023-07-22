@@ -3,7 +3,9 @@ package com.vn.wecare.feature.home.goal.weeklyrecords
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,7 +19,11 @@ import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.home.goal.data.model.GoalStatus
 import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.midPadding
+import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.utils.common_composable.LoadingDialog
+import com.vn.wecare.utils.common_composable.WecareAppBar
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -54,11 +60,8 @@ fun GoalWeeklyRecordDetailScreen(
         modifier = modifier.fillMaxSize(),
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         topBar = {
-            WeeklyRecordAppBar(
-                modifier = modifier,
-                navigateBack = navigateBack,
-                startDay = record.startDate,
-                endDay = record.endDate
+            WecareAppBar(
+                modifier = modifier, onLeadingIconPress = navigateBack, title = "Weekly report"
             )
         },
     ) {
@@ -70,10 +73,43 @@ fun GoalWeeklyRecordDetailScreen(
         ) {
             OverviewSection(
                 modifier = modifier,
-                totalRecords = uiState.totalRecords,
+                totalRecords = record.numberOfDayRecord,
                 progress = uiState.progress,
-                goalStatus = GoalStatus.getGoalStatusFromString(record.status)
+                goalStatus = GoalStatus.getGoalStatusFromValue(record.status),
+                dateSetGoal = record.startDate,
+                dateEndGoal = record.endDate,
+                weeklyGoalWeight = record.weeklyGoalWeight,
+                bmr = record.bmr
             )
+            Spacer(modifier = modifier.height(normalPadding))
+            WeeklyGoalSummary(
+                modifier = modifier,
+                totalCaloriesIn = record.caloriesIn,
+                totalCaloriesOutWithBMR = uiState.totalCaloriesOutWithBmr,
+                goalName = record.goalName
+            )
+            Spacer(modifier = modifier.height(normalPadding))
+            WeeklyGoalBarChartReportSection(
+                modifier = modifier,
+                dailyRecordList = uiState.records,
+                record = record,
+                totalCaloriesIn = uiState.totalCaloriesIn,
+                totalCaloriesOut = uiState.totalCaloriesOut,
+                caloriesInProgress = getProgressInFloatWithIntInput(
+                    uiState.totalCaloriesIn, record.weeklyCaloriesGoal
+                ),
+                caloriesOutProgress = getProgressInFloatWithIntInput(
+                    uiState.totalCaloriesOut, record.weeklyCaloriesOutGoal
+                )
+            )
+            Spacer(modifier = modifier.height(normalPadding))
+            WeeklyRecordDetailIndex(
+                modifier = modifier,
+                record = record,
+                averageCaloriesIn = uiState.averageCaloriesInEachDay,
+                averageCaloriesOut = uiState.averageCaloriesOutEachDay
+            )
+            Spacer(modifier = modifier.height(midPadding))
         }
     }
 }

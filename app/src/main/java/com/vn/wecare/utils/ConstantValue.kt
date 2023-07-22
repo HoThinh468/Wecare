@@ -35,7 +35,6 @@ object WecareUserConstantValues {
     const val GAIN_WEIGHT = "Gain weight"
     const val MAINTAIN_WEIGHT = "Maintain weight"
     const val GET_HEALTHIER = "Get healthier"
-    const val IMPROVE_MOOD = "Improve mood"
     const val SEDENTARY_LEVEL = "Sedentary"
     const val LIGHTLY_ACTIVE_LEVEL = "Lightly active"
     const val MODERATELY_ACTIVE_LEVEL = "Moderately active"

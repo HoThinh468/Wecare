@@ -34,17 +34,18 @@ import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.midPadding
 
-//@Preview
-//@Composable
-//fun a() {
-//    WorkoutPageScreen(
-//        onQuit = { /*TODO*/ },
-//        title = "Jumping Jack",
-//        exercise = R.drawable.jumping_jack,
-//        duration = 10,
-//        viewModel = hiltViewModel()
-//    )
-//}
+@Preview
+@Composable
+fun a() {
+    WorkoutPageScreen(
+        onQuit = { /*TODO*/ },
+        title = "Jumping Jack",
+        exercise = R.drawable.jumping_jack,
+        duration = 10,
+//        viewModel = ExercisesViewModel(),
+        context = LocalContext.current
+    )
+}
 
 @Composable
 fun WorkoutPageScreen(
@@ -55,7 +56,7 @@ fun WorkoutPageScreen(
     exercise: Int,
     onNavigateToRest: () -> Unit = {},
     onNavigateToPreviousRest: () -> Unit = {},
-    viewModel: ExercisesViewModel,
+//    viewModel: ExercisesViewModel,
     context: Context
 ) {
     var onResume by remember {

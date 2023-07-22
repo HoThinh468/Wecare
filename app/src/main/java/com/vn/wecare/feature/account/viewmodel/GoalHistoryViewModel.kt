@@ -3,6 +3,7 @@ package com.vn.wecare.feature.account.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vn.wecare.core.data.Response
+import com.vn.wecare.feature.home.goal.dashboard.GoalDetailUiState
 import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.feature.home.goal.data.model.EnumGoal
 import com.vn.wecare.feature.home.goal.data.model.Goal
@@ -11,24 +12,18 @@ import com.vn.wecare.feature.home.goal.data.model.GoalWeeklyRecord
 import com.vn.wecare.feature.home.goal.usecase.GetGoalWeeklyRecordUsecase
 import com.vn.wecare.feature.home.goal.usecase.GetGoalsFromFirebaseUsecase
 import com.vn.wecare.utils.WecareUserConstantValues
+import com.vn.wecare.utils.getProgressInFloatWithIntInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
+import kotlin.math.abs
 
-data class GoalFilterUiState(
-    val getDataResponse: Response<Boolean>? = null, val time: Long = 0
-)
-
-data class GoalDetailUiState(
-    val getRecordsResponse: Response<Boolean>? = null,
-    val records: List<GoalWeeklyRecord> = emptyList(),
-    val totalCaloIn: Int = 0,
-    val totalCaloOut: Int = 0,
-    val caloriesRecommendation: Int = 0,
-    val isResetGoalEnable: Boolean = false
+data class GoalHistoryUiState(
+    val getDataResponse: Response<Boolean>? = null
 )
 
 @HiltViewModel
@@ -40,14 +35,20 @@ class GoalHistoryViewModel @Inject constructor(
     private val _goals = MutableStateFlow(emptyList<Goal>())
     val goals = _goals.asStateFlow()
 
+    private val _goalWeeklyRecords = MutableStateFlow(emptyList<GoalWeeklyRecord>())
+    val goalWeeklyRecord = _goalWeeklyRecords.asStateFlow()
+
     private val _currentChosenGoal = MutableStateFlow(Goal())
     val currentChosenGoal = _currentChosenGoal.asStateFlow()
 
-    private val _detailUiState = MutableStateFlow(GoalDetailUiState())
-    val detailUiState = _detailUiState.asStateFlow()
+    private val _detailUi = MutableStateFlow(GoalDetailUiState())
+    val detailUi = _detailUi.asStateFlow()
 
-    private val _filterUi = MutableStateFlow(GoalFilterUiState())
-    val filterUi = _filterUi.asStateFlow()
+    private val _isResetEnabled = MutableStateFlow(false)
+    val isResetEnabled = _isResetEnabled.asStateFlow()
+
+    private val _goalHistoryUiState = MutableStateFlow(GoalHistoryUiState())
+    val goalHistoryUiState = _goalHistoryUiState.asStateFlow()
 
     fun initGoalHistoryUi() {
         getGoalsFromFirebase()
@@ -56,75 +57,76 @@ class GoalHistoryViewModel @Inject constructor(
 
     fun onGoalSelected(goal: Goal) {
         _currentChosenGoal.update { goal }
+        initDetailUi(goal)
     }
 
-    fun resetGetRecordResponse() {
-        _detailUiState.update { it.copy(getRecordsResponse = null) }
+    private fun initDetailUi(goal: Goal) {
+        _detailUi.update {
+            it.copy(
+                goalName = goal.goalName,
+                description = getGoalDescription(
+                    goal.goalName, goal.weightDifference, goal.timeToReachGoalInWeek
+                ),
+                dayLeft = getDayLeft(goal.dateEndGoal),
+                timeProgress = getTimeProgress(goal.dateEndGoal, goal.dateSetGoal),
+                caloriesInGoal = goal.caloriesInEachDayGoal,
+                caloriesOutGoal = goal.caloriesBurnedEachDayGoal,
+                caloriesRecommend = goal.caloriesBurnedGoalForStepCount,
+                stepRecommend = goal.stepsGoal,
+                activeTimeRecommend = goal.moveTimeGoal,
+                status = goal.goalStatus,
+                weightToLose = goal.weightDifference,
+                timeToReachGoal = goal.timeToReachGoalInWeek,
+                weeklyGoalWeight = goal.weeklyGoalWeight
+            )
+        }
+    }
+
+    private fun getGoalDescription(name: String, weightDiffer: Int, time: Int): String {
+        return when (name) {
+            EnumGoal.GAINWEIGHT.value -> "You want to gain $weightDiffer kg in $time week(s)"
+            EnumGoal.LOSEWEIGHT.value -> "You want to loose $weightDiffer kg in $time week(s)"
+            else -> "$name in $time week(s)"
+        }
+    }
+
+    private fun getDayLeft(endDay: Long): Int {
+        return (abs(endDay - System.currentTimeMillis()) / WecareUserConstantValues.DAY_TO_MILLISECONDS).toInt()
+    }
+
+    private fun getTimeProgress(endDay: Long, startDay: Long): Float {
+        val totalDay = ((endDay - startDay) / WecareUserConstantValues.DAY_TO_MILLISECONDS).toInt()
+        val dayPassed = totalDay - getDayLeft(endDay)
+        return getProgressInFloatWithIntInput(dayPassed, totalDay)
     }
 
     private fun getGoalsFromFirebase() = viewModelScope.launch {
-        _filterUi.update { it.copy(getDataResponse = Response.Loading) }
-        getGoalsFromFirebaseUsecase.getGoalsFromFirebase().collect { res ->
+        _goalHistoryUiState.update { it.copy(getDataResponse = Response.Loading) }
+        getGoalsFromFirebaseUsecase.getDoneGoals().collect { res ->
             if (res is Response.Success) {
                 _goals.update { res.data }
-                _filterUi.update { it.copy(getDataResponse = Response.Success(true)) }
+                _goalHistoryUiState.update { it.copy(getDataResponse = Response.Success(true)) }
             } else {
-                _filterUi.update { it.copy(getDataResponse = Response.Error(Exception("Fail to load data!"))) }
+                _goalHistoryUiState.update { it.copy(getDataResponse = Response.Error(Exception("Cannot get goal history"))) }
             }
         }
     }
 
     fun getRecords(goal: Goal) = viewModelScope.launch {
-        _detailUiState.update { it.copy(getRecordsResponse = Response.Loading) }
-        getGoalWeeklyRecordUsecase.getAllRecord(goal.goalId).collect { res ->
+        getGoalWeeklyRecordUsecase.getAll(goal.goalId).collect { res ->
             if (res is Response.Success) {
-                _detailUiState.update {
-                    it.copy(
-                        records = res.data
-                    )
-                }
-                _detailUiState.update { it.copy(getRecordsResponse = Response.Success(true)) }
-                updateCaloriesInfo(res.data)
-            } else {
-                _detailUiState.update {
-                    it.copy(
-                        getRecordsResponse = Response.Error(
-                            java.lang.Exception(
-                                "Fail to get data!"
-                            )
-                        )
-                    )
-                }
+                _goalWeeklyRecords.update { res.data }
             }
         }
     }
 
-    private fun updateCaloriesInfo(res: List<GoalWeeklyRecord>) {
-        var totalCaloriesIn = 0
-        var totalCaloriesOut = 0
-        for (i in res) {
-            totalCaloriesIn += i.caloriesIn
-            totalCaloriesOut += i.caloriesOut
-        }
-        val caloriesRecommendation = when (_currentChosenGoal.value.goalName) {
-            EnumGoal.GAINMUSCLE.value -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_GAIN_MUSCLE
-            EnumGoal.LOSEWEIGHT.value -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY_TO_LOSE_WEIGHT
-            else -> WecareUserConstantValues.DEFAULT_CALORIES_TO_BURN_EACH_DAY
-        }
-        _detailUiState.update {
-            it.copy(
-                totalCaloIn = totalCaloriesIn,
-                totalCaloOut = totalCaloriesOut,
-                caloriesRecommendation = caloriesRecommendation
-            )
-        }
+    fun resetGetGoalsResponse() {
+        _goalHistoryUiState.update { GoalHistoryUiState() }
     }
 
     private fun checkIfResetIsEnabled() {
-        _detailUiState.update {
-            it.copy(
-                isResetGoalEnable = LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value
-            )
+        _isResetEnabled.update {
+            LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value
         }
     }
 }

@@ -37,9 +37,8 @@ fun SplashScreen(
                     moveToOnboardingScreen()
                 }
                 if (viewModel.shouldMoveToHomeScreen) {
-//                    resetStartDestination()
-//                    moveToHomeScreen()
-                    moveToOnboardingScreen()
+                    resetStartDestination()
+                    moveToHomeScreen()
                 } else { /* Do nothing */
                 }
             }

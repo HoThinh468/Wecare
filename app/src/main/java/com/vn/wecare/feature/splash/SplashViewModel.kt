@@ -79,6 +79,7 @@ class SplashViewModel @Inject constructor(
             }
             if (goal is Response.Success) {
                 LatestGoalSingletonObject.updateInStance(goal.data)
+                Log.d(SplashFragment.splashFlowTag, "Latest goal is ${goal.data}")
                 updateCurrentGoalWeeklyRecord(goal.data.goalId)
                 if (goal.data.goalStatus == GoalStatus.INPROGRESS.value && System.currentTimeMillis() > goal.data.dateEndGoal) {
                     updateCurrentGoalStatus(goal.data)
@@ -96,12 +97,13 @@ class SplashViewModel @Inject constructor(
     private fun updateCurrentGoalWeeklyRecord(goalId: String) = viewModelScope.launch {
         getGoalWeeklyRecordUsecase.getCurrentGoalWeeklyRecord(goalId).collect {
             if (it is Response.Success) {
-                CurrentGoalWeeklyRecordSingletonObject.updateInstance(it.data)
+                CurrentGoalWeeklyRecordSingletonObject.updateInstance(it.data.copy(status = GoalStatus.INPROGRESS.value))
                 updateCurrentGoalDailyRecord(goalId, it.data)
                 if (it.data.status == GoalStatus.NOTSTARTED.value) {
                     updateGoalStatusUsecase.updateGoalStatusForWeeklyGoal(
-                        GoalWeeklyRecord.statusField, GoalStatus.INPROGRESS
+                        GoalStatus.INPROGRESS, it.data
                     ).collect()
+                    updateGoalStatusUsecase.updatePreviousGoalWeeklyRecords(goalId)
                 }
                 Log.d(SplashFragment.splashFlowTag, "Latest weekly record is ${it.data}")
             } else CurrentGoalWeeklyRecordSingletonObject.updateInstance(
@@ -123,7 +125,7 @@ class SplashViewModel @Inject constructor(
         }
 
     private suspend fun updateCurrentGoalStatus(goal: Goal) {
-        if (goal.goalName == EnumGoal.IMPROVEMOOD.value || goal.goalName == EnumGoal.GETHEALTHIER.value) {
+        if (goal.goalName == EnumGoal.MAINTAINWEIGHT.value) {
             updateGoalStatusUsecase.update(goal.goalId, GoalStatus.DONE).collect()
         } else {
             combine(

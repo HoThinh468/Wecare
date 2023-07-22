@@ -27,17 +27,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Timer10
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,17 +48,13 @@ import com.vn.wecare.R
 import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.feature.exercises.done.workoutTime
 import com.vn.wecare.feature.exercises.exercise_list.TextWithIcon
-import com.vn.wecare.feature.home.water.report.WaterReportViewModel
 import com.vn.wecare.ui.theme.Black30
-import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey100
-import com.vn.wecare.ui.theme.Grey20
 import com.vn.wecare.ui.theme.Grey500
 import com.vn.wecare.ui.theme.WeCareTypography
 import com.vn.wecare.ui.theme.extraLargePadding
 import com.vn.wecare.ui.theme.halfMidPadding
-import com.vn.wecare.ui.theme.mediumPadding
 import com.vn.wecare.ui.theme.mediumRadius
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.smallPadding
@@ -162,7 +154,7 @@ private fun HistoryChartReport(
     modifier: Modifier = Modifier, viewModel: ExerciseHistoryViewModel
 ) {
 
-    val listDisplay = viewModel.listHistoryDisplay.collectAsState().value
+    val listChart = viewModel.listChartDisplay.collectAsState().value
 
     Card(
         modifier = modifier
@@ -210,7 +202,7 @@ private fun HistoryChartReport(
                 }
             }
             Spacer(modifier = modifier.height(midPadding))
-            if (!listDisplay.isNullOrEmpty()) {
+            if (!listChart.isNullOrEmpty()) {
                 Row(
                     modifier = modifier
                         .weight(9f)
@@ -218,12 +210,12 @@ private fun HistoryChartReport(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    for (item in listDisplay!!) {
-                        val progress = item.kcal / 600f
+                    for ((index, item) in listChart.withIndex()) {
+                        val progress = item / 600f
                         BarChartItem(
-                            itemTitle = getWeekDayFromInt(listDisplay.indexOf(item)),
+                            itemTitle = getWeekDayFromInt(index + 1),
                             progress = progress,
-                            index = item.kcal.toInt()
+                            index = item.toInt()
                         )
                     }
                 }
@@ -267,7 +259,7 @@ private fun HistoryChartReport(
                         .weight(6f)
                         .padding(horizontal = halfMidPadding)
                 ) {
-                    val kcal = listDisplay?.sumOf { it.kcal.toDouble() }?.toFloat()?.div(7f)
+                    val kcal = listChart.sumOf { it.toDouble() }.toFloat().div(7f)
                     Text(text = "Average", style = MaterialTheme.typography.body2)
                     Text(
                         text = "${
@@ -312,7 +304,7 @@ fun ExerciseHistoryTitle(
             )
         }
         Column(
-            modifier = modifier.weight(1f)
+            modifier = modifier.weight(1.5f)
         ) {
             TextWithIcon(
                 icon = Icons.Outlined.Timer,

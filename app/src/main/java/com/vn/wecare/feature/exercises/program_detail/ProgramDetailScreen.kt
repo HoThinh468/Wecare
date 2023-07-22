@@ -82,7 +82,12 @@ fun ProgramDetailScreen(
                         )
                     }
                 },
-                title = { Text("") },
+                title = {
+                    Text(
+                       text = title,
+                        color = Color.White,
+                    )
+                },
                 backgroundColor = Color.Black
             )
         }
@@ -93,118 +98,122 @@ fun ProgramDetailScreen(
                 .fillMaxWidth()
                 .padding(paddingValues)
         ) {
-            Column(
-                modifier = modifier
-                    .background(Color.Black)
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            ) {
-                Text(
-                    modifier = modifier.padding(bottom = 10.dp),
-                    text = title,
-                    style = WeCareTypography.h3,
-                    color = Color.White,
-                    overflow = TextOverflow.Clip
-                )
-                Row(
-                    modifier = modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "$duration min",
-                        style = WeCareTypography.caption,
-                        color = Green500
-                    )
-                    Box(
-                        modifier = modifier
-                            .padding(horizontal = smallPadding)
-                            .clip(CircleShape)
-                            .size(6.dp)
-                            .background(Green500)
-                    )
-                    Text(
-                        text = level.toString(),
-                        style = WeCareTypography.caption,
-                        color = Green500
-                    )
-                }
-                ExpandableText(
-                    text = description,
-                    textColor = Color.White
-                )
-                Box(
-                    modifier = modifier
-                        .padding(vertical = halfMidPadding)
-                        .background(Color.White)
-                        .height(2.dp)
-                        .fillMaxWidth()
-                )
-                Text(
-                    text = "What others say",
-                    style = WeCareTypography.caption,
-                    color = Color.White,
-                    modifier = modifier.padding(bottom = smallPadding)
-                )
-                when (val listReviewResponse = viewModel.reviewListResponse) {
-                    is Response.Loading -> ProgressBar()
-                    is Response.Error -> println(listReviewResponse.e)
-                    is Response.Success -> {
-                        exerciseViewModel.checkIsReview(listReviewResponse.data)
-                        val rating = viewModel.getRating(listReviewResponse.data)
-                        val reviewCount = viewModel.getReviewCount(listReviewResponse.data)
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = modifier
-                                .padding(bottom = midPadding)
-                                .clickable {
-                                    onNavigateToRatingScreen()
-                                }
-                        ) {
-                            RatingStar(rating = rating)
-                            Text(
-                                modifier = modifier.padding(end = tinyPadding),
-                                text = "($rating/5)",
-                                style = WeCareTypography.caption,
-                                color = YellowStar
-                            )
-                            Text(
-                                text = "($reviewCount reviews)",
-                                style = WeCareTypography.caption,
-                                color = Color.White
-                            )
-                        }
-                    }
-                }
-            }
             Surface(
-                modifier = modifier,
+                modifier = modifier.fillMaxSize(),
                 color = Color.White,
                 shape = RoundedCornerShape(32.dp, 32.dp, 0.dp, 0.dp)
             ) {
-                Column() {
-                    LazyColumn(
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
                         modifier = modifier
-                            .padding(top = 30.dp)
-                            .height(330.dp)
+                            .background(Grey500)
+                            .height(10.dp)
+                            .width(100.dp)
+                            .padding(top = 32.dp)
+                    )
+                    Row(
+                        modifier = modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp, horizontal = 32.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        items(listExercises) { exercise ->
-                            DetailProgramItem(programItem = exercise)
+                        Row(
+                            modifier = modifier
+                                .wrapContentSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "$duration min",
+                                style = WeCareTypography.body1,
+                                color = Green500
+                            )
+                            Box(
+                                modifier = modifier
+                                    .padding(horizontal = smallPadding)
+                                    .clip(CircleShape)
+                                    .size(6.dp)
+                                    .background(Green500)
+                            )
+                            Text(
+                                text = level.toString(),
+                                style = WeCareTypography.body1,
+                                color = Green500,
+                                modifier = modifier.padding(vertical = smallPadding)
+                            )
+                        }
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = modifier
+                                .clickable {
+                                    onNavigateToRatingScreen()
+                                }
+                                .wrapContentSize(),
+                        ) {
+                            when (val listReviewResponse = viewModel.reviewListResponse) {
+                                is Response.Loading -> ProgressBar()
+                                is Response.Error -> println(listReviewResponse.e)
+                                is Response.Success -> {
+                                    exerciseViewModel.checkIsReview(listReviewResponse.data)
+                                    val rating = viewModel.getRating(listReviewResponse.data)
+                                    val reviewCount =
+                                        viewModel.getReviewCount(listReviewResponse.data)
+
+                                    Row(
+                                        modifier = modifier
+                                            .wrapContentSize(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center,
+                                    ) {
+                                        RatingStar(rating = rating)
+                                        Text(
+                                            modifier = modifier.padding(end = tinyPadding),
+                                            text = "($rating/5)",
+                                            style = WeCareTypography.caption,
+                                            color = YellowStar
+                                        )
+                                    }
+                                    Text(
+                                        text = "($reviewCount reviews)",
+                                        style = WeCareTypography.caption,
+                                        color = Color.Black
+                                    )
+                                }
+                            }
                         }
                     }
-                    CustomButton(
-                        text = "LET'S START",
-                        onClick = {
-                            onStartWorkout()
-                        },
-                        backgroundColor = Green500,
-                        textColor = Color.White,
-                        padding = 0.dp,
-                        modifier = modifier
-                            .padding(midPadding, tinyPadding, midPadding, 0.dp)
-                    )
+                    Box(
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        LazyColumn(
+                            modifier = modifier
+                                .padding(top = 12.dp, bottom = xxExtraPadding)
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            items(listExercises) { exercise ->
+                                DetailProgramItem(programItem = exercise)
+                            }
+                        }
+                        CustomButton(
+                            text = "LET'S START",
+                            onClick = {
+                                onStartWorkout()
+                            },
+                            backgroundColor = Green500,
+                            textColor = Color.White,
+                            padding = 0.dp,
+                            modifier = modifier
+                                .padding(vertical = normalPadding, horizontal = largePadding)
+                        )
+                    }
                 }
             }
         }

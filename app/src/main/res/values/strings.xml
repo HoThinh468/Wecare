@@ -38,7 +38,7 @@
     <string name="move_time_unit">min</string>
 
     <!-- Training -->
-    <string name="training_now">Training</string>
+    <string name="training_now">Exercise</string>
     <string name="training_walk_title">Walking</string>
     <string name="training_run_title">Running</string>
     <string name="training_bicycle_title">Bicycle</string>
