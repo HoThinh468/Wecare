@@ -34,6 +34,7 @@ import com.vn.wecare.R
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.WeCareTypography
 import com.vn.wecare.ui.theme.halfMidPadding
+import com.vn.wecare.ui.theme.smallPadding
 
 @Composable
 @Preview
@@ -57,7 +58,7 @@ fun CtDialog(
     onAgreeText: String? = null,
     onAgree: () -> Unit = {},
     onDismiss: () -> Unit,
-    height: Dp = 280.dp
+    height: Dp = 290.dp
 ) {
     Card(
         //shape = MaterialTheme.shapes.medium,
@@ -128,7 +129,7 @@ fun CtDialog(
                 ) {
                     Button(
                         onClick = onAgree,
-                        modifier = modifier.weight(1f),
+                        modifier = modifier.padding(horizontal = smallPadding).weight(1f),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Green500)
                     ) {
                         Text(
@@ -140,7 +141,7 @@ fun CtDialog(
                     }
                     Button(
                         onClick = onDismiss,
-                        modifier = modifier.weight(1f),
+                        modifier = modifier.padding(horizontal = smallPadding).weight(1f),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Green500)
                     ) {
                         Text(

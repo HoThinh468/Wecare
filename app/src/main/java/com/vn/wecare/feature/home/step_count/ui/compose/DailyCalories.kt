@@ -72,69 +72,27 @@ fun DailyCalories(
         Row(
             modifier = modifier
                 .fillMaxSize()
-                .padding(normalPadding)
+                .padding(normalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Column(
-                modifier = modifier
-                    .weight(2.5f)
-                    .padding(start = halfMidPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                CaloriesCategoryItem(
-                    modifier = modifier,
-                    calories = caloriesIn,
-                    category = "Calories in",
-                    icon = Icons.Default.ArrowDropUp,
-                    color = MaterialTheme.colors.primary,
-                    progress = caloriesInProgress,
-                    isCaloOut = false
-                )
-                CaloriesCategoryItem(
-                    modifier = modifier,
-                    calories = caloriesOut,
-                    category = "Calories out",
-                    icon = Icons.Default.ArrowDropDown,
-                    color = Red400,
-                    progress = caloriesOutProgress
-                )
-            }
-            Column(
-                modifier = modifier
-                    .weight(3f)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                val progressAnimationValue by animateFloatAsState(
-                    targetValue = getProgressInFloatWithIntInput(
-                        caloriesOut, caloriesOutTarget.toInt()
-                    ), animationSpec = tween(1000)
-                )
-
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = modifier.size(125.dp),
-                        progress = progressAnimationValue,
-                        color = MaterialTheme.colors.primary,
-                        strokeWidth = 10.dp,
-                        backgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
-                        strokeCap = StrokeCap.Round
-                    )
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = remainingCalo.toString(), style = MaterialTheme.typography.h3
-                        )
-                        Text(
-                            text = "kcal left",
-                            style = MaterialTheme.typography.body2
-                        )
-                    }
-                }
-            }
+            CaloriesCategoryItem(
+                modifier = modifier,
+                calories = caloriesIn,
+                category = "Calories in",
+                icon = Icons.Default.ArrowDropUp,
+                color = MaterialTheme.colors.primary,
+                progress = caloriesInProgress,
+                isCaloOut = false
+            )
+            CaloriesCategoryItem(
+                modifier = modifier,
+                calories = caloriesOut,
+                category = "Calories out",
+                icon = Icons.Default.ArrowDropDown,
+                color = Red400,
+                progress = caloriesOutProgress
+            )
         }
     }
 }

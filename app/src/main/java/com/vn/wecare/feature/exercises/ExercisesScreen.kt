@@ -32,7 +32,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.runtime.*
@@ -97,40 +99,48 @@ fun ExercisesScreen(
     onNavigateToFlexibility: () -> Unit,
     onNavigateToFullBody: () -> Unit,
     onNavigateToChatBox: () -> Unit,
+    onNavigationBack: () -> Unit = {},
     auth: FirebaseAuth = Firebase.auth
 ) {
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                elevation = 0.dp,
+                navigationIcon = {
+                    IconButton(onClick = { onNavigationBack() }) {
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
+                    }
+                },
+                title = {
+                    Text("")
+                },
+                backgroundColor = Color.White,
+                actions =  {
+                    IconButton(
+                        modifier = modifier
+                            .width(32.dp)
+                            .height(40.dp)
+                            .padding(top = normalPadding),
+                        onClick = {
+                            onNavigateToReport()
+                        }
+                    ) {
+                        Icon(Icons.Default.Assessment, "", tint = Color.Black)
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
         ) {
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(halfMidPadding),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Let's workout",
-                    style = WeCareTypography.h2,
-                    color = Color.Black
-                )
-                IconButton(
-                    modifier = modifier
-                        .width(32.dp)
-                        .height(40.dp)
-                        .padding(top = normalPadding),
-                    onClick = {
-                        onNavigateToReport()
-                    }
-                ) {
-                    Icon(Icons.Default.Assessment, "", tint = Color.Black)
-                }
-            }
             Column(
                 modifier = modifier
                     .verticalScroll(rememberScrollState()),

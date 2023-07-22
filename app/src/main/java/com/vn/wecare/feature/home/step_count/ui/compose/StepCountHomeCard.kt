@@ -3,11 +3,13 @@ package com.vn.wecare.feature.home.step_count.ui.compose
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -18,54 +20,47 @@ import com.vn.wecare.ui.theme.*
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StepCountHomeCard(
-    modifier: Modifier, onCardClick: () -> Unit, steps: Int, calories: Int, time: Int
+    modifier: Modifier = Modifier, onCardClick: () -> Unit, steps: Int, calories: Int, time: Int
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .padding(end = midPadding)
+            .fillMaxWidth(0.48f)
+            .height(210.dp),
         elevation = smallElevation,
         shape = Shapes.medium,
         onClick = onCardClick
     ) {
         Column(
             modifier = modifier
-                .heightIn()
-                .fillMaxWidth()
-                .padding(normalPadding)
+                .fillMaxSize()
+                .padding(halfMidPadding),
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth(),
                 text = "Daily activity",
                 style = MaterialTheme.typography.h5,
             )
-            Spacer(modifier = modifier.height(normalPadding))
-            Row(
+            FootstepCountOverviewItem(
+                iconRes = R.drawable.burn,
+                index = calories,
+                unitRes = R.string.calo_unit,
                 modifier = modifier
-                    .fillMaxSize()
-                    .padding(horizontal = normalPadding),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                FootstepCountOverviewItem(
-                    iconRes = R.drawable.ic_fire_calo,
-                    iconColorRes = R.color.Red400,
-                    index = calories,
-                    unitRes = R.string.calo_unit,
-                    modifier = modifier
-                )
-                FootstepCountOverviewItem(
-                    iconRes = R.drawable.ic_step,
-                    iconColorRes = R.color.Green500,
-                    index = steps,
-                    unitRes = R.string.footstep_unit,
-                    modifier = modifier
-                )
-                FootstepCountOverviewItem(
-                    iconRes = R.drawable.ic_time_clock,
-                    iconColorRes = R.color.Blue400,
-                    index = time,
-                    unitRes = R.string.move_time_unit,
-                    modifier = modifier
-                )
-            }
+            )
+            FootstepCountOverviewItem(
+                iconRes = R.drawable.step,
+                index = steps,
+                unitRes = R.string.footstep_unit,
+                modifier = modifier
+            )
+            FootstepCountOverviewItem(
+                iconRes = R.drawable.time,
+                index = time,
+                unitRes = R.string.move_time_unit,
+                modifier = modifier
+            )
         }
     }
 }
@@ -74,21 +69,23 @@ fun StepCountHomeCard(
 fun FootstepCountOverviewItem(
     @DrawableRes iconRes: Int,
     @StringRes unitRes: Int,
-    @ColorRes iconColorRes: Int,
     index: Int,
     modifier: Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            modifier = modifier
-                .padding(bottom = 4.dp)
-                .size(iconSize),
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = colorResource(id = iconColorRes)
-        )
+        Box(modifier = modifier.width(64.dp)) {
+            Icon(
+                modifier = modifier
+                    .padding(vertical = 4.dp, horizontal = halfMidPadding)
+                    .size(mediumIconSize),
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = Color.Unspecified
+            )
+        }
         Text(
             text = "$index ",
             style = MaterialTheme.typography.h4,

@@ -199,11 +199,19 @@ class StepCountViewModel @Inject constructor(
                 val caloriesBurned = steps.getCaloriesBurnedFromStepCount(info.height ?: 1, info.weight ?: 1)
                 val moveTime = steps.getMoveTimeFromStepCount(info.height ?: 1)
                 _stepsCountUiState.update {
-                    it.copy(
-                        currentSteps = steps,
-                        caloConsumed = caloriesBurned,
-                        moveMin = moveTime
-                    )
+                    if(stepsFromSensor == 0f) {
+                        it.copy(
+                            currentSteps = 0,
+                            caloConsumed = 0,
+                            moveMin = 0
+                        )
+                    } else {
+                        it.copy(
+                            currentSteps = steps,
+                            caloConsumed = caloriesBurned,
+                            moveMin = moveTime
+                        )
+                    }
                 }
             }
         }
