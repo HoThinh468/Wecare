@@ -23,6 +23,8 @@ import com.vn.wecare.ui.theme.Yellow
 import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.smallPadding
 import com.vn.wecare.utils.common_composable.WecareAppBar
+import com.vn.wecare.utils.getDayFormatWithYear
+import java.time.LocalDate
 
 @Composable
 fun DailyMealPlanAppBar(
@@ -31,7 +33,8 @@ fun DailyMealPlanAppBar(
     totalCalories: Int,
     totalProtein: Int,
     totalFat: Int,
-    totalCarbs: Int
+    totalCarbs: Int,
+    localDate: LocalDate
 ) {
     Column(
         modifier = modifier
@@ -40,7 +43,7 @@ fun DailyMealPlanAppBar(
     ) {
         WecareAppBar(
             modifier = modifier,
-            title = "31st July, 2023",
+            title = getDayFormatWithYear(localDate),
             onLeadingIconPress = navigateUp,
         )
         Column(modifier = modifier.padding(normalPadding)) {

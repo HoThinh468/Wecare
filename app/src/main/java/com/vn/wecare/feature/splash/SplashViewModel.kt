@@ -72,7 +72,6 @@ class SplashViewModel @Inject constructor(
             if (user is Response.Success && user.data != null) {
                 val res = user.data
                 WecareUserSingletonObject.updateInstance(res)
-                WecareCaloriesObject.updateUserCaloriesAmount()
                 if (res.gender == null || res.age == null || res.height == null || res.weight == null || res.goal == null) {
                     shouldMoveToOnboarding = true
                 }
@@ -84,6 +83,7 @@ class SplashViewModel @Inject constructor(
                 if (goal.data.goalStatus == GoalStatus.INPROGRESS.value && System.currentTimeMillis() > goal.data.dateEndGoal) {
                     updateCurrentGoalStatus(goal.data)
                 }
+                WecareCaloriesObject.updateUserCaloriesAmount()
             } else shouldMoveToOnboarding = true
             val result =
                 WecareUserSingletonObject.getInstance() != WecareUser() && LatestGoalSingletonObject.getInStance() != Goal()
