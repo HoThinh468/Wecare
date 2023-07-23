@@ -13,7 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.*
 
@@ -46,19 +51,19 @@ fun StepCountHomeCard(
             FootstepCountOverviewItem(
                 iconRes = R.drawable.burn,
                 index = calories,
-                unitRes = R.string.calo_unit,
+                unitRes = "cal",
                 modifier = modifier
             )
             FootstepCountOverviewItem(
                 iconRes = R.drawable.step,
                 index = steps,
-                unitRes = R.string.footstep_unit,
+                unitRes = "steps",
                 modifier = modifier
             )
             FootstepCountOverviewItem(
                 iconRes = R.drawable.time,
                 index = time,
-                unitRes = R.string.move_time_unit,
+                unitRes = "min",
                 modifier = modifier
             )
         }
@@ -68,7 +73,7 @@ fun StepCountHomeCard(
 @Composable
 fun FootstepCountOverviewItem(
     @DrawableRes iconRes: Int,
-    @StringRes unitRes: Int,
+    unitRes: String,
     index: Int,
     modifier: Modifier
 ) {
@@ -76,7 +81,7 @@ fun FootstepCountOverviewItem(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = modifier.width(64.dp)) {
+        Box(modifier = modifier.width(48.dp)) {
             Icon(
                 modifier = modifier
                     .padding(vertical = 4.dp, horizontal = halfMidPadding)
@@ -87,12 +92,32 @@ fun FootstepCountOverviewItem(
             )
         }
         Text(
-            text = "$index ",
-            style = MaterialTheme.typography.h4,
-        )
-        Text(
-            text = stringResource(id = unitRes),
-            style = MaterialTheme.typography.body2.copy(color = colorResource(id = R.color.Black450)),
+            buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        fontFamily = OpenSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                ) {
+                    append("$index ")
+                }
+
+                withStyle(
+                    style = SpanStyle(
+                        fontFamily = OpenSans,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                        color = colorResource(id = R.color.Black450)
+                    )
+                ) {
+                    if(index >= 10000) {
+                        append("\n$unitRes")
+                    } else {
+                        append(unitRes)
+                    }
+                }
+            }
         )
     }
 }

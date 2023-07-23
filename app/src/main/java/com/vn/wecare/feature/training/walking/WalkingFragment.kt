@@ -86,6 +86,12 @@ class WalkingFragment : Fragment() {
     ): View? {
         _binding = FragmentWalkingBinding.inflate(inflater, container, false)
         mapView = binding.mapView
+
+        val btn = binding.btnNavigate
+        btn.setOnClickListener {
+            onCameraTrackingChanged()
+        }
+
         lateinit var result: UserAction
         binding.targetChosen.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -127,6 +133,11 @@ class WalkingFragment : Fragment() {
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
+    }
+
+    private fun onCameraTrackingChanged() {
+        initLocationComponent()
+        setupGesturesListener()
     }
 
     private fun onMapReady() {
