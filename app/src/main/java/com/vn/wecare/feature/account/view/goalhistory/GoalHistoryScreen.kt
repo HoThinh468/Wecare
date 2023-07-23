@@ -68,7 +68,8 @@ fun GoalHistoryScreen(
     val isResetEnabled = viewModel.isResetEnabled.collectAsState().value
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
     val uiState = viewModel.detailUi.collectAsState().value
     val coroutineScope = rememberCoroutineScope()

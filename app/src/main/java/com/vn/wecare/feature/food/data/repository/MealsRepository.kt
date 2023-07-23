@@ -24,8 +24,7 @@ class MealsRepository @Inject constructor(
 ) {
     suspend fun insertMealRecord(
         dateTime: Calendar, mealTypeKey: MealTypeKey, meal: MealRecordModel
-    ): Flow<Response<Boolean>?> =
-        remoteDataSource.insert(dateTime, mealTypeKey, meal)
+    ): Flow<Response<Boolean>?> = remoteDataSource.insert(dateTime, mealTypeKey, meal)
 
     suspend fun getMealOfEachTypeInDayWithDayId(
         dayOfMonth: Int, month: Int, year: Int, mealTypeKey: MealTypeKey

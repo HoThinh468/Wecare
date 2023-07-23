@@ -32,7 +32,6 @@ import com.vn.wecare.core.model.listDetailEndurance
 import com.vn.wecare.feature.exercises.ExercisesViewModel
 import com.vn.wecare.feature.exercises.exercise_list.ExerciseLevel
 import com.vn.wecare.feature.exercises.widget.CountDownTimer1
-import com.vn.wecare.feature.exercises.widget.ExpandableText
 import com.vn.wecare.feature.exercises.widget.RatingStar
 import com.vn.wecare.feature.training.dashboard.widget.ProgressBar
 import com.vn.wecare.ui.theme.*
@@ -44,7 +43,7 @@ fun PreviewScreen() {
     ProgramDetailScreen(
         onNavigationBack = {},
         title = "High intensity full body workout",
-        level = ExerciseLevel.Hard,
+        level = ExerciseLevel.Advanced,
         duration = 20,
         description = "High intensity full body workout High intensity full body workout High intensity full body workout High intensity full body workout",
         onNavigateToRatingScreen = {},
