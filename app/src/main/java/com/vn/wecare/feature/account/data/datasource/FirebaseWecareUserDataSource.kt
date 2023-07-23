@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.core.di.IoDispatcher
 import com.vn.wecare.feature.account.data.model.WecareUser
+import com.vn.wecare.feature.onboarding.OnboardingFragment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,16 +20,20 @@ class FirebaseWecareUserDataSource @Inject constructor(
 ) : WecareUserDataSource {
 
     override suspend fun insertUser(input: WecareUser) {
-        db.collection(WECARE_USER_COLLECTION_PATH).document(input.userId).set(input)
-            .addOnSuccessListener {
-                Log.d(
-                    "Insert user firestore", "DocumentSnapshot successfully written!"
-                )
-            }.addOnFailureListener { e ->
-                Log.w(
-                    "Insert user firestore", "Error writing document", e
-                )
-            }
+        try {
+            db.collection(WECARE_USER_COLLECTION_PATH).document(input.userId).set(input)
+                .addOnSuccessListener {
+                    Log.d(
+                        "Insert user firestore", "DocumentSnapshot successfully written!"
+                    )
+                }.addOnFailureListener { e ->
+                    Log.w(
+                        "Insert user firestore", "Error writing document", e
+                    )
+                }
+        } catch (e: Exception) {
+            Log.d(OnboardingFragment.onboardingTag, "Insert user fail due to ${e.message}")
+        }
     }
 
     override suspend fun deleteUser(input: WecareUser) {

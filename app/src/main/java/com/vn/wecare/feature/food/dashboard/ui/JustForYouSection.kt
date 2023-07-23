@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.R
 import com.vn.wecare.ui.theme.Blue
 import com.vn.wecare.ui.theme.Shapes
-import com.vn.wecare.ui.theme.Yellow
 import com.vn.wecare.ui.theme.halfMidPadding
 import com.vn.wecare.ui.theme.midPadding
 import com.vn.wecare.ui.theme.normalPadding
@@ -29,7 +28,7 @@ import com.vn.wecare.ui.theme.normalPadding
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun JustForYouSection(
-    modifier: Modifier, navigateToAddYourOwnMealScreen: () -> Unit
+    modifier: Modifier, navigateToAddYourOwnMealScreen: () -> Unit, moveToMealPlanScreen: () -> Unit
 ) {
     Text("Just for you", style = MaterialTheme.typography.h4)
     Spacer(modifier = modifier.height(halfMidPadding))
@@ -61,7 +60,7 @@ fun JustForYouSection(
         Card(modifier = modifier.weight(1f),
             shape = Shapes.large,
             backgroundColor = Blue,
-            onClick = {}) {
+            onClick = { moveToMealPlanScreen() }) {
             Column(
                 modifier = modifier.fillMaxWidth().padding(horizontal = midPadding, vertical = normalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally

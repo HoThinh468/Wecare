@@ -87,9 +87,10 @@ class UpdateGoalRecordUsecase @Inject constructor(
                 )
             }
         }
+        updateCaloriesOutForCurrentWeekRecord(caloriesOut)
     }
 
-    suspend fun updateCaloriesOutForCurrentWeekRecord(calories: Int) {
+    private suspend fun updateCaloriesOutForCurrentWeekRecord(calories: Int) {
         if (LatestGoalSingletonObject.getInStance().goalStatus != GoalStatus.INPROGRESS.value) return
         val currentWeeklyRecord = CurrentGoalWeeklyRecordSingletonObject.getInstance()
 

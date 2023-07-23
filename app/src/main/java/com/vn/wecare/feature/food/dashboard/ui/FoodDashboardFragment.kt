@@ -70,6 +70,12 @@ class FoodDashboardFragment :
                         R.id.action_dailyNutritionFragment_to_foodReportFragment
                     )
                 },
+                moveToMealPlan = {
+                    findNavController().safeNavigate(
+                        R.id.dailyNutritionFragment,
+                        R.id.action_dailyNutritionFragment_to_mealPlanFragment
+                    )
+                },
                 nutritionDashboardViewmodel = viewModel,
             )
         }

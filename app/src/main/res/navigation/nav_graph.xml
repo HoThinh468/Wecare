@@ -394,6 +394,9 @@
             <action
                 android:id="@+id/action_dailyNutritionFragment_to_foodReportFragment"
                 app:destination="@id/foodReportFragment" />
+            <action
+                android:id="@+id/action_dailyNutritionFragment_to_mealPlanFragment"
+                app:destination="@id/mealPlanFragment" />
         </fragment>
         <fragment
             android:id="@+id/breakfastFragment"
@@ -471,6 +474,20 @@
             android:name="com.vn.wecare.feature.food.report.FoodReportFragment"
             android:label="fragment_food_report"
             tools:layout="@layout/fragment_food_report" />
+        <fragment
+            android:id="@+id/mealPlanFragment"
+            android:name="com.vn.wecare.feature.food.mealplan.weekly.WeeklyMealPlanFragment"
+            android:label="fragment_meal_plan"
+            tools:layout="@layout/fragment_meal_plan" >
+            <action
+                android:id="@+id/action_mealPlanFragment_to_dailyMealPlanFragment"
+                app:destination="@id/dailyMealPlanFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/dailyMealPlanFragment"
+            android:name="com.vn.wecare.feature.food.mealplan.daily.DailyMealPlanFragment"
+            android:label="fragment_daily_meal_plan"
+            tools:layout="@layout/fragment_daily_meal_plan" />
     </navigation>
 
     <!-- Account nested graph -->

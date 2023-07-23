@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.vn.wecare.core.data.Response
 import com.vn.wecare.feature.food.dashboard.viewmodel.NutritionDashboardViewmodel
 import com.vn.wecare.ui.theme.midPadding
-import com.vn.wecare.ui.theme.normalPadding
 import com.vn.wecare.ui.theme.xxxExtraPadding
 import com.vn.wecare.utils.common_composable.LoadingDialog
 
@@ -45,6 +44,7 @@ fun NutritionDashboardScreen(
     moveToAddYourOwnMealsListScreen: () -> Unit,
     moveToSearchFoodScreen: () -> Unit,
     moveToReportScreen: () -> Unit,
+    moveToMealPlan: () -> Unit,
     nutritionDashboardViewmodel: NutritionDashboardViewmodel
 ) {
     val uiState = nutritionDashboardViewmodel.uiState.collectAsState()
@@ -95,9 +95,13 @@ fun NutritionDashboardScreen(
                 currentCarbs = nutritionDashboardViewmodel.totalCarbs
             )
             Spacer(modifier = modifier.height(midPadding))
-            JustForYouSection(modifier = modifier) {
-                moveToAddYourOwnMealsListScreen()
-            }
+            JustForYouSection(
+                modifier = modifier,
+                navigateToAddYourOwnMealScreen = {
+                    moveToAddYourOwnMealsListScreen()
+                },
+                moveToMealPlanScreen = { moveToMealPlan() },
+            )
             Spacer(modifier = modifier.height(midPadding))
             AddMealsSection(
                 modifier = modifier,
@@ -138,7 +142,7 @@ private fun NutritionAppbar(
                     text = dateTime, style = MaterialTheme.typography.h3
                 )
             }
-            Row() {
+            Row {
                 IconButton(onClick = moveToSearchFoodScreen) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = null)
                 }
