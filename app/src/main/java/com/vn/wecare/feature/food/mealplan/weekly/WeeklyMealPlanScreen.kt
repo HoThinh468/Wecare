@@ -19,7 +19,7 @@ import java.time.LocalDate
 fun WeeklyMealPlanScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    moveToDailyMealPlanScreen: () -> Unit,
+    moveToDailyMealPlanScreen: (dayOfMonth: Int, month: Int, year: Int) -> Unit,
     viewModel: WeeklyMealPlanViewModel
 ) {
 
@@ -49,7 +49,11 @@ fun WeeklyMealPlanScreen(
                     modifier = modifier,
                     day = getDayFormatWithYear(localDate),
                     dayOfWeek = getDayOfWeekPrefix(localDate.dayOfWeek.value + 1),
-                    onClick = { moveToDailyMealPlanScreen() },
+                    onClick = {
+                        moveToDailyMealPlanScreen(
+                            localDate.dayOfMonth, localDate.monthValue, localDate.year
+                        )
+                    },
                     isEnabled = LocalDate.now() >= localDate
                 )
             }
