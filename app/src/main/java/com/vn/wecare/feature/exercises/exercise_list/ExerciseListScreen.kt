@@ -1,6 +1,5 @@
 package com.vn.wecare.feature.exercises.exercise_list
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,8 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vn.wecare.core.model.ListExerciseItem
@@ -66,14 +63,6 @@ fun ExerciseListScreen(
                 .fillMaxWidth()
                 .padding(paddingValues)
         ) {
-            Image(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                painter = painterResource(id = uiState.image),
-                contentDescription = "",
-                contentScale = ContentScale.FillBounds
-            )
             Surface(
                 modifier = modifier,
                 color = Color.White,
@@ -136,14 +125,6 @@ fun ExerciseListItem(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            modifier = modifier
-                .weight(5f)
-                .size(50.dp),
-            painter = painterResource(id = exerciseItem.image),
-            contentDescription = "",
-            contentScale = ContentScale.FillBounds
-        )
         Column(
             modifier
                 .padding(start = 15.dp)
@@ -176,7 +157,7 @@ fun ExerciseListItem(
 }
 
 enum class ExerciseLevel {
-    Easy, Medium, Hard
+    Beginner, Intermediate, Advanced
 }
 
 @Composable
