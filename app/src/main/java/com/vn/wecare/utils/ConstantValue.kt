@@ -53,4 +53,7 @@ object WecareUserConstantValues {
     val BMI_OVERWEIGHT_RANGE = 25.0..29.9
     val BMI_FAT_RANGE = 30.0..35.0
     val BMI_OBESITY_RANGE = 35.1..60.0
+
+    /* Food constant */
+    const val SPOONACULAR_IMAGE_URL = "https://spoonacular.com/recipeImages/"
 }
