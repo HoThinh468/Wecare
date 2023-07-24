@@ -64,6 +64,7 @@ class AccountViewModel @Inject constructor(
     fun updateAccountScreen() = viewModelScope.launch {
         getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
             .collect { res ->
+                Log.d("User from room", "$res")
                 if (res is Response.Success && res.data != null) {
                     _accountUiState.update {
                         it.copy(

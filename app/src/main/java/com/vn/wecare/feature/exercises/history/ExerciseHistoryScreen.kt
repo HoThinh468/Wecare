@@ -73,7 +73,7 @@ import java.time.format.DateTimeFormatter
 
 @Preview
 @Composable
-fun preview() {
+fun Preview() {
     ExerciseHistoryScreen(
         onNavigationBack = {}
     )
@@ -266,7 +266,7 @@ private fun HistoryChartReport(
                             DecimalFormat("#.##").format(
                                 kcal ?: 0f
                             )
-                        } kcal",
+                        } cal",
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -314,7 +314,7 @@ fun ExerciseHistoryTitle(
             TextWithIcon(
                 icon = Icons.Default.Bolt,
                 tint = Black30,
-                text = "${DecimalFormat("#.##").format(kcal)} Kcal"
+                text = "${DecimalFormat("#.##").format(kcal)} cal"
             )
         }
     }
@@ -359,7 +359,7 @@ fun ExerciseHistoryItem(
             TextWithIcon(
                 icon = Icons.Default.Bolt,
                 tint = Black30,
-                text = "${DecimalFormat("#.##").format(kcal)} Kcal"
+                text = "${DecimalFormat("#.##").format(kcal)} cal"
             )
         }
     }

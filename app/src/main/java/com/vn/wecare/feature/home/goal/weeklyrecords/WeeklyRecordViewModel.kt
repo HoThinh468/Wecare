@@ -30,6 +30,7 @@ data class WeekRecordDetailUiState(
     val totalCaloriesOut: Int = 0,
     val totalCaloriesOutWithBmr: Int = 0,
     val completedDays: Int = 0,
+    val recordedDays: Int = 0,
 )
 
 @HiltViewModel
@@ -70,11 +71,10 @@ class WeeklyRecordViewModel @Inject constructor(
                     it.copy(
                         progress = getProgressInFloatWithIntInput(
                             res.data.size, NUMBER_OF_DAYS_IN_WEEK
-                        ), getRecordsResponse = Response.Success(true)
+                        ), getRecordsResponse = Response.Success(true), recordedDays = res.data.size
                     )
                 }
                 updateRecordsAfterGetData(res.data)
-
             } else {
                 _uiState.update { it.copy(getRecordsResponse = Response.Error(Exception("Fail to load daily records!"))) }
             }

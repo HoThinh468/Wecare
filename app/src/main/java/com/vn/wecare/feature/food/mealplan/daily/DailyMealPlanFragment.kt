@@ -31,6 +31,11 @@ class DailyMealPlanFragment : BaseBindingFragment<FragmentDailyMealPlanBinding>(
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewmodel.resetGetMealResponse()
+    }
+
     companion object {
         const val dailyMealPlanTag = "Daily meal plan flow"
     }
