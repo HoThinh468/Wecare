@@ -79,10 +79,6 @@ fun Overview(
     val targetSteps = targetCalo.getStepsFromCaloriesBurned(info.height ?: 1, info.weight ?: 1)
     val targetMoveTime = targetSteps.getMoveTimeFromStepCount(info.height ?: 1)
 
-    Log.e("trung log", "targetCalo: $targetCalo")
-    Log.e("trung log", "targetSteps: $targetSteps")
-    Log.e("trung log", "targetMoveTime: $targetMoveTime")
-
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = Shapes.small,
@@ -100,14 +96,18 @@ fun Overview(
                 CircularProgressAnimated(
                     size = 180.dp, currentValue = getProgressInFloatWithIntInput(
                         stepsCountUiState.currentSteps, targetSteps
-                    ), indicatorThickness = 20.dp
+                    ).let {
+                        if (it >= 1f) 1f else it
+                    }, indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
                     size = 140.dp,
                     color = colorResource(id = R.color.Red400),
                     currentValue = getProgressInFloatWithIntInput(
                         stepsCountUiState.caloConsumed, targetCalo
-                    ),
+                    ).let {
+                        if (it >= 1f) 1f else it
+                    },
                     indicatorThickness = 20.dp
                 )
                 CircularProgressAnimated(
@@ -115,7 +115,9 @@ fun Overview(
                     color = colorResource(id = R.color.Blue400),
                     currentValue = getProgressInFloatWithIntInput(
                         stepsCountUiState.moveMin, targetMoveTime
-                    ),
+                    ).let {
+                        if (it >= 1f) 1f else it
+                    },
                     indicatorThickness = 20.dp
                 )
             }

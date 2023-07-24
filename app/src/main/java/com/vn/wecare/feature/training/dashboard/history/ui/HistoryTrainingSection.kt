@@ -175,7 +175,7 @@ fun HistoryTrainingItem(
         ) {
             LeadingIconText(
                 icon = Icons.Default.Whatshot,
-                text = "${stringWith2Decimals(kcal)} kcal",
+                text = "${stringWith2Decimals(kcal)} cal",
                 modifier = modifier
             )
             LeadingIconText(

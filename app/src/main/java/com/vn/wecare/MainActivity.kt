@@ -19,11 +19,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.core.STEP_COUNT_SHARED_PREF
+import com.vn.wecare.core.WecareUserSingletonObject
 import com.vn.wecare.databinding.ActivityMainBinding
 import com.vn.wecare.feature.exercises.workout_dashboard.ExerciseDashboardViewModel
-import com.vn.wecare.feature.home.HomeViewModel
 import com.vn.wecare.feature.home.step_count.StepCountViewModel
 import com.vn.wecare.feature.home.step_count.usecase.CURRENT_STEP_FROM_SENSOR
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +32,6 @@ import io.kommunicate.Kommunicate
 import io.kommunicate.callbacks.KMLoginHandler
 import io.kommunicate.callbacks.KmCallback
 import io.kommunicate.users.KMUser
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SensorEventListener {
@@ -99,6 +97,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     initialTouchY = event.rawY
                     isMoved = false
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     val deltaX = event.rawX - initialTouchX
                     val deltaY = event.rawY - initialTouchY
@@ -106,6 +105,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     view.y = initialY + deltaY
                     isMoved = true
                 }
+
                 MotionEvent.ACTION_UP -> {
                     // Calculate the new x-coordinate to move the FAB to the right or left edge
                     val halfFabWidth = view.width / 2
@@ -118,10 +118,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     }
 
                     // Animate the FAB to its new position
-                    view.animate()
-                        .x(newFabX)
-                        .setDuration(200)
-                        .start()
+                    view.animate().x(newFabX).setDuration(200).start()
 
                     if (!isMoved) {
                         view.performClick()
@@ -139,7 +136,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         Kommunicate.login(this, user, object : KMLoginHandler {
             override fun onSuccess(registrationResponse: RegistrationResponse, context: Context) {
-                KmConversationHelper.openConversation(this@MainActivity,
+                KmConversationHelper.openConversation(
+                    this@MainActivity,
                     false,
                     null,
                     object : KmCallback {
@@ -149,8 +147,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
 
             override fun onFailure(
-                registrationResponse: RegistrationResponse,
-                exception: java.lang.Exception
+                registrationResponse: RegistrationResponse, exception: java.lang.Exception
             ) {
                 Toast.makeText(
                     this@MainActivity,
@@ -164,8 +161,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun openChatWithGuest() {
         Kommunicate.loginAsVisitor(this, object : KMLoginHandler {
             override fun onSuccess(registrationResponse: RegistrationResponse, context: Context) {
-                KmConversationBuilder(this@MainActivity)
-                    .setSingleConversation(true)
+                KmConversationBuilder(this@MainActivity).setSingleConversation(true)
                     .launchConversation(object : KmCallback {
                         override fun onSuccess(message: Any) {
                             Log.d("Conversation", "Success : $message")
@@ -174,17 +170,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         override fun onFailure(error: Any) {
                             Log.d("Conversation", "Failure : $error")
                             Toast.makeText(
-                                this@MainActivity,
-                                "Open chat bot fail: $error",
-                                Toast.LENGTH_SHORT
+                                this@MainActivity, "Open chat bot fail: $error", Toast.LENGTH_SHORT
                             ).show()
                         }
                     })
             }
 
             override fun onFailure(
-                registrationResponse: RegistrationResponse,
-                exception: Exception
+                registrationResponse: RegistrationResponse, exception: Exception
             ) {
                 Toast.makeText(
                     this@MainActivity,
@@ -239,6 +232,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     binding.navView.visibility = View.VISIBLE
                     binding.fab.visibility = View.VISIBLE
                 }
+
                 R.id.signUpFragment, R.id.logInFragment -> binding.fab.visibility = View.VISIBLE
 
                 else -> {
