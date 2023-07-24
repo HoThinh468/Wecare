@@ -119,6 +119,11 @@ class OnWalkingFragment : Fragment() {
         _binding = FragmentOnWalkingBinding.inflate(inflater, container, false)
         mapView = binding.mapView
 
+        val btn = binding.btnNavigate
+        btn.setOnClickListener {
+            onCameraTrackingChanged()
+        }
+
         getLocation()
 
         lateinit var result: Pair<UserTarget, TargetIndex>
@@ -214,6 +219,11 @@ class OnWalkingFragment : Fragment() {
         locationComponentPlugin.addOnIndicatorBearingChangedListener(
             onIndicatorBearingChangedListener
         )
+    }
+
+    private fun onCameraTrackingChanged() {
+        initLocationComponent()
+        setupGesturesListener()
     }
 
     private fun onCameraTrackingDismissed() {

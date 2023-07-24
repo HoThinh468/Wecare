@@ -3,6 +3,7 @@ package com.vn.wecare.feature.training.dashboard
 import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -44,6 +45,7 @@ fun TrainingScreen(
         content = { padding ->
             Column(
                 modifier = modifier
+                    .padding(padding)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
