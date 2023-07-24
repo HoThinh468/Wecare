@@ -26,6 +26,8 @@ import com.vn.wecare.feature.training.utils.stringWith2Decimals
 import com.vn.wecare.ui.theme.Black900
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey500
+import com.vn.wecare.utils.getFirstWeekdayTimestamp
+import com.vn.wecare.utils.getMondayOfTimestampWeek
 import java.util.Calendar
 
 
@@ -48,8 +50,7 @@ fun CheckingWeeklySummarySection(
     kcal: Double,
     session: Int
 ) {
-    val cal: Calendar = Calendar.getInstance()
-    val firstDateOfWeek = cal.firstDayOfWeek
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -80,8 +81,8 @@ fun CheckingWeeklySummarySection(
                     TrainingCalendar(
                         modifier = modifier,
                         checks = checks,
-                        startDate = firstDateOfWeek,
-                        endDate = firstDateOfWeek + 6
+                        startDate = getMondayOfTimestampWeek(System.currentTimeMillis()).dayOfMonth + 1,
+                        endDate = getMondayOfTimestampWeek(System.currentTimeMillis()).dayOfMonth + 7
                     )
                 }
             )

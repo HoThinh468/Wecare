@@ -97,8 +97,8 @@ fun OnWalkingScreen(
                             convertUserActionToString(userAction),
                             System.currentTimeMillis(),
                             duration,
-                            stringWith2Decimals(kcal.value).toDouble(),
-                            stringWith2Decimals(distance.value).toDouble()
+                            stringWith2Decimals(kcal.value).replace(",","").toDouble(),
+                            stringWith2Decimals(distance.value).replace(",","").toDouble()
                         )
                     )
                     viewModel.addTrainedDate()
