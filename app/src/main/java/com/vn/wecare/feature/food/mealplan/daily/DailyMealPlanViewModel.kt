@@ -52,7 +52,19 @@ class DailyMealPlanViewModel @Inject constructor(
                 _uiState.update { it.copy(getMealPlanResponse = Response.Loading) }
                 repo.getMealPlanFromFirestore(dayId).collect { res ->
                     if (res is Response.Success && res.data != null) {
-                        _uiState.update { it.copy(dailyMealPlan = res.data) }
+                        _uiState.update {
+                            it.copy(
+                                dailyMealPlan = res.data,
+                                getMealPlanResponse = Response.Success(true)
+                            )
+                        }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                dailyMealPlan = emptyList(),
+                                getMealPlanResponse = Response.Success(true)
+                            )
+                        }
                     }
                 }
             }

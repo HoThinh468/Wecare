@@ -152,13 +152,6 @@ fun AccountHeader(
             ),
             modifier = modifier.padding(bottom = normalPadding)
         )
-        if (!uiState.value.isEmailVerified) {
-            Button(
-                onClick = sendVerifiedEmail, modifier = modifier.padding(bottom = normalPadding)
-            ) {
-                Text("Get your email verified!")
-            }
-        }
     }
 }
 

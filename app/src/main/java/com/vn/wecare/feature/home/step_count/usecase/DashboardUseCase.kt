@@ -76,7 +76,7 @@ class DashboardUseCase(
                 ?: newCalo.caloOutTraining
 
             val newValue = CaloPerDay(
-                caloInt = caloInt,
+                caloInt = if (caloInt < 0) 0 else caloInt,
                 caloOutExercise = caloOutExercise,
                 caloOutWalking = caloOutWaking,
                 caloOutTraining = caloOutTraining,

@@ -33,10 +33,10 @@ class UpdateGoalRecordUsecase @Inject constructor(
         val currentCarbs = currentDailyRecord.carbsAmount + carbs
 
         val newRecord = currentDailyRecord.copy(
-            caloriesIn = currentCalories,
-            carbsAmount = currentCarbs,
-            proteinAmount = currentProtein,
-            fatAmount = currentFat
+            caloriesIn = if (currentCalories < 0) 0 else currentCalories,
+            carbsAmount = if (currentCarbs < 0) 0 else currentCarbs,
+            proteinAmount = if (currentProtein < 0) 0 else currentProtein,
+            fatAmount = if (currentFat < 0) 0 else currentFat
         )
 
         repository.insertGoalDailyRecord(newRecord).collect()
@@ -54,10 +54,10 @@ class UpdateGoalRecordUsecase @Inject constructor(
         val currentFat = currentWeeklyRecord.fatAmount + fat
         val currentCarbs = currentWeeklyRecord.carbsAmount + carbs
         val newRecord = currentWeeklyRecord.copy(
-            caloriesIn = currentWeeklyCaloriesIn,
-            proteinAmount = currentProtein,
-            fatAmount = currentFat,
-            carbsAmount = currentCarbs,
+            caloriesIn = if (currentWeeklyCaloriesIn < 0) 0 else currentWeeklyCaloriesIn,
+            proteinAmount = if (currentProtein < 0) 0 else currentProtein,
+            fatAmount = if (currentFat < 0) 0 else currentFat,
+            carbsAmount = if (currentCarbs < 0) 0 else currentCarbs,
             status = GoalStatus.INPROGRESS.value
         )
 

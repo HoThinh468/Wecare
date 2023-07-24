@@ -34,7 +34,7 @@ class InsertGoalDailyRecordUsecase @Inject constructor(
             if (CurrentGoalWeeklyRecordSingletonObject.getInstance().status == GoalStatus.NOTSTARTED.value) {
                 this.updateInfoForCurrentGoalWeeklyRecord(
                     field = GoalWeeklyRecord.statusField, value = GoalStatus.INPROGRESS.value
-                ).collect()
+                ).collect {}
             }
         }
         CurrentGoalDailyRecordSingletonObject.updateInstance(record)

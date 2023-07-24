@@ -149,7 +149,6 @@ class LoginViewModel @Inject constructor(
     private fun updateResponseIfSaveDataSuccess() = viewModelScope.launch {
         getWecareUserWithIdUsecase.getUserFromRoomWithId(accountService.currentUserId)
             .stateIn(viewModelScope).collect { res ->
-                delay(2000)
                 if (res is Response.Success && res.data?.userId != null) {
                     _logInUiState.update {
                         it.copy(saveDataResponse = Response.Success(true))

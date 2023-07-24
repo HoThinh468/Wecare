@@ -17,9 +17,9 @@ import com.vn.wecare.feature.home.water.data.model.WaterRecordEntity
 
 @Database(
     entities = [StepsPerDayEntity::class, StepsPerHourEntity::class, WecareUser::class, WaterRecordEntity::class, MealByNutrientsEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
-    autoMigrations = [AutoMigration(from = 2, to = 3)]
+    autoMigrations = [AutoMigration(from = 3, to = 4)]
 )
 @TypeConverters(DateTimeConverters::class)
 abstract class WecareDatabase : RoomDatabase() {

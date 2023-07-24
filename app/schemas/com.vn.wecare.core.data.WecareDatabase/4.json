@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "a7be6a0542197ca75851f3fdec2042c1",
+    "identityHash": "b9a4f06a1b7c48fe101bdabd7b95999b",
     "entities": [
       {
         "tableName": "steps_per_day",
@@ -94,7 +94,7 @@
       },
       {
         "tableName": "wecare_user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `userName` TEXT NOT NULL, `email` TEXT NOT NULL, `emailVerified` INTEGER NOT NULL, `gender` INTEGER NOT NULL, `age` INTEGER NOT NULL, `height` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `goal` TEXT NOT NULL, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `userName` TEXT NOT NULL, `email` TEXT NOT NULL, `emailVerified` INTEGER NOT NULL, `gender` INTEGER, `age` INTEGER, `height` INTEGER, `weight` INTEGER, `goal` TEXT, `activityLevel` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`userId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -124,31 +124,38 @@
             "fieldPath": "gender",
             "columnName": "gender",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "age",
             "columnName": "age",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "height",
             "columnName": "height",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "weight",
             "columnName": "weight",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "goal",
             "columnName": "goal",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
+          },
+          {
+            "fieldPath": "activityLevel",
+            "columnName": "activityLevel",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -277,7 +284,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a7be6a0542197ca75851f3fdec2042c1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9a4f06a1b7c48fe101bdabd7b95999b')"
     ]
   }
 }
