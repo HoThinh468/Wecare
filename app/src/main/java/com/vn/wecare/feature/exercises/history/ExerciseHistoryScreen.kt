@@ -48,6 +48,7 @@ import com.vn.wecare.R
 import com.vn.wecare.core.model.ExerciseType
 import com.vn.wecare.feature.exercises.done.workoutTime
 import com.vn.wecare.feature.exercises.exercise_list.TextWithIcon
+import com.vn.wecare.feature.home.goal.data.LatestGoalSingletonObject
 import com.vn.wecare.ui.theme.Black30
 import com.vn.wecare.ui.theme.Green500
 import com.vn.wecare.ui.theme.Grey100
@@ -62,6 +63,7 @@ import com.vn.wecare.ui.theme.tinyPadding
 import com.vn.wecare.utils.common_composable.BarChartItem
 import com.vn.wecare.utils.formatMonthDay
 import com.vn.wecare.utils.getMondayOfTimestampWeek
+import com.vn.wecare.utils.getProgressInFloatWithFloatInput
 import com.vn.wecare.utils.getSundayOfTimestampWeek
 import com.vn.wecare.utils.getWeekDayFromInt
 import java.text.DecimalFormat
@@ -74,9 +76,7 @@ import java.time.format.DateTimeFormatter
 @Preview
 @Composable
 fun Preview() {
-    ExerciseHistoryScreen(
-        onNavigationBack = {}
-    )
+    ExerciseHistoryScreen(onNavigationBack = {})
 }
 
 @Composable
@@ -85,30 +85,20 @@ fun ExerciseHistoryScreen(
     onNavigationBack: () -> Unit,
     viewModel: ExerciseHistoryViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        backgroundColor = Grey100,
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = { onNavigationBack() }) {
-                        Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-                },
-                title = {
-                    Text(
-                        text = "Exercise History",
-                        style = WeCareTypography.h5,
-                        color = Color.Black
-                    )
-                },
-                backgroundColor = Grey100
+    Scaffold(backgroundColor = Grey100, modifier = modifier, topBar = {
+        TopAppBar(navigationIcon = {
+            IconButton(onClick = { onNavigationBack() }) {
+                Icon(
+                    Icons.Filled.ArrowBack, contentDescription = null, tint = Color.Black
+                )
+            }
+        }, title = {
+            Text(
+                text = "Exercise History", style = WeCareTypography.h5, color = Color.Black
             )
-        }
+        }, backgroundColor = Grey100
+        )
+    }
 
     ) { values ->
         Column(
@@ -116,8 +106,7 @@ fun ExerciseHistoryScreen(
         ) {
             Box(modifier = modifier.weight(1.5f)) {
                 HistoryChartReport(
-                    modifier = modifier,
-                    viewModel = viewModel
+                    modifier = modifier, viewModel = viewModel
                 )
             }
             Box(modifier = modifier.weight(1f)) {
@@ -127,12 +116,10 @@ fun ExerciseHistoryScreen(
                 ) {
                     var listHistory =
                         viewModel.listHistoryDisplay.collectAsState().value ?: listOf()
-                    ExerciseHistoryTitle(
-                        dateTime = viewModel.historyViewTime.collectAsState().value,
+                    ExerciseHistoryTitle(dateTime = viewModel.historyViewTime.collectAsState().value,
                         exercisesCount = listHistory.size,
                         kcal = listHistory?.sumOf { it.kcal.toDouble() }?.toFloat() ?: 0f,
-                        duration = listHistory.sumOf { it.duration.toLong() * 1000 }
-                    )
+                        duration = listHistory.sumOf { it.duration.toLong() * 1000 })
                     LazyColumn {
                         items(listHistory.reversed()) { history ->
                             ExerciseHistoryItem(
@@ -161,7 +148,8 @@ private fun HistoryChartReport(
             .padding(horizontal = midPadding, vertical = smallPadding)
             .fillMaxWidth()
             .clip(RoundedCornerShape(mediumRadius))
-            .background(MaterialTheme.colors.background), elevation = 20.dp
+            .background(MaterialTheme.colors.background),
+        elevation = 20.dp
     ) {
         Column(
             modifier = modifier.padding(horizontal = smallPadding, vertical = smallPadding),
@@ -211,7 +199,9 @@ private fun HistoryChartReport(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     for ((index, item) in listChart.withIndex()) {
-                        val progress = item / 600f
+                        val progress =
+//                            item / (LatestGoalSingletonObject.getInStance().caloriesBurnedEachDayGoal/2).toFloat()
+                        getProgressInFloatWithFloatInput(item, (LatestGoalSingletonObject.getInStance().caloriesBurnedEachDayGoal/2).toFloat())
                         BarChartItem(
                             itemTitle = getWeekDayFromInt(index + 1),
                             progress = progress,
@@ -220,18 +210,15 @@ private fun HistoryChartReport(
                     }
                 }
             } else {
-                val imageLoader = ImageLoader.Builder(LocalContext.current)
-                    .components {
+                val imageLoader = ImageLoader.Builder(LocalContext.current).components {
                         if (Build.VERSION.SDK_INT >= 28) {
                             add(ImageDecoderDecoder.Factory())
                         } else {
                             add(GifDecoder.Factory())
                         }
-                    }
-                    .build()
+                    }.build()
                 Image(
-                    modifier = modifier
-                        .weight(9f),
+                    modifier = modifier.weight(9f),
                     painter = rememberAsyncImagePainter(
                         R.drawable.no_infor, imageLoader
                     ),
@@ -266,8 +253,7 @@ private fun HistoryChartReport(
                             DecimalFormat("#.##").format(
                                 kcal ?: 0f
                             )
-                        } cal",
-                        style = MaterialTheme.typography.body1
+                        } cal", style = MaterialTheme.typography.body1
                     )
                 }
             }
@@ -277,11 +263,7 @@ private fun HistoryChartReport(
 
 @Composable
 fun ExerciseHistoryTitle(
-    modifier: Modifier = Modifier,
-    dateTime: Long,
-    exercisesCount: Int,
-    kcal: Float,
-    duration: Long
+    modifier: Modifier = Modifier, dateTime: Long, exercisesCount: Int, kcal: Float, duration: Long
 ) {
     Row(
         modifier = modifier
@@ -298,18 +280,14 @@ fun ExerciseHistoryTitle(
                 text = exerciseTitle(dateTime), style = WeCareTypography.body1
             )
             Text(
-                text = "$exercisesCount exercises",
-                style = WeCareTypography.body2,
-                color = Black30
+                text = "$exercisesCount exercises", style = WeCareTypography.body2, color = Black30
             )
         }
         Column(
             modifier = modifier.weight(1.5f)
         ) {
             TextWithIcon(
-                icon = Icons.Outlined.Timer,
-                tint = Black30,
-                text = workoutTime(duration)
+                icon = Icons.Outlined.Timer, tint = Black30, text = workoutTime(duration)
             )
             TextWithIcon(
                 icon = Icons.Default.Bolt,
@@ -343,9 +321,7 @@ fun ExerciseHistoryItem(
                 text = exerciseType.toString(), style = WeCareTypography.body1
             )
             Text(
-                text = formatTimestamp(dateTime),
-                style = WeCareTypography.body2,
-                color = Black30
+                text = formatTimestamp(dateTime), style = WeCareTypography.body2, color = Black30
             )
         }
         Column(

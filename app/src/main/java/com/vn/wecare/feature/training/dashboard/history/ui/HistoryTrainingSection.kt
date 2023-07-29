@@ -154,7 +154,7 @@ fun HistoryTrainingItem(
             Text(
                 text = action.actionContent(),
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 color = MaterialTheme.colors.primary
             )
             Text(
